@@ -1,0 +1,178 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+
+
+\title{Frost HDL}
+\date{2018-10-19}
+\author{Andrew Clark (FL4SHK)}
+
+%% Hide section, subsection, and subsubsection numbering
+%\renewcommand{\thesection}{}
+%\renewcommand{\thesubsection}{}
+%\renewcommand{\thesubsubsection}{}
+
+
+%Figures
+%\begin{figure}[H]
+%	\includegraphics[width=\linewidth]{example.png}
+%\end{figure}
+
+% Verbatim text
+%\VerbatimInput{main.cpp}
+
+%% Fixed-width text
+%\texttt{module FullAdder(input logic a, b, c_in, output logic s, c_out);}
+%% Bold
+%\textbf{green eggs}
+%% Italic
+%\textit{and}
+%% Underline
+%\underline{eggs}
+
+%% Non-numbered list
+%\begin{itemize}
+%\item item 0
+%\item item 1
+%\end{itemize}
+
+%% Numbered list
+%\begin{enumerate}
+%\item item 0
+%\item item 1
+%\end{enumerate}
+
+%% Spaces and new lines
+%LaTeX ignores extra spaces and new lines.
+%Place \\ at the end of a line to create a new line (but not create a new
+%paragraph)
+
+%% Use "\noindent" to prevent a paragraph from indenting
+
+%% Tables
+%\begin{table}[H]
+%	\begin{center}
+%		\caption{Results for \texttt{blocksPerGrid = 5}}:
+%		\label{tab:table0}
+%		\begin{tabular}{c|c}
+%			\textbf{\texttt{threadsPerBlock}}
+%				& \textbf{\texttt{scaling()} Running Time (us)}\\
+%			\hline
+%			32 & 156.39\\
+%			64 & 163.59\\
+%			128 & 155.62\\
+%			256 & 155.56\\
+%			512 & 161.57\\
+%			1024 & 166.85\\
+%		\end{tabular}
+%	\end{center}
+%\end{table}
+
+
+\begin{document}
+	\maketitle
+	\pagenumbering{gobble}
+	\newpage
+	\pagenumbering{arabic}
+
+	\section{Introduction}
+		\begin{itemize}
+		\item This is a "high level" hardware description language.  The
+		main goal is to take features from synthesizeable SystemVerilog
+		(which aren't in Verilog) and expand upon them, and also to have
+		direct support for yosys's formal verification abilities.
+		\item The language syntax is also set up differently from both
+		Verilog and SystemVerilog to eliminate some of my pet peeves.
+		\item This language compiles to Verilog-2001, but support for
+		compiling to SystemVerilog may be added later.  On that note, this
+		language is ONLY compiled, and does not have its own simulator.
+		This allows me to piggy back off of Verilog's semantics.
+		\end{itemize}
+	\section{Language Details/Features}
+		\begin{itemize}
+		\item Syntax changes
+			\begin{itemize}
+			\item The biggest syntax change is that \texttt{\{} and
+			\texttt{\}} are used to indicate code blocks, \textbf{not}
+			\texttt{begin} and \texttt{end}.  I will also have \texttt{\{}
+			and \texttt{\}} be used to indicate \texttt{module} contents,
+			so \texttt{endmodule} is gone.
+			\item As such, concatenation needs new syntax.  I have simply
+			chosen \texttt{\$concat()} for the new syntax.
+			\item Replication also has a new syntax:
+			\texttt{\$replicate()}.
+			\end{itemize}
+		\item What doesn't exist
+			\begin{itemize}
+			\item Verilog's \texttt{fork} and \texttt{join} constructs are
+			not supported at this time, but may be added later, especially
+			if I can figure out what they're actually used for.  They do
+			not appear to be synthesizeable constructs anyway.
+			\end{itemize}
+		\item \texttt{package}s
+			\begin{itemize}
+			\item Nested \texttt{package}s are supported.  This may be
+			something that SystemVerilog proper supports, but Icarus
+			Verilog's implementation of SystemVerilog's \texttt{package}s
+			sure does not support nested \texttt{package}s.
+			\end{itemize}
+		\item \texttt{struct}s
+			\begin{itemize}
+			\item First and foremost, unlike in SystemVerilog,
+			\texttt{struct}s can be \texttt{parameter}ized.
+			\item A \texttt{struct} can have member \texttt{task}s and
+			member \texttt{function}s.  These operate basically how you
+			would expect.
+			\item \texttt{public} and \texttt{private} are supported as
+			well.
+			\item Constructors and destructors are not supported.
+			Destructors in particular do not make sense to support, but
+			constructors \textbf{may} be added for \texttt{struct}s that
+			end up implemented as \texttt{reg} vectors in the generated
+			code.
+			\item For code generation, \texttt{struct}s are simply compiled
+			to either \texttt{wire} or \texttt{reg} vectors, with a
+			\texttt{struct}'s data members simply being different slices of
+			the generated \texttt{wire} or \texttt{reg} vector.
+			\item Note that \texttt{struct}s in this language are very
+			similar to SystemVerilog's \texttt{packed struct}s, and
+			SystemVerilog's non-\texttt{packed struct}s simply do not
+			exist.
+			\end{itemize}
+		\item \texttt{union}s
+			\begin{itemize}
+			\item \texttt{union}s may or may not be added.  I honestly
+			\textbf{might} add them, but it's not as high a priority as
+			other things.
+			\end{itemize}
+		\item \texttt{interface}s
+			\begin{itemize}
+			\item These are intended to mimic SystemVerilog's
+			\texttt{interface}s, though I may make some changes.
+			\item Having not had much access to SystemVerilog's
+			\texttt{interface}s myself, I may have to review how they work
+			first before I can implement them.
+			\end{itemize}
+		\item \texttt{macro}s
+			\begin{itemize}
+			\item I really want to support a useful macro system, perhaps
+			in the form of a preprocessor.  This is perhaps my replacement
+			for Verilog's \texttt{generate}, but I might need to support
+			\texttt{generate} as well.
+			\end{itemize}
+		\item Formal Verification
+			\begin{itemize}
+			\item yosys's formal verification constructs are directly
+			supported and will simply be inserted directly into the
+			generated code.
+			\item \texttt{assert()}, \texttt{assume()},
+			\texttt{assert property}, \texttt{assume property}, etc.
+			\end{itemize}
+		\end{itemize}
+
+\end{document}
