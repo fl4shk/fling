@@ -23,7 +23,7 @@ private:		// variables
 	SymbolTable __sym_tbl;
 
 
-	std::stack<s64> __num_stack;
+	std::stack<BigNum*> __num_stack;
 	std::stack<s64> __scope_child_num_stack;
 	std::stack<std::string*> __str_stack;
 
@@ -98,7 +98,7 @@ private:		// visitor functions
 		(CompilerGrammarParser::DeclModuleContext *ctx);
 
 private:		// functions
-	inline void push_num(s64 to_push)
+	inline void push_num(BigNum* to_push)
 	{
 		__num_stack.push(to_push);
 	}

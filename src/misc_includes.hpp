@@ -18,6 +18,7 @@
 #include "liborangepower_src/gen_getter_setter_defines.hpp"
 #include "liborangepower_src/json_stuff.hpp"
 #include "liborangepower_src/prev_curr_pair_class.hpp"
+#include "liborangepower_src/gmp_stuff.hpp"
 
 using namespace liborangepower::printout_etc;
 using namespace liborangepower::misc_input;
@@ -26,6 +27,7 @@ using namespace liborangepower::misc_util;
 using namespace liborangepower::bitwise;
 using namespace liborangepower::json;
 
+using liborangepower::bignum::BigNum;
 
 
 #endif		// src__slash__misc_includes_hpp
