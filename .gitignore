@@ -45,3 +45,4 @@ frost_hdl_compiler_debug
 *.elf
 docs/*.log
 docs/*.aux
+src/gen_src/*

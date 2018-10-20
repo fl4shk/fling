@@ -17,7 +17,7 @@ CXX_DIRS:=$(SHARED_SRC_DIRS)
 DEBUG_OPTIMIZATION_LEVEL:=-O0
 REGULAR_OPTIMIZATION_LEVEL:=-O2
 
-GRAMMAR_PREFIX:=Grammar
+GRAMMAR_PREFIX:=CompilerGrammar
 
 ALWAYS_DEBUG_SUFFIX:=_debug
 ifdef DEBUG
@@ -39,6 +39,7 @@ LD:=$(CXX)
 LD_FLAGS:=$(LD_FLAGS) -lm \
 	-lantlr4-runtime \
 	-ljsoncpp \
+	-lgmp
 
 
 
