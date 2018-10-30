@@ -11,6 +11,9 @@
 
 #include "symbol_table_classes.hpp"
 
+namespace frost_hdl
+{
+
 class Compiler : public CompilerGrammarVisitor
 //class Compiler
 {
@@ -37,6 +40,7 @@ private:		// variables
 	ScopedTableNode<Symbol>* __curr_scope_node = nullptr;
 public:		// functions
 	Compiler(Parser& parser);
+	virtual ~Compiler();
 	int run();
 
 private:		// functions
@@ -224,5 +228,6 @@ private:		// functions
 	gen_getter_by_ref(sym_tbl);
 };
 
+} // namespace frost_hdl
 
 #endif		// src__slash__compiler_class_hpp

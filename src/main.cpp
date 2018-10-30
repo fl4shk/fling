@@ -16,6 +16,6 @@ int main(int argc, char** argv)
 		(new CompilerErrorListener());
 	parser.addErrorListener(compiler_error_listener.get());
 
-	Compiler visitor(parser);
+	frost_hdl::Compiler visitor(parser);
 	return visitor.run();
 }
