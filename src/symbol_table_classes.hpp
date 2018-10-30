@@ -20,6 +20,8 @@ private:		// variables
 	// Used to allow forward referencing.
 	bool __has_been_found = false;
 
+	size_t __size = 0;
+
 
 public:		// functions
 	inline Symbol()
@@ -29,10 +31,11 @@ public:		// functions
 	//	: __name(s_name), __addr(s_addr), __found_as_label(false)
 	//{
 	//}
-	inline Symbol(Ident s_name, Ident s_type)
-		: __name(s_name), __type(s_type), __has_been_found(false)
-	{
-	}
+
+	//inline Symbol(Ident s_name, Ident s_type)
+	//	: __name(s_name), __type(s_type), __has_been_found(false)
+	//{
+	//}
 	inline Symbol(const Symbol& to_copy) = default;
 	inline Symbol(Symbol&& to_move) = default;
 
