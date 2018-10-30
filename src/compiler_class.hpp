@@ -11,11 +11,14 @@
 
 #include "symbol_table_classes.hpp"
 
-//class Compiler : public CompilerGrammarVisitor
-class Compiler
+class Compiler : public CompilerGrammarVisitor
+//class Compiler
 {
 public:		// typedefs
 	typedef antlr4::ParserRuleContext ParserRuleContext;
+	typedef antlrcpp::Any VisitorRetType;
+
+	typedef CompilerGrammarParser Parser;
 
 private:		// variables
 
@@ -28,12 +31,12 @@ private:		// variables
 	std::stack<std::string*> __str_stack;
 
 
-	CompilerGrammarParser::ProgramContext* __program_ctx;
+	Parser::ProgramContext* __program_ctx;
 	int __pass;
 
 	ScopedTableNode<Symbol>* __curr_scope_node = nullptr;
 public:		// functions
-	Compiler(CompilerGrammarParser& parser);
+	Compiler(Parser& parser);
 	int run();
 
 private:		// functions
@@ -85,17 +88,93 @@ private:		// functions
 	}
 
 private:		// visitor functions
-	antlrcpp::Any visitProgram
-		(CompilerGrammarParser::ProgramContext *ctx);
+	VisitorRetType visitProgram
+		(Parser::ProgramContext *ctx);
 
 	// program:
-	antlrcpp::Any visitSubProgram
-		(CompilerGrammarParser::SubProgramContext *ctx);
+	VisitorRetType visitSubProgram
+		(Parser::SubProgramContext *ctx);
 
 	// Declarations
 	// subProgram
-	antlrcpp::Any visitDeclModule
-		(CompilerGrammarParser::DeclModuleContext *ctx);
+	VisitorRetType visitDeclModule
+		(Parser::DeclModuleContext *ctx);
+
+	VisitorRetType visitDeclStruct
+		(Parser::DeclStructContext *ctx);
+
+	VisitorRetType visitDeclVarList
+		(Parser::DeclVarListContext *ctx);
+
+	VisitorRetType visitDeclParameters
+		(Parser::DeclParametersContext *ctx);
+
+	VisitorRetType visitTypeName
+		(Parser::TypeNameContext *ctx);
+
+	VisitorRetType visitSlice
+		(Parser::SliceContext *ctx);
+
+	VisitorRetType visitScopedOuterStatements
+		(Parser::ScopedOuterStatementsContext *ctx);
+
+	// Outer statements
+	VisitorRetType visitOuterStatement
+		(Parser::OuterStatementContext *ctx);
+
+	// outerStmtAssign
+	VisitorRetType visitListIdentNames
+		(Parser::ListIdentNamesContext *ctx);
+
+	VisitorRetType visitMultiListModulePorts
+		(Parser::MultiListModulePortsContext *ctx);
+
+	VisitorRetType visitListModulePorts
+		(Parser::ListModulePortsContext *ctx);
+
+	VisitorRetType visitListPortParams
+		(Parser::ListPortParamsContext *ctx);
+
+	VisitorRetType visitPortParam
+		(Parser::PortParamContext *ctx);
+
+	// Expression parsing
+	VisitorRetType visitExpr
+		(Parser::ExprContext *ctx);
+
+	VisitorRetType visitExprLogical
+		(Parser::ExprLogicalContext *ctx);
+
+	VisitorRetType visitExprCompare
+		(Parser::ExprCompareContext *ctx);
+
+	VisitorRetType visitExprAddSub
+		(Parser::ExprAddSubContext *ctx);
+
+	VisitorRetType visitExprMulDivModEtc
+		(Parser::ExprMulDivModEtcContext *ctx);
+
+	VisitorRetType visitExprUnary
+		(Parser::ExprUnaryContext *ctx);
+
+	VisitorRetType visitExprBitInvert
+		(Parser::ExprBitInvertContext *ctx);
+	VisitorRetType visitExprNegate
+		(Parser::ExprNegateContext *ctx);
+
+	VisitorRetType visitExprLogNot
+		(Parser::ExprLogNotContext *ctx);
+
+	VisitorRetType visitNumExpr
+		(Parser::NumExprContext *ctx);
+
+	VisitorRetType visitIdentExpr
+		(Parser::IdentExprContext *ctx);
+
+	VisitorRetType visitIdentName
+		(Parser::IdentNameContext *ctx);
+	VisitorRetType visitIdentSliced
+		(Parser::IdentSlicedContext *ctx);
 
 private:		// functions
 	inline void push_num(BigNum* to_push)

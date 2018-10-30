@@ -11,10 +11,14 @@
 class Symbol
 {
 private:		// variables
+	// The symbol's name
 	Ident __name;
 
-	//u64 __addr = 0;
-	//bool __found_as_label = false;
+	// The type name of this symbol.
+	Ident __type;
+
+	// Used to allow forward referencing.
+	bool __has_been_found = false;
 
 
 public:		// functions
@@ -25,6 +29,10 @@ public:		// functions
 	//	: __name(s_name), __addr(s_addr), __found_as_label(false)
 	//{
 	//}
+	inline Symbol(Ident s_name, Ident s_type)
+		: __name(s_name), __type(s_type), __has_been_found(false)
+	{
+	}
 	inline Symbol(const Symbol& to_copy) = default;
 	inline Symbol(Symbol&& to_move) = default;
 
@@ -33,9 +41,13 @@ public:		// functions
 
 	gen_getter_and_setter_by_con_ref(name);
 	gen_setter_by_rval_ref(name);
+	gen_getter_and_setter_by_con_ref(type);
+	gen_setter_by_rval_ref(type);
 
 	//gen_getter_and_setter_by_val(addr);
-	//gen_getter_and_setter_by_val(found_as_label);
+	gen_getter_and_setter_by_val(has_been_found);
+
+	//gen_getter_and_setter_by_val(is_constant);
 };
 
 

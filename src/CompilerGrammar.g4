@@ -8,25 +8,34 @@ program:
 
 subProgram:
 	declModule
-	//| declStruct
-	//| declUnion
+	| declStruct
+	////| declUnion
 	//| declEnum
-	//| declInterface
-	//| declPackage
+	////| declInterface
+	////| declPackage
 	;
 
 
 // Declarations
 declModule:
-	TokKwModule TokLParen multiListModulePorts TokRParen
+	TokKwModule declParameters? identName
+	TokLParen multiListModulePorts TokRParen
 	scopedOuterStatements
 	;
 
 
-//declStruct
-//	TokKwStruct
+declStruct:
+	TokKwStruct declParameters? identName
+	TokLBrace
+	(declVarList TokSemicolon)*
+	TokRBrace
+	TokSemicolon
+	;
+
+//declEnum:
+//	TokKwEnum identName
 //	TokLBrace
-//	declVarList*
+//	(listIdentNames | (listIdentNames TokComma))
 //	TokRBrace
 //	TokSemicolon
 //	;
@@ -34,6 +43,10 @@ declModule:
 
 declVarList:
 	typeName listIdentNames
+	;
+
+declParameters:
+	TokNumber TokLParen listPortParams TokRParen
 	;
 
 
@@ -69,6 +82,7 @@ outerStatement:
 	;
 
 
+//outerStmtAssign
 
 // Lists
 listIdentNames:
@@ -81,6 +95,15 @@ multiListModulePorts:
 
 listModulePorts:
 	(TokKwInput | TokKwOutput) declVarList 
+	;
+
+listPortParams:
+	portParam (TokComma portParam)*
+	;
+
+
+portParam:
+	TokKwParameter identName (TokBlockingAssign expr)?
 	;
 
 
@@ -156,6 +179,7 @@ identSliced: TokIdent slice ;
 LexWhitespace: (' ' | '\t' | '\n' ) -> skip ;
 LexLineComment: ('//' | ';') (~ '\n')* -> skip ;
 
+// Expressions
 TokOpLogical: ('&&' | '||') ;
 TokOpCompare: ('==' | '!=' | '<' | '>' | '<=' | '>=') ;
 TokPlus: '+' ;
@@ -168,6 +192,9 @@ TokDecNum: [0-9] ([0-9]*) ;
 TokHexNum: '0x' ([0-9A-Fa-f]+) ;
 TokBinNum: '0b' ([0-1]+) ;
 
+
+TokBlockingAssign: '=' ;
+TokNonBlockingAssign: '<-' ;
 
 // Punctuation, etc.
 TokPeriod: '.' ;
@@ -184,6 +211,9 @@ TokLBracket: '[' ;
 TokRBracket: ']' ;
 TokLBrace: '{' ;
 TokRBrace: '}' ;
+
+// Not "pound", not "hash".  "number".
+TokNumber: '#' ;
 
 
 

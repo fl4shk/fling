@@ -20,7 +20,7 @@
 		push_str(cstm_strdup(arg->toString())); \
 	}
 
-Compiler::Compiler(CompilerGrammarParser& parser)
+Compiler::Compiler(Parser& parser)
 {
 	__program_ctx = parser.program();
 }
