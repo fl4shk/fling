@@ -32,23 +32,28 @@ public:		// functions
 		__val = static_cast<Symbol*>(nullptr);
 	}
 
+	// Eh, these can just be used for 
+	inline ExprChunk(const ExprChunk& to_copy) = default;
 
-	inline void set_sym_val(Symbol* n_val)
+	inline ExprChunk& operator = (const ExprChunk& to_copy) = default;
+
+
+	inline void set_symbol(Symbol* n_val)
 	{
 		__type = Type::Symbol;
 		__val = n_val;
 	}
-	inline Symbol* sym_val() const
+	inline Symbol* symbol() const
 	{
 		return std::get<Symbol*>(__val);
 	}
 
-	inline void set_expr_num_val(ExprNum* n_val)
+	inline void set_expr_num(ExprNum* n_val)
 	{
 		__type = Type::ExprNum;
 		__val = n_val;
 	}
-	inline ExprNum* expr_num_val() const
+	inline ExprNum* expr_num() const
 	{
 		return std::get<ExprNum*>(__val);
 	}
@@ -58,10 +63,10 @@ public:		// functions
 		switch (type())
 		{
 			case Type::Symbol:
-				return sym_val()->is_constant();
+				return symbol()->is_constant();
 				break;
 			case Type::ExprNum:
-				return expr_num_val()->is_constant();
+				return expr_num()->is_constant();
 				break;
 		}
 

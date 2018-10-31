@@ -15,7 +15,7 @@ namespace frost_hdl
 
 BigNum* cstm_numdup(const BigNum& to_dup);
 std::string* cstm_strdup(const std::string& to_dup);
-ExprNum* alloc_expr_num(size_t s_size, BigNum* s_val);
+ExprNum* cstm_expr_numdup(const ExprNum& to_dup);
 
 } // namespace frost_hdl
 
