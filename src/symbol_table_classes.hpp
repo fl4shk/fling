@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 
 #include "scoped_table_base_class.hpp"
+#include "expr_num_class.hpp"
 
 
 namespace frost_hdl
@@ -23,9 +24,7 @@ private:		// variables
 	// Used to allow forward referencing.
 	bool __has_been_found = false;
 
-	size_t __size = 0;
-	BigNum* __val = nullptr;
-
+	ExprNum* __expr_num = nullptr;
 
 public:		// functions
 	inline Symbol()
@@ -39,15 +38,28 @@ public:		// functions
 
 	inline Symbol(Ident s_name, Ident s_type)
 		: __name(s_name), __type(s_type), __has_been_found(false),
-		__size(0), __val(nullptr)
+		__expr_num(nullptr)
 	{
 	}
+
+	//inline Symbol(Ident s_name, Ident s_type, ExprNum* s_expr_num)
+	//	: __name(s_name), __type(s_type), __has_been_found(true),
+	//	__expr_num(s_expr_num)
+	//{
+	//}
 
 	inline Symbol(const Symbol& to_copy) = default;
 	inline Symbol(Symbol&& to_move) = default;
 
 	inline Symbol& operator = (const Symbol& to_copy) = default;
 	inline Symbol& operator = (Symbol&& to_move) = default;
+
+
+	inline bool is_constant() const
+	{
+		return (expr_num() && expr_num()->is_constant());
+	}
+
 
 	gen_getter_and_setter_by_con_ref(name);
 	gen_setter_by_rval_ref(name);
@@ -56,13 +68,9 @@ public:		// functions
 
 	gen_getter_and_setter_by_val(has_been_found);
 
-	gen_getter_and_setter_by_val(size)
-	gen_getter_and_setter_by_val(val)
+	gen_getter_and_setter_by_val(expr_num);
 
-	inline bool is_constant() const
-	{
-		return (__val != nullptr);
-	}
+
 };
 
 
