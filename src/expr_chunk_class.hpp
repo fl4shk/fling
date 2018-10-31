@@ -58,20 +58,25 @@ public:		// functions
 		return std::get<ExprNum*>(__val);
 	}
 
-	inline bool is_constant() const
+	inline ExprNum* any_expr_num() const
 	{
 		switch (type())
 		{
 			case Type::Symbol:
-				return symbol()->is_constant();
+				return symbol()->expr_num();
 				break;
 			case Type::ExprNum:
-				return expr_num()->is_constant();
+				return expr_num();
 				break;
 		}
 
 		// Eek!
-		return false;
+		return nullptr;
+	}
+
+	inline bool is_constant() const
+	{
+		return any_expr_num()->is_constant();
 	}
 
 	gen_getter_by_val(type);

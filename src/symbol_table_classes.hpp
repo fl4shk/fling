@@ -55,11 +55,6 @@ public:		// functions
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
 
-	inline bool is_constant() const
-	{
-		return (expr_num() && expr_num()->is_constant());
-	}
-
 
 	gen_getter_and_setter_by_con_ref(name);
 	gen_setter_by_rval_ref(name);
