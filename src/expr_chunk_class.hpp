@@ -32,7 +32,6 @@ public:		// functions
 		__val = static_cast<Symbol*>(nullptr);
 	}
 
-	// Eh, these can just be used for 
 	inline ExprChunk(const ExprChunk& to_copy) = default;
 
 	inline ExprChunk& operator = (const ExprChunk& to_copy) = default;

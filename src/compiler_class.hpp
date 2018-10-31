@@ -10,6 +10,7 @@
 #include "gen_src/CompilerGrammarVisitor.h"
 
 #include "symbol_table_classes.hpp"
+#include "expr_chunk_class.hpp"
 
 namespace frost_hdl
 {
@@ -28,9 +29,10 @@ private:		// variables
 	SymbolTable __sym_tbl;
 
 
-	std::stack<BigNum*> __num_stack;
+	//std::stack<BigNum*> __num_stack;
 	std::stack<s64> __scope_child_num_stack;
 	std::stack<std::string*> __str_stack;
+	std::stack<ExprChunk> __expr_chunk_stack;
 
 
 	Parser::ProgramContext* __program_ctx;
@@ -180,18 +182,18 @@ private:		// visitor functions
 		(Parser::IdentSlicedContext *ctx);
 
 private:		// functions
-	inline void push_num(BigNum* to_push)
+	inline void push_expr_chunk(ExprChunk to_push)
 	{
-		__num_stack.push(to_push);
+		__expr_chunk_stack.push(to_push);
 	}
-	inline auto get_top_num()
+	inline auto get_top_expr_chunk()
 	{
-		return __num_stack.top();
+		return __expr_chunk_stack.top();
 	}
-	inline auto pop_num()
+	inline auto pop_expr_chunk()
 	{
-		auto ret = __num_stack.top();
-		__num_stack.pop();
+		auto ret = __expr_chunk_stack.top();
+		__expr_chunk_stack.pop();
 		return ret;
 	}
 	inline void push_scope_child_num(s64 to_push)
