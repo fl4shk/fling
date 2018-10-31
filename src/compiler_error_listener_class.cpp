@@ -1,5 +1,9 @@
 #include "compiler_error_listener_class.hpp"
 
+
+namespace frost_hdl
+{
+
 CompilerErrorListener::~CompilerErrorListener()
 {
 }
@@ -35,3 +39,5 @@ void CompilerErrorListener::reportContextSensitivity
 	antlr4::atn::ATNConfigSet *configs)
 {
 }
+
+} // namespace frost_hdl}

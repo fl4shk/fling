@@ -6,6 +6,9 @@
 #include "misc_includes.hpp"
 #include "ident_table_classes.hpp"
 
+namespace frost_hdl
+{
+
 template<typename Type>
 class ScopedTableNode
 {
@@ -248,5 +251,6 @@ public:		// functions
 	//gen_getter_by_val(scope_lev);
 };
 
+} // namespace frost_hdl
 
 #endif		// src__slash__scoped_table_base_class_hpp

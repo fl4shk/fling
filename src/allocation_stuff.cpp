@@ -1,5 +1,8 @@
 #include "allocation_stuff.hpp"
 
+namespace frost_hdl
+{
+
 class DupStuff
 {
 	friend BigNum* cstm_numdup(const BigNum& to_dup);
@@ -45,3 +48,5 @@ std::string* cstm_strdup(const std::string& to_dup)
 
 	return pool.at(to_dup).get();
 }
+
+} // namespace frost_hdl

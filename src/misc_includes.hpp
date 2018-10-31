@@ -6,6 +6,7 @@
 
 #include <stack>
 #include <map>
+#include <variant>
 
 
 #include "liborangepower_src/misc_includes.hpp"

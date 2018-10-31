@@ -15,7 +15,6 @@ namespace frost_hdl
 {
 
 class Compiler : public CompilerGrammarVisitor
-//class Compiler
 {
 public:		// typedefs
 	typedef antlr4::ParserRuleContext ParserRuleContext;

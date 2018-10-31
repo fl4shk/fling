@@ -12,8 +12,8 @@ int main(int argc, char** argv)
 
 	CompilerGrammarParser parser(&tokens);
 	parser.removeErrorListeners();
-	std::unique_ptr<CompilerErrorListener> compiler_error_listener
-		(new CompilerErrorListener());
+	std::unique_ptr<frost_hdl::CompilerErrorListener>
+		compiler_error_listener(new frost_hdl::CompilerErrorListener());
 	parser.addErrorListener(compiler_error_listener.get());
 
 	frost_hdl::Compiler visitor(parser);

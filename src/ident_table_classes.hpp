@@ -5,6 +5,9 @@
 
 #include "misc_includes.hpp"
 
+namespace frost_hdl
+{
+
 typedef std::string* Ident;
 
 template<typename Type>
@@ -82,5 +85,6 @@ public:		// functions
 	gen_getter_by_ref(table);
 };
 
+} // namespace frost_hdl
 
 #endif		// src__slash__ident_table_classes_hpp

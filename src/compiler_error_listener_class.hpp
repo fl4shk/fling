@@ -6,6 +6,8 @@
 #include "misc_includes.hpp"
 #include "ANTLRErrorListener.h"
 
+namespace frost_hdl
+{
 
 class CompilerErrorListener : public antlr4::ANTLRErrorListener
 {
@@ -30,5 +32,7 @@ public:		// functions
 		const antlr4::dfa::DFA &dfa, size_t startIndex, size_t stopIndex,
 		size_t prediction, antlr4::atn::ATNConfigSet *configs);
 };
+
+} // namespace frost_hdl
 
 #endif		// src__slash__compiler_error_listener_class_hpp

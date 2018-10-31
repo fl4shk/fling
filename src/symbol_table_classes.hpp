@@ -8,34 +8,41 @@
 #include "scoped_table_base_class.hpp"
 
 
+namespace frost_hdl
+{
+
 class Symbol
 {
 private:		// variables
 	// The symbol's name
-	Ident __name;
+	Ident __name = nullptr;
 
 	// The type name of this symbol.
-	Ident __type;
+	Ident __type = nullptr;
 
 	// Used to allow forward referencing.
 	bool __has_been_found = false;
 
 	size_t __size = 0;
+	BigNum* __val = nullptr;
 
 
 public:		// functions
 	inline Symbol()
 	{
 	}
-	//inline Symbol(Ident s_name, u64 s_addr)
-	//	: __name(s_name), __addr(s_addr), __found_as_label(false)
-	//{
-	//}
 
 	//inline Symbol(Ident s_name, Ident s_type)
 	//	: __name(s_name), __type(s_type), __has_been_found(false)
 	//{
 	//}
+
+	inline Symbol(Ident s_name, Ident s_type)
+		: __name(s_name), __type(s_type), __has_been_found(false),
+		__size(0), __val(nullptr)
+	{
+	}
+
 	inline Symbol(const Symbol& to_copy) = default;
 	inline Symbol(Symbol&& to_move) = default;
 
@@ -47,10 +54,15 @@ public:		// functions
 	gen_getter_and_setter_by_con_ref(type);
 	gen_setter_by_rval_ref(type);
 
-	//gen_getter_and_setter_by_val(addr);
 	gen_getter_and_setter_by_val(has_been_found);
 
-	//gen_getter_and_setter_by_val(is_constant);
+	gen_getter_and_setter_by_val(size)
+	gen_getter_and_setter_by_val(val)
+
+	inline bool is_constant() const
+	{
+		return (__val != nullptr);
+	}
 };
 
 
@@ -61,7 +73,7 @@ public:		// functions
 	virtual ~SymbolTable();
 };
 
-
+} // namespace frost_hdl
 
 
 #endif		// src__slash__symbol_table_classes_hpp

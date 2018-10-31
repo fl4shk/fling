@@ -1,6 +1,9 @@
 #include "symbol_table_classes.hpp"
 
 
+namespace frost_hdl
+{
+
 //// The symbol table
 //SymbolTable sym_tbl;
 
@@ -24,3 +27,4 @@ SymbolTable::~SymbolTable()
 {
 }
 
+} // namespace frost_hdl

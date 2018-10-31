@@ -8,7 +8,12 @@
 
 #include <map>
 
+namespace frost_hdl
+{
+
 BigNum* cstm_numdup(const BigNum& to_dup);
 std::string* cstm_strdup(const std::string& to_dup);
+
+} // namespace frost_hdl
 
 #endif		// src__slash__allocation_stuff_hpp
