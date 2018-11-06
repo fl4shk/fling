@@ -41,6 +41,10 @@ private:		// variables
 	// NOT constant, it still needs __expr_num to NOT be a nullptr.
 	ExprNum* __expr_num = nullptr;
 
+
+	// Array dimensions.
+	std::vector<size_t> __arr_dim;
+
 public:		// functions
 	inline Symbol()
 	{
@@ -59,6 +63,10 @@ public:		// functions
 	inline Symbol& operator = (const Symbol& to_copy) = default;
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
+	inline bool is_array() const
+	{
+		return (arr_dim().size() > 0);
+	}
 
 	gen_getter_and_setter_by_con_ref(name);
 	gen_setter_by_rval_ref(name);
@@ -68,6 +76,8 @@ public:		// functions
 	gen_getter_and_setter_by_val(has_been_found);
 	gen_getter_and_setter_by_val(compiled_type);
 	gen_getter_and_setter_by_val(expr_num);
+	gen_getter_by_ref(arr_dim);
+	gen_getter_by_con_ref(arr_dim);
 
 
 };

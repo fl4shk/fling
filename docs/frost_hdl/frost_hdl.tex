@@ -5,11 +5,24 @@
 \usepackage{fancyvrb}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-
+\usepackage{setspace}
+%\usepackage[nottoc]{tocbibind}
+\usepackage[font=large]{caption}
+\usepackage{framed}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage[backend=biber,sorting=none]{biblatex}
+%%\usepackage[
+%%	backend=biber,
+%%	style=ieee,
+%%	sorting=none
+%%]{biblatex}
+%\addbibresource{project_refs.bib}
 
 
 \title{Frost HDL}
-\date{2018-10-19}
+\date{2018-11-03}
 \author{Andrew Clark (FL4SHK)}
 
 %% Hide section, subsection, and subsubsection numbering
@@ -17,6 +30,20 @@
 %\renewcommand{\thesubsection}{}
 %\renewcommand{\thesubsubsection}{}
 
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\makeatletter
+\def\@seccntformat#1{\csname #1ignore\expandafter\endcsname\csname the#1\endcsname\quad}
+\let\sectionignore\@gobbletwo
+\let\latex@numberline\numberline
+\def\numberline#1{\if\relax#1\relax\else\latex@numberline{#1}\fi}
+\makeatother
+
+\makeatletter
+\renewcommand\tableofcontents{%
+    \@starttoc{toc}%
+}
+\makeatother
 
 %Figures
 %\begin{figure}[H]
@@ -79,6 +106,16 @@
 	\pagenumbering{gobble}
 	\newpage
 	\pagenumbering{arabic}
+
+	\doublespacing
+	\section{Abstract}
+	\setcounter{section}{-1}
+	Eggs!
+
+	\newpage
+	\section{Table of Contents}
+	\tableofcontents
+	\newpage
 
 	\section{Introduction}
 		\begin{itemize}
@@ -175,5 +212,8 @@
 			all supported directly.
 			\end{itemize}
 		\end{itemize}
+
+
+	%\printbibliography[heading=bibnumbered,title={Bibliography}]
 
 \end{document}

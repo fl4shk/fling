@@ -49,3 +49,4 @@ docs/*.toc
 docs/*.lot
 docs/*.lof
 src/gen_src/*
+docs/*/build/*
