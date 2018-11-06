@@ -11,8 +11,8 @@ namespace frost_hdl
 class ExprNum
 {
 private:		// variables
-	size_t ___size = 0;
-	BigNum* ___val = nullptr;
+	size_t __size = 0;
+	BigNum* __val = nullptr;
 
 public:		// functions
 	inline ExprNum()
@@ -20,7 +20,7 @@ public:		// functions
 	}
 
 	inline ExprNum(size_t s_size, BigNum* s_val)
-		: ___size(s_size), ___val(s_val)
+		: __size(s_size), __val(s_val)
 	{
 	}
 

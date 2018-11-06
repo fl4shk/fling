@@ -21,15 +21,15 @@ public:		// enums
 	};
 
 private:		// variables
-	Type ___type = Type::Symbol;
+	Type __type = Type::Symbol;
 
-	std::variant<Symbol*, ExprNum*> ___val;
+	std::variant<Symbol*, ExprNum*> __val;
 
 public:		// functions
 	inline ExprChunk()
 	{
-		___type = Type::Symbol;
-		___val = static_cast<Symbol*>(nullptr);
+		__type = Type::Symbol;
+		__val = static_cast<Symbol*>(nullptr);
 	}
 
 	inline ExprChunk(const ExprChunk& to_copy) = default;
@@ -39,22 +39,22 @@ public:		// functions
 
 	inline void set_symbol(Symbol* n_val)
 	{
-		___type = Type::Symbol;
-		___val = n_val;
+		__type = Type::Symbol;
+		__val = n_val;
 	}
 	inline Symbol* symbol() const
 	{
-		return std::get<Symbol*>(___val);
+		return std::get<Symbol*>(__val);
 	}
 
 	inline void set_expr_num(ExprNum* n_val)
 	{
-		___type = Type::ExprNum;
-		___val = n_val;
+		__type = Type::ExprNum;
+		__val = n_val;
 	}
 	inline ExprNum* expr_num() const
 	{
-		return std::get<ExprNum*>(___val);
+		return std::get<ExprNum*>(__val);
 	}
 
 	inline ExprNum* any_expr_num() const

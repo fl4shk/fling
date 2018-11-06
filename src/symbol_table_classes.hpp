@@ -23,27 +23,27 @@ public:		// enums
 
 private:		// variables
 	// The symbol's name
-	Ident ___name = nullptr;
+	Ident __name = nullptr;
 
 	// The type name of this symbol.
-	Ident ___type = nullptr;
+	Ident __type = nullptr;
 
 	// Used to allow forward referencing.
-	bool ___has_been_found = false;
+	bool __has_been_found = false;
 
 	// Whether or not this Symbol will be compiled to a reg (vector)
 	// or a wire (vector).  By default, it is assumed that this Symbol
 	// will be compiled to a reg (vector), but that only applies to the
 	// case when this Symbol is never assigned to.
-	CompiledType ___compiled_type = CompiledType::Reg;
+	CompiledType __compiled_type = CompiledType::Reg;
 
 	// This also contains the size of the Symbol, so even if a Symbol is
-	// NOT constant, it still needs ___expr_num to NOT be a nullptr.
-	ExprNum* ___expr_num = nullptr;
+	// NOT constant, it still needs __expr_num to NOT be a nullptr.
+	ExprNum* __expr_num = nullptr;
 
 
 	// Array dimensions.
-	std::vector<size_t> ___arr_dim;
+	std::vector<size_t> __arr_dim;
 
 public:		// functions
 	inline Symbol()
@@ -52,8 +52,8 @@ public:		// functions
 
 
 	inline Symbol(Ident s_name, Ident s_type)
-		: ___name(s_name), ___type(s_type), ___has_been_found(false),
-		___compiled_type(CompiledType::Reg), ___expr_num(nullptr)
+		: __name(s_name), __type(s_type), __has_been_found(false),
+		__compiled_type(CompiledType::Reg), __expr_num(nullptr)
 	{
 	}
 

@@ -25,7 +25,7 @@ namespace frost_hdl
 
 Compiler::Compiler(Parser& parser)
 {
-	___program_ctx = parser.program();
+	__program_ctx = parser.program();
 }
 
 Compiler::~Compiler()

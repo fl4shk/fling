@@ -10,21 +10,21 @@ class DupStuff
 	friend ExprNum* cstm_expr_numdup(const ExprNum& to_dup);
 
 private:			// static variables
-	static std::map<BigNum, std::unique_ptr<BigNum>> ___num_pool;
-	static std::map<std::string, std::unique_ptr<std::string>> ___str_pool;
-	static std::map<ExprNum, std::unique_ptr<ExprNum>> ___expr_num_pool;
+	static std::map<BigNum, std::unique_ptr<BigNum>> __num_pool;
+	static std::map<std::string, std::unique_ptr<std::string>> __str_pool;
+	static std::map<ExprNum, std::unique_ptr<ExprNum>> __expr_num_pool;
 
 };
 
 
-std::map<BigNum, std::unique_ptr<BigNum>> DupStuff::___num_pool;
-std::map<std::string, std::unique_ptr<std::string>> DupStuff::___str_pool;
-std::map<ExprNum, std::unique_ptr<ExprNum>> DupStuff::___expr_num_pool;
+std::map<BigNum, std::unique_ptr<BigNum>> DupStuff::__num_pool;
+std::map<std::string, std::unique_ptr<std::string>> DupStuff::__str_pool;
+std::map<ExprNum, std::unique_ptr<ExprNum>> DupStuff::__expr_num_pool;
 
 
 BigNum* cstm_numdup(const BigNum& to_dup)
 {
-	auto& pool = DupStuff::___num_pool;
+	auto& pool = DupStuff::__num_pool;
 
 	if (pool.count(to_dup) == 0)
 	{
@@ -40,7 +40,7 @@ BigNum* cstm_numdup(const BigNum& to_dup)
 
 std::string* cstm_strdup(const std::string& to_dup)
 {
-	auto& pool = DupStuff::___str_pool;
+	auto& pool = DupStuff::__str_pool;
 
 	if (pool.count(to_dup) == 0)
 	{
@@ -56,7 +56,7 @@ std::string* cstm_strdup(const std::string& to_dup)
 
 ExprNum* cstm_expr_numdup(const ExprNum& to_dup)
 {
-	auto& pool = DupStuff::___expr_num_pool;
+	auto& pool = DupStuff::__expr_num_pool;
 
 	if (pool.count(to_dup) == 0)
 	{
