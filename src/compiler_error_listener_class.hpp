@@ -1,5 +1,5 @@
-#ifndef src__slash__compiler_error_listener_class_hpp
-#define src__slash__compiler_error_listener_class_hpp
+#ifndef src_compiler_error_listener_class_hpp
+#define src_compiler_error_listener_class_hpp
 
 // src/compiler_error_listener_class_hpp
 
@@ -35,4 +35,4 @@ public:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src__slash__compiler_error_listener_class_hpp
+#endif		// src_compiler_error_listener_class_hpp

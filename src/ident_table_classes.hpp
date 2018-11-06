@@ -1,5 +1,5 @@
-#ifndef src__slash__ident_table_classes_hpp
-#define src__slash__ident_table_classes_hpp
+#ifndef src_ident_table_classes_hpp
+#define src_ident_table_classes_hpp
 
 // src/ident_table_classes.hpp
 
@@ -14,7 +14,7 @@ template<typename Type>
 class IdentTable
 {
 private:		// variables
-	std::map<Ident, Type> __table;
+	std::map<Ident, Type> ___table;
 
 public:		// functions
 	inline IdentTable()
@@ -24,17 +24,17 @@ public:		// functions
 	// Type accessors
 	inline Type& at(Ident some_name)
 	{
-		return __table[some_name];
+		return ___table[some_name];
 	}
 
 	inline const Type& at(Ident some_name) const
 	{
-		return __table.at(some_name);
+		return ___table.at(some_name);
 	}
 
 	inline bool contains(Ident some_name) const
 	{
-		return (__table.count(some_name) == 1);
+		return (___table.count(some_name) == 1);
 	}
 
 	inline void insert_or_assign(const Type& to_insert_or_assign)
@@ -53,7 +53,7 @@ template<typename Type>
 class IdentToPointerTable
 {
 private:		// variables
-	std::map<Ident, Type*> __table;
+	std::map<Ident, Type*> ___table;
 
 public:		// functions
 	inline IdentToPointerTable()
@@ -63,17 +63,17 @@ public:		// functions
 	// Type accessors
 	inline auto& at(Ident some_name)
 	{
-		return __table[some_name];
+		return ___table[some_name];
 	}
 
 	inline const auto& at(Ident some_name) const
 	{
-		return __table.at(some_name);
+		return ___table.at(some_name);
 	}
 
 	inline bool contains(Ident some_name) const
 	{
-		return (__table.count(some_name) == 1);
+		return (___table.count(some_name) == 1);
 	}
 
 	inline void insert_or_assign(Type* to_insert_or_assign)
@@ -87,4 +87,4 @@ public:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src__slash__ident_table_classes_hpp
+#endif		// src_ident_table_classes_hpp

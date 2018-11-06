@@ -1,5 +1,5 @@
-#ifndef src__slash__symbol_table_classes_hpp
-#define src__slash__symbol_table_classes_hpp
+#ifndef src_symbol_table_classes_hpp
+#define src_symbol_table_classes_hpp
 
 // src/symbol_table_classes.hpp
 
@@ -23,27 +23,27 @@ public:		// enums
 
 private:		// variables
 	// The symbol's name
-	Ident __name = nullptr;
+	Ident ___name = nullptr;
 
 	// The type name of this symbol.
-	Ident __type = nullptr;
+	Ident ___type = nullptr;
 
 	// Used to allow forward referencing.
-	bool __has_been_found = false;
+	bool ___has_been_found = false;
 
 	// Whether or not this Symbol will be compiled to a reg (vector)
 	// or a wire (vector).  By default, it is assumed that this Symbol
 	// will be compiled to a reg (vector), but that only applies to the
 	// case when this Symbol is never assigned to.
-	CompiledType __compiled_type = CompiledType::Reg;
+	CompiledType ___compiled_type = CompiledType::Reg;
 
 	// This also contains the size of the Symbol, so even if a Symbol is
-	// NOT constant, it still needs __expr_num to NOT be a nullptr.
-	ExprNum* __expr_num = nullptr;
+	// NOT constant, it still needs ___expr_num to NOT be a nullptr.
+	ExprNum* ___expr_num = nullptr;
 
 
 	// Array dimensions.
-	std::vector<size_t> __arr_dim;
+	std::vector<size_t> ___arr_dim;
 
 public:		// functions
 	inline Symbol()
@@ -52,8 +52,8 @@ public:		// functions
 
 
 	inline Symbol(Ident s_name, Ident s_type)
-		: __name(s_name), __type(s_type), __has_been_found(false),
-		__compiled_type(CompiledType::Reg), __expr_num(nullptr)
+		: ___name(s_name), ___type(s_type), ___has_been_found(false),
+		___compiled_type(CompiledType::Reg), ___expr_num(nullptr)
 	{
 	}
 
@@ -93,4 +93,4 @@ public:		// functions
 } // namespace frost_hdl
 
 
-#endif		// src__slash__symbol_table_classes_hpp
+#endif		// src_symbol_table_classes_hpp

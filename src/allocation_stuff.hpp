@@ -1,5 +1,5 @@
-#ifndef src__slash__allocation_stuff_hpp
-#define src__slash__allocation_stuff_hpp
+#ifndef src_allocation_stuff_hpp
+#define src_allocation_stuff_hpp
 
 // src/allocation_stuff.hpp
 
@@ -19,4 +19,4 @@ ExprNum* cstm_expr_numdup(const ExprNum& to_dup);
 
 } // namespace frost_hdl
 
-#endif		// src__slash__allocation_stuff_hpp
+#endif		// src_allocation_stuff_hpp

@@ -1,5 +1,5 @@
-#ifndef src__slash__misc_includes_hpp
-#define src__slash__misc_includes_hpp
+#ifndef src_misc_includes_hpp
+#define src_misc_includes_hpp
 
 // src/misc_includes.hpp
 
@@ -31,4 +31,4 @@ using namespace liborangepower::json;
 using liborangepower::bignum::BigNum;
 
 
-#endif		// src__slash__misc_includes_hpp
+#endif		// src_misc_includes_hpp

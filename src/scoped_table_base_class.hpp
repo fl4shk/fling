@@ -1,5 +1,5 @@
-#ifndef src__slash__scoped_table_base_class_hpp
-#define src__slash__scoped_table_base_class_hpp
+#ifndef src_scoped_table_base_class_hpp
+#define src_scoped_table_base_class_hpp
 
 // src/scoped_table_base_class.hpp
 
@@ -39,13 +39,13 @@ public:		// functions
 	{
 		std::vector<std::map<Ident, Type*>*> ret;
 
-		__inner_func_get_all_children_tables(ret);
+		___inner_func_get_all_children_tables(ret);
 
 		return ret;
 	}
 
 protected:		// functions
-	void __inner_func_get_all_children_tables
+	void ___inner_func_get_all_children_tables
 		(std::vector<std::map<Ident, Type*>*>& ret) const
 		__attribute__((noinline))
 	{
@@ -53,7 +53,7 @@ protected:		// functions
 		for (auto iter : children)
 		{
 			ret.push_back(&(iter->table.table()));
-			iter->__inner_func_get_all_children_tables(ret);
+			iter->___inner_func_get_all_children_tables(ret);
 		}
 	}
 	
@@ -82,51 +82,51 @@ public:		// classes
 
 
 protected:		// variables
-	Node __tree;
+	Node ___tree;
 
-	//Node* __curr_node = &__tree;
-	//Node* __curr_node = nullptr;
+	//Node* ___curr_node = &___tree;
+	//Node* ___curr_node = nullptr;
 
 
 	// The number of scopes that have been made - 1
-	s64 __scope_num = -1;
+	s64 ___scope_num = -1;
 
-	std::vector<Node*> __node_pool;
-	std::vector<Type*> __data_pool;
+	std::vector<Node*> ___node_pool;
+	std::vector<Type*> ___data_pool;
 
-	//std::map<Ident, Node*> __ident_to_global_map;
+	//std::map<Ident, Node*> ___ident_to_global_map;
 
-	//std::map<Ident, Node*> __ident_to_func_node_map;
+	//std::map<Ident, Node*> ___ident_to_func_node_map;
 
 public:		// functions
 	inline ScopedTableBase()
 	{
-		//__curr_node = &__tree;
-		auto some_curr_node = &__tree;
+		//___curr_node = &___tree;
+		auto some_curr_node = &___tree;
 		mkscope(some_curr_node);
 	}
 	virtual ~ScopedTableBase()
 	{
-		for (size_t i=0; i<__node_pool.size(); ++i)
+		for (size_t i=0; i<___node_pool.size(); ++i)
 		{
-			delete __node_pool.at(i);
+			delete ___node_pool.at(i);
 		}
 
-		for (size_t i=0; i<__data_pool.size(); ++i)
+		for (size_t i=0; i<___data_pool.size(); ++i)
 		{
-			delete __data_pool.at(i);
+			delete ___data_pool.at(i);
 		}
 	}
 
 	void mkscope(Node*& some_curr_node) __attribute__((noinline))
 	{
-		//if (__curr_node == nullptr)
+		//if (___curr_node == nullptr)
 		//{
 		//	printerr("ScopedTableBase::mkscope():  Eek!\n");
 		//	exit(1);
 		//}
 
-		++__scope_num;
+		++___scope_num;
 
 		if (scope_num() < 0)
 		{
@@ -135,9 +135,9 @@ public:		// functions
 			exit(1);
 		}
 
-		__node_pool.push_back(new Node(some_curr_node));
+		___node_pool.push_back(new Node(some_curr_node));
 
-		some_curr_node->append_child(__node_pool.back());
+		some_curr_node->append_child(___node_pool.back());
 		auto old_curr_node = some_curr_node;
 		some_curr_node = some_curr_node->children.back();
 		some_curr_node->parent = old_curr_node;
@@ -146,7 +146,7 @@ public:		// functions
 	}
 	void rmscope(Node*& some_curr_node) __attribute__((noinline))
 	{
-		if (some_curr_node != &__tree)
+		if (some_curr_node != &___tree)
 		{
 			some_curr_node = some_curr_node->parent;
 		}
@@ -168,14 +168,14 @@ public:		// functions
 	inline void insert_or_assign(Node* some_curr_node,
 		const Type& to_insert_or_assign)
 	{
-		__data_pool.push_back(new Type(to_insert_or_assign));
-		some_curr_node->table.insert_or_assign(__data_pool.back());
+		___data_pool.push_back(new Type(to_insert_or_assign));
+		some_curr_node->table.insert_or_assign(___data_pool.back());
 	}
 	inline void insert_or_assign(Node* some_curr_node,
 		Type&& to_insert_or_assign)
 	{
-		__data_pool.push_back(new Type(std::move(to_insert_or_assign)));
-		some_curr_node->table.insert_or_assign(__data_pool.back());
+		___data_pool.push_back(new Type(std::move(to_insert_or_assign)));
+		some_curr_node->table.insert_or_assign(___data_pool.back());
 	}
 
 
@@ -183,7 +183,7 @@ public:		// functions
 		__attribute__((noinline))
 	{
 		//for (s64 i=scope_lev(); i>=builtin_scope_level; --i)
-		for (auto p=some_curr_node; p!=&__tree; p=p->parent)
+		for (auto p=some_curr_node; p!=&___tree; p=p->parent)
 		{
 			//if (table().at(i).contains(some_name))
 			//{
@@ -201,7 +201,7 @@ public:		// functions
 
 	inline Type* find_func_arg(Node* some_func_node, Ident some_name)
 	{
-		//auto func_node = __ident_to_func_node_map.at(some_func_name);
+		//auto func_node = ___ident_to_func_node_map.at(some_func_name);
 
 		if (some_func_node->children.front()->table.contains(some_name))
 		{
@@ -253,4 +253,4 @@ public:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src__slash__scoped_table_base_class_hpp
+#endif		// src_scoped_table_base_class_hpp

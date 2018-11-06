@@ -1,5 +1,5 @@
-#ifndef src__slash__expr_num_class_hpp
-#define src__slash__expr_num_class_hpp
+#ifndef src_expr_num_class_hpp
+#define src_expr_num_class_hpp
 
 // src/expr_num_class.hpp
 
@@ -11,8 +11,8 @@ namespace frost_hdl
 class ExprNum
 {
 private:		// variables
-	size_t __size = 0;
-	BigNum* __val = nullptr;
+	size_t ___size = 0;
+	BigNum* ___val = nullptr;
 
 public:		// functions
 	inline ExprNum()
@@ -20,7 +20,7 @@ public:		// functions
 	}
 
 	inline ExprNum(size_t s_size, BigNum* s_val)
-		: __size(s_size), __val(s_val)
+		: ___size(s_size), ___val(s_val)
 	{
 	}
 
@@ -60,4 +60,4 @@ public:		// functions
 
 
 
-#endif		// src__slash__expr_num_class_hpp
+#endif		// src_expr_num_class_hpp

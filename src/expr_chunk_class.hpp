@@ -1,5 +1,5 @@
-#ifndef src__slash__expr_chunk_class_hpp
-#define src__slash__expr_chunk_class_hpp
+#ifndef src_expr_chunk_class_hpp
+#define src_expr_chunk_class_hpp
 
 // src/expr_chunk_class.hpp
 
@@ -21,15 +21,15 @@ public:		// enums
 	};
 
 private:		// variables
-	Type __type = Type::Symbol;
+	Type ___type = Type::Symbol;
 
-	std::variant<Symbol*, ExprNum*> __val;
+	std::variant<Symbol*, ExprNum*> ___val;
 
 public:		// functions
 	inline ExprChunk()
 	{
-		__type = Type::Symbol;
-		__val = static_cast<Symbol*>(nullptr);
+		___type = Type::Symbol;
+		___val = static_cast<Symbol*>(nullptr);
 	}
 
 	inline ExprChunk(const ExprChunk& to_copy) = default;
@@ -39,22 +39,22 @@ public:		// functions
 
 	inline void set_symbol(Symbol* n_val)
 	{
-		__type = Type::Symbol;
-		__val = n_val;
+		___type = Type::Symbol;
+		___val = n_val;
 	}
 	inline Symbol* symbol() const
 	{
-		return std::get<Symbol*>(__val);
+		return std::get<Symbol*>(___val);
 	}
 
 	inline void set_expr_num(ExprNum* n_val)
 	{
-		__type = Type::ExprNum;
-		__val = n_val;
+		___type = Type::ExprNum;
+		___val = n_val;
 	}
 	inline ExprNum* expr_num() const
 	{
-		return std::get<ExprNum*>(__val);
+		return std::get<ExprNum*>(___val);
 	}
 
 	inline ExprNum* any_expr_num() const
@@ -84,4 +84,4 @@ public:		// functions
 } // namespace frost_hdl
 
 
-#endif		// src__slash__expr_chunk_class_hpp
+#endif		// src_expr_chunk_class_hpp

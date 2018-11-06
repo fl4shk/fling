@@ -1,5 +1,5 @@
-#ifndef src__slash__compiler_class_hpp
-#define src__slash__compiler_class_hpp
+#ifndef src_compiler_class_hpp
+#define src_compiler_class_hpp
 
 // src/compiler_class.hpp
 
@@ -26,19 +26,19 @@ public:		// typedefs
 private:		// variables
 
 
-	SymbolTable __sym_tbl;
+	SymbolTable ___sym_tbl;
 
 
-	//std::stack<BigNum*> __num_stack;
-	std::stack<s64> __scope_child_num_stack;
-	std::stack<std::string*> __str_stack;
-	std::stack<ExprChunk> __expr_chunk_stack;
+	//std::stack<BigNum*> ___num_stack;
+	std::stack<s64> ___scope_child_num_stack;
+	std::stack<std::string*> ___str_stack;
+	std::stack<ExprChunk> ___expr_chunk_stack;
 
 
-	Parser::ProgramContext* __program_ctx;
-	int __pass;
+	Parser::ProgramContext* ___program_ctx;
+	int ___pass;
 
-	ScopedTableNode<Symbol>* __curr_scope_node = nullptr;
+	ScopedTableNode<Symbol>* ___curr_scope_node = nullptr;
 public:		// functions
 	Compiler(Parser& parser);
 	virtual ~Compiler();
@@ -57,7 +57,7 @@ private:		// functions
 			auto tok = ctx->getStart();
 			const size_t line = tok->getLine();
 			const size_t pos_in_line = tok->getCharPositionInLine();
-			//printerr("Error in file \"", *__file_name, "\", on line ",
+			//printerr("Error in file \"", *___file_name, "\", on line ",
 			//	line, ", position ", pos_in_line, ":  ", msg, "\n");
 			printerr("Error on line ", line, ", position ", pos_in_line, 
 				":  ", msg, "\n");
@@ -66,7 +66,7 @@ private:		// functions
 	}
 	inline void err(const std::string& msg)
 	{
-		//printerr("Error in file \"", *__file_name, "\":  ", msg, "\n");
+		//printerr("Error in file \"", *___file_name, "\":  ", msg, "\n");
 		printerr("Error:  ", msg, "\n");
 		exit(1);
 	}
@@ -81,7 +81,7 @@ private:		// functions
 			auto tok = ctx->getStart();
 			const size_t line = tok->getLine();
 			const size_t pos_in_line = tok->getCharPositionInLine();
-			//printerr("Error in file \"", *__file_name, "\", on line ",
+			//printerr("Error in file \"", *___file_name, "\", on line ",
 			//	line, ", position ", pos_in_line, ":  ", msg, "\n");
 			printerr("Warning on line ", line, ", position ", pos_in_line, 
 				":  ", msg, "\n");
@@ -184,45 +184,45 @@ private:		// visitor functions
 private:		// functions
 	inline void push_expr_chunk(ExprChunk to_push)
 	{
-		__expr_chunk_stack.push(to_push);
+		___expr_chunk_stack.push(to_push);
 	}
 	inline auto get_top_expr_chunk()
 	{
-		return __expr_chunk_stack.top();
+		return ___expr_chunk_stack.top();
 	}
 	inline auto pop_expr_chunk()
 	{
-		auto ret = __expr_chunk_stack.top();
-		__expr_chunk_stack.pop();
+		auto ret = ___expr_chunk_stack.top();
+		___expr_chunk_stack.pop();
 		return ret;
 	}
 	inline void push_scope_child_num(s64 to_push)
 	{
-		__scope_child_num_stack.push(to_push);
+		___scope_child_num_stack.push(to_push);
 	}
 	inline auto get_top_scope_child_num()
 	{
-		return __scope_child_num_stack.top();
+		return ___scope_child_num_stack.top();
 	}
 	inline auto pop_scope_child_num()
 	{
-		auto ret = __scope_child_num_stack.top();
-		__scope_child_num_stack.pop();
+		auto ret = ___scope_child_num_stack.top();
+		___scope_child_num_stack.pop();
 		return ret;
 	}
 
 	inline void push_str(std::string* to_push)
 	{
-		__str_stack.push(to_push);
+		___str_stack.push(to_push);
 	}
 	inline auto get_top_str()
 	{
-		return __str_stack.top();
+		return ___str_stack.top();
 	}
 	inline auto pop_str()
 	{
-		auto ret = __str_stack.top();
-		__str_stack.pop();
+		auto ret = ___str_stack.top();
+		___str_stack.pop();
 		return ret;
 	}
 
@@ -231,4 +231,4 @@ private:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src__slash__compiler_class_hpp
+#endif		// src_compiler_class_hpp
