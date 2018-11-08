@@ -18,14 +18,13 @@ subProgram:
 
 // Declarations
 declModule:
-	TokKwModule declParameters? identName
+	TokKwModule /* (declParameters?) */ identName
 	TokLParen multiListModulePorts TokRParen
 	scopedOuterStatements
 	;
 
-
 declStruct:
-	TokKwStruct declParameters? identName
+	TokKwStruct /* (declParameters?) */ identName
 	TokLBrace
 	(declVarList TokSemicolon)*
 	TokRBrace
@@ -75,14 +74,13 @@ scopedOuterStatements:
 // Outer statements
 outerStatement:
 	declVarList TokSemicolon
+	| declStruct
 	//| outerStmtAssign TokSemicolon
 	//| outerStmtBlockInitial
 	//| outerStmtBlockAlwaysComb
 	//| outerStmtBlockAlwaysSeq
 	;
 
-
-//outerStmtAssign
 
 // Lists
 listIdentNames:
@@ -220,6 +218,7 @@ TokNumber: '#' ;
 // Keywords
 TokKwModule: 'module' ;
 TokKwParameter: 'parameter' ;
+TokKwLocalparam: 'localparam' ;
 
 TokKwInput: 'input' ;
 TokKwOutput: 'output' ;

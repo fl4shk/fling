@@ -9,7 +9,7 @@
 #include "gen_src/CompilerGrammarParser.h"
 #include "gen_src/CompilerGrammarVisitor.h"
 
-#include "symbol_table_classes.hpp"
+#include "symbol_table_class.hpp"
 #include "expr_chunk_class.hpp"
 
 namespace frost_hdl

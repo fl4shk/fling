@@ -1,4 +1,4 @@
-#include "symbol_table_classes.hpp"
+#include "symbol_table_class.hpp"
 
 
 namespace frost_hdl

@@ -46,6 +46,8 @@ public:		// functions
 		}
 	}
 
+	// Symbols can have either constant values or non-constant values, of
+	// course contained within the particular Symbol's ExprNum.
 	inline bool is_constant() const
 	{
 		return (val() != nullptr);
@@ -56,7 +58,6 @@ public:		// functions
 };
 
 } // namespace frost_hdl
-
 
 
 

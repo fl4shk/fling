@@ -1,13 +1,10 @@
-#ifndef src_symbol_table_classes_hpp
-#define src_symbol_table_classes_hpp
+#ifndef src_symbol_class_hpp
+#define src_symbol_class_hpp
 
-// src/symbol_table_classes.hpp
+// src/symbol_class.hpp
 
 #include "misc_includes.hpp"
-
-#include "scoped_table_base_class.hpp"
 #include "expr_num_class.hpp"
-
 
 namespace frost_hdl
 {
@@ -76,21 +73,13 @@ public:		// functions
 	gen_getter_and_setter_by_val(has_been_found);
 	gen_getter_and_setter_by_val(compiled_type);
 	gen_getter_and_setter_by_val(expr_num);
+
 	gen_getter_by_ref(arr_dim);
 	gen_getter_by_con_ref(arr_dim);
 
 
 };
 
-
-class SymbolTable : public ScopedTableBase<Symbol>
-{
-public:		// functions
-	SymbolTable();
-	virtual ~SymbolTable();
-};
-
 } // namespace frost_hdl
 
-
-#endif		// src_symbol_table_classes_hpp
+#endif		// src_symbol_class_hpp
