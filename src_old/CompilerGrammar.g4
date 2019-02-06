@@ -6,85 +6,103 @@ program:
 	;
 
 
-// In addition to module declarations, "subProgram" includes things like
-// struct definitions and packages, too.
 subProgram:
 	declModule
+	| declStruct
+	////| declUnion
+	//| declEnum
+	////| declInterface
+	////| declPackage
 	;
 
 
-
-// declarations
+// Declarations
 declModule:
-	TokKwModule identName
-		TokLParen /* <insert variable declarations here> */ TokRParen
+	TokKwModule /* (declParameters?) */ identName
+	TokLParen multiListModulePorts TokRParen
+	scopedOuterStatements
+	;
 
+declStruct:
+	TokKwStruct /* (declParameters?) */ identName
 	TokLBrace
-		moduleInsides
+	(declVarList TokSemicolon)*
 	TokRBrace
+	TokSemicolon
 	;
 
-declVar:
-	identName identName
-	;
-
-
-
-
-
-moduleInsides:
-	// convert this to list of variable declarations
-	declVar TokSemicolon
-	| moduleStmtInitial
-	| moduleStmtAlwaysComb
-	| moduleStmtAlwaysSeq
-	;
-
-
-// initial behavioral block
-moduleStmtInitial:
-	TokKwInitial
-	scopedListStmtBehavioral
-	;
-
-// always_comb behavioral block
-moduleStmtAlwaysComb:
-	TokKwAlwaysComb
-	scopedListStmtBehavioral
-	;
-
-// always_seq behavioral block
-moduleStmtAlwaysSeq:
-	TokKwAlwaysSeq
-	scopedListStmtBehavioral
-	;
-
-scopedListStmtBehavioral:
-	TokLBrace
-		listStmtBehavioral
-	TokRBrace
-	;
-
-listStmtBehavioral:
-	stmtBehavioral*
-	;
-
-stmtBehavioral:
-	stmtBehavAssign
-	//| stmtBehavIf
-	//| stmtBehavFor
-	//| stmtBehavWhile
-	| scopedListStmtBehavioral
-	;
-
-stmtBehavAssign:
-	identExpr TokAssign expr TokSemicolon
-	;
-
-//stmtBehavIf:
-//	TokKwIf TokLParen expr TokRParen
-//	scopedListStmtBehavioral
+//declEnum:
+//	TokKwEnum identName
+//	TokLBrace
+//	(listIdentNames | (listIdentNames TokComma))
+//	TokRBrace
+//	TokSemicolon
 //	;
+
+
+declVarList:
+	typeName listIdentNames
+	;
+
+declParameters:
+	TokNumber TokLParen listPortParams TokRParen
+	;
+
+
+typeName:
+	// 
+	TokKwLogic (slice?)
+
+	// custom type name
+	| identName
+	;
+
+slice:
+	TokLBrace expr TokColon expr TokRBrace
+	;
+
+
+scopedOuterStatements:
+	TokLBrace outerStatement* TokRBrace
+	;
+
+//scopedInnerStatements:
+//	TokLBrace innerStatement* TokRBrace
+//	;
+
+
+// Outer statements
+outerStatement:
+	declVarList TokSemicolon
+	| declStruct
+	//| outerStmtAssign TokSemicolon
+	//| outerStmtBlockInitial
+	//| outerStmtBlockAlwaysComb
+	//| outerStmtBlockAlwaysSeq
+	;
+
+
+// Lists
+listIdentNames:
+	identName (TokComma identName)*
+	;
+
+multiListModulePorts:
+	listModulePorts (TokComma listModulePorts)*
+	;
+
+listModulePorts:
+	(TokKwInput | TokKwOutput) declVarList 
+	;
+
+listPortParams:
+	portParam (TokComma portParam)*
+	;
+
+
+portParam:
+	TokKwParameter identName (TokBlockingAssign expr)?
+	;
 
 
 // Expression parsing
@@ -141,14 +159,15 @@ identExpr:
 
 
 identName: TokIdent ;
+identSliced: TokIdent slice ;
+//memberAccessNonSliced:
+//	TokIdent (TokPeriod TokIdent)+
+//	;
+//memberAccessSliced:
+//	memberAccessNonSliced slice
+//	;
 
-// For now, only support sliced identifiers.
-identSliced: TokIdent (slice+) ;
 
-
-slice:
-	TokLBracket expr TokRBracket
-	;
 
 
 // Lexer rules
@@ -172,9 +191,8 @@ TokHexNum: '0x' ([0-9A-Fa-f]+) ;
 TokBinNum: '0b' ([0-1]+) ;
 
 
-TokAssign: '=' ;
-//TokBlockingAssign: '=' ;
-//TokNonBlockingAssign: '<-' ;
+TokBlockingAssign: '=' ;
+TokNonBlockingAssign: '<-' ;
 
 // Punctuation, etc.
 TokPeriod: '.' ;
@@ -185,7 +203,6 @@ TokApostrophe: '\'' ;
 TokQuote: '"' ;
 TokSemicolon: ';' ;
 TokExclamPoint: '!' ;
-TokQmark: '?' ;
 TokLParen: '(' ;
 TokRParen: ')' ;
 TokLBracket: '[' ;

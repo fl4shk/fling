@@ -62,31 +62,32 @@ public:		// functions
 
 	inline ExprNum* any_expr_num() const;
 
-	inline bool operator < (const ExprChunk& to_cmp) const
-	{
-		const u32 temp = ((static_cast<u32>(type()) << 1)
-			| (static_cast<u32>(to_cmp.type())));
+	//inline
+	bool operator < (const ExprChunk& to_cmp) const;
+	//{
+	//	const u32 temp = ((static_cast<u32>(type()) << 1)
+	//		| (static_cast<u32>(to_cmp.type())));
 
-		switch (temp)
-		{
-			case 0b00:
-				return (expr_symbol_ref() < to_cmp.expr_symbol_ref());
-				break;
+	//	switch (temp)
+	//	{
+	//		case 0b00:
+	//			return (expr_symbol_ref() < to_cmp.expr_symbol_ref());
+	//			break;
 
-			case 0b01:
-				return true;
+	//		case 0b01:
+	//			return true;
 
-			case 0b10:
-				return false;
+	//		case 0b10:
+	//			return false;
 
-			case 0b11:
-				return (expr_num() < to_cmp.expr_num());
-				break;
-		}
+	//		case 0b11:
+	//			return (expr_num() < to_cmp.expr_num());
+	//			break;
+	//	}
 
-		// Eek!
-		return false;
-	}
+	//	// Eek!
+	//	return false;
+	//}
 
 	inline bool is_constant() const
 	{

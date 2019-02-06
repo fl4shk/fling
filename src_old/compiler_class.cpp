@@ -44,92 +44,94 @@ Compiler::VisitorRetType Compiler::visitProgram
 	return nullptr;
 }
 
-
-// In addition to module declarations, "subProgram" includes things
-// like struct definitions and packages, too.
+// program:
 Compiler::VisitorRetType Compiler::visitSubProgram
 	(Parser::SubProgramContext *ctx)
 {
 	return nullptr;
 }
 
-
-
-// declarations
+// Declarations
+// subProgram
 Compiler::VisitorRetType Compiler::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitDeclVar
-	(Parser::DeclVarContext *ctx)
+Compiler::VisitorRetType Compiler::visitDeclStruct
+	(Parser::DeclStructContext *ctx)
 {
 	return nullptr;
 }
 
-
-
-
-
-Compiler::VisitorRetType Compiler::visitModuleInsides
-	(Parser::ModuleInsidesContext *ctx)
+Compiler::VisitorRetType Compiler::visitDeclVarList
+	(Parser::DeclVarListContext *ctx)
 {
 	return nullptr;
 }
 
-
-// initial behavioral block
-Compiler::VisitorRetType Compiler::visitModuleStmtInitial
-	(Parser::ModuleStmtInitialContext *ctx)
+Compiler::VisitorRetType Compiler::visitDeclParameters
+	(Parser::DeclParametersContext *ctx)
 {
 	return nullptr;
 }
 
-// always_comb behavioral block
-Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysComb
-	(Parser::ModuleStmtAlwaysCombContext *ctx)
+Compiler::VisitorRetType Compiler::visitTypeName
+	(Parser::TypeNameContext *ctx)
 {
 	return nullptr;
 }
 
-// always_seq behavioral block
-Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysSeq
-	(Parser::ModuleStmtAlwaysSeqContext *ctx)
+Compiler::VisitorRetType Compiler::visitSlice
+	(Parser::SliceContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitScopedListStmtBehavioral
-	(Parser::ScopedListStmtBehavioralContext *ctx)
+Compiler::VisitorRetType Compiler::visitScopedOuterStatements
+	(Parser::ScopedOuterStatementsContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitListStmtBehavioral
-	(Parser::ListStmtBehavioralContext *ctx)
+// Outer statements
+Compiler::VisitorRetType Compiler::visitOuterStatement
+	(Parser::OuterStatementContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitStmtBehavioral
-	(Parser::StmtBehavioralContext *ctx)
+// outerStmtAssign
+Compiler::VisitorRetType Compiler::visitListIdentNames
+	(Parser::ListIdentNamesContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitStmtBehavAssign
-	(Parser::StmtBehavAssignContext *ctx)
+Compiler::VisitorRetType Compiler::visitMultiListModulePorts
+	(Parser::MultiListModulePortsContext *ctx)
 {
 	return nullptr;
 }
 
-//Compiler::VisitorRetType Compiler::visitStmtBehavIf
-//	(Parser::StmtBehavIfCon *ctx)
-//{
-//	return nullptr;
-//}
+Compiler::VisitorRetType Compiler::visitListModulePorts
+	(Parser::ListModulePortsContext *ctx)
+{
+	return nullptr;
+}
 
+Compiler::VisitorRetType Compiler::visitListPortParams
+	(Parser::ListPortParamsContext *ctx)
+{
+	return nullptr;
+}
+
+Compiler::VisitorRetType Compiler::visitPortParam
+	(Parser::PortParamContext *ctx)
+{
+	return nullptr;
+}
 
 // Expression parsing
 Compiler::VisitorRetType Compiler::visitExpr
@@ -168,7 +170,6 @@ Compiler::VisitorRetType Compiler::visitExprUnary
 	return nullptr;
 }
 
-
 Compiler::VisitorRetType Compiler::visitExprBitInvert
 	(Parser::ExprBitInvertContext *ctx)
 {
@@ -179,6 +180,7 @@ Compiler::VisitorRetType Compiler::visitExprNegate
 {
 	return nullptr;
 }
+
 Compiler::VisitorRetType Compiler::visitExprLogNot
 	(Parser::ExprLogNotContext *ctx)
 {
@@ -191,8 +193,6 @@ Compiler::VisitorRetType Compiler::visitNumExpr
 	return nullptr;
 }
 
-
-
 Compiler::VisitorRetType Compiler::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 {
@@ -204,17 +204,8 @@ Compiler::VisitorRetType Compiler::visitIdentName
 {
 	return nullptr;
 }
-
-// For now, only support sliced identifiers.
 Compiler::VisitorRetType Compiler::visitIdentSliced
 	(Parser::IdentSlicedContext *ctx)
-{
-	return nullptr;
-}
-
-
-Compiler::VisitorRetType Compiler::visitSlice
-	(Parser::SliceContext *ctx)
 {
 	return nullptr;
 }
