@@ -238,7 +238,7 @@ private:		// functions
 	//	return ret;
 	//}
 
-	//gen_getter_by_ref(sym_tbl);
+	//GEN_GETTER_BY_REF(sym_tbl);
 };
 
 } // namespace frost_hdl
