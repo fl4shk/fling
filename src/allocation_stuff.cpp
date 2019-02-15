@@ -1,35 +1,30 @@
 #include "allocation_stuff.hpp"
+#include "expression_classes.hpp"
 
 namespace frost_hdl
 {
 
 class DupStuff
 {
-	friend BigNum* cstm_numdup(const BigNum& to_dup);
-	friend std::string* cstm_strdup(const std::string& to_dup);
-	//friend ExprNum* cstm_expr_numdup(const ExprNum& to_dup);
-	//friend ExprSymbolRef* cstm_expr_symbol_refdup
-	//	(const ExprSymbolRef& to_dup);
+	friend BigNum* cstm_num_dup(const BigNum& to_dup);
+	friend std::string* cstm_str_dup(const std::string& to_dup);
+	friend Expression* save_expr(Expression&& to_move);
 
 private:			// static variables
-	static std::map<BigNum, std::unique_ptr<BigNum>> __num_pool;
-	static std::map<std::string, std::unique_ptr<std::string>> __str_pool;
-	//static std::map<ExprNum, std::unique_ptr<ExprNum>> __expr_num_pool;
-	//static std::map<ExprSymbolRef, std::unique_ptr<ExprSymbolRef>>
-	//	__expr_symbol_ref_pool;
+	static std::map<BigNum, std::unique_ptr<BigNum>> _num_pool;
+	static std::map<std::string, std::unique_ptr<std::string>> _str_pool;
+	static std::vector<std::unique_ptr<Expression>> _expr_pool;
 
 };
 
 
-std::map<BigNum, std::unique_ptr<BigNum>> DupStuff::__num_pool;
-std::map<std::string, std::unique_ptr<std::string>> DupStuff::__str_pool;
-//std::map<ExprNum, std::unique_ptr<ExprNum>> DupStuff::__expr_num_pool;
-//std::map<ExprSymbolRef, std::unique_ptr<ExprSymbolRef>>
-//	DupStuff::__expr_symbol_ref_pool;
+std::map<BigNum, std::unique_ptr<BigNum>> DupStuff::_num_pool;
+std::map<std::string, std::unique_ptr<std::string>> DupStuff::_str_pool;
+std::vector<std::unique_ptr<Expression>> DupStuff::_expr_pool;
 
-BigNum* cstm_numdup(const BigNum& to_dup)
+BigNum* cstm_num_dup(const BigNum& to_dup)
 {
-	auto& pool = DupStuff::__num_pool;
+	auto& pool = DupStuff::_num_pool;
 
 	if (pool.count(to_dup) == 0)
 	{
@@ -43,9 +38,9 @@ BigNum* cstm_numdup(const BigNum& to_dup)
 	return pool.at(to_dup).get();
 }
 
-std::string* cstm_strdup(const std::string& to_dup)
+std::string* cstm_str_dup(const std::string& to_dup)
 {
-	auto& pool = DupStuff::__str_pool;
+	auto& pool = DupStuff::_str_pool;
 
 	if (pool.count(to_dup) == 0)
 	{
@@ -58,35 +53,5 @@ std::string* cstm_strdup(const std::string& to_dup)
 	return pool.at(to_dup).get();
 }
 
-
-//ExprNum* cstm_expr_numdup(const ExprNum& to_dup)
-//{
-//	auto& pool = DupStuff::__expr_num_pool;
-//
-//	if (pool.count(to_dup) == 0)
-//	{
-//		std::unique_ptr<ExprNum> to_insert;
-//		to_insert.reset(new ExprNum());
-//		*to_insert = to_dup;
-//		pool[to_dup] = std::move(to_insert);
-//	}
-//
-//	return pool.at(to_dup).get();
-//}
-//
-//ExprSymbolRef* cstm_expr_symbol_refdup(const ExprSymbolRef& to_dup)
-//{
-//	auto& pool = DupStuff::__expr_symbol_ref_pool;
-//
-//	if (pool.count(to_dup) == 0)
-//	{
-//		std::unique_ptr<ExprSymbolRef> to_insert;
-//		to_insert.reset(new ExprSymbolRef());
-//		*to_insert = to_dup;
-//		pool[to_dup] = std::move(to_insert);
-//	}
-//
-//	return pool.at(to_dup).get();
-//}
 
 } // namespace frost_hdl

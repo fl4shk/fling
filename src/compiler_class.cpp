@@ -17,7 +17,7 @@
 #define ANY_PUSH_TOK_IF(arg) \
 	if (arg) \
 	{ \
-		push_str(cstm_strdup(arg->toString())); \
+		push_str(cstm_str_dup(arg->toString())); \
 	}
 
 namespace frost_hdl
@@ -25,7 +25,7 @@ namespace frost_hdl
 
 Compiler::Compiler(Parser& parser)
 {
-	__program_ctx = parser.program();
+	_program_ctx = parser.program();
 }
 
 Compiler::~Compiler()

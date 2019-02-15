@@ -4,85 +4,293 @@
 // src/expression_classes.hpp
 
 #include "misc_includes.hpp"
+#include "allocation_stuff.hpp"
 
 namespace frost_hdl
 {
 
+inline BigNum max(const BigNum& a, const BigNum& b)
+{
+	return (a > b) ? a : b;
+}
+
+typedef BigNum* ExprNum;
+
 class Expression
 {
-public:		// constants
-	// If I recall correctly, only "?:" has three children.
-	static constexpr size_t max_num_children = 3;
+public:		// types
+	typedef std::string* OpStr;
+	typedef std::string* Ident;
+	//typedef std::string* MemberName;
+
+	//enum class Category
+	//{
+	//	UnOp,
+	//	BinOp,
+	//	Ternary,
+
+	//	IdentName,
+	//	IdentSliced,
+	//	HardCodedConstant,
+	//};
 
 protected:		// variables
-	std::array<Expression*, max_num_children> _children;
-	BigNum _value, _size;
-	bool _is_signed, _is_constant;
+	std::vector<Expression*> _children;
+
+	Ident _ident;
+	ExprNum _value;
+	ExprNum _size;
+	//bool _is_signed, _is_constant;
+	//bool _is_signed;
+	bool _is_constant;
 
 public:		// functions
-	[[gnu::noinline]] Expression();
+	Expression();
 
 
 	// Don't want copies of raw Expression's
 	Expression(const Expression& to_copy) = delete;
+
+	// Moves are okay, though
+	Expression(Expression&& to_move) = default;
 
 
 	virtual ~Expression();
 
 
 	// Don't want copies of raw Expression's
-	Expression& operator = (const Expression& to_copy) = default;
+	Expression& operator = (const Expression& to_copy) = delete;
 
-	virtual size_t num_children() const = 0;
+	// Moves are okay, though
+	Expression& operator = (Expression&& to_move) = default;
+
+	virtual void evaluate();
+	virtual OpStr op_str() const = 0;
 
 
+	inline auto num_children() const
+	{
+		return children().size();
+	}
 	inline bool is_leaf() const
 	{
 		return (num_children() == 0);
 	}
 
+	inline const auto& value() const
+	{
+		return (*_value);
+	}
+
+	inline const auto& size() const
+	{
+		return (*_size);
+	}
+
 
 	GEN_GETTER_BY_CON_REF(children)
 
-	GEN_GETTER_BY_CON_REF(value)
-	GEN_GETTER_BY_CON_REF(size)
+	GEN_GETTER_BY_VAL(ident)
+	//GEN_GETTER_BY_VAL(value)
+	//GEN_GETTER_BY_VAL(size)
+	//GEN_GETTER_BY_VAL(is_signed)
 	GEN_GETTER_BY_VAL(is_constant)
-	GEN_GETTER_BY_VAL(is_signed)
 
 protected:		// functions
-	bool _any_children_are_constant() const;
-
-	template<typename FirstArgType, typename... RemArgTypes>
-	void _inner_set_children(size_t index, FirstArgType&& first,
-		RemArgTypes&&... rem_args)
+	inline void set_value(const BigNum& n_value)
 	{
-		_children.at(index) = first;
-
-		if constexpr (sizeof...(rem_args) > 0)
-		{
-			_inner_set_children(index + 1, rem_args...);
-		}
+		_value = cstm_num_dup(n_value);
+	}
+	inline void set_size(const BigNum& n_size)
+	{
+		_size = cstm_num_dup(n_size);
 	}
 
+	bool _has_only_constant_children() const;
+
 	template<typename FirstArgType, typename... RemArgTypes>
-	void _set_children(FirstArgType&& first, RemArgTypes&&... rem_args)
+	inline bool _has_only_constant_children(FirstArgType&& first_child,
+		RemArgTypes&&... rem_children)
 	{
-		_inner_set_children(0, first, rem_args...);
+		_set_children(first_child, rem_children...);
+		return _has_only_constant_children();
+	}
+
+	// Require at LEAST one argument.
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline void _set_children(FirstArgType&& first_child,
+		RemArgTypes&&... rem_children)
+	{
+		_children.push_back(first_child);
+
+		// Oh hey, an actual use for "if constexpr" that actually CAN'T be
+		// written as a plain old "if"!
+		if constexpr (sizeof...(rem_children) > 0)
+		{
+			_set_children(rem_children...);
+		}
+	}
+};
+
+class ExprBaseUnOp : public Expression
+{
+public:		// functions
+	ExprBaseUnOp(Expression* only_child);
+
+
+protected:		// functions
+	Expression* _only_child() const
+	{
+		return children().at(0);
+	}
+};
+
+class ExprBaseBinOp : public Expression
+{
+public:		// functions
+	ExprBaseBinOp(Expression* left_child, Expression* right_child);
+
+
+protected:		// functions
+	Expression* _left_child() const
+	{
+		return children().at(0);
+	}
+
+	Expression* _right_child() const
+	{
+		return children().at(1);
 	}
 };
 
 
-
 // "&&"
-class ExprLogAnd : public Expression
+class ExprLogAnd : public ExprBaseBinOp
 {
 public:		// functions
-	ExprLogAnd(Expression* left, Expression* right);
-
-	size_t num_children() const
+	inline ExprLogAnd(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
 	{
-		return 2;
 	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "||"
+class ExprLogOr : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprLogOr(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "=="
+class ExprCmpEq : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprCmpEq(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "!="
+class ExprCmpNe : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprCmpNe(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "<"
+class ExprCmpLt : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprCmpLt(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// ">"
+class ExprCmpGt : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprCmpGt(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "<="
+class ExprCmpLe : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprCmpLe(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// ">="
+class ExprCmpGe : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprCmpGe(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "+" binop
+class ExprBinOpPlus : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpPlus(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+// "-" binop
+class ExprBinOpMinus : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpMinus(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
 };
 
 } // namespace frost_hdl
