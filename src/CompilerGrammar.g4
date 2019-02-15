@@ -17,7 +17,9 @@ subProgram:
 // declarations
 declModule:
 	TokKwModule identName
-		TokLParen /* <insert variable declarations here> */ TokRParen
+		TokLParen
+			/* <insert input/output variable declarations here> */
+		TokRParen
 
 	TokLBrace
 		moduleInsides
@@ -35,56 +37,56 @@ declVar:
 moduleInsides:
 	// convert this to list of variable declarations
 	declVar TokSemicolon
-	| moduleStmtInitial
-	| moduleStmtAlwaysComb
-	| moduleStmtAlwaysSeq
+	//| moduleStmtInitial
+	//| moduleStmtAlwaysComb
+	//| moduleStmtAlwaysSeq
 	;
 
 
-// initial behavioral block
-moduleStmtInitial:
-	TokKwInitial
-	scopedListStmtBehavioral
-	;
-
-// always_comb behavioral block
-moduleStmtAlwaysComb:
-	TokKwAlwaysComb
-	scopedListStmtBehavioral
-	;
-
-// always_seq behavioral block
-moduleStmtAlwaysSeq:
-	TokKwAlwaysSeq
-	scopedListStmtBehavioral
-	;
-
-scopedListStmtBehavioral:
-	TokLBrace
-		listStmtBehavioral
-	TokRBrace
-	;
-
-listStmtBehavioral:
-	stmtBehavioral*
-	;
-
-stmtBehavioral:
-	stmtBehavAssign
-	//| stmtBehavIf
-	//| stmtBehavFor
-	//| stmtBehavWhile
-	| scopedListStmtBehavioral
-	;
-
-stmtBehavAssign:
-	identExpr TokAssign expr TokSemicolon
-	;
-
-//stmtBehavIf:
-//	TokKwIf TokLParen expr TokRParen
+//// initial behavioral block
+//moduleStmtInitial:
+//	TokKwInitial
 //	scopedListStmtBehavioral
 //	;
+//
+//// always_comb behavioral block
+//moduleStmtAlwaysComb:
+//	TokKwAlwaysComb
+//	scopedListStmtBehavioral
+//	;
+//
+//// always_seq behavioral block
+//moduleStmtAlwaysSeq:
+//	TokKwAlwaysSeq
+//	scopedListStmtBehavioral
+//	;
+//
+//scopedListStmtBehavioral:
+//	TokLBrace
+//		listStmtBehavioral
+//	TokRBrace
+//	;
+//
+//listStmtBehavioral:
+//	stmtBehavioral*
+//	;
+//
+//stmtBehavioral:
+//	stmtBehavAssign
+//	//| stmtBehavIf
+//	//| stmtBehavFor
+//	//| stmtBehavWhile
+//	| scopedListStmtBehavioral
+//	;
+//
+//stmtBehavAssign:
+//	identExpr TokAssign expr TokSemicolon
+//	;
+//
+////stmtBehavIf:
+////	TokKwIf TokLParen expr TokRParen
+////	scopedListStmtBehavioral
+////	;
 
 
 // Expression parsing
@@ -147,7 +149,18 @@ identSliced: TokIdent (slice+) ;
 
 
 slice:
-	TokLBracket expr TokRBracket
+	TokLBracket 
+	(innerSliceOne
+	| innerSliceTwo)
+	TokRBracket
+	;
+
+innerSliceOne:
+	expr
+	;
+
+innerSliceTwo:
+	expr TokColon expr
 	;
 
 
@@ -205,11 +218,15 @@ TokKwLocalparam: 'localparam' ;
 
 TokKwInput: 'input' ;
 TokKwOutput: 'output' ;
+TokKwInout: 'inout' ;
+
 TokKwLogic: 'logic' ;
 TokKwInterface: 'interface' ;
 TokKwStruct: 'struct' ;
+
 TokKwPublic: 'public' ;
 TokKwPrivate: 'private' ;
+
 TokKwEnum: 'enum' ;
 TokKwUnion: 'union' ;
 TokKwTask: 'task' ;
@@ -220,6 +237,8 @@ TokKwPackage: 'package' ;
 
 TokKwDollarConcat: '$concat' ;
 TokKwDollarReplicate: '$replicate' ;
+TokKwDollarUnsigned: '$unsigned' ;
+TokKwDollarSigned: '$signed' ;
 
 
 

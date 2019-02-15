@@ -79,56 +79,56 @@ Compiler::VisitorRetType Compiler::visitModuleInsides
 }
 
 
-// initial behavioral block
-Compiler::VisitorRetType Compiler::visitModuleStmtInitial
-	(Parser::ModuleStmtInitialContext *ctx)
-{
-	return nullptr;
-}
-
-// always_comb behavioral block
-Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysComb
-	(Parser::ModuleStmtAlwaysCombContext *ctx)
-{
-	return nullptr;
-}
-
-// always_seq behavioral block
-Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysSeq
-	(Parser::ModuleStmtAlwaysSeqContext *ctx)
-{
-	return nullptr;
-}
-
-Compiler::VisitorRetType Compiler::visitScopedListStmtBehavioral
-	(Parser::ScopedListStmtBehavioralContext *ctx)
-{
-	return nullptr;
-}
-
-Compiler::VisitorRetType Compiler::visitListStmtBehavioral
-	(Parser::ListStmtBehavioralContext *ctx)
-{
-	return nullptr;
-}
-
-Compiler::VisitorRetType Compiler::visitStmtBehavioral
-	(Parser::StmtBehavioralContext *ctx)
-{
-	return nullptr;
-}
-
-Compiler::VisitorRetType Compiler::visitStmtBehavAssign
-	(Parser::StmtBehavAssignContext *ctx)
-{
-	return nullptr;
-}
-
-//Compiler::VisitorRetType Compiler::visitStmtBehavIf
-//	(Parser::StmtBehavIfCon *ctx)
+//// initial behavioral block
+//Compiler::VisitorRetType Compiler::visitModuleStmtInitial
+//	(Parser::ModuleStmtInitialContext *ctx)
 //{
 //	return nullptr;
 //}
+//
+//// always_comb behavioral block
+//Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysComb
+//	(Parser::ModuleStmtAlwaysCombContext *ctx)
+//{
+//	return nullptr;
+//}
+//
+//// always_seq behavioral block
+//Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysSeq
+//	(Parser::ModuleStmtAlwaysSeqContext *ctx)
+//{
+//	return nullptr;
+//}
+//
+//Compiler::VisitorRetType Compiler::visitScopedListStmtBehavioral
+//	(Parser::ScopedListStmtBehavioralContext *ctx)
+//{
+//	return nullptr;
+//}
+//
+//Compiler::VisitorRetType Compiler::visitListStmtBehavioral
+//	(Parser::ListStmtBehavioralContext *ctx)
+//{
+//	return nullptr;
+//}
+//
+//Compiler::VisitorRetType Compiler::visitStmtBehavioral
+//	(Parser::StmtBehavioralContext *ctx)
+//{
+//	return nullptr;
+//}
+//
+//Compiler::VisitorRetType Compiler::visitStmtBehavAssign
+//	(Parser::StmtBehavAssignContext *ctx)
+//{
+//	return nullptr;
+//}
+//
+////Compiler::VisitorRetType Compiler::visitStmtBehavIf
+////	(Parser::StmtBehavIfCon *ctx)
+////{
+////	return nullptr;
+////}
 
 
 // Expression parsing
@@ -215,6 +215,18 @@ Compiler::VisitorRetType Compiler::visitIdentSliced
 
 Compiler::VisitorRetType Compiler::visitSlice
 	(Parser::SliceContext *ctx)
+{
+	return nullptr;
+}
+
+
+Compiler::VisitorRetType Compiler::visitInnerSliceOne
+	(Parser::InnerSliceOneContext *ctx)
+{
+	return nullptr;
+}
+Compiler::VisitorRetType Compiler::visitInnerSliceTwo
+	(Parser::InnerSliceTwoContext *ctx)
 {
 	return nullptr;
 }

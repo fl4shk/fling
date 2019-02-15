@@ -39,6 +39,7 @@ private:		// variables
 	int __pass;
 
 	//ScopedTableNode<Symbol>* __curr_scope_node = nullptr;
+
 public:		// functions
 	Compiler(Parser& parser);
 	virtual ~Compiler();
@@ -119,32 +120,32 @@ private:		// visitor functions
 		(Parser::ModuleInsidesContext *ctx);
 
 
-	// initial behavioral block
-	VisitorRetType visitModuleStmtInitial
-		(Parser::ModuleStmtInitialContext *ctx);
+	//// initial behavioral block
+	//VisitorRetType visitModuleStmtInitial
+	//	(Parser::ModuleStmtInitialContext *ctx);
 
-	// always_comb behavioral block
-	VisitorRetType visitModuleStmtAlwaysComb
-		(Parser::ModuleStmtAlwaysCombContext *ctx);
+	//// always_comb behavioral block
+	//VisitorRetType visitModuleStmtAlwaysComb
+	//	(Parser::ModuleStmtAlwaysCombContext *ctx);
 
-	// always_seq behavioral block
-	VisitorRetType visitModuleStmtAlwaysSeq
-		(Parser::ModuleStmtAlwaysSeqContext *ctx);
+	//// always_seq behavioral block
+	//VisitorRetType visitModuleStmtAlwaysSeq
+	//	(Parser::ModuleStmtAlwaysSeqContext *ctx);
 
-	VisitorRetType visitScopedListStmtBehavioral
-		(Parser::ScopedListStmtBehavioralContext *ctx);
+	//VisitorRetType visitScopedListStmtBehavioral
+	//	(Parser::ScopedListStmtBehavioralContext *ctx);
 
-	VisitorRetType visitListStmtBehavioral
-		(Parser::ListStmtBehavioralContext *ctx);
+	//VisitorRetType visitListStmtBehavioral
+	//	(Parser::ListStmtBehavioralContext *ctx);
 
-	VisitorRetType visitStmtBehavioral
-		(Parser::StmtBehavioralContext *ctx);
+	//VisitorRetType visitStmtBehavioral
+	//	(Parser::StmtBehavioralContext *ctx);
 
-	VisitorRetType visitStmtBehavAssign
-		(Parser::StmtBehavAssignContext *ctx);
+	//VisitorRetType visitStmtBehavAssign
+	//	(Parser::StmtBehavAssignContext *ctx);
 
-	//VisitorRetType visitStmtBehavIf
-	//	(Parser::StmtBehavIfCon *ctx);
+	////VisitorRetType visitStmtBehavIf
+	////	(Parser::StmtBehavIfCon *ctx);
 
 
 	// Expression parsing
@@ -192,6 +193,11 @@ private:		// visitor functions
 
 	VisitorRetType visitSlice
 		(Parser::SliceContext *ctx);
+
+	VisitorRetType visitInnerSliceOne
+		(Parser::InnerSliceOneContext *ctx);
+	VisitorRetType visitInnerSliceTwo
+		(Parser::InnerSliceTwoContext *ctx);
 
 private:		// functions
 	//inline void push_expr_chunk(ExprChunk to_push)
