@@ -27,7 +27,7 @@ void Expression::evaluate()
 }
 OpStr Expression::op_str() const
 {
-	return cstm_str_dup("INVALID_EXPRESSION");
+	return dup_str("INVALID_EXPRESSION");
 }
 
 bool Expression::_has_only_constant_children() const
@@ -72,7 +72,7 @@ ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 //}
 //OpStr ExprLogAnd::op_str() const
 //{
-//	return cstm_str_dup("&&");
+//	return dup_str("&&");
 //}
 
 

@@ -1,5 +1,5 @@
 #include "compiler_class.hpp"
-#include "allocation_stuff.hpp"
+#include "general_allocator_class.hpp"
 
 #include <sstream>
 

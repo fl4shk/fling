@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "expr_num_class.hpp"
-#include "allocation_stuff.hpp"
+#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {
@@ -97,7 +97,7 @@ protected:		// functions
 
 	inline void set_ident(const std::string& n_ident)
 	{
-		_ident = cstm_str_dup(n_ident);
+		_ident = dup_str(n_ident);
 	}
 	//inline void set_value(const BigNum& n_value)
 	//{
