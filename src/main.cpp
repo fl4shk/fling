@@ -24,8 +24,10 @@ int main(int argc, char** argv)
 
 	const frost_hdl::ExprNum test_egg(BigNum(2003), 12);
 
-	printout(liborangepower::bignum::convert_bignum_to_str(test_egg
-		.convert_to_bignum()), "\n");
+	ASM_COMMENT("test_egg constructed.");
+
+	printout(liborangepower::bignum::convert_bignum_to_str
+		(static_cast<BigNum>(test_egg)), "\n");
 
 
 

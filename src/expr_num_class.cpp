@@ -48,7 +48,7 @@ void ExprNum::copy_from_bignum(const BigNum& n_data, size_t n_data_size)
 	set_data(temp_data);
 }
 
-BigNum ExprNum::convert_to_bignum() const
+ExprNum::operator BigNum() const
 {
 	BigNum ret = 0;
 
@@ -61,90 +61,82 @@ BigNum ExprNum::convert_to_bignum() const
 	return ret;
 }
 
-// non-assignment operators
-// "&&", "||"
-ExprNum ExprNum::op_log_and(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_log_or(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-
-// "==", "!=", "<", ">", "<=", ">="
-ExprNum ExprNum::op_cmp_eq(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_cmp_ne(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_cmp_lt(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_cmp_gt(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_cmp_le(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_cmp_ge(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-
-// Unop "+", "-", "~"
-ExprNum ExprNum::op_unop_plus(ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_unop_minus(ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_unop_bit_invert(ExprNum* assignment_lhs) const
-{
-}
-
-// Binop "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"
-ExprNum ExprNum::op_binop_mul(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_div(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_mod(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_bit_and(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_bit_or(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_bit_xor(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_bit_lsl(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_bit_lsr(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
-ExprNum ExprNum::op_binop_bit_asr(const ExprNum& other,
-	ExprNum* assignment_lhs) const
-{
-}
+//// non-assignment operators
+//// "&&", "||"
+//ExprNum ExprNum::op_log_and(const ExprNum& other) const
+//{
+//}
+//ExprNum ExprNum::op_log_or(const ExprNum& other) const
+//{
+//}
+//
+//// "==", "!=", "<", ">", "<=", ">="
+//ExprNum ExprNum::op_cmp_eq(const ExprNum& other) const
+//{
+//}
+//ExprNum ExprNum::op_cmp_ne(const ExprNum& other) const
+//{
+//}
+//ExprNum ExprNum::op_cmp_lt(const ExprNum& other) const
+//{
+//}
+//ExprNum ExprNum::op_cmp_gt(const ExprNum& other) const
+//{
+//}
+//ExprNum ExprNum::op_cmp_le(const ExprNum& other) const
+//{
+//}
+//ExprNum ExprNum::op_cmp_ge(const ExprNum& other) const
+//{
+//}
+//
+//// Unop "+", "-", "~"
+//ExprNum ExprNum::op_unop_plus() const
+//{
+//}
+//ExprNum ExprNum::op_unop_minus() const
+//{
+//}
+//ExprNum ExprNum::op_unop_bit_invert() const
+//{
+//}
+//
+//// Binop "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"
+//ExprNum ExprNum::op_binop_mul(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_div(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_mod(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_bit_and(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_bit_or(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_bit_xor(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_bit_lsl(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_bit_lsr(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
+//ExprNum ExprNum::op_binop_bit_asr(const ExprNum& other,
+//	ExprNum* assignment_lhs) const
+//{
+//}
 
 } // namespace frost_hdl

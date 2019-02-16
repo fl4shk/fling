@@ -39,79 +39,80 @@ public:		// functions
 	ExprNum& operator = (ExprNum&& to_move) = default;
 
 	void copy_from_bignum(const BigNum& n_data, size_t n_data_size);
-	BigNum convert_to_bignum() const;
+
+	operator BigNum () const;
 
 
-	// non-assignment operators
-	// "&&", "||"
-	ExprNum op_log_and(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_log_or(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
+	//// non-assignment operators
+	//// "&&", "||"
+	//ExprNum op_log_and(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_log_or(const ExprNum& other,
+	//	size_t expr_size) const;
 
-	// "==", "!=", "<", ">", "<=", ">="
-	ExprNum op_cmp_eq(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_cmp_ne(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_cmp_lt(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_cmp_gt(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_cmp_le(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_cmp_ge(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
+	//// "==", "!=", "<", ">", "<=", ">="
+	//ExprNum op_cmp_eq(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_cmp_ne(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_cmp_lt(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_cmp_gt(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_cmp_le(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_cmp_ge(const ExprNum& other,
+	//	size_t expr_size) const;
 
 
-	// Binop "+", "-"
-	ExprNum op_binop_plus(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_minus(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
+	//// Binop "+", "-"
+	//ExprNum op_binop_plus(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_minus(const ExprNum& other,
+	//	size_t expr_size) const;
 
-	// Unop "+", "-"
+	//// Unop "+", "-"
 
-	//// unary -
-	//inline ExprNum operator - () const
-	//{
-	//	ExprNum ret = ~(*this);
-	//	return ((~(*this)) + ExprNum(BigNum(1), size(), is_signed()));
-	//}
+	////// unary -
+	////inline ExprNum operator - () const
+	////{
+	////	ExprNum ret = ~(*this);
+	////	return ((~(*this)) + ExprNum(BigNum(1), size(), is_signed()));
+	////}
 
-	//inline ExprNum operator ~ () const
-	//{
-	//	decltype(_data) ret_data;
-	//	ret_data = _data;
-	//	ret_data.flip();
+	////inline ExprNum operator ~ () const
+	////{
+	////	decltype(_data) ret_data;
+	////	ret_data = _data;
+	////	ret_data.flip();
 
-	//	return ExprNum(ret_data, _is_signed);
-	//}
+	////	return ExprNum(ret_data, _is_signed);
+	////}
 
-	// Unop "+", "-", "~"
-	ExprNum op_unop_plus(ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_unop_minus(ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_unop_bit_invert(ExprNum* assignment_lhs=nullptr) const;
+	//// Unop "+", "-", "~"
+	//ExprNum op_unop_plus(size_t expr_size) const;
+	//ExprNum op_unop_minus(size_t expr_size) const;
+	//ExprNum op_unop_bit_invert(size_t expr_size) const;
 
-	// Binop "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"
-	ExprNum op_binop_mul(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_div(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_mod(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_bit_and(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_bit_or(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_bit_xor(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_bit_lsl(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_bit_lsr(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
-	ExprNum op_binop_bit_asr(const ExprNum& other,
-		ExprNum* assignment_lhs=nullptr) const;
+	//// Binop "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"
+	//ExprNum op_binop_mul(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_div(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_mod(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_bit_and(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_bit_or(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_bit_xor(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_bit_lsl(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_bit_lsr(const ExprNum& other,
+	//	size_t expr_size) const;
+	//ExprNum op_binop_bit_asr(const ExprNum& other,
+	//	size_t expr_size) const;
 
 
 
