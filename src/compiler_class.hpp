@@ -42,7 +42,7 @@ private:		// variables
 
 public:		// functions
 	Compiler(Parser& parser);
-	virtual ~Compiler();
+	virtual ~Compiler() = default;
 	int run();
 
 private:		// functions

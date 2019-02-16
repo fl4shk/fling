@@ -4,20 +4,16 @@
 // src/allocation_stuff.hpp
 
 #include "misc_includes.hpp"
-//#include "expression_classes.hpp"
 
 
 #include <map>
 
 namespace frost_hdl
 {
-
-BigNum* cstm_num_dup(const BigNum& to_dup);
-std::string* cstm_str_dup(const std::string& to_dup);
-
 class Expression;
 
-Expression* save_expr(Expression&& to_move);
+std::string* cstm_str_dup(const std::string& to_dup);
+Expression* save_expr(Expression&& to_save);
 
 } // namespace frost_hdl
 

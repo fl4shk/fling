@@ -15,18 +15,19 @@ Expression::Expression()
 	}
 
 	_ident = nullptr;
-	_value = nullptr;
-	_size = nullptr;
+	//_value = nullptr;
+	//_size = nullptr;
 	_is_constant = false;
 }
 
-Expression::~Expression()
-{
-}
 
 void Expression::evaluate()
 {
-	_value = cstm_num_dup(0);
+	//set_value(0);
+}
+OpStr Expression::op_str() const
+{
+	return cstm_str_dup("INVALID_EXPRESSION");
 }
 
 bool Expression::_has_only_constant_children() const
@@ -64,105 +65,16 @@ ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 	evaluate();
 }
 
-void ExprLogAnd::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() && _right_child()->value());
-}
-OpStr ExprLogAnd::op_str() const
-{
-	return cstm_str_dup("&&");
-}
+//void ExprLogAnd::evaluate()
+//{
+//	set_size(1);
+//	set_value(_left_child()->value() && _right_child()->value());
+//}
+//OpStr ExprLogAnd::op_str() const
+//{
+//	return cstm_str_dup("&&");
+//}
 
 
-void ExprLogOr::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() || _right_child()->value());
-}
-OpStr ExprLogOr::op_str() const
-{
-	return cstm_str_dup("||");
-}
-
-void ExprCmpEq::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() == _right_child()->value());
-}
-OpStr ExprCmpEq::op_str() const
-{
-	return cstm_str_dup("==");
-}
-
-void ExprCmpNe::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() != _right_child()->value());
-}
-OpStr ExprCmpNe::op_str() const
-{
-	return cstm_str_dup("!=");
-}
-
-void ExprCmpLt::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() < _right_child()->value());
-}
-OpStr ExprCmpLt::op_str() const
-{
-	return cstm_str_dup("<");
-}
-
-void ExprCmpGt::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() > _right_child()->value());
-}
-OpStr ExprCmpGt::op_str() const
-{
-	return cstm_str_dup(">");
-}
-
-void ExprCmpLe::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() <= _right_child()->value());
-}
-OpStr ExprCmpLe::op_str() const
-{
-	return cstm_str_dup("<=");
-}
-
-void ExprCmpGe::evaluate()
-{
-	set_size(1);
-	set_value(_left_child()->value() >= _right_child()->value());
-}
-OpStr ExprCmpGe::op_str() const
-{
-	return cstm_str_dup(">=");
-}
-
-void ExprBinOpPlus::evaluate()
-{
-	set_size(max(_left_child()->size(), _right_child()->size()));
-	set_value(_left_child()->value() + _right_child()->value());
-}
-OpStr ExprBinOpPlus::op_str() const
-{
-	return cstm_str_dup("+");
-}
-
-void ExprBinOpMinus::evaluate()
-{
-	set_size(max(_left_child()->size(), _right_child()->size()));
-	set_value(_left_child()->value() + _right_child()->value());
-}
-OpStr ExprBinOpMinus::op_str() const
-{
-	return cstm_str_dup("-");
-}
 
 } // namespace frost_hdl

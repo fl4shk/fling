@@ -39,7 +39,7 @@ OBJDUMP:=$(PREFIX)objdump
 LD:=$(CXX)
 
 # Initial linker flags
-LD_FLAGS:=$(LD_FLAGS) -lm -lgmp\
+LD_FLAGS:=$(LD_FLAGS) -lm -lgmpxx -lgmp \
 	-lantlr4-runtime \
 
 

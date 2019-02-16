@@ -4,17 +4,18 @@
 // src/expression_classes.hpp
 
 #include "misc_includes.hpp"
+#include "expr_num_class.hpp"
 #include "allocation_stuff.hpp"
 
 namespace frost_hdl
 {
 
-inline BigNum max(const BigNum& a, const BigNum& b)
-{
-	return (a > b) ? a : b;
-}
-
-typedef BigNum* ExprNum;
+//inline BigNum max(const BigNum& a, const BigNum& b)
+//{
+//	return (a > b) ? a : b;
+//}
+//
+//typedef BigNum* ExprNum;
 
 class Expression
 {
@@ -23,23 +24,24 @@ public:		// types
 	typedef std::string* Ident;
 	//typedef std::string* MemberName;
 
-	//enum class Category
-	//{
-	//	UnOp,
-	//	BinOp,
-	//	Ternary,
+	enum class Category
+	{
+		UnOp,
+		BinOp,
+		Ternary,
 
-	//	IdentName,
-	//	IdentSliced,
-	//	HardCodedConstant,
-	//};
+		IdentName,
+		IdentSliced,
+		HardCodedConstant,
+	};
 
 protected:		// variables
 	std::vector<Expression*> _children;
 
 	Ident _ident;
 	ExprNum _value;
-	ExprNum _size;
+
+	//ExprNum _size;
 	//bool _is_signed, _is_constant;
 	//bool _is_signed;
 	bool _is_constant;
@@ -55,7 +57,7 @@ public:		// functions
 	Expression(Expression&& to_move) = default;
 
 
-	virtual ~Expression();
+	virtual ~Expression() = default;
 
 
 	// Don't want copies of raw Expression's
@@ -65,7 +67,7 @@ public:		// functions
 	Expression& operator = (Expression&& to_move) = default;
 
 	virtual void evaluate();
-	virtual OpStr op_str() const = 0;
+	virtual OpStr op_str() const;
 
 
 	inline auto num_children() const
@@ -77,34 +79,34 @@ public:		// functions
 		return (num_children() == 0);
 	}
 
-	inline const auto& value() const
+
+	inline const auto& ident() const
 	{
-		return (*_value);
+		return (*_ident);
 	}
 
-	inline const auto& size() const
-	{
-		return (*_size);
-	}
 
 
 	GEN_GETTER_BY_CON_REF(children)
+	GEN_GETTER_BY_CON_REF(value)
 
-	GEN_GETTER_BY_VAL(ident)
-	//GEN_GETTER_BY_VAL(value)
-	//GEN_GETTER_BY_VAL(size)
 	//GEN_GETTER_BY_VAL(is_signed)
 	GEN_GETTER_BY_VAL(is_constant)
 
 protected:		// functions
-	inline void set_value(const BigNum& n_value)
+
+	inline void set_ident(const std::string& n_ident)
 	{
-		_value = cstm_num_dup(n_value);
+		_ident = cstm_str_dup(n_ident);
 	}
-	inline void set_size(const BigNum& n_size)
-	{
-		_size = cstm_num_dup(n_size);
-	}
+	//inline void set_value(const BigNum& n_value)
+	//{
+	//	_value = cstm_num_dup(n_value);
+	//}
+	//inline void set_size(const BigNum& n_size)
+	//{
+	//	_size = cstm_num_dup(n_size);
+	//}
 
 	bool _has_only_constant_children() const;
 
@@ -285,6 +287,123 @@ class ExprBinOpMinus : public ExprBaseBinOp
 {
 public:		// functions
 	inline ExprBinOpMinus(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "*" binop
+class ExprBinOpMul : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpMul(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "/" binop
+class ExprBinOpDiv : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpDiv(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "%" binop
+class ExprBinOpMod : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpMod(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "&" binop
+class ExprBinOpBitAnd : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpBitAnd(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "|" binop
+class ExprBinOpBitOr : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpBitOr(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "^" binop
+class ExprBinOpBitXor : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpBitXor(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// "<<" binop
+class ExprBinOpBitLsl : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpBitLsl(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// ">>" binop
+class ExprBinOpBitLsr : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpBitLsr(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+	OpStr op_str() const final;
+};
+
+// ">>>" binop
+class ExprBinOpBitAsr : public ExprBaseBinOp
+{
+public:		// functions
+	inline ExprBinOpBitAsr(Expression* left_child, Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
 	}

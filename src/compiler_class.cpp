@@ -28,10 +28,6 @@ Compiler::Compiler(Parser& parser)
 	_program_ctx = parser.program();
 }
 
-Compiler::~Compiler()
-{
-}
-
 int Compiler::run()
 {
 	return 0;
