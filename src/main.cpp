@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
 	//test_expr_num_conversion(std::cout, 4);
 
-	test_expr_num_size_change(std::cout);
+	//test_expr_num_size_change(std::cout);
 }
 
 void test_expr_num_conversion(std::ostream& os, size_t test_data_width)
@@ -79,7 +79,7 @@ void test_expr_num_size_change(std::ostream& os)
 	static constexpr size_t orig_size = 5, large_dst_size = 30,
 		small_dst_size = 3;
 
-	const ExprNum test_expr_num(-5, orig_size, true);
+	const ExprNum test_expr_num(5, orig_size, true);
 
 	printout(BigNum(test_expr_num), "\n\n");
 	//printout(test_expr_num, "\n");
