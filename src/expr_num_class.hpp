@@ -40,80 +40,12 @@ public:		// functions
 
 	void copy_from_bignum(const BigNum& n_data, size_t n_data_size);
 
-	operator BigNum () const;
+	BigNum convert_to_bignum() const;
 
-
-	//// non-assignment operators
-	//// "&&", "||"
-	//ExprNum op_log_and(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_log_or(const ExprNum& other,
-	//	size_t expr_size) const;
-
-	//// "==", "!=", "<", ">", "<=", ">="
-	//ExprNum op_cmp_eq(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_cmp_ne(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_cmp_lt(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_cmp_gt(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_cmp_le(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_cmp_ge(const ExprNum& other,
-	//	size_t expr_size) const;
-
-
-	//// Binop "+", "-"
-	//ExprNum op_binop_plus(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_minus(const ExprNum& other,
-	//	size_t expr_size) const;
-
-	//// Unop "+", "-"
-
-	////// unary -
-	////inline ExprNum operator - () const
-	////{
-	////	ExprNum ret = ~(*this);
-	////	return ((~(*this)) + ExprNum(BigNum(1), size(), is_signed()));
-	////}
-
-	////inline ExprNum operator ~ () const
-	////{
-	////	decltype(_data) ret_data;
-	////	ret_data = _data;
-	////	ret_data.flip();
-
-	////	return ExprNum(ret_data, _is_signed);
-	////}
-
-	//// Unop "+", "-", "~"
-	//ExprNum op_unop_plus(size_t expr_size) const;
-	//ExprNum op_unop_minus(size_t expr_size) const;
-	//ExprNum op_unop_bit_invert(size_t expr_size) const;
-
-	//// Binop "*", "/", "%", "&", "|", "^", "<<", ">>", ">>>"
-	//ExprNum op_binop_mul(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_div(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_mod(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_bit_and(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_bit_or(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_bit_xor(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_bit_lsl(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_bit_lsr(const ExprNum& other,
-	//	size_t expr_size) const;
-	//ExprNum op_binop_bit_asr(const ExprNum& other,
-	//	size_t expr_size) const;
-
+	inline operator BigNum () const
+	{
+		return convert_to_bignum();
+	}
 
 
 	inline const auto& data() const
@@ -125,6 +57,20 @@ public:		// functions
 	{
 		return data().size();
 	}
+	void set_size(size_t n_size);
+
+	inline auto one_bit(size_t index) const
+	{
+		return data().at(index);
+	}
+
+	inline void set_bit(size_t index, bool val)
+	{
+		RawExprNumData n_data(data());
+		n_data.at(index) = val;
+		set_data(n_data);
+	}
+
 
 	inline void set_data(const RawExprNumData& n_data)
 	{

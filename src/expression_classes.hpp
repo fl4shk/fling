@@ -20,8 +20,8 @@ namespace frost_hdl
 class Expression
 {
 public:		// types
-	typedef std::string* OpStr;
-	typedef std::string* Ident;
+	typedef SavedString OpStr;
+	typedef SavedString Ident;
 	//typedef std::string* MemberName;
 
 	enum class Category

@@ -2,7 +2,7 @@
 #include "compiler_class.hpp"
 #include "expr_num_class.hpp"
 
-using liborangepower::bignum::convert_bignum_to_str;
+//using liborangepower::bignum::convert_bignum_to_str;
 
 int main(int argc, char** argv)
 {
@@ -22,13 +22,10 @@ int main(int argc, char** argv)
 	//frost_hdl::Compiler visitor(parser);
 	//return visitor.run();
 
-	const frost_hdl::ExprNum test_egg(BigNum(2003), 12);
+	//const frost_hdl::ExprNum test_egg(BigNum(2003), 12);
 
-	ASM_COMMENT("test_egg constructed.");
+	//ASM_COMMENT("test_egg constructed.");
 
-	printout(liborangepower::bignum::convert_bignum_to_str
-		(static_cast<BigNum>(test_egg)), "\n");
-
-
-
+	////printout(liborangepower::bignum::convert_bignum_to_str
+	////	(static_cast<BigNum>(test_egg)), "\n");
 }
