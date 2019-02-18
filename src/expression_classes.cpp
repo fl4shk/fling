@@ -28,6 +28,10 @@ void Expression::evaluate()
 //	return dup_str("INVALID_EXPRESSION");
 //}
 
+bool Expression::_children_affect_length() const
+{
+	return true;
+}
 size_t Expression::_starting_length() const
 {
 	return 0;

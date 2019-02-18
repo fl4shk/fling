@@ -145,6 +145,9 @@ public:		// functions
 	{
 		return (_has_only_constant_children() || _is_always_constant());
 	}
+	//inline bool is_pseudo_top_node() const
+	//{
+	//}
 
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_CON_REF(value)
@@ -153,6 +156,8 @@ public:		// functions
 
 
 protected:		// functions
+	virtual bool _children_affect_length() const;
+
 	// The length of the expression before being possibly casted to a
 	// larger type
 	virtual size_t _starting_length() const;
@@ -226,7 +231,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	inline void _get_lengthened_child_expr_nums(ExprNum& left_ret,
+	inline void _get_resized_child_expr_nums(ExprNum& left_ret,
 		ExprNum& right_ret) const
 	{
 		left_ret = _left_child()->value();
@@ -247,6 +252,11 @@ protected:		// functions
 		return 1;
 	}
 
+	bool _children_affect_length() const final
+	{
+		return false;
+	}
+
 };
 
 
@@ -261,6 +271,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			&& static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -275,6 +290,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			|| static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -289,6 +309,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			== static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -303,6 +328,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			!= static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -317,6 +347,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			< static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -331,6 +366,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			> static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -345,6 +385,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			<= static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
@@ -359,6 +404,11 @@ public:		// functions
 
 	void evaluate() final
 	{
+		ExprNum left_expr_num, right_expr_num;
+		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+
+		_value = ExprNum(static_cast<BigNum>(left_expr_num)
+			>= static_cast<BigNum>(right_expr_num), _value.is_signed());
 	}
 };
 
