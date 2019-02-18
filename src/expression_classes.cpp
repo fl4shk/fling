@@ -4,8 +4,7 @@ namespace frost_hdl
 {
 
 typedef Expression::OpStr OpStr;
-//typedef Expression::MemberName MemberName;
-//typedef Expression::Category Category;
+//typedef Expression::Type ExprType;
 
 Expression::Expression()
 {
@@ -15,19 +14,28 @@ Expression::Expression()
 	}
 
 	_ident = nullptr;
-	//_value = nullptr;
-	//_size = nullptr;
-	_is_constant = false;
+	set_is_self_determined(false);
 }
 
 
 void Expression::evaluate()
 {
-	//set_value(0);
+	set_value(ExprNum(0, 1, false));
 }
-OpStr Expression::op_str() const
+
+//OpStr Expression::op_str() const
+//{
+//	return dup_str("INVALID_EXPRESSION");
+//}
+
+size_t Expression::_starting_length() const
 {
-	return dup_str("INVALID_EXPRESSION");
+	return 0;
+}
+
+bool Expression::_is_always_constant() const
+{
+	return false;
 }
 
 bool Expression::_has_only_constant_children() const
@@ -50,19 +58,13 @@ bool Expression::_has_only_constant_children() const
 
 ExprBaseUnOp::ExprBaseUnOp(Expression* only_child)
 {
-	_is_constant = _has_only_constant_children(only_child);
-
-	// We do this regardless of whether or not this expression is constant.
-	evaluate();
+	_set_children(only_child);
 }
 
 ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 	Expression* right_child)
 {
-	_is_constant = _has_only_constant_children(left_child, right_child);
-
-	// We do this regardless of whether or not this expression is constant.
-	evaluate();
+	_set_children(left_child, right_child);
 }
 
 //void ExprLogAnd::evaluate()
@@ -76,5 +78,15 @@ ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 //}
 
 
+//ExprBinOpBitAsr::ExprBinOpBitAsr(Expression* left_child,
+//	Expression* right_child)
+//	: ExprBaseBinOp(left_child, right_child)
+//{
+//	right_child->set_is_self_determined(true);
+//}
+//
+//void ExprBinOpBitAsr::evaluate()
+//{
+//}
 
 } // namespace frost_hdl
