@@ -210,22 +210,31 @@ public:		// functions
 
 
 protected:		// functions
-	Expression* _left_child() const
+	inline Expression* _left_child() const
 	{
 		return children().at(0);
 	}
 
-	Expression* _right_child() const
+	inline Expression* _right_child() const
 	{
 		return children().at(1);
+	}
+
+	inline const ExprNum& _left_child_value() const
+	{
+		return _left_child()->value();
+	}
+	inline const ExprNum& _right_child_value() const
+	{
+		return _right_child()->value();
 	}
 };
 
 // "&&", "||", "==", "!=", "<", ">", "<=", ">="
-class ExprBaseLogCmp : public ExprBaseBinOp
+class ExprBaseLogCmpBinOp : public ExprBaseBinOp
 {
 public:		// functions
-	ExprBaseLogCmp(Expression* left_child, Expression* right_child)
+	ExprBaseLogCmpBinOp(Expression* left_child, Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
 	}
@@ -234,8 +243,8 @@ protected:		// functions
 	inline void _get_resized_child_expr_nums(ExprNum& left_ret,
 		ExprNum& right_ret) const
 	{
-		left_ret = _left_child()->value();
-		right_ret = _right_child()->value();
+		left_ret = _left_child_value();
+		right_ret = _right_child_value();
 
 		if (left_ret.size() < right_ret.size())
 		{
@@ -259,13 +268,65 @@ protected:		// functions
 
 };
 
+// "+", "-", "*", "/", "%", "&", "|", "^"
+class ExprBaseLengthTwoMaxBinOp : public ExprBaseBinOp
+{
+public:		// functions
+	ExprBaseLengthTwoMaxBinOp(Expression* left_child,
+		Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+	}
+
+protected:		// functions
+	size_t _starting_length() const final
+	{
+		// max(sizeof(left_child), sizeof(right_child))
+		return max_va(_left_child()->value().size(),
+			_right_child()->value().size());
+	}
+
+	bool _children_affect_length() const final
+	{
+		return true;
+	}
+};
+
+// "<<", ">>", ">>>"
+class ExprBaseBitShiftBinOp : public ExprBaseBinOp
+{
+public:		// functions
+	ExprBaseBitShiftBinOp(Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
+	{
+		_right_child()->set_is_self_determined(true);
+	}
+
+protected:		// functions
+	size_t _starting_length() const final
+	{
+		return _left_child()->value().size();
+	}
+
+	bool _children_affect_length() const final
+	{
+		return true;
+	}
+};
+
+
+// Finally, here are the "most derived" "Expression" classes, the ones at
+// the bottom of the class hierarchy.
+
+
+// "Expression" classes derived from "ExprBaseLogCmpBinOp"
 
 // "&&"
-class ExprLogAnd : public ExprBaseLogCmp
+class ExprLogAnd : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprLogAnd(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -274,17 +335,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			&& static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			&& static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // "||"
-class ExprLogOr : public ExprBaseLogCmp
+class ExprLogOr : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprLogOr(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -293,17 +354,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			|| static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			|| static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // "=="
-class ExprCmpEq : public ExprBaseLogCmp
+class ExprCmpEq : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprCmpEq(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -312,17 +373,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			== static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			== static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // "!="
-class ExprCmpNe : public ExprBaseLogCmp
+class ExprCmpNe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprCmpNe(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -331,17 +392,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			!= static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			!= static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // "<"
-class ExprCmpLt : public ExprBaseLogCmp
+class ExprCmpLt : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprCmpLt(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -350,17 +411,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			< static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			< static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // ">"
-class ExprCmpGt : public ExprBaseLogCmp
+class ExprCmpGt : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprCmpGt(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -369,17 +430,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			> static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			> static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // "<="
-class ExprCmpLe : public ExprBaseLogCmp
+class ExprCmpLe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprCmpLe(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -388,17 +449,17 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			<= static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			<= static_cast<BigNum>(right_expr_num));
 	}
 };
 
 // ">="
-class ExprCmpGe : public ExprBaseLogCmp
+class ExprCmpGe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
 	ExprCmpGe(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmp(left_child, right_child)
+		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
 
@@ -407,163 +468,76 @@ public:		// functions
 		ExprNum left_expr_num, right_expr_num;
 		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value = ExprNum(static_cast<BigNum>(left_expr_num)
-			>= static_cast<BigNum>(right_expr_num), _value.is_signed());
+		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+			>= static_cast<BigNum>(right_expr_num));
 	}
 };
 
-//// "+" binop
-//class ExprBinOpPlus : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpPlus(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//// "-" binop
-//class ExprBinOpMinus : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpMinus(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "*" binop
-//class ExprBinOpMul : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpMul(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "/" binop
-//class ExprBinOpDiv : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpDiv(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "%" binop
-//class ExprBinOpMod : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpMod(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "&" binop
-//class ExprBinOpBitAnd : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpBitAnd(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "|" binop
-//class ExprBinOpBitOr : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpBitOr(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "^" binop
-//class ExprBinOpBitXor : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpBitXor(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// "<<" binop
-//class ExprBinOpBitLsl : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpBitLsl(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// ">>" binop
-//class ExprBinOpBitLsr : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpBitLsr(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
-//
-//// ">>>" binop
-//class ExprBinOpBitAsr : public ExprBaseBinOp
-//{
-//public:		// functions
-//	ExprBinOpBitAsr(Expression* left_child, Expression* right_child);
-//
-//	size_t _starting_length() const final
-//	{
-//	}
-//	void evaluate() final
-//	{
-//	}
-//};
+// "Expression" classes derived from "ExprBaseLengthTwoMaxBinOp"
+
+// Binop "+"
+class ExprBinOpPlus : public ExprBaseLengthTwoMaxBinOp
+{
+public:		// functions
+	ExprBinOpPlus(Expression* left_child, Expression* right_child)
+		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			+ static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// Binop "-"
+class ExprBinOpMinus : public ExprBaseLengthTwoMaxBinOp
+{
+public:		// functions
+	ExprBinOpMinus(Expression* left_child, Expression* right_child)
+		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			- static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// "*"
+class ExprBinOpMul : public ExprBaseLengthTwoMaxBinOp
+{
+public:		// functions
+	ExprBinOpMul(Expression* left_child, Expression* right_child)
+		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			* static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// "/"
+class ExprBinOpDiv : public ExprBaseLengthTwoMaxBinOp
+{
+public:		// functions
+	ExprBinOpDiv(Expression* left_child, Expression* right_child)
+		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			/ static_cast<BigNum>(_right_child_value()));
+	}
+};
 
 } // namespace frost_hdl
 

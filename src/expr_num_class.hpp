@@ -24,7 +24,7 @@ public:		// functions
 
 
 	explicit ExprNum(const BigNum& s_data, size_t s_data_size,
-		bool s_is_signed=false);
+		bool s_is_signed);
 
 	ExprNum(const ExprNum& src, size_t s_data_size);
 	ExprNum(const ExprNum& src, size_t s_data_size, bool s_is_signed);
@@ -46,6 +46,10 @@ public:		// functions
 	{
 		copy_from_bignum(n_data, n_data_size);
 		set_is_signed(n_is_signed);
+	}
+	inline void copy_from_bignum(const BigNum& n_data)
+	{
+		copy_from_bignum(n_data, size(), is_signed());
 	}
 
 	BigNum convert_to_bignum() const;
