@@ -3,7 +3,7 @@
 namespace frost_hdl
 {
 
-typedef Expression::OpStr OpStr;
+//typedef Expression::OpStr OpStr;
 //typedef Expression::Type ExprType;
 
 Expression::Expression()
@@ -15,6 +15,7 @@ Expression::Expression()
 
 	_ident = nullptr;
 	set_is_self_determined(false);
+
 }
 
 
@@ -42,6 +43,20 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
+bool Expression::_has_any_unsigned_non_self_determined_children() const
+{
+	for (const auto& child : _children)
+	{
+		if ((!child->value().is_signed())
+			&& (!child->is_self_determined()))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool Expression::_has_only_constant_children() const
 {
 	if (is_leaf())
@@ -49,9 +64,9 @@ bool Expression::_has_only_constant_children() const
 		return false;
 	}
 
-	for (size_t i=0; i<num_children(); ++i)
+	for (const auto& child : _children)
 	{
-		if (!_children.at(i)->is_constant())
+		if (!child->is_constant())
 		{
 			return false;
 		}
@@ -71,26 +86,22 @@ ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 	_set_children(left_child, right_child);
 }
 
-//void ExprLogAnd::evaluate()
-//{
-//	set_size(1);
-//	set_value(_left_child()->value() && _right_child()->value());
-//}
-//OpStr ExprLogAnd::op_str() const
-//{
-//	return dup_str("&&");
-//}
+void ExprBinOpBitLsl::evaluate()
+{
 
+	for (BigNum i=0; i<BigNum(_right_child_value()); ++i)
+	{
+		set_value(ExprNum(BigNum(value()) * 2, value().size(),
+			value().is_signed()));
+	}
+}
 
-//ExprBinOpBitAsr::ExprBinOpBitAsr(Expression* left_child,
-//	Expression* right_child)
-//	: ExprBaseBinOp(left_child, right_child)
-//{
-//	right_child->set_is_self_determined(true);
-//}
-//
-//void ExprBinOpBitAsr::evaluate()
-//{
-//}
+void ExprBinOpBitLsr::evaluate()
+{
+}
+
+void ExprBinOpBitAsr::evaluate()
+{
+}
 
 } // namespace frost_hdl

@@ -20,7 +20,7 @@ namespace frost_hdl
 class Expression
 {
 public:		// types
-	typedef SavedString OpStr;
+	//typedef SavedString OpStr;
 	typedef SavedString Ident;
 
 	//enum class Category
@@ -109,7 +109,7 @@ public:		// functions
 	virtual void evaluate();
 
 
-	inline auto num_children() const
+	inline size_t num_children() const
 	{
 		return children().size();
 	}
@@ -145,9 +145,6 @@ public:		// functions
 	{
 		return (_has_only_constant_children() || _is_always_constant());
 	}
-	//inline bool is_pseudo_top_node() const
-	//{
-	//}
 
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_CON_REF(value)
@@ -163,6 +160,8 @@ protected:		// functions
 	virtual size_t _starting_length() const;
 
 	virtual bool _is_always_constant() const;
+
+	bool _has_any_unsigned_non_self_determined_children() const;
 
 	bool _has_only_constant_children() const;
 
@@ -186,6 +185,10 @@ protected:		// functions
 		if constexpr (sizeof...(rem_children) > 0)
 		{
 			_set_children(rem_children...);
+		}
+		else
+		{
+			_value.set_size(_starting_length());
 		}
 	}
 };
@@ -268,12 +271,11 @@ protected:		// functions
 
 };
 
-// "+", "-", "*", "/", "%", "&", "|", "^"
-class ExprBaseLengthTwoMaxBinOp : public ExprBaseBinOp
+// "+", "-", "*", "/", "%"
+class ExprBaseArithBinOp : public ExprBaseBinOp
 {
 public:		// functions
-	ExprBaseLengthTwoMaxBinOp(Expression* left_child,
-		Expression* right_child)
+	ExprBaseArithBinOp(Expression* left_child, Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
 	}
@@ -286,9 +288,24 @@ protected:		// functions
 			_right_child()->value().size());
 	}
 
-	bool _children_affect_length() const final
+};
+
+// "&", "|", "^"
+class ExprBaseBitNonShiftBinOp : public ExprBaseBinOp
+{
+public:		// functions
+	ExprBaseBitNonShiftBinOp(Expression* left_child,
+		Expression* right_child)
+		: ExprBaseBinOp(left_child, right_child)
 	{
-		return true;
+	}
+
+protected:		// functions
+	size_t _starting_length() const final
+	{
+		// max(sizeof(left_child), sizeof(right_child))
+		return max_va(_left_child()->value().size(),
+			_right_child()->value().size());
 	}
 };
 
@@ -307,11 +324,6 @@ protected:		// functions
 	{
 		return _left_child()->value().size();
 	}
-
-	bool _children_affect_length() const final
-	{
-		return true;
-	}
 };
 
 
@@ -322,10 +334,10 @@ protected:		// functions
 // "Expression" classes derived from "ExprBaseLogCmpBinOp"
 
 // "&&"
-class ExprLogAnd : public ExprBaseLogCmpBinOp
+class ExprBinOpLogAnd : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprLogAnd(Expression* left_child, Expression* right_child)
+	ExprBinOpLogAnd(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -341,10 +353,10 @@ public:		// functions
 };
 
 // "||"
-class ExprLogOr : public ExprBaseLogCmpBinOp
+class ExprBinOpLogOr : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprLogOr(Expression* left_child, Expression* right_child)
+	ExprBinOpLogOr(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -360,10 +372,10 @@ public:		// functions
 };
 
 // "=="
-class ExprCmpEq : public ExprBaseLogCmpBinOp
+class ExprBinOpCmpEq : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprCmpEq(Expression* left_child, Expression* right_child)
+	ExprBinOpCmpEq(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -375,14 +387,17 @@ public:		// functions
 
 		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
 			== static_cast<BigNum>(right_expr_num));
+
+		// Comparison results are unsigned
+		_value.set_is_signed(false);
 	}
 };
 
 // "!="
-class ExprCmpNe : public ExprBaseLogCmpBinOp
+class ExprBinOpCmpNe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprCmpNe(Expression* left_child, Expression* right_child)
+	ExprBinOpCmpNe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -394,14 +409,17 @@ public:		// functions
 
 		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
 			!= static_cast<BigNum>(right_expr_num));
+
+		// Comparison results are unsigned
+		_value.set_is_signed(false);
 	}
 };
 
 // "<"
-class ExprCmpLt : public ExprBaseLogCmpBinOp
+class ExprBinOpCmpLt : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprCmpLt(Expression* left_child, Expression* right_child)
+	ExprBinOpCmpLt(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -413,14 +431,17 @@ public:		// functions
 
 		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
 			< static_cast<BigNum>(right_expr_num));
+
+		// Comparison results are unsigned
+		_value.set_is_signed(false);
 	}
 };
 
 // ">"
-class ExprCmpGt : public ExprBaseLogCmpBinOp
+class ExprBinOpCmpGt : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprCmpGt(Expression* left_child, Expression* right_child)
+	ExprBinOpCmpGt(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -432,14 +453,17 @@ public:		// functions
 
 		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
 			> static_cast<BigNum>(right_expr_num));
+
+		// Comparison results are unsigned
+		_value.set_is_signed(false);
 	}
 };
 
 // "<="
-class ExprCmpLe : public ExprBaseLogCmpBinOp
+class ExprBinOpCmpLe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprCmpLe(Expression* left_child, Expression* right_child)
+	ExprBinOpCmpLe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -451,14 +475,17 @@ public:		// functions
 
 		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
 			<= static_cast<BigNum>(right_expr_num));
+
+		// Comparison results are unsigned
+		_value.set_is_signed(false);
 	}
 };
 
 // ">="
-class ExprCmpGe : public ExprBaseLogCmpBinOp
+class ExprBinOpCmpGe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprCmpGe(Expression* left_child, Expression* right_child)
+	ExprBinOpCmpGe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
 	}
@@ -470,17 +497,20 @@ public:		// functions
 
 		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
 			>= static_cast<BigNum>(right_expr_num));
+
+		// Comparison results are unsigned
+		_value.set_is_signed(false);
 	}
 };
 
-// "Expression" classes derived from "ExprBaseLengthTwoMaxBinOp"
+// "Expression" classes derived from "ExprBaseArithBinOp"
 
 // Binop "+"
-class ExprBinOpPlus : public ExprBaseLengthTwoMaxBinOp
+class ExprBinOpPlus : public ExprBaseArithBinOp
 {
 public:		// functions
 	ExprBinOpPlus(Expression* left_child, Expression* right_child)
-		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+		: ExprBaseArithBinOp(left_child, right_child)
 	{
 	}
 
@@ -492,11 +522,11 @@ public:		// functions
 };
 
 // Binop "-"
-class ExprBinOpMinus : public ExprBaseLengthTwoMaxBinOp
+class ExprBinOpMinus : public ExprBaseArithBinOp
 {
 public:		// functions
 	ExprBinOpMinus(Expression* left_child, Expression* right_child)
-		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+		: ExprBaseArithBinOp(left_child, right_child)
 	{
 	}
 
@@ -508,11 +538,11 @@ public:		// functions
 };
 
 // "*"
-class ExprBinOpMul : public ExprBaseLengthTwoMaxBinOp
+class ExprBinOpMul : public ExprBaseArithBinOp
 {
 public:		// functions
 	ExprBinOpMul(Expression* left_child, Expression* right_child)
-		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+		: ExprBaseArithBinOp(left_child, right_child)
 	{
 	}
 
@@ -524,11 +554,11 @@ public:		// functions
 };
 
 // "/"
-class ExprBinOpDiv : public ExprBaseLengthTwoMaxBinOp
+class ExprBinOpDiv : public ExprBaseArithBinOp
 {
 public:		// functions
 	ExprBinOpDiv(Expression* left_child, Expression* right_child)
-		: ExprBaseLengthTwoMaxBinOp(left_child, right_child)
+		: ExprBaseArithBinOp(left_child, right_child)
 	{
 	}
 
@@ -537,6 +567,110 @@ public:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			/ static_cast<BigNum>(_right_child_value()));
 	}
+};
+
+// "%"
+class ExprBinOpMod : public ExprBaseArithBinOp
+{
+public:		// functions
+	ExprBinOpMod(Expression* left_child, Expression* right_child)
+		: ExprBaseArithBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			% static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// "Expression" classes derived from "ExprBaseBitNonShiftBinOp"
+
+// "&"
+class ExprBinOpBitAnd : public ExprBaseBitNonShiftBinOp
+{
+public:		// functions
+	ExprBinOpBitAnd(Expression* left_child, Expression* right_child)
+		: ExprBaseBitNonShiftBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			& static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// "|"
+class ExprBinOpBitOr : public ExprBaseBitNonShiftBinOp
+{
+public:		// functions
+	ExprBinOpBitOr(Expression* left_child, Expression* right_child)
+		: ExprBaseBitNonShiftBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			| static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// "^"
+class ExprBinOpBitXor : public ExprBaseBitNonShiftBinOp
+{
+public:		// functions
+	ExprBinOpBitXor(Expression* left_child, Expression* right_child)
+		: ExprBaseBitNonShiftBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			^ static_cast<BigNum>(_right_child_value()));
+	}
+};
+
+// "Expression" classes derived from "ExprBaseBitShiftBinOp"
+
+// "<<"
+class ExprBinOpBitLsl : public ExprBaseBitShiftBinOp
+{
+public:		// functions
+	ExprBinOpBitLsl(Expression* left_child, Expression* right_child)
+		: ExprBaseBitShiftBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+};
+
+// ">>"
+class ExprBinOpBitLsr : public ExprBaseBitShiftBinOp
+{
+public:		// functions
+	ExprBinOpBitLsr(Expression* left_child, Expression* right_child)
+		: ExprBaseBitShiftBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
+};
+
+// ">>>"
+class ExprBinOpBitAsr : public ExprBaseBitShiftBinOp
+{
+public:		// functions
+	ExprBinOpBitAsr(Expression* left_child, Expression* right_child)
+		: ExprBaseBitShiftBinOp(left_child, right_child)
+	{
+	}
+
+	void evaluate() final;
 };
 
 } // namespace frost_hdl
