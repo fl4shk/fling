@@ -53,6 +53,10 @@ public:		// functions
 	}
 
 	BigNum convert_to_bignum() const;
+	inline BigNum convert_to_unsigned_bignum() const
+	{
+		return BigNum(ExprNum(*this, size(), false));
+	}
 	inline std::string convert_to_string() const
 	{
 		return liborangepower::bignum::convert_bignum_to_str

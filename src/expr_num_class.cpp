@@ -87,7 +87,7 @@ BigNum ExprNum::convert_to_bignum() const
 void ExprNum::set_size(size_t n_size)
 {
 	RawExprNumData n_data(data());
-	n_data.resize(n_size);
+	n_data.resize(n_size, false);
 
 	if (n_size > size())
 	{

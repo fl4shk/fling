@@ -104,10 +104,14 @@ public:		// functions
 
 
 
-	// Don't call "evaluate()" until after the size of the expression has
-	// been determined and the children have been modified.
-	virtual void evaluate();
 
+	//// Don't uncomment this; it's no good.
+	//bool is_pseudo_top_level_node() const
+	//{
+	//	return ((!_children_affect_length()) || is_self_determined());
+	//}
+
+	//virtual bool children_affect_length() const;
 
 	inline size_t num_children() const
 	{
@@ -124,16 +128,12 @@ public:		// functions
 		return (*_ident);
 	}
 
-
-	inline void set_ident(const std::string& n_ident)
-	{
-		_ident = dup_str(n_ident);
-	}
-
 	inline void set_value(const ExprNum& n_value)
 	{
 		_value = n_value;
 	}
+
+
 	//inline void set_value(const BigNum& n_value_data,
 	//	size_t n_value_data_size, bool n_value_is_signed)
 	//{
@@ -153,13 +153,23 @@ public:		// functions
 
 
 protected:		// functions
-	virtual bool _children_affect_length() const;
+	// Don't call "_evaluate()" until after the size of the expression has
+	// been determined and the children have been modified.
+	virtual void _evaluate();
 
-	// The length of the expression before being possibly casted to a
-	// larger type
+	// The length of the expression before (possibly) being casted to a
+	// larger one.
 	virtual size_t _starting_length() const;
 
 	virtual bool _is_always_constant() const;
+
+
+
+	inline void _set_ident(const std::string& n_ident)
+	{
+		_ident = dup_str(n_ident);
+	}
+
 
 	bool _has_any_unsigned_non_self_determined_children() const;
 
@@ -186,10 +196,13 @@ protected:		// functions
 		{
 			_set_children(rem_children...);
 		}
-		else
-		{
-			_value.set_size(_starting_length());
-		}
+
+		// (Don't uncomment this if "_set_children()" is called too early
+		// in the class hierarchy!)
+		//else 
+		//{
+		//	_value.set_size(_starting_length());
+		//}
 	}
 };
 
@@ -203,6 +216,11 @@ protected:		// functions
 	Expression* _only_child() const
 	{
 		return children().at(0);
+	}
+
+	inline const ExprNum& _only_child_value() const
+	{
+		return _only_child()->value();
 	}
 };
 
@@ -236,26 +254,55 @@ protected:		// functions
 // "&&", "||", "==", "!=", "<", ">", "<=", ">="
 class ExprBaseLogCmpBinOp : public ExprBaseBinOp
 {
+public:		// types
+	typedef BigNum (*CmpFunc)(const BigNum& left, const BigNum& right);
+
 public:		// functions
 	ExprBaseLogCmpBinOp(Expression* left_child, Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
+		// This *has* to be done in this class or later down the hierarchy,
+		// and not in one of the classes this one is derived from.
+		_value.set_size(_starting_length());
 	}
 
-protected:		// functions
-	inline void _get_resized_child_expr_nums(ExprNum& left_ret,
-		ExprNum& right_ret) const
-	{
-		left_ret = _left_child_value();
-		right_ret = _right_child_value();
+	//bool children_affect_length() const final
+	//{
+	//	return false;
+	//}
 
-		if (left_ret.size() < right_ret.size())
+protected:		// functions
+	//inline void _get_resized_child_expr_nums(ExprNum& left_ret,
+	//	ExprNum& right_ret) const
+	//{
+	//	left_ret = _left_child_value();
+	//	right_ret = _right_child_value();
+
+	//	if (left_ret.size() < right_ret.size())
+	//	{
+	//		left_ret.set_size(right_ret.size());
+	//	}
+	//	else // if (left_ret.size() >= right_ret.size())
+	//	{
+	//		right_ret.set_size(left_ret.size());
+	//	}
+	//}
+	void _perf_compare(CmpFunc cmp_func)
+	{
+		if (_left_child_value().is_signed()
+			&& _right_child_value().is_signed())
 		{
-			left_ret.set_size(right_ret.size());
+			_value.copy_from_bignum(cmp_func
+				(static_cast<BigNum>(_left_child_value()),
+				static_cast<BigNum>(_right_child_value())));
 		}
-		else // if (left_ret.size() >= right_ret.size())
+		else
 		{
-			right_ret.set_size(left_ret.size());
+			// Verilog dictates that, unless *both* expressions in a
+			// compare are signed, the compare will be an unsigned one.
+			_value.copy_from_bignum(cmp_func
+				(_left_child_value().convert_to_unsigned_bignum(),
+				_right_child_value().convert_to_unsigned_bignum()));
 		}
 	}
 
@@ -264,10 +311,6 @@ protected:		// functions
 		return 1;
 	}
 
-	bool _children_affect_length() const final
-	{
-		return false;
-	}
 
 };
 
@@ -278,6 +321,9 @@ public:		// functions
 	ExprBaseArithBinOp(Expression* left_child, Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
+		// This *has* to be done in this class or later down the hierarchy,
+		// and not in one of the classes this one is derived from.
+		_value.set_size(_starting_length());
 	}
 
 protected:		// functions
@@ -298,6 +344,9 @@ public:		// functions
 		Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
+		// This *has* to be done in this class or later down the hierarchy,
+		// and not in one of the classes this one is derived from.
+		_value.set_size(_starting_length());
 	}
 
 protected:		// functions
@@ -316,12 +365,20 @@ public:		// functions
 	ExprBaseBitShiftBinOp(Expression* left_child, Expression* right_child)
 		: ExprBaseBinOp(left_child, right_child)
 	{
+		// This *has* to be done in this class or later down the hierarchy,
+		// and not in one of the classes this one is derived from.
+		_value.set_size(_starting_length());
+
+		// Also, all bit shifts have the amount to shift by be
+		// self-determined.
 		_right_child()->set_is_self_determined(true);
 	}
 
 protected:		// functions
 	size_t _starting_length() const final
 	{
+		// Bit shifts take the size of the thing to be shifted as their
+		// size.
 		return _left_child()->value().size();
 	}
 };
@@ -342,13 +399,16 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
+		//ExprNum left_expr_num, right_expr_num;
+		//_get_resized_child_expr_nums(left_expr_num, right_expr_num);
 
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			&& static_cast<BigNum>(right_expr_num));
+		//_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
+		//	&& static_cast<BigNum>(right_expr_num));
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			&& static_cast<BigNum>(_right_child_value()));
 	}
 };
 
@@ -361,13 +421,11 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			|| static_cast<BigNum>(right_expr_num));
+		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+			|| static_cast<BigNum>(_right_child_value()));
 	}
 };
 
@@ -378,18 +436,17 @@ public:		// functions
 	ExprBinOpCmpEq(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
+		// Comparison results are unsigned values
+		_value.set_is_signed(false);
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			== static_cast<BigNum>(right_expr_num));
-
-		// Comparison results are unsigned
-		_value.set_is_signed(false);
+		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
+			{
+				return (left == right);
+			});
 	}
 };
 
@@ -402,16 +459,15 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			!= static_cast<BigNum>(right_expr_num));
-
-		// Comparison results are unsigned
-		_value.set_is_signed(false);
+		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+		//	!= static_cast<BigNum>(_right_child_value()));
+		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
+			{
+				return (left != right);
+			});
 	}
 };
 
@@ -422,18 +478,19 @@ public:		// functions
 	ExprBinOpCmpLt(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
+		// Comparison results are unsigned values
+		_value.set_is_signed(false);
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			< static_cast<BigNum>(right_expr_num));
-
-		// Comparison results are unsigned
-		_value.set_is_signed(false);
+		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+		//	< static_cast<BigNum>(_right_child_value()));
+		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
+			{
+				return (left < right);
+			});
 	}
 };
 
@@ -444,18 +501,19 @@ public:		// functions
 	ExprBinOpCmpGt(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
+		// Comparison results are unsigned values
+		_value.set_is_signed(false);
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			> static_cast<BigNum>(right_expr_num));
-
-		// Comparison results are unsigned
-		_value.set_is_signed(false);
+		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+		//	> static_cast<BigNum>(_right_child_value()));
+		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
+			{
+				return (left > right);
+			});
 	}
 };
 
@@ -466,18 +524,19 @@ public:		// functions
 	ExprBinOpCmpLe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
+		// Comparison results are unsigned values
+		_value.set_is_signed(false);
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			<= static_cast<BigNum>(right_expr_num));
-
-		// Comparison results are unsigned
-		_value.set_is_signed(false);
+		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+		//	<= static_cast<BigNum>(_right_child_value()));
+		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
+			{
+				return (left <= right);
+			});
 	}
 };
 
@@ -488,18 +547,19 @@ public:		// functions
 	ExprBinOpCmpGe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
+		// Comparison results are unsigned values
+		_value.set_is_signed(false);
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
-		ExprNum left_expr_num, right_expr_num;
-		_get_resized_child_expr_nums(left_expr_num, right_expr_num);
-
-		_value.copy_from_bignum(static_cast<BigNum>(left_expr_num)
-			>= static_cast<BigNum>(right_expr_num));
-
-		// Comparison results are unsigned
-		_value.set_is_signed(false);
+		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
+		//	>= static_cast<BigNum>(_right_child_value()));
+		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
+			{
+				return (left >= right);
+			});
 	}
 };
 
@@ -514,7 +574,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			+ static_cast<BigNum>(_right_child_value()));
@@ -530,7 +591,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			- static_cast<BigNum>(_right_child_value()));
@@ -546,7 +608,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			* static_cast<BigNum>(_right_child_value()));
@@ -562,7 +625,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			/ static_cast<BigNum>(_right_child_value()));
@@ -578,7 +642,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			% static_cast<BigNum>(_right_child_value()));
@@ -596,7 +661,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			& static_cast<BigNum>(_right_child_value()));
@@ -612,7 +678,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			| static_cast<BigNum>(_right_child_value()));
@@ -628,7 +695,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final
+protected:		// functions
+	void _evaluate() final
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			^ static_cast<BigNum>(_right_child_value()));
@@ -646,7 +714,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final;
+protected:		// functions
+	void _evaluate() final;
 };
 
 // ">>"
@@ -658,7 +727,8 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final;
+protected:		// functions
+	void _evaluate() final;
 };
 
 // ">>>"
@@ -670,7 +740,39 @@ public:		// functions
 	{
 	}
 
-	void evaluate() final;
+protected:		// functions
+	void _evaluate() final;
+};
+
+
+class ExprHardCodedNum : public Expression
+{
+public:		// functions
+	ExprHardCodedNum(const ExprNum& n_value)
+	{
+		set_value(n_value);
+	}
+
+
+	//bool children_affect_length() const final
+	//{
+	//	return false;
+	//}
+
+protected:		// functions
+	// Hard-coded numbers don't really evaluate to anything.
+	void _evaluate() final
+	{
+	}
+	size_t _starting_length() const final
+	{
+		return value().size();
+	}
+
+	bool _is_always_constant() const final
+	{
+		return true;
+	}
 };
 
 } // namespace frost_hdl

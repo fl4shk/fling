@@ -1,8 +1,8 @@
 #include "compiler_error_listener_class.hpp"
 #include "compiler_class.hpp"
 #include "expr_num_class.hpp"
+#include "expression_classes.hpp"
 #include "testing.hpp"
-
 
 
 int main(int argc, char** argv)
@@ -23,11 +23,6 @@ int main(int argc, char** argv)
 	//frost_hdl::Compiler visitor(parser);
 	//return visitor.run();
 
-	//const frost_hdl::ExprNum test_egg(BigNum(-2003), 12, true);
+	frost_hdl::test_implemented_expressions(std::cout);
 
-	////ASM_COMMENT("test_egg constructed.");
-
-	//printout(liborangepower::bignum::convert_bignum_to_str
-	//	(static_cast<BigNum>(test_egg)), "\n");
 }
-

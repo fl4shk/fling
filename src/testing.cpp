@@ -1,5 +1,6 @@
 #include "testing.hpp"
 #include "expr_num_class.hpp"
+#include "expression_classes.hpp"
 
 
 namespace frost_hdl
@@ -92,6 +93,19 @@ void test_cpp_expressions(std::ostream& os)
 	const BigNum b_bignum(2);
 
 	osprintout(os, (a_bignum % b_bignum), "\n");
+}
+
+void test_implemented_expressions(std::ostream& os)
+{
+	//static constexpr size_t width = 10;
+	//// a + b
+	//ExprHardCodedNum a(ExprNum(BigNum(3), width, false));
+	//ExprHardCodedNum b(ExprNum(BigNum(5), width, false));
+
+	//ExprBinOpPlus plus_of_a_comma_b(&a, &b);
+	//plus_of_a_comma_b.evaluate();
+
+	//printout(BigNum(plus_of_a_comma_b.value()), "\n");
 }
 
 } // namespace frost_hdl
