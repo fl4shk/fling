@@ -88,78 +88,78 @@ ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 	_set_children(left_child, right_child);
 }
 
-//void ExprBinOpBitLsl::_evaluate()
-//{
-//	RawExprNumData n_value_data;
-//	n_value_data.resize(_left_child_value().size(), false);
-//
-//
-//	for (BigNum i=0;
-//		i<_right_child_value().convert_to_unsigned_bignum();
-//		++i)
-//	{
-//		const auto write_index = BigNum(i + _right_child_value()
-//			.convert_to_unsigned_bignum()).get_ui();
-//		const auto read_index = i.get_ui();
-//
-//		n_value_data.at(write_index) = _left_child_value().data()
-//			.at(read_index);
-//	}
-//
-//	_value.set_data(std::move(n_value_data));
-//}
-//
-//void ExprBinOpBitLsr::_evaluate()
-//{
-//	RawExprNumData n_value_data;
-//	n_value_data.resize(_left_child_value().size(), false);
-//
-//
-//	for (BigNum i=0;
-//		i<_right_child_value().convert_to_unsigned_bignum();
-//		++i)
-//	{
-//		const auto write_index = i.get_ui();
-//		const auto read_index = BigNum(i + _right_child_value()
-//			.convert_to_unsigned_bignum()).get_ui();
-//
-//		n_value_data.at(write_index) = _left_child_value().data()
-//			.at(read_index);
-//	}
-//
-//	_value.set_data(std::move(n_value_data));
-//}
-//
-//void ExprBinOpBitAsr::_evaluate()
-//{
-//	RawExprNumData n_value_data;
-//
-//	// ">>>" only acts as an arithmetic right shift when thing to shift is
-//	// signed.
-//	if (_left_child_value().is_signed())
-//	{
-//		n_value_data.resize(_left_child_value().size(),
-//			_left_child_value().data().back());
-//	}
-//	else // if (!_left_child_value().is_signed())
-//	{
-//		n_value_data.resize(_left_child_value().size(), false);
-//	}
-//
-//
-//	for (BigNum i=0;
-//		i<_right_child_value().convert_to_unsigned_bignum();
-//		++i)
-//	{
-//		const auto write_index = i.get_ui();
-//		const auto read_index = BigNum(i + _right_child_value()
-//			.convert_to_unsigned_bignum()).get_ui();
-//
-//		n_value_data.at(write_index) = _left_child_value().data()
-//			.at(read_index);
-//	}
-//
-//	_value.set_data(std::move(n_value_data));
-//}
+void ExprBinOpBitLsl::_evaluate()
+{
+	RawExprNumData n_value_data;
+	n_value_data.resize(_left_child_value().size(), false);
+
+
+	for (BigNum i=0;
+		i<_right_child_value().convert_to_unsigned_bignum();
+		++i)
+	{
+		const auto write_index = BigNum(i + _right_child_value()
+			.convert_to_unsigned_bignum()).get_ui();
+		const auto read_index = i.get_ui();
+
+		n_value_data.at(write_index) = _left_child_value().data()
+			.at(read_index);
+	}
+
+	_value.set_data(std::move(n_value_data));
+}
+
+void ExprBinOpBitLsr::_evaluate()
+{
+	RawExprNumData n_value_data;
+	n_value_data.resize(_left_child_value().size(), false);
+
+
+	for (BigNum i=0;
+		i<_right_child_value().convert_to_unsigned_bignum();
+		++i)
+	{
+		const auto write_index = i.get_ui();
+		const auto read_index = BigNum(i + _right_child_value()
+			.convert_to_unsigned_bignum()).get_ui();
+
+		n_value_data.at(write_index) = _left_child_value().data()
+			.at(read_index);
+	}
+
+	_value.set_data(std::move(n_value_data));
+}
+
+void ExprBinOpBitAsr::_evaluate()
+{
+	RawExprNumData n_value_data;
+
+	// ">>>" only acts as an arithmetic right shift when thing to shift is
+	// signed.
+	if (_left_child_value().is_signed())
+	{
+		n_value_data.resize(_left_child_value().size(),
+			_left_child_value().data().back());
+	}
+	else // if (!_left_child_value().is_signed())
+	{
+		n_value_data.resize(_left_child_value().size(), false);
+	}
+
+
+	for (BigNum i=0;
+		i<_right_child_value().convert_to_unsigned_bignum();
+		++i)
+	{
+		const auto write_index = i.get_ui();
+		const auto read_index = BigNum(i + _right_child_value()
+			.convert_to_unsigned_bignum()).get_ui();
+
+		n_value_data.at(write_index) = _left_child_value().data()
+			.at(read_index);
+	}
+
+	_value.set_data(std::move(n_value_data));
+}
 
 } // namespace frost_hdl

@@ -262,8 +262,13 @@ public:		// functions
 		: ExprBaseBinOp(left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
-		// and not in one of the classes this one is derived from.
+		// and not in one of the classes this one is derived from, at least
+		// if done in the *constructor* of one of the classes this one is
+		// derived from.
 		_value.set_size(_starting_length());
+
+		// Comparisons and "&&" and "||" produce an unsigned, 1-bit value.
+		_value.set_is_signed(false);
 	}
 
 	//bool children_affect_length() const final
@@ -299,7 +304,8 @@ protected:		// functions
 		else
 		{
 			// Verilog dictates that, unless *both* expressions in a
-			// compare are signed, the compare will be an unsigned one.
+			// compare are signed, the compare will be an unsigned one, at
+			// least if there are no "real"s involved.
 			_value.copy_from_bignum(cmp_func
 				(_left_child_value().convert_to_unsigned_bignum(),
 				_right_child_value().convert_to_unsigned_bignum()));
@@ -310,8 +316,6 @@ protected:		// functions
 	{
 		return 1;
 	}
-
-
 };
 
 // "+", "-", "*", "/", "%"
@@ -322,7 +326,9 @@ public:		// functions
 		: ExprBaseBinOp(left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
-		// and not in one of the classes this one is derived from.
+		// and not in one of the classes this one is derived from, at least
+		// if done in the *constructor* of one of the classes this one is
+		// derived from.
 		_value.set_size(_starting_length());
 	}
 
@@ -345,7 +351,9 @@ public:		// functions
 		: ExprBaseBinOp(left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
-		// and not in one of the classes this one is derived from.
+		// and not in one of the classes this one is derived from, at least
+		// if done in the *constructor* of one of the classes this one is
+		// derived from.
 		_value.set_size(_starting_length());
 	}
 
@@ -366,7 +374,9 @@ public:		// functions
 		: ExprBaseBinOp(left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
-		// and not in one of the classes this one is derived from.
+		// and not in one of the classes this one is derived from, at least
+		// if done in the *constructor* of one of the classes this one is
+		// derived from.
 		_value.set_size(_starting_length());
 
 		// Also, all bit shifts have the amount to shift by be
@@ -436,8 +446,6 @@ public:		// functions
 	ExprBinOpCmpEq(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
-		// Comparison results are unsigned values
-		_value.set_is_signed(false);
 	}
 
 protected:		// functions
@@ -478,8 +486,6 @@ public:		// functions
 	ExprBinOpCmpLt(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
-		// Comparison results are unsigned values
-		_value.set_is_signed(false);
 	}
 
 protected:		// functions
@@ -501,15 +507,11 @@ public:		// functions
 	ExprBinOpCmpGt(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
-		// Comparison results are unsigned values
-		_value.set_is_signed(false);
 	}
 
 protected:		// functions
 	void _evaluate() final
 	{
-		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
-		//	> static_cast<BigNum>(_right_child_value()));
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
 				return (left > right);
@@ -524,15 +526,11 @@ public:		// functions
 	ExprBinOpCmpLe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
-		// Comparison results are unsigned values
-		_value.set_is_signed(false);
 	}
 
 protected:		// functions
 	void _evaluate() final
 	{
-		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
-		//	<= static_cast<BigNum>(_right_child_value()));
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
 				return (left <= right);
@@ -547,15 +545,11 @@ public:		// functions
 	ExprBinOpCmpGe(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
-		// Comparison results are unsigned values
-		_value.set_is_signed(false);
 	}
 
 protected:		// functions
 	void _evaluate() final
 	{
-		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
-		//	>= static_cast<BigNum>(_right_child_value()));
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
 				return (left >= right);
