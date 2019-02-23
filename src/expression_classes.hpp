@@ -23,6 +23,8 @@ public:		// types
 	//typedef SavedString OpStr;
 	typedef SavedString Ident;
 
+	typedef std::set<Expression*> DescendantsList;
+
 	//enum class Category
 	//{
 	//	UnOp,
@@ -143,7 +145,21 @@ public:		// functions
 
 	inline bool is_constant() const
 	{
+		//printout("Debug:  is_constant():  ", _has_only_constant_children(),
+		//	" ", _is_always_constant(), "\n");
 		return (_has_only_constant_children() || _is_always_constant());
+	}
+
+	inline void full_evaluate_if_constant()
+	{
+		if (is_constant())
+		{
+			_full_evaluate();
+		}
+		//else
+		//{
+		//	printout("I wasn't constant!\n");
+		//}
 	}
 
 	GEN_GETTER_BY_CON_REF(children)
@@ -169,6 +185,12 @@ protected:		// functions
 	{
 		_ident = dup_str(n_ident);
 	}
+
+	// Stuff for evaluating constant expressions.
+	void _full_evaluate();
+
+	void _inner_full_evaluate();
+	void _get_pseudo_top_descendants(DescendantsList& ret) const;
 
 
 	bool _has_any_unsigned_non_self_determined_children() const;
@@ -255,7 +277,7 @@ protected:		// functions
 class ExprBaseLogCmpBinOp : public ExprBaseBinOp
 {
 public:		// types
-	typedef BigNum (*CmpFunc)(const BigNum& left, const BigNum& right);
+	typedef BigNum (*CmpEvalFunc)(const BigNum& left, const BigNum& right);
 
 public:		// functions
 	ExprBaseLogCmpBinOp(Expression* left_child, Expression* right_child)
@@ -267,7 +289,7 @@ public:		// functions
 		// derived from.
 		_value.set_size(_starting_length());
 
-		// Comparisons and "&&" and "||" produce an unsigned, 1-bit value.
+		// Comparisons, "&&", and "||" produce an *unsigned*, 1-bit value.
 		_value.set_is_signed(false);
 	}
 
@@ -292,12 +314,12 @@ protected:		// functions
 	//		right_ret.set_size(left_ret.size());
 	//	}
 	//}
-	void _perf_compare(CmpFunc cmp_func)
+	void _perf_compare(CmpEvalFunc cmp_eval_func)
 	{
 		if (_left_child_value().is_signed()
 			&& _right_child_value().is_signed())
 		{
-			_value.copy_from_bignum(cmp_func
+			_value.copy_from_bignum(cmp_eval_func
 				(static_cast<BigNum>(_left_child_value()),
 				static_cast<BigNum>(_right_child_value())));
 		}
@@ -305,8 +327,9 @@ protected:		// functions
 		{
 			// Verilog dictates that, unless *both* expressions in a
 			// compare are signed, the compare will be an unsigned one, at
-			// least if there are no "real"s involved.
-			_value.copy_from_bignum(cmp_func
+			// least if there are no "real"s involved.  In this HDL,
+			// however, there are no "real"s.
+			_value.copy_from_bignum(cmp_eval_func
 				(_left_child_value().convert_to_unsigned_bignum(),
 				_right_child_value().convert_to_unsigned_bignum()));
 		}
@@ -330,6 +353,9 @@ public:		// functions
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
 		_value.set_size(_starting_length());
+
+		_value.set_is_signed(_left_child_value().is_signed()
+			&& _right_child_value().is_signed());
 	}
 
 protected:		// functions
@@ -355,6 +381,11 @@ public:		// functions
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
 		_value.set_size(_starting_length());
+
+		// I'm not sure this is correct.
+		// NOTE:  POSSIBLE BUG HERE
+		_value.set_is_signed(_left_child_value().is_signed()
+			&& _right_child_value().is_signed());
 	}
 
 protected:		// functions
@@ -382,6 +413,8 @@ public:		// functions
 		// Also, all bit shifts have the amount to shift by be
 		// self-determined.
 		_right_child()->set_is_self_determined(true);
+
+		_value.set_is_signed(_left_child_value().is_signed());
 	}
 
 protected:		// functions
@@ -658,6 +691,8 @@ public:		// functions
 protected:		// functions
 	void _evaluate() final
 	{
+		// This may not match the Verilog standard due to zero-extension
+		// being dictated....
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			& static_cast<BigNum>(_right_child_value()));
 	}
@@ -675,6 +710,8 @@ public:		// functions
 protected:		// functions
 	void _evaluate() final
 	{
+		// This may not match the Verilog standard due to zero-extension
+		// being dictated....
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			| static_cast<BigNum>(_right_child_value()));
 	}
@@ -692,6 +729,8 @@ public:		// functions
 protected:		// functions
 	void _evaluate() final
 	{
+		// This may not match the Verilog standard due to zero-extension
+		// being dictated....
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			^ static_cast<BigNum>(_right_child_value()));
 	}

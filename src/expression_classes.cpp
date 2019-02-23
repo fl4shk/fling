@@ -45,6 +45,65 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
+void Expression::_full_evaluate()
+{
+	// The expression evaluation algorithm:
+	// * Determine the expression size using standard rules.
+	// * Determine the sign of the expression using standard rules.
+	// * Coerce the type of every operand of the expression, not counting
+	// those that are self-determined, to the type of the expression.
+	// * Extend the size of every operand of the expression, not counting
+	// those that are self-determined, to the type of the expression.
+	// Perform sign extension if and only if the operand type (after type
+	// coercion) is signed.
+
+
+	DescendantsList pseudo_top_descendants;
+	_get_pseudo_top_descendants(pseudo_top_descendants);
+
+	//for (auto iter : pseudo_top_descendants)
+	//{
+	//	//printout(BigNum(iter->value()), "\n");
+	//	iter->_full_evaluate();
+	//}
+
+	_inner_full_evaluate();
+}
+
+void Expression::_inner_full_evaluate()
+{
+	for (auto iter : _children)
+	{
+		iter->_inner_full_evaluate();
+		iter->_evaluate();
+	}
+	_evaluate();
+}
+
+void Expression::_get_pseudo_top_descendants(DescendantsList& ret)
+	const
+{
+	for (auto iter : _children)
+	{
+		// It's a bug if any descendants appear twice....
+		if (ret.count(iter) != 0)
+		{
+			printout("Expression::_get_pseudo_top_descendants():",
+				"  Eek!\n");
+			exit(1);
+		}
+
+		if (iter->is_self_determined())
+		{
+			ret.insert(iter);
+		}
+		else // if (!iter->is_self_determined())
+		{
+			iter->_get_pseudo_top_descendants(ret);
+		}
+	}
+}
+
 bool Expression::_has_any_unsigned_non_self_determined_children() const
 {
 	for (const auto& child : _children)

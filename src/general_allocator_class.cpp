@@ -68,14 +68,5 @@ ExprNumData GeneralAllocator::dup_expr_num_data
 	return pool.at(to_dup).get();
 }
 
-Expression* GeneralAllocator::save_expr(Expression&& to_save)
-{
-	auto& pool = _expr_pool;
-
-	std::unique_ptr<Expression> to_insert;
-	to_insert.reset(new Expression(std::move(to_save)));
-	pool.push_back(std::move(to_insert));
-	return pool.back().get();
-}
 
 } // namespace frost_hdl

@@ -32,7 +32,17 @@ public:		// static functions
 	static SavedString dup_str(RawSavedString&& to_dup);
 	static ExprNumData dup_expr_num_data(const RawExprNumData& to_dup); 
 	static ExprNumData dup_expr_num_data(RawExprNumData&& to_dup); 
-	static Expression* save_expr(Expression&& to_save);
+
+	template<typename ExprType>
+	static inline Expression* save_expr(ExprType&& to_save)
+	{
+		auto& pool = _expr_pool;
+
+		std::unique_ptr<Expression> to_insert;
+		to_insert.reset(new ExprType(std::move(to_save)));
+		pool.push_back(std::move(to_insert));
+		return pool.back().get();
+	}
 };
 
 inline SavedString dup_str(const RawSavedString& to_dup)
@@ -51,7 +61,9 @@ inline ExprNumData dup_expr_num_data(RawExprNumData&& to_dup)
 {
 	return GeneralAllocator::dup_expr_num_data(std::move(to_dup));
 }
-inline Expression* save_expr(Expression&& to_save)
+
+template<typename ExprType>
+inline Expression* save_expr(ExprType&& to_save)
 {
 	return GeneralAllocator::save_expr(std::move(to_save));
 }

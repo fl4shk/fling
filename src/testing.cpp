@@ -1,6 +1,7 @@
 #include "testing.hpp"
 #include "expr_num_class.hpp"
 #include "expression_classes.hpp"
+#include "general_allocator_class.hpp"
 
 
 namespace frost_hdl
@@ -95,17 +96,69 @@ void test_cpp_expressions(std::ostream& os)
 	osprintout(os, (a_bignum % b_bignum), "\n");
 }
 
+//template<typename ExprType>
+//static inline Expression* _show_expr_binop(std::ostream& os,
+//	Expression* left_child, Expression* right_child)
+//{
+//	ExprType ret(left_child, right_child);
+//	ret.full_evaluate_if_constant();
+//	osprintout(os, ret.value().size(), " ", ret.value().is_signed(),
+//		":  ", BigNum(ret.value()), "\n");
+//	return save_expr(std::move(ret));
+//}
+
+static inline std::ostream& _show_expr(std::ostream& os,
+	Expression* to_show)
+{
+	return osprintout(os, to_show->value().size(), " ",
+		to_show->value().is_signed(), ":  ", BigNum(to_show->value()),
+		"\n");
+}
+static inline auto& _show_expr(Expression* to_show)
+{
+	return _show_expr(std::cout, to_show);
+}
+
+template<typename NumType>
+static inline auto _make_expr_hc_num(const NumType& s_data,
+	size_t s_data_size, bool s_is_signed)
+{
+	return save_expr(ExprHardCodedNum(ExprNum(BigNum(s_data), s_data_size,
+		s_is_signed)));
+}
+
+template<typename ExprType>
+static inline Expression* _make_expr_unop(Expression* only_child)
+{
+	return save_expr(ExprType(only_child));
+}
+
+template<typename ExprType>
+static inline Expression* _make_expr_binop(Expression* left_child,
+	Expression* right_child)
+{
+	return save_expr(ExprType(left_child, right_child));
+}
+
+
+
 void test_implemented_expressions(std::ostream& os)
 {
-	//static constexpr size_t width = 10;
-	//// a + b
-	//ExprHardCodedNum a(ExprNum(BigNum(3), width, false));
-	//ExprHardCodedNum b(ExprNum(BigNum(5), width, false));
+	auto a = _make_expr_hc_num(0, 2, true);
+	auto b = _make_expr_hc_num(-1, 1, true);
+	auto c = _make_expr_hc_num(5, 5, true);
+	auto d = _make_expr_binop<ExprBinOpPlus>(a, b);
+	auto e = _make_expr_binop<ExprBinOpPlus>(d, c);
 
-	//ExprBinOpPlus plus_of_a_comma_b(&a, &b);
-	//plus_of_a_comma_b.evaluate();
+	e->full_evaluate_if_constant();
 
-	//printout(BigNum(plus_of_a_comma_b.value()), "\n");
+	//_show_expr(a);
+	//_show_expr(b);
+	//_show_expr(c);
+	_show_expr(d);
+	_show_expr(e);
+
+
 }
 
 } // namespace frost_hdl
