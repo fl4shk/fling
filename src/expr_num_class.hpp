@@ -89,14 +89,14 @@ public:		// functions
 	// extension being determined by the value of _is_signed)
 	void set_size(size_t n_size);
 
-	//// "change_full_type()" is intended to be used only by whoever is
-	//// evaluating the expression (which is probably the "Expression" class
-	//// itself).
-	//inline void change_full_type(size_t n_size, bool n_is_signed)
-	//{
-	//	set_is_signed(n_is_signed);
-	//	set_size(n_size);
-	//}
+	// "change_full_type()" is intended to be used only by whoever is
+	// evaluating the expression (which is probably the "Expression" class
+	// itself).
+	inline void change_full_type(size_t n_size, bool n_is_signed)
+	{
+		set_is_signed(n_is_signed);
+		set_size(n_size);
+	}
 
 	inline auto one_bit(size_t index) const
 	{

@@ -186,11 +186,13 @@ protected:		// functions
 
 	//void _inner_full_evaluate
 	//	(const DescendantsList& pseudo_top_descs);
-	void _get_pseudo_top_level_descs(DescendantsList& ret) const;
+	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
 
-	size_t _highest_desc_size_with_effect() const;
+	//size_t _highest_desc_size_with_effect() const;
 
 	//bool _has_any_unsigned_non_sd_children() const;
+
+	void _perf_mega_cast() const;
 
 	bool _has_only_constant_children() const;
 

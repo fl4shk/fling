@@ -57,12 +57,19 @@ void Expression::_full_evaluate()
 	// those that are self-determined, to the type of the expression.
 	// Perform sign extension if and only if the operand type (after type
 	// coercion) is signed.
+	// * Finally, evaluate everything.
 
 
-	//DescendantsList all_pseudo_top_level_descs;
-	//_get_pseudo_top_level_descs(all_pseudo_top_level_descs, true);
-	DescendantsList pseudo_top_level_descs;
-	_get_pseudo_top_level_descs(pseudo_top_level_descs);
+	// The descendants of an "Expression" already know their size and their
+	// type.
+	DescendantsList ptln_descs;
+	_get_first_layer_ptln_descs(ptln_descs);
+
+	for (auto iter : ptln_descs)
+	{
+		iter->_full_evaluate();
+	}
+
 
 	//for (auto iter : pseudo_top_level_descs)
 	//{
@@ -85,7 +92,9 @@ void Expression::_full_evaluate()
 //	_evaluate();
 //}
 
-void Expression::_get_pseudo_top_level_descs(DescendantsList& ret) const
+// Get pseudo top-level node descendants, but only the ones in the first
+// "layer" of descendants, relative to this "Expression".
+void Expression::_get_first_layer_ptln_descs(DescendantsList& ret) const
 {
 	for (auto iter : _children)
 	{
@@ -97,44 +106,44 @@ void Expression::_get_pseudo_top_level_descs(DescendantsList& ret) const
 			exit(1);
 		}
 
-		if (iter->is_self_determined())
+		if (iter->_is_pseudo_top_level_node())
 		{
 			ret.insert(iter);
 		}
-		else // if (!iter->is_self_determined())
+		else // if (!iter->_is_pseudo_top_level_node())
 		{
-			iter->_get_pseudo_top_level_descs(ret);
+			iter->_get_first_layer_ptln_descs(ret);
 		}
 	}
 }
 
-// Find the highest size of a descendant of this "Expression" that can
-// affect the size of this "Expression".
-size_t Expression::_highest_desc_size_with_effect() const
-{
-	size_t ret = 0;
-
-	for (const auto& child : _children)
-	{
-		if (!child->is_self_determined())
-		{
-			if (child->_is_pseudo_top_level_node())
-			{
-				ret = max_va(ret, child->value().size());
-			}
-			else // if (!child->_is_pseudo_top_level_node())
-			{
-				ret = max_va(ret, child->_highest_desc_size_with_effect());
-				ret = max_va(ret, child->value().size());
-			}
-		}
-	}
-
-	return ret;
-}
+//// Find the highest size of a descendant of this "Expression" that can
+//// affect the size of this "Expression".
+//size_t Expression::_highest_desc_size_with_effect() const
+//{
+//	size_t ret = 0;
+//
+//	for (const auto& child : _children)
+//	{
+//		if (!child->is_self_determined())
+//		{
+//			if (child->_is_pseudo_top_level_node())
+//			{
+//				ret = max_va(ret, child->value().size());
+//			}
+//			else // if (!child->_is_pseudo_top_level_node())
+//			{
+//				ret = max_va(ret, child->_highest_desc_size_with_effect());
+//				ret = max_va(ret, child->value().size());
+//			}
+//		}
+//	}
+//
+//	return ret;
+//}
 
 //// I'm pretty sure this is unnecessary because the Expression itself will
-//// already know its signedness, or at least "_value" will.
+//// already know its signedness via "_value.is_signed()".
 //bool Expression::_has_any_unsigned_non_sd_children() const
 //{
 //	for (const auto& child : _children)
