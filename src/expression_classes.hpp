@@ -184,15 +184,14 @@ protected:		// functions
 	// Stuff for evaluating constant expressions.
 	void _full_evaluate();
 
-	//void _inner_full_evaluate
-	//	(const DescendantsList& pseudo_top_descs);
+	void _inner_full_evaluate();
 	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
 
 	//size_t _highest_desc_size_with_effect() const;
 
 	//bool _has_any_unsigned_non_sd_children() const;
 
-	void _perf_mega_cast() const;
+	void _perf_mega_descs_cast(size_t n_size, bool n_is_signed) const;
 
 	bool _has_only_constant_children() const;
 

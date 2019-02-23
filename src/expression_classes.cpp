@@ -70,6 +70,8 @@ void Expression::_full_evaluate()
 		iter->_full_evaluate();
 	}
 
+	_perf_mega_descs_cast(value().size(), value().is_signed());
+
 
 	//for (auto iter : pseudo_top_level_descs)
 	//{
@@ -78,19 +80,18 @@ void Expression::_full_evaluate()
 	//}
 
 
-	//_inner_full_evaluate(pseudo_top_level_descs);
+	_inner_full_evaluate();
 }
 
-//void Expression::_inner_full_evaluate
-//	(const DescendantsList& pseudo_top_level_descs)
-//{
-//	for (auto iter : _children)
-//	{
-//		iter->_inner_full_evaluate(pseudo_top_level_descs);
-//		iter->_evaluate();
-//	}
-//	_evaluate();
-//}
+void Expression::_inner_full_evaluate()
+{
+	for (auto iter : _children)
+	{
+		iter->_inner_full_evaluate();
+		iter->_evaluate();
+	}
+	_evaluate();
+}
 
 // Get pseudo top-level node descendants, but only the ones in the first
 // "layer" of descendants, relative to this "Expression".
@@ -157,6 +158,26 @@ void Expression::_get_first_layer_ptln_descs(DescendantsList& ret) const
 //
 //	return false;
 //}
+
+void Expression::_perf_mega_descs_cast(size_t n_size, bool n_is_signed)
+	const
+{
+	for (auto child : _children)
+	{
+		// We don't want to cast self-determined nodes.
+		if (!child->is_self_determined())
+		{
+			child->_value.change_full_type(n_size, n_is_signed);
+
+			// We don't want to cast the *descendants* of a pseudo
+			// top-level node.
+			if (!child->_is_pseudo_top_level_node())
+			{
+				child->_perf_mega_descs_cast(n_size, n_is_signed);
+			}
+		}
+	}
+}
 
 bool Expression::_has_only_constant_children() const
 {
