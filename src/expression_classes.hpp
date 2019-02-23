@@ -107,13 +107,6 @@ public:		// functions
 
 
 
-	//// Don't uncomment this; it's no good.
-	//bool is_pseudo_top_level_node() const
-	//{
-	//	return ((!_children_affect_length()) || is_self_determined());
-	//}
-
-	//virtual bool children_affect_length() const;
 
 	inline size_t num_children() const
 	{
@@ -173,6 +166,8 @@ protected:		// functions
 	// been determined and the children have been modified.
 	virtual void _evaluate();
 
+	virtual bool _children_affect_length() const;
+
 	// The length of the expression before (possibly) being casted to a
 	// larger one.
 	virtual size_t _starting_length() const;
@@ -189,13 +184,23 @@ protected:		// functions
 	// Stuff for evaluating constant expressions.
 	void _full_evaluate();
 
-	void _inner_full_evaluate();
-	void _get_pseudo_top_descendants(DescendantsList& ret) const;
+	//void _inner_full_evaluate
+	//	(const DescendantsList& pseudo_top_descendants);
+	void _get_pseudo_top_descendants(DescendantsList& ret,
+		bool get_all) const;
 
+	size_t _highest_ptln_as_leaf_descendant_size() const;
 
-	bool _has_any_unsigned_non_self_determined_children() const;
+	//bool _has_any_unsigned_non_sd_children() const;
 
 	bool _has_only_constant_children() const;
+
+	inline bool _is_pseudo_top_level_node() const
+	{
+		const bool non_sd_thing = (!_is_always_constant())
+			&& (!_children_affect_length());
+		return (non_sd_thing || is_self_determined());
+	}
 
 	//template<typename FirstArgType, typename... RemArgTypes>
 	//inline bool _has_only_constant_children(FirstArgType&& first_child,
@@ -293,10 +298,6 @@ public:		// functions
 		_value.set_is_signed(false);
 	}
 
-	//bool children_affect_length() const final
-	//{
-	//	return false;
-	//}
 
 protected:		// functions
 	//inline void _get_resized_child_expr_nums(ExprNum& left_ret,
@@ -328,11 +329,17 @@ protected:		// functions
 			// Verilog dictates that, unless *both* expressions in a
 			// compare are signed, the compare will be an unsigned one, at
 			// least if there are no "real"s involved.  In this HDL,
-			// however, there are no "real"s.
+			// however, there are no "real"s, so the only numeric types are
+			// "unsigned" and "signed".
 			_value.copy_from_bignum(cmp_eval_func
 				(_left_child_value().convert_to_unsigned_bignum(),
 				_right_child_value().convert_to_unsigned_bignum()));
 		}
+	}
+
+	bool _children_affect_length() const final
+	{
+		return false;
 	}
 
 	size_t _starting_length() const final
@@ -787,15 +794,17 @@ public:		// functions
 	}
 
 
-	//bool children_affect_length() const final
-	//{
-	//	return false;
-	//}
 
 protected:		// functions
+
 	// Hard-coded numbers don't really evaluate to anything.
 	void _evaluate() final
 	{
+	}
+
+	bool _children_affect_length() const final
+	{
+		return false;
 	}
 	size_t _starting_length() const final
 	{

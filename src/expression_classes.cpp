@@ -19,11 +19,6 @@ Expression::Expression()
 }
 
 
-//bool Expression::children_affect_length() const
-//{
-//	// Most types of expression use this definition.
-//	return true;
-//}
 
 //OpStr Expression::op_str() const
 //{
@@ -33,6 +28,12 @@ Expression::Expression()
 void Expression::_evaluate()
 {
 	set_value(ExprNum(0, 1, false));
+}
+
+bool Expression::_children_affect_length() const
+{
+	// Most types of expression use this definition.
+	return true;
 }
 
 size_t Expression::_starting_length() const
@@ -58,8 +59,10 @@ void Expression::_full_evaluate()
 	// coercion) is signed.
 
 
+	//DescendantsList all_pseudo_top_descendants;
+	//_get_pseudo_top_descendants(all_pseudo_top_descendants, true);
 	DescendantsList pseudo_top_descendants;
-	_get_pseudo_top_descendants(pseudo_top_descendants);
+	_get_pseudo_top_descendants(pseudo_top_descendants, false);
 
 	//for (auto iter : pseudo_top_descendants)
 	//{
@@ -67,21 +70,23 @@ void Expression::_full_evaluate()
 	//	iter->_full_evaluate();
 	//}
 
-	_inner_full_evaluate();
+
+	//_inner_full_evaluate(pseudo_top_descendants);
 }
 
-void Expression::_inner_full_evaluate()
-{
-	for (auto iter : _children)
-	{
-		iter->_inner_full_evaluate();
-		iter->_evaluate();
-	}
-	_evaluate();
-}
+//void Expression::_inner_full_evaluate
+//	(const DescendantsList& pseudo_top_descendants)
+//{
+//	for (auto iter : _children)
+//	{
+//		iter->_inner_full_evaluate(pseudo_top_descendants);
+//		iter->_evaluate();
+//	}
+//	_evaluate();
+//}
 
-void Expression::_get_pseudo_top_descendants(DescendantsList& ret)
-	const
+void Expression::_get_pseudo_top_descendants(DescendantsList& ret,
+	bool get_all) const
 {
 	for (auto iter : _children)
 	{
@@ -96,27 +101,58 @@ void Expression::_get_pseudo_top_descendants(DescendantsList& ret)
 		if (iter->is_self_determined())
 		{
 			ret.insert(iter);
+
+			if (get_all)
+			{
+				iter->_get_pseudo_top_descendants(ret, get_all);
+			}
 		}
 		else // if (!iter->is_self_determined())
 		{
-			iter->_get_pseudo_top_descendants(ret);
+			iter->_get_pseudo_top_descendants(ret, get_all);
 		}
 	}
 }
 
-bool Expression::_has_any_unsigned_non_self_determined_children() const
+size_t Expression::_highest_ptln_as_leaf_descendant_size() const
 {
+	size_t ret = 0;
+
 	for (const auto& child : _children)
 	{
-		if ((!child->value().is_signed())
-			&& (!child->is_self_determined()))
+		if (!child->is_self_determined())
 		{
-			return true;
+			if (child->_is_pseudo_top_level_node())
+			{
+				ret = max_va(ret, child->value().size());
+			}
+			else // if (!child->_is_pseudo_top_level_node())
+			{
+				ret = max_va(ret,
+					child->_highest_ptln_as_leaf_descendant_size());
+				ret = max_va(ret, child->value().size());
+			}
 		}
 	}
 
-	return false;
+	return ret;
 }
+
+//// I'm pretty sure this is unnecessary because the Expression itself will
+//// already know its signedness, or at least "_value" will.
+//bool Expression::_has_any_unsigned_non_sd_children() const
+//{
+//	for (const auto& child : _children)
+//	{
+//		if ((!child->value().is_signed())
+//			&& (!child->is_self_determined()))
+//		{
+//			return true;
+//		}
+//	}
+//
+//	return false;
+//}
 
 bool Expression::_has_only_constant_children() const
 {

@@ -144,21 +144,23 @@ static inline Expression* _make_expr_binop(Expression* left_child,
 
 void test_implemented_expressions(std::ostream& os)
 {
-	auto a = _make_expr_hc_num(0, 2, true);
-	auto b = _make_expr_hc_num(-1, 1, true);
-	auto c = _make_expr_hc_num(5, 5, true);
-	auto d = _make_expr_binop<ExprBinOpPlus>(a, b);
-	auto e = _make_expr_binop<ExprBinOpPlus>(d, c);
+	auto a_u = _make_expr_hc_num(1, 1, false);
+	auto b_u = _make_expr_hc_num(1, 1, false);
+	auto c_u = _make_expr_hc_num(5, 5, false);
+	auto d_u = _make_expr_binop<ExprBinOpPlus>(a_u, b_u);
+	auto e_u = _make_expr_binop<ExprBinOpPlus>(d_u, c_u);
 
-	e->full_evaluate_if_constant();
+	auto a_s = _make_expr_hc_num(1, 1, true);
+	auto b_s = _make_expr_hc_num(1, 1, true);
+	auto c_s = _make_expr_hc_num(5, 5, true);
+	auto d_s = _make_expr_binop<ExprBinOpPlus>(a_s, b_s);
+	auto e_s = _make_expr_binop<ExprBinOpPlus>(d_s, c_s);
 
-	//_show_expr(a);
-	//_show_expr(b);
-	//_show_expr(c);
-	_show_expr(d);
-	_show_expr(e);
+	e_u->full_evaluate_if_constant();
+	e_s->full_evaluate_if_constant();
 
-
+	_show_expr(e_u);
+	_show_expr(e_s);
 }
 
 } // namespace frost_hdl
