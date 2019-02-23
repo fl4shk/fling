@@ -185,11 +185,10 @@ protected:		// functions
 	void _full_evaluate();
 
 	//void _inner_full_evaluate
-	//	(const DescendantsList& pseudo_top_descendants);
-	void _get_pseudo_top_descendants(DescendantsList& ret,
-		bool get_all) const;
+	//	(const DescendantsList& pseudo_top_descs);
+	void _get_pseudo_top_level_descs(DescendantsList& ret) const;
 
-	size_t _highest_ptln_as_leaf_descendant_size() const;
+	size_t _highest_desc_size_with_effect() const;
 
 	//bool _has_any_unsigned_non_sd_children() const;
 

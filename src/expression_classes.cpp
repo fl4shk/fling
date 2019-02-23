@@ -59,41 +59,40 @@ void Expression::_full_evaluate()
 	// coercion) is signed.
 
 
-	//DescendantsList all_pseudo_top_descendants;
-	//_get_pseudo_top_descendants(all_pseudo_top_descendants, true);
-	DescendantsList pseudo_top_descendants;
-	_get_pseudo_top_descendants(pseudo_top_descendants, false);
+	//DescendantsList all_pseudo_top_level_descs;
+	//_get_pseudo_top_level_descs(all_pseudo_top_level_descs, true);
+	DescendantsList pseudo_top_level_descs;
+	_get_pseudo_top_level_descs(pseudo_top_level_descs);
 
-	//for (auto iter : pseudo_top_descendants)
+	//for (auto iter : pseudo_top_level_descs)
 	//{
 	//	//printout(BigNum(iter->value()), "\n");
 	//	iter->_full_evaluate();
 	//}
 
 
-	//_inner_full_evaluate(pseudo_top_descendants);
+	//_inner_full_evaluate(pseudo_top_level_descs);
 }
 
 //void Expression::_inner_full_evaluate
-//	(const DescendantsList& pseudo_top_descendants)
+//	(const DescendantsList& pseudo_top_level_descs)
 //{
 //	for (auto iter : _children)
 //	{
-//		iter->_inner_full_evaluate(pseudo_top_descendants);
+//		iter->_inner_full_evaluate(pseudo_top_level_descs);
 //		iter->_evaluate();
 //	}
 //	_evaluate();
 //}
 
-void Expression::_get_pseudo_top_descendants(DescendantsList& ret,
-	bool get_all) const
+void Expression::_get_pseudo_top_level_descs(DescendantsList& ret) const
 {
 	for (auto iter : _children)
 	{
 		// It's a bug if any descendants appear twice....
 		if (ret.count(iter) != 0)
 		{
-			printout("Expression::_get_pseudo_top_descendants():",
+			printout("Expression::_get_pseudo_top_level_descs():",
 				"  Eek!\n");
 			exit(1);
 		}
@@ -101,20 +100,17 @@ void Expression::_get_pseudo_top_descendants(DescendantsList& ret,
 		if (iter->is_self_determined())
 		{
 			ret.insert(iter);
-
-			if (get_all)
-			{
-				iter->_get_pseudo_top_descendants(ret, get_all);
-			}
 		}
 		else // if (!iter->is_self_determined())
 		{
-			iter->_get_pseudo_top_descendants(ret, get_all);
+			iter->_get_pseudo_top_level_descs(ret);
 		}
 	}
 }
 
-size_t Expression::_highest_ptln_as_leaf_descendant_size() const
+// Find the highest size of a descendant of this "Expression" that can
+// affect the size of this "Expression".
+size_t Expression::_highest_desc_size_with_effect() const
 {
 	size_t ret = 0;
 
@@ -128,8 +124,7 @@ size_t Expression::_highest_ptln_as_leaf_descendant_size() const
 			}
 			else // if (!child->_is_pseudo_top_level_node())
 			{
-				ret = max_va(ret,
-					child->_highest_ptln_as_leaf_descendant_size());
+				ret = max_va(ret, child->_highest_desc_size_with_effect());
 				ret = max_va(ret, child->value().size());
 			}
 		}
