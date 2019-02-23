@@ -20,3 +20,5 @@ Code generation that outputs VHDL is unlikely, but may eventually come
 Support for Verilog's `x` and `z` constructs will be limited, except
 perhaps for some very specific things, such as `casez` and tri-state
 buffers.
+
+ANTLR is used for a parser generator.
