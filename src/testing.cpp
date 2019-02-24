@@ -147,19 +147,29 @@ void test_implemented_expressions(std::ostream& os)
 		_show_expr(os, to_show);
 	};
 
-	auto a = _make_expr_hc_num(-8, 5, true);
-	auto b = _make_expr_hc_num(-9, 5, true);
-	auto c = _make_expr_binop<ExprBinOpLogAnd>(a, b);
-	auto d = _make_expr_hc_num(8, 5, false);
-	auto e = _make_expr_binop<ExprBinOpPlus>(c, d);
 
-	e->full_evaluate_if_constant();
+	std::array<Expression*, 20> arr;
 
-	show_expr(a);
-	show_expr(b);
-	show_expr(c);
-	show_expr(d);
-	show_expr(e);
+	for (auto& iter : arr)
+	{
+		iter = nullptr;
+	}
+
+	arr[0] = _make_expr_hc_num(-8, 5, true);
+	arr[1] = _make_expr_hc_num(20, 6, true);
+	arr[2] = _make_expr_binop<ExprBinOpCmpLt>(arr[0], arr[1]);
+
+	arr[2]->full_evaluate_if_constant();
+
+
+	for (auto iter : arr)
+	{
+		if (iter != nullptr)
+		{
+			show_expr(iter);
+		}
+	}
+
 }
 
 } // namespace frost_hdl

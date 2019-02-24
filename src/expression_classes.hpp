@@ -583,6 +583,8 @@ protected:		// functions
 		//	< static_cast<BigNum>(_right_child_value()));
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
+				printout("ExprBinOpCmpLt:  ", strappcom2(left, right,
+					left < right), "\n");
 				return (left < right);
 			});
 	}
