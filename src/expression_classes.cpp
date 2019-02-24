@@ -225,7 +225,7 @@ void ExprBinOpBitLsl::_evaluate()
 		}
 	}
 
-	_value.set_data(n_value_data);
+	_value.set_data(std::move(n_value_data));
 }
 
 void ExprBinOpBitLsr::_evaluate()
@@ -248,7 +248,7 @@ void ExprBinOpBitLsr::_evaluate()
 		}
 	}
 
-	_value.set_data(n_value_data);
+	_value.set_data(std::move(n_value_data));
 }
 
 void ExprBinOpBitAsr::_evaluate()
@@ -282,7 +282,7 @@ void ExprBinOpBitAsr::_evaluate()
 		}
 	}
 
-	_value.set_data(n_value_data);
+	_value.set_data(std::move(n_value_data));
 }
 
 } // namespace frost_hdl

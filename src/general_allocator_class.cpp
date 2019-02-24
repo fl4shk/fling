@@ -25,6 +25,20 @@ SavedString GeneralAllocator::dup_str(const RawSavedString& to_dup)
 
 	return pool.at(to_dup).get();
 }
+SavedString GeneralAllocator::dup_str(RawSavedString&& to_dup)
+{
+	auto& pool = _str_pool;
+
+	if (pool.count(to_dup) == 0)
+	{
+		std::unique_ptr<const RawSavedString> to_insert;
+		to_insert.reset(new RawSavedString(std::move(to_dup)));
+		auto ret = pool.insert_or_assign(*to_insert, std::move(to_insert));
+		return ret.first->second.get();
+	}
+
+	return pool.at(to_dup).get();
+}
 
 ExprNumData GeneralAllocator::dup_expr_num_data
 	(const RawExprNumData& to_dup)
@@ -40,20 +54,21 @@ ExprNumData GeneralAllocator::dup_expr_num_data
 
 	return pool.at(to_dup).get();
 }
-//ExprNumData GeneralAllocator::dup_expr_num_data
-//	(RawExprNumData&& to_dup)
-//{
-//	auto& pool = _expr_num_data_pool;
-//
-//	if (pool.count(to_dup) == 0)
-//	{
-//		std::unique_ptr<const RawExprNumData> to_insert;
-//		to_insert.reset(new RawExprNumData(std::move(to_dup)));
-//		pool[*to_insert] = std::move(to_insert);
-//	}
-//
-//	return pool.at(to_dup).get();
-//}
+ExprNumData GeneralAllocator::dup_expr_num_data
+	(RawExprNumData&& to_dup)
+{
+	auto& pool = _expr_num_data_pool;
+
+	if (pool.count(to_dup) == 0)
+	{
+		std::unique_ptr<const RawExprNumData> to_insert;
+		to_insert.reset(new RawExprNumData(std::move(to_dup)));
+		auto ret = pool.insert_or_assign(*to_insert, std::move(to_insert));
+		return ret.first->second.get();
+	}
+
+	return pool.at(to_dup).get();
+}
 
 
 } // namespace frost_hdl
