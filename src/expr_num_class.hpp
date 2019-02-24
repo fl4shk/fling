@@ -118,6 +118,10 @@ public:		// functions
 	{
 		_data = dup_expr_num_data(n_data);
 	}
+	//inline void set_data(RawExprNumData&& n_data)
+	//{
+	//	_data = dup_expr_num_data(std::move(n_data));
+	//}
 
 	inline bool is_negative() const
 	{

@@ -23,13 +23,14 @@ class GeneralAllocator
 private:		// static variables
 	static std::map<RawSavedString, std::unique_ptr<const RawSavedString>>
 		_str_pool;
-	static std::map<RawExprNumData,
-		std::unique_ptr<const RawExprNumData>> _expr_num_data_pool;
+	static std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
+		_expr_num_data_pool;
 	static std::vector<std::unique_ptr<Expression>> _expr_pool;
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
 	static ExprNumData dup_expr_num_data(const RawExprNumData& to_dup); 
+	//static ExprNumData dup_expr_num_data(RawExprNumData&& to_dup); 
 
 	template<typename ExprType>
 	static inline Expression* save_expr(ExprType&& to_save)
@@ -51,6 +52,10 @@ inline ExprNumData dup_expr_num_data(const RawExprNumData& to_dup)
 {
 	return GeneralAllocator::dup_expr_num_data(to_dup);
 }
+//inline ExprNumData dup_expr_num_data(RawExprNumData&& to_dup)
+//{
+//	return GeneralAllocator::dup_expr_num_data(std::move(to_dup));
+//}
 
 template<typename ExprType>
 inline Expression* save_expr(ExprType&& to_save)
