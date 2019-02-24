@@ -142,33 +142,24 @@ static inline Expression* _make_expr_binop(Expression* left_child,
 
 void test_implemented_expressions(std::ostream& os)
 {
-	//auto a = _make_expr_hc_num(1, 1, false);
-	//auto b = _make_expr_hc_num(1, 1, false);
-	//auto c = _make_expr_hc_num(5, 5, false);
-	//auto d = _make_expr_binop<ExprBinOpPlus>(a, b);
-	//auto e = _make_expr_binop<ExprBinOpPlus>(d, c);
-
-
-	//e->full_evaluate_if_constant();
-
-	//_show_expr(os, e);
+	auto show_expr = [&os](Expression* to_show) -> void
+	{
+		_show_expr(os, to_show);
+	};
 
 	auto a = _make_expr_hc_num(-8, 5, true);
-	auto b = _make_expr_hc_num(1, 6, false);
-	auto c = _make_expr_hc_num(-8, 5, true);
-	auto d = _make_expr_hc_num(2, 9, false);
-	auto e = _make_expr_binop<ExprBinOpBitAsr>(a, b);
-	auto f = _make_expr_binop<ExprBinOpBitAsr>(c, d);
+	auto b = _make_expr_hc_num(-9, 5, true);
+	auto c = _make_expr_binop<ExprBinOpLogAnd>(a, b);
+	auto d = _make_expr_hc_num(8, 5, false);
+	auto e = _make_expr_binop<ExprBinOpPlus>(c, d);
 
 	e->full_evaluate_if_constant();
-	f->full_evaluate_if_constant();
 
-	//_show_expr(os, a);
-	//_show_expr(os, b);
-	//_show_expr(os, c);
-	//_show_expr(os, d);
-	_show_expr(os, e);
-	_show_expr(os, f);
+	show_expr(a);
+	show_expr(b);
+	show_expr(c);
+	show_expr(d);
+	show_expr(e);
 }
 
 } // namespace frost_hdl

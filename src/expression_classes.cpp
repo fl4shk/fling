@@ -70,7 +70,22 @@ void Expression::_full_evaluate(bool is_real_top)
 		iter->_full_evaluate(false);
 	}
 
-	_perf_mega_descs_cast(value().size(), value().is_signed());
+	if (!_is_pseudo_top_level_node())
+	{
+		_perf_mega_descs_cast(value().size(), value().is_signed());
+	}
+	else // if (_is_pseudo_top_level_node())
+	{
+		if (is_self_determined())
+		{
+			_perf_mega_descs_cast(value().size(), value().is_signed());
+		}
+		else // if (!is_self_determined())
+		{
+			_perf_mega_descs_cast(_highest_desc_size_with_effect(),
+				!_has_any_unsigned_first_layer_non_sd_descs());
+		}
+	}
 
 
 	if (is_real_top)
@@ -114,46 +129,56 @@ void Expression::_get_first_layer_ptln_descs(DescendantsList& ret) const
 	}
 }
 
-//// Find the highest size of a descendant of this "Expression" that can
-//// affect the size of this "Expression".
-//size_t Expression::_highest_desc_size_with_effect() const
-//{
-//	size_t ret = 0;
-//
-//	for (const auto& child : _children)
-//	{
-//		if (!child->is_self_determined())
-//		{
-//			if (child->_is_pseudo_top_level_node())
-//			{
-//				ret = max_va(ret, child->value().size());
-//			}
-//			else // if (!child->_is_pseudo_top_level_node())
-//			{
-//				ret = max_va(ret, child->_highest_desc_size_with_effect());
-//				ret = max_va(ret, child->value().size());
-//			}
-//		}
-//	}
-//
-//	return ret;
-//}
+// Find the highest size of a descendant of this "Expression" that can
+// affect the size of this "Expression".  This is used for 
+size_t Expression::_highest_desc_size_with_effect() const
+{
+	size_t ret = 0;
 
-//// I'm pretty sure this is unnecessary because the Expression itself will
-//// already know its signedness via "_value.is_signed()".
-//bool Expression::_has_any_unsigned_non_sd_children() const
-//{
-//	for (const auto& child : _children)
-//	{
-//		if ((!child->value().is_signed())
-//			&& (!child->is_self_determined()))
-//		{
-//			return true;
-//		}
-//	}
-//
-//	return false;
-//}
+	for (const auto& child : _children)
+	{
+		if (!child->is_self_determined())
+		{
+			if (child->_is_pseudo_top_level_node())
+			{
+				ret = max_va(ret, child->value().size());
+			}
+			else // if (!child->_is_pseudo_top_level_node())
+			{
+				ret = max_va(ret, child->_highest_desc_size_with_effect());
+				ret = max_va(ret, child->value().size());
+			}
+			//ret = max_va(ret, child->_highest_desc_size_with_effect());
+			//ret = max_va(ret, child->value().size());
+		}
+	}
+
+	return ret;
+}
+
+bool Expression::_has_any_unsigned_first_layer_non_sd_descs() const
+{
+	for (const auto& child : _children)
+	{
+		if (!child->is_self_determined())
+		{
+			if (!child->value().is_signed())
+			{
+				return true;
+			}
+
+			if (!child->_is_pseudo_top_level_node())
+			{
+				if (child->_has_any_unsigned_first_layer_non_sd_descs())
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
 
 void Expression::_perf_mega_descs_cast(size_t n_size, bool n_is_signed)
 	const

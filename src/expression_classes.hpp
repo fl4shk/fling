@@ -185,9 +185,8 @@ protected:		// functions
 	void _inner_full_evaluate();
 	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
 
-	//size_t _highest_desc_size_with_effect() const;
-
-	//bool _has_any_unsigned_non_sd_children() const;
+	size_t _highest_desc_size_with_effect() const;
+	bool _has_any_unsigned_first_layer_non_sd_descs() const;
 
 	void _perf_mega_descs_cast(size_t n_size, bool n_is_signed) const;
 
