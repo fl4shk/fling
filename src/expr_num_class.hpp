@@ -128,6 +128,15 @@ public:		// functions
 		return (is_signed() && one_bit(size() - 1));
 	}
 
+	// Logical Shift Left
+	void perf_lsl(const ExprNum& to_shift, const ExprNum& amount);
+
+	// Logical Shift Right
+	void perf_lsr(const ExprNum& to_shift, const ExprNum& amount);
+
+	// Arithmetic Shift Right
+	void perf_asr(const ExprNum& to_shift, const ExprNum& amount);
+
 	GEN_GETTER_AND_SETTER_BY_VAL(is_signed)
 };
 

@@ -74,6 +74,12 @@ Compiler::VisitorRetType Compiler::visitModuleInsides
 	return nullptr;
 }
 
+Compiler::VisitorRetType Compiler::visitModuleStmtAssign
+	(Parser::ModuleStmtAssignContext *ctx)
+{
+	return nullptr;
+}
+
 
 //// initial behavioral block
 //Compiler::VisitorRetType Compiler::visitModuleStmtInitial
@@ -208,6 +214,16 @@ Compiler::VisitorRetType Compiler::visitIdentSliced
 	return nullptr;
 }
 
+Compiler::VisitorRetType Compiler::visitIdentConcatExpr
+	(Parser::IdentConcatExprContext *ctx)
+{
+	return nullptr;
+}
+Compiler::VisitorRetType Compiler::visitListIdentExpr
+	(Parser::ListIdentExprContext *ctx)
+{
+	return nullptr;
+}
 
 Compiler::VisitorRetType Compiler::visitSlice
 	(Parser::SliceContext *ctx)

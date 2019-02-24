@@ -231,83 +231,43 @@ ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
 
 void ExprBinOpBitLsl::_evaluate()
 {
-	RawExprNumData n_value_data;
-	n_value_data.resize(_left_child_value().size(), false);
-
-	const auto& old_data = _left_child_value().data();
-	const auto amount = _right_child_value().convert_to_unsigned_bignum()
-		.get_ui();
-
-
-	if (amount < n_value_data.size())
-	{
-		for (size_t i=0; i<(n_value_data.size() - amount); ++i)
-		{
-			const auto write_index = i + amount;
-			const auto read_index = i;
-
-			n_value_data.at(write_index) = old_data.at(read_index);
-		}
-	}
-
-	_value.set_data(std::move(n_value_data));
+	_value.perf_lsl(_left_child_value(), _right_child_value());
 }
 
 void ExprBinOpBitLsr::_evaluate()
 {
-	RawExprNumData n_value_data;
-	n_value_data.resize(_left_child_value().size(), false);
-
-	const auto& old_data = _left_child_value().data();
-	const auto amount = _right_child_value().convert_to_unsigned_bignum()
-		.get_ui();
-
-	if (amount < n_value_data.size())
-	{
-		for (size_t i=0; i<(n_value_data.size() - amount); ++i)
-		{
-			const auto write_index = i;
-			const auto read_index = i + amount;
-
-			n_value_data.at(write_index) = old_data.at(read_index);
-		}
-	}
-
-	_value.set_data(std::move(n_value_data));
+	_value.perf_lsr(_left_child_value(), _right_child_value());
 }
 
 void ExprBinOpBitAsr::_evaluate()
 {
-	RawExprNumData n_value_data;
+	_value.perf_asr(_left_child_value(), _right_child_value());
+}
 
-	const auto& old_data = _left_child_value().data();
-	const auto amount = _right_child_value().convert_to_unsigned_bignum()
-		.get_ui();
+ExprIdentConcat::ExprIdentConcat(ChildrenList&& s_children)
+{
+	_children = std::move(s_children);
 
-	// ">>>" only acts as an arithmetic right shift when thing to shift is
-	// signed.
-	if (_left_child_value().is_signed())
+	for (auto child : _children)
 	{
-		n_value_data.resize(_left_child_value().size(), old_data.back());
+		child->set_is_self_determined(true);
 	}
-	else // if (!_left_child_value().is_signed())
+}
+
+void ExprIdentConcat::_evaluate()
+{
+}
+
+size_t ExprIdentConcat::_starting_length() const
+{
+	size_t ret = 0;
+
+	for (auto child : _children)
 	{
-		n_value_data.resize(_left_child_value().size(), false);
-	}
-
-
-	if (amount < n_value_data.size())
-	{
-		for (size_t i=0; i<(n_value_data.size() - amount); ++i)
-		{
-			const auto write_index = i;
-			const auto read_index = i + amount;
-
-			n_value_data.at(write_index) = old_data.at(read_index);
-		}
+		ret += child->value().size();
 	}
 
-	_value.set_data(std::move(n_value_data));
+	return ret;
 }
 
 } // namespace frost_hdl

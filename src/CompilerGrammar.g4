@@ -10,6 +10,12 @@ program:
 // struct definitions and packages, too.
 subProgram:
 	declModule
+	//| declStruct
+	//| declClass
+	//| declEnum
+	//| declTypedef
+	//| declInterface
+	//| declPackage
 	;
 
 
@@ -18,7 +24,8 @@ subProgram:
 declModule:
 	TokKwModule identName
 		TokLParen
-			/* <insert input/output variable declarations here> */
+			// FUTURE:  insert input/output/inout variable declarations
+			// here
 		TokRParen
 
 	TokLBrace
@@ -27,6 +34,7 @@ declModule:
 	;
 
 declVar:
+	// FUTURE:  convert this to be able to handle sizes.
 	identName identName
 	;
 
@@ -35,13 +43,17 @@ declVar:
 
 
 moduleInsides:
-	// convert this to list of variable declarations
+	// FUTURE:  convert this to list of variable declarations
 	declVar TokSemicolon
+	| moduleStmtAssign TokSemicolon
 	//| moduleStmtInitial
 	//| moduleStmtAlwaysComb
 	//| moduleStmtAlwaysSeq
 	;
 
+moduleStmtAssign:
+	TokKwAssign identExpr TokAssign expr
+	;
 
 //// initial behavioral block
 //moduleStmtInitial:
@@ -130,6 +142,10 @@ exprBitInvert: TokBitInvert expr ;
 exprNegate: TokMinus expr ;
 exprLogNot: TokExclamPoint expr ;
 
+//exprConcat:
+//	TokKwDollarConcat TokLParen expr TokRParen
+//	;
+
 numExpr: TokDecNum | TokHexNum | TokBinNum ;
 
 
@@ -137,6 +153,7 @@ numExpr: TokDecNum | TokHexNum | TokBinNum ;
 identExpr:
 	identName
 	| identSliced
+	| identConcatExpr
 	//| memberAccessNonSliced
 	//| memberAccessSliced
 	;
@@ -146,6 +163,15 @@ identName: TokIdent ;
 
 // For now, only support sliced identifiers.
 identSliced: TokIdent (slice+) ;
+
+identConcatExpr:
+	TokKwDollarConcat TokLParen listIdentExpr TokRParen
+	;
+
+listIdentExpr:
+	identExpr ((TokComma identExpr)*)
+	;
+
 
 
 slice:
@@ -236,9 +262,12 @@ TokKwPackage: 'package' ;
 
 
 TokKwDollarConcat: '$concat' ;
-TokKwDollarReplicate: '$replicate' ;
+TokKwDollarRepl: '$repl' ;
 TokKwDollarUnsigned: '$unsigned' ;
 TokKwDollarSigned: '$signed' ;
+TokKwDollarIsUnsigned: '$is_unsigned' ;
+TokKwDollarIsSigned: '$is_signed' ;
+TokKwDollarSizeof: '$sizeof' ;
 
 
 

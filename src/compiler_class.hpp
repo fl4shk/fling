@@ -119,6 +119,9 @@ private:		// visitor functions
 	VisitorRetType visitModuleInsides
 		(Parser::ModuleInsidesContext *ctx);
 
+	VisitorRetType visitModuleStmtAssign
+		(Parser::ModuleStmtAssignContext *ctx);
+
 
 	//// initial behavioral block
 	//VisitorRetType visitModuleStmtInitial
@@ -189,6 +192,11 @@ private:		// visitor functions
 	// For now, only support sliced identifiers.
 	VisitorRetType visitIdentSliced
 		(Parser::IdentSlicedContext *ctx);
+
+	VisitorRetType visitIdentConcatExpr
+		(Parser::IdentConcatExprContext *ctx);
+	VisitorRetType visitListIdentExpr
+		(Parser::ListIdentExprContext *ctx);
 
 
 	VisitorRetType visitSlice

@@ -154,4 +154,84 @@ void ExprNum::set_multiple_bits(size_t start_index,
 	set_data(n_data);
 }
 
+// Logical Shift Left
+void ExprNum::perf_lsl(const ExprNum& to_shift, const ExprNum& amount)
+{
+	RawExprNumData n_value_data;
+	n_value_data.resize(to_shift.size(), false);
+
+	const auto& old_data = to_shift.data();
+	const auto amount_as_ui = amount.convert_to_unsigned_bignum().get_ui();
+
+	if (amount_as_ui < n_value_data.size())
+	{
+		for (size_t i=0; i<(n_value_data.size() - amount_as_ui); ++i)
+		{
+			const auto write_index = i + amount_as_ui;
+			const auto read_index = i;
+
+			n_value_data.at(write_index) = old_data.at(read_index);
+		}
+	}
+
+	set_data(std::move(n_value_data));
+}
+
+// Logical Shift Right
+void ExprNum::perf_lsr(const ExprNum& to_shift, const ExprNum& amount)
+{
+	RawExprNumData n_data;
+	n_data.resize(to_shift.size(), false);
+
+	const auto& old_data = to_shift.data();
+	const auto amount_as_ui = amount.convert_to_unsigned_bignum().get_ui();
+
+	if (amount_as_ui < n_data.size())
+	{
+		for (size_t i=0; i<(n_data.size() - amount_as_ui); ++i)
+		{
+			const auto write_index = i;
+			const auto read_index = i + amount_as_ui;
+
+			n_data.at(write_index) = old_data.at(read_index);
+		}
+	}
+
+	set_data(std::move(n_data));
+}
+
+// Arithmetic Shift Right
+void ExprNum::perf_asr(const ExprNum& to_shift, const ExprNum& amount)
+{
+	RawExprNumData n_data;
+
+	const auto& old_data = to_shift.data();
+	const auto amount_as_ui = amount.convert_to_unsigned_bignum().get_ui();
+
+	// ">>>" only acts as an arithmetic right shift when thing to shift is
+	// signed.
+	if (to_shift.is_signed())
+	{
+		n_data.resize(to_shift.size(), old_data.back());
+	}
+	else // if (!_left_child_value().is_signed())
+	{
+		n_data.resize(to_shift.size(), false);
+	}
+
+
+	if (amount_as_ui < n_data.size())
+	{
+		for (size_t i=0; i<(n_data.size() - amount_as_ui); ++i)
+		{
+			const auto write_index = i;
+			const auto read_index = i + amount_as_ui;
+
+			n_data.at(write_index) = old_data.at(read_index);
+		}
+	}
+
+	set_data(std::move(n_data));
+}
+
 } // namespace frost_hdl

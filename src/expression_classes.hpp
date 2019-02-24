@@ -24,6 +24,7 @@ public:		// types
 	typedef SavedString Ident;
 
 	typedef std::set<Expression*> DescendantsList;
+	typedef std::vector<Expression*> ChildrenList;
 
 	//enum class Category
 	//{
@@ -77,7 +78,7 @@ public:		// types
 
 
 protected:		// variables
-	std::vector<Expression*> _children;
+	ChildrenList _children;
 
 	Ident _ident;
 	ExprNum _value;
@@ -834,13 +835,14 @@ protected:		// functions
 	void _evaluate() final;
 };
 
+// "most derived" "Expression" classes that derive only from "Expression"
 
 class ExprHardCodedNum : public Expression
 {
 public:		// functions
-	ExprHardCodedNum(const ExprNum& n_value)
+	ExprHardCodedNum(const ExprNum& s_value)
 	{
-		set_value(n_value);
+		set_value(s_value);
 	}
 
 
@@ -865,6 +867,16 @@ protected:		// functions
 	{
 		return true;
 	}
+};
+
+class ExprIdentConcat : public Expression
+{
+public:		// functions
+	ExprIdentConcat(ChildrenList&& s_children);
+
+protected:		// functions
+	void _evaluate() final;
+	size_t _starting_length() const final;
 };
 
 } // namespace frost_hdl
