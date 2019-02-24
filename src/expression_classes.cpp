@@ -46,7 +46,7 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
-void Expression::_full_evaluate()
+void Expression::_full_evaluate(bool is_real_top)
 {
 	// The expression evaluation algorithm:
 	// * Determine the expression size using standard rules.
@@ -67,20 +67,16 @@ void Expression::_full_evaluate()
 
 	for (auto iter : ptln_descs)
 	{
-		iter->_full_evaluate();
+		iter->_full_evaluate(false);
 	}
 
 	_perf_mega_descs_cast(value().size(), value().is_signed());
 
 
-	//for (auto iter : pseudo_top_level_descs)
-	//{
-	//	//printout(BigNum(iter->value()), "\n");
-	//	iter->_full_evaluate();
-	//}
-
-
-	_inner_full_evaluate();
+	if (is_real_top)
+	{
+		_inner_full_evaluate();
+	}
 }
 
 void Expression::_inner_full_evaluate()
@@ -213,20 +209,23 @@ void ExprBinOpBitLsl::_evaluate()
 	RawExprNumData n_value_data;
 	n_value_data.resize(_left_child_value().size(), false);
 
+	const auto& old_data = _left_child_value().data();
+	const auto amount = _right_child_value().convert_to_unsigned_bignum()
+		.get_ui();
 
-	for (BigNum i=0;
-		i<_right_child_value().convert_to_unsigned_bignum();
-		++i)
+
+	if (amount < n_value_data.size())
 	{
-		const auto write_index = BigNum(i + _right_child_value()
-			.convert_to_unsigned_bignum()).get_ui();
-		const auto read_index = i.get_ui();
+		for (size_t i=0; i<(n_value_data.size() - amount); ++i)
+		{
+			const auto write_index = i + amount;
+			const auto read_index = i;
 
-		n_value_data.at(write_index) = _left_child_value().data()
-			.at(read_index);
+			n_value_data.at(write_index) = old_data.at(read_index);
+		}
 	}
 
-	_value.set_data(std::move(n_value_data));
+	_value.set_data(n_value_data);
 }
 
 void ExprBinOpBitLsr::_evaluate()
@@ -234,32 +233,37 @@ void ExprBinOpBitLsr::_evaluate()
 	RawExprNumData n_value_data;
 	n_value_data.resize(_left_child_value().size(), false);
 
+	const auto& old_data = _left_child_value().data();
+	const auto amount = _right_child_value().convert_to_unsigned_bignum()
+		.get_ui();
 
-	for (BigNum i=0;
-		i<_right_child_value().convert_to_unsigned_bignum();
-		++i)
+	if (amount < n_value_data.size())
 	{
-		const auto write_index = i.get_ui();
-		const auto read_index = BigNum(i + _right_child_value()
-			.convert_to_unsigned_bignum()).get_ui();
+		for (size_t i=0; i<(n_value_data.size() - amount); ++i)
+		{
+			const auto write_index = i;
+			const auto read_index = i + amount;
 
-		n_value_data.at(write_index) = _left_child_value().data()
-			.at(read_index);
+			n_value_data.at(write_index) = old_data.at(read_index);
+		}
 	}
 
-	_value.set_data(std::move(n_value_data));
+	_value.set_data(n_value_data);
 }
 
 void ExprBinOpBitAsr::_evaluate()
 {
 	RawExprNumData n_value_data;
 
+	const auto& old_data = _left_child_value().data();
+	const auto amount = _right_child_value().convert_to_unsigned_bignum()
+		.get_ui();
+
 	// ">>>" only acts as an arithmetic right shift when thing to shift is
 	// signed.
 	if (_left_child_value().is_signed())
 	{
-		n_value_data.resize(_left_child_value().size(),
-			_left_child_value().data().back());
+		n_value_data.resize(_left_child_value().size(), old_data.back());
 	}
 	else // if (!_left_child_value().is_signed())
 	{
@@ -267,19 +271,18 @@ void ExprBinOpBitAsr::_evaluate()
 	}
 
 
-	for (BigNum i=0;
-		i<_right_child_value().convert_to_unsigned_bignum();
-		++i)
+	if (amount < n_value_data.size())
 	{
-		const auto write_index = i.get_ui();
-		const auto read_index = BigNum(i + _right_child_value()
-			.convert_to_unsigned_bignum()).get_ui();
+		for (size_t i=0; i<(n_value_data.size() - amount); ++i)
+		{
+			const auto write_index = i;
+			const auto read_index = i + amount;
 
-		n_value_data.at(write_index) = _left_child_value().data()
-			.at(read_index);
+			n_value_data.at(write_index) = old_data.at(read_index);
+		}
 	}
 
-	_value.set_data(std::move(n_value_data));
+	_value.set_data(n_value_data);
 }
 
 } // namespace frost_hdl

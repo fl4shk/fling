@@ -75,6 +75,7 @@ BigNum ExprNum::convert_to_bignum() const
 		}
 	}
 
+
 	if (is_negative())
 	{
 		ret += 1;

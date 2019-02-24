@@ -136,6 +136,8 @@ public:		// functions
 	//		n_value_is_signed));
 	//}
 
+
+	// This doesn't *need* to be stored anywhere.
 	inline bool is_constant() const
 	{
 		//printout("Debug:  is_constant():  ", _has_only_constant_children(),
@@ -147,12 +149,8 @@ public:		// functions
 	{
 		if (is_constant())
 		{
-			_full_evaluate();
+			_full_evaluate(true);
 		}
-		//else
-		//{
-		//	printout("I wasn't constant!\n");
-		//}
 	}
 
 	GEN_GETTER_BY_CON_REF(children)
@@ -182,7 +180,7 @@ protected:		// functions
 	}
 
 	// Stuff for evaluating constant expressions.
-	void _full_evaluate();
+	void _full_evaluate(bool is_real_top);
 
 	void _inner_full_evaluate();
 	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
@@ -275,6 +273,23 @@ protected:		// functions
 	inline const ExprNum& _right_child_value() const
 	{
 		return _right_child()->value();
+	}
+};
+
+// "$unsigned()", "$signed()"
+class ExprBaseCastUnop : public ExprBaseUnOp
+{
+public:		// functions
+	ExprBaseCastUnop(Expression* only_child)
+		: ExprBaseUnOp(only_child)
+	{
+		_value.set_size(_starting_length());
+	}
+
+protected:		// functions
+	size_t _starting_length() const final
+	{
+		return _only_child_value().size();
 	}
 };
 
@@ -437,6 +452,40 @@ protected:		// functions
 // Finally, here are the "most derived" "Expression" classes, the ones at
 // the bottom of the class hierarchy.
 
+// "Expression" classes derived from "ExprBaseCastUnop"
+
+// "$unsigned()
+class ExprUnOpCastUnsigned : public ExprBaseCastUnop
+{
+public:		// functions
+	ExprUnOpCastUnsigned(Expression* only_child)
+		: ExprBaseCastUnop(only_child)
+	{
+		_value.set_is_signed(false);
+	}
+
+protected:		// functions
+	void _evaluate() final
+	{
+		set_value(_only_child_value());
+	}
+};
+// "$signed()
+class ExprUnOpCastSigned : public ExprBaseCastUnop
+{
+public:		// functions
+	ExprUnOpCastSigned(Expression* only_child)
+		: ExprBaseCastUnop(only_child)
+	{
+		_value.set_is_signed(true);
+	}
+
+protected:		// functions
+	void _evaluate() final
+	{
+		set_value(_only_child_value());
+	}
+};
 
 // "Expression" classes derived from "ExprBaseLogCmpBinOp"
 

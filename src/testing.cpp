@@ -114,10 +114,10 @@ static inline std::ostream& _show_expr(std::ostream& os,
 		to_show->value().is_signed(), ":  ", BigNum(to_show->value()),
 		"\n");
 }
-static inline auto& _show_expr(Expression* to_show)
-{
-	return _show_expr(std::cout, to_show);
-}
+//static inline auto& _show_expr(Expression* to_show)
+//{
+//	return _show_expr(std::cout, to_show);
+//}
 
 template<typename NumType>
 static inline auto _make_expr_hc_num(const NumType& s_data,
@@ -140,27 +140,35 @@ static inline Expression* _make_expr_binop(Expression* left_child,
 	return save_expr(ExprType(left_child, right_child));
 }
 
-
-
 void test_implemented_expressions(std::ostream& os)
 {
-	auto a_u = _make_expr_hc_num(1, 1, false);
-	auto b_u = _make_expr_hc_num(1, 1, false);
-	auto c_u = _make_expr_hc_num(5, 5, false);
-	auto d_u = _make_expr_binop<ExprBinOpPlus>(a_u, b_u);
-	auto e_u = _make_expr_binop<ExprBinOpPlus>(d_u, c_u);
+	//auto a = _make_expr_hc_num(1, 1, false);
+	//auto b = _make_expr_hc_num(1, 1, false);
+	//auto c = _make_expr_hc_num(5, 5, false);
+	//auto d = _make_expr_binop<ExprBinOpPlus>(a, b);
+	//auto e = _make_expr_binop<ExprBinOpPlus>(d, c);
 
-	auto a_s = _make_expr_hc_num(1, 1, true);
-	auto b_s = _make_expr_hc_num(1, 1, true);
-	auto c_s = _make_expr_hc_num(5, 5, true);
-	auto d_s = _make_expr_binop<ExprBinOpPlus>(a_s, b_s);
-	auto e_s = _make_expr_binop<ExprBinOpPlus>(d_s, c_s);
 
-	e_u->full_evaluate_if_constant();
-	e_s->full_evaluate_if_constant();
+	//e->full_evaluate_if_constant();
 
-	_show_expr(e_u);
-	_show_expr(e_s);
+	//_show_expr(os, e);
+
+	auto a = _make_expr_hc_num(-8, 5, true);
+	auto b = _make_expr_hc_num(1, 6, false);
+	auto c = _make_expr_hc_num(-8, 5, true);
+	auto d = _make_expr_hc_num(2, 9, false);
+	auto e = _make_expr_binop<ExprBinOpBitAsr>(a, b);
+	auto f = _make_expr_binop<ExprBinOpBitAsr>(c, d);
+
+	e->full_evaluate_if_constant();
+	f->full_evaluate_if_constant();
+
+	//_show_expr(os, a);
+	//_show_expr(os, b);
+	//_show_expr(os, c);
+	//_show_expr(os, d);
+	_show_expr(os, e);
+	_show_expr(os, f);
 }
 
 } // namespace frost_hdl

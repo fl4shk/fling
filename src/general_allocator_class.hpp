@@ -29,9 +29,7 @@ private:		// static variables
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
-	static SavedString dup_str(RawSavedString&& to_dup);
 	static ExprNumData dup_expr_num_data(const RawExprNumData& to_dup); 
-	static ExprNumData dup_expr_num_data(RawExprNumData&& to_dup); 
 
 	template<typename ExprType>
 	static inline Expression* save_expr(ExprType&& to_save)
@@ -49,17 +47,9 @@ inline SavedString dup_str(const RawSavedString& to_dup)
 {
 	return GeneralAllocator::dup_str(to_dup);
 }
-inline SavedString dup_str(RawSavedString&& to_dup)
-{
-	return GeneralAllocator::dup_str(std::move(to_dup));
-}
 inline ExprNumData dup_expr_num_data(const RawExprNumData& to_dup)
 {
 	return GeneralAllocator::dup_expr_num_data(to_dup);
-}
-inline ExprNumData dup_expr_num_data(RawExprNumData&& to_dup)
-{
-	return GeneralAllocator::dup_expr_num_data(std::move(to_dup));
 }
 
 template<typename ExprType>
