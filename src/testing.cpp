@@ -156,10 +156,14 @@ void test_implemented_expressions(std::ostream& os)
 	}
 
 	arr[0] = _make_expr_hc_num(-8, 5, true);
-	arr[1] = _make_expr_hc_num(20, 6, true);
-	arr[2] = _make_expr_binop<ExprBinOpCmpLt>(arr[0], arr[1]);
+	arr[1] = _make_expr_hc_num(-4, 6, true);
+	arr[2] = _make_expr_binop<ExprBinOpPlus>(arr[0], arr[1]);
 
-	arr[2]->full_evaluate_if_constant();
+	arr[3] = _make_expr_hc_num(20, 6, true);
+
+	arr[4] = _make_expr_binop<ExprBinOpCmpLt>(arr[2], arr[3]);
+
+	arr[4]->full_evaluate_if_constant();
 
 
 	for (auto iter : arr)
