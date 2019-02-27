@@ -13,7 +13,8 @@ Expression::Expression()
 	//	iter = nullptr;
 	//}
 
-	_ident = nullptr;
+	//_ident = nullptr;
+	_symbol = nullptr;
 	set_is_self_determined(false);
 
 }
@@ -244,7 +245,7 @@ void ExprBinOpBitAsr::_evaluate()
 	_value.perf_asr(_left_child_value(), _right_child_value());
 }
 
-ExprIdentConcat::ExprIdentConcat(ChildrenList&& s_children)
+ExprConcat::ExprConcat(ChildrenList&& s_children)
 {
 	_children = std::move(s_children);
 
@@ -252,13 +253,28 @@ ExprIdentConcat::ExprIdentConcat(ChildrenList&& s_children)
 	{
 		child->set_is_self_determined(true);
 	}
+
+	_value.set_size(_starting_length());
+	_value.set_is_signed(false);
 }
 
-void ExprIdentConcat::_evaluate()
+void ExprConcat::_evaluate()
 {
+	RawExprNumData n_value_data;
+	//n_value_data.reserve(_value.size());
+
+	for (auto child : _children)
+	{
+		for (size_t i=0; i<child->value().size(); ++i)
+		{
+			n_value_data.push_back(child->value().one_bit(i));
+		}
+	}
+
+	_value.set_data(std::move(n_value_data));
 }
 
-size_t ExprIdentConcat::_starting_length() const
+size_t ExprConcat::_starting_length() const
 {
 	size_t ret = 0;
 
@@ -269,5 +285,19 @@ size_t ExprIdentConcat::_starting_length() const
 
 	return ret;
 }
+
+//ExprIdentName::ExprIdentName(const std::string& s_ident,
+//	SymbolTable* s_symbol_table)
+//{
+//	_set_ident(s_ident);
+//	_symbol_table = s_symbol_table;
+//}
+//
+//void ExprIdentName::_evaluate()
+//{
+//}
+//size_t ExprIdentName::_starting_length() const
+//{
+//}
 
 } // namespace frost_hdl

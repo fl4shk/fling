@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 #include "expr_num_class.hpp"
 #include "general_allocator_class.hpp"
+#include "symbol_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -80,9 +81,12 @@ public:		// types
 protected:		// variables
 	ChildrenList _children;
 
-	Ident _ident;
-	ExprNum _value;
+	//Ident _ident;
+	//SymbolTable* _symbol_table;
+	Symbol* _symbol;
 	bool _is_self_determined;
+	ExprNum _value;
+
 
 public:		// functions
 	Expression();
@@ -118,11 +122,17 @@ public:		// functions
 		return (num_children() == 0);
 	}
 
+	//inline Symbol* symbol() const
+	//{
+	//	return _symbol_table->at(_ident);
+	//}
 
-	inline const auto& ident() const
-	{
-		return (*_ident);
-	}
+
+
+	//inline const auto& ident() const
+	//{
+	//	return (*_ident);
+	//}
 
 	inline void set_value(const ExprNum& n_value)
 	{
@@ -139,7 +149,7 @@ public:		// functions
 
 
 	// This doesn't *need* to be stored anywhere.
-	inline bool is_constant() const
+	virtual bool is_constant() const
 	{
 		//printout("Debug:  is_constant():  ", _has_only_constant_children(),
 		//	" ", _is_always_constant(), "\n");
@@ -159,6 +169,8 @@ public:		// functions
 
 	GEN_GETTER_AND_SETTER_BY_VAL(is_self_determined)
 
+	GEN_GETTER_AND_SETTER_BY_VAL(symbol)
+
 
 protected:		// functions
 	// Don't call "_evaluate()" until after the size of the expression has
@@ -175,10 +187,10 @@ protected:		// functions
 
 
 
-	inline void _set_ident(const std::string& n_ident)
-	{
-		_ident = dup_str(n_ident);
-	}
+	//inline void _set_ident(const std::string& n_ident)
+	//{
+	//	_ident = dup_str(n_ident);
+	//}
 
 	// Stuff for evaluating constant expressions.
 	void _full_evaluate(bool is_real_top);
@@ -869,10 +881,26 @@ protected:		// functions
 	}
 };
 
-class ExprIdentConcat : public Expression
+class ExprConcat : public Expression
 {
 public:		// functions
-	ExprIdentConcat(ChildrenList&& s_children);
+	ExprConcat(ChildrenList&& s_children);
+
+protected:		// functions
+	void _evaluate() final;
+	size_t _starting_length() const final;
+};
+
+class ExprIdentName : public Expression
+{
+public:		// functions
+	//ExprIdentName(const std::string& s_ident, SymbolTable* s_symbol_table);
+	ExprIdentName(Symbol* s_symbol);
+
+	bool is_constant() const final
+	{
+		return (Expression::is_constant() || symbol()->is_constant());
+	}
 
 protected:		// functions
 	void _evaluate() final;
