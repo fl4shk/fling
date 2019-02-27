@@ -115,17 +115,84 @@
 
 	\singlespacing
 
+	\section{Table of Contents}
 	\tableofcontents
 
 	\newpage
 
-
-	\section{Scope Types}
+	\section{Scope Types and Containable Ones, Too}
 	\begin{itemize}
-		\item
+		\item \texttt{module}
+		\begin{itemize}
+			\item \texttt{struct} / \texttt{class}
+			%\item \texttt{union}
+			\item \texttt{enum}
+			\item \texttt{function} / \texttt{task}
+			\item Behavioral code blocks
+			\begin{itemize}
+				\item \texttt{initial}
+				\item \texttt{always}
+				\item \texttt{always\_comb}
+				\item \texttt{always\_seq}
+				\item \texttt{generate}
+			\end{itemize}
+			\item \texttt{module} instantiations
+		\end{itemize}
+
+		\item \texttt{package}
+		\begin{itemize}
+			\item (Other) \texttt{package}
+			\item \texttt{struct} / \texttt{class}
+			%\item \texttt{union}
+			\item \texttt{enum}
+			\item \texttt{function} / \texttt{task}
+		\end{itemize}
+
+		\item \texttt{struct} / \texttt{class}
+		\begin{itemize}
+			\item (Other) \texttt{struct} / \texttt{class}
+			%\item \texttt{union}
+			\item \texttt{enum}
+			\item \texttt{function} / \texttt{task}
+		\end{itemize}
+
+		%\item \texttt{union}
+		\item \texttt{enum}
+
+		\item \texttt{function} / \texttt{task}
+
+		\item Behavioral code blocks
+		\begin{itemize}
+			\item \texttt{initial}
+			\item \texttt{always}
+			\item \texttt{always\_comb}
+			\item \texttt{always\_seq}
+			\item \texttt{generate}
+		\end{itemize}
 	\end{itemize}
 
+	\newpage
+	\doublespacing
 
+	\section{\texttt{module} Scopes Handling}
+
+	This is the primary type of scope, without which no Verilog code will
+	be generated.  The other types of scopes are intended to be used as
+	helpers for this type of scope.  These are analagous to Verilog
+	\texttt{module}s.
+
+	\texttt{parameter}ized \texttt{module}s are extremely useful, and will
+	be supported directly.  However, they may generate Verilog code for
+	non-\texttt{parameter}ized \texttt{module}s so that Frost HDL can use
+	its own semantics for them.
+
+	A \texttt{module} can only be placed at global scope, at least in the
+	initial version of the language.  Because \texttt{parameter}ized
+	\texttt{module}s are probably going to have their names mangled, it
+	will probably be easy to allow \texttt{module} definitions in scopes
+	other than global scope.  If \texttt{module} definitions are ever
+	allowed in non-global scopes, such scopes will probably have to be
+	either a \texttt{package} or another \texttt{module}.
 
 	%\printbibliography[heading=bibnumbered,title={Bibliography}]
 
