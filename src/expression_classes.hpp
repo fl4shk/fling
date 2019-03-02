@@ -861,6 +861,7 @@ protected:		// functions
 
 // "most derived" "Expression" classes that derive only from "Expression"
 
+// Hard-coded numbers (not named constants)
 class ExprHardCodedNum : public Expression
 {
 public:		// functions
@@ -893,6 +894,7 @@ protected:		// functions
 	}
 };
 
+// "$concat(...)"
 class ExprConcat : public Expression
 {
 public:		// functions

@@ -21,7 +21,8 @@ class Expression;
 // "HdlModule" or a composite type).
 //
 // An instantiation of a "parameter"ized construct will have a different
-// set of "Symbol"s for its "parameter"s than
+// set of "Symbol"s for its "parameter"s than the set of "Symbol"s used for
+// the construct's definition.
 class Symbol
 {
 protected:		// variables
@@ -31,7 +32,7 @@ protected:		// variables
 	bool _is_constant = false;
 
 	HdlType* _hdl_type = nullptr;
-	Expression* _starting_value_expr = nullptr;
+	Expression* _value_expr = nullptr;
 
 public:		// functions
 	Symbol() = default;
@@ -41,7 +42,7 @@ public:		// functions
 	{
 	}
 	Symbol(SavedString s_ident, bool s_is_constant, HdlType* s_hdl_type,
-		Expression* s_starting_value);
+		Expression* s_value);
 
 
 	// We really don't want copies of "Symbol"s.
@@ -56,9 +57,9 @@ public:		// functions
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
 	// Used to determine if a "parameter" has a default value.
-	inline bool has_starting_val() const
+	inline bool has_value() const
 	{
-		return (_starting_value_expr != nullptr);
+		return (_value_expr != nullptr);
 	}
 
 
@@ -67,7 +68,7 @@ public:		// functions
 	GEN_GETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(hdl_type)
 
-	GEN_GETTER_AND_SETTER_BY_VAL(starting_value_expr)
+	GEN_GETTER_AND_SETTER_BY_VAL(value_expr)
 };
 
 // "SymbolTable" isn't scoped because scoping information is stored in the

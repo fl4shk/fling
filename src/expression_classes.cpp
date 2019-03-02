@@ -343,14 +343,16 @@ bool ExprIdentName::is_constant() const
 
 void ExprIdentName::_evaluate()
 {
-	if (symbol()->is_constant())
-	{
-		_value = symbol()->starting_value_expr()->value();
-	}
-	else
-	{
-		_value.copy_from_bignum(BigNum(0));
-	}
+	//if (symbol()->is_constant())
+	//{
+	//	_value = symbol()->value_expr()->value();
+	//}
+	//else
+	//{
+	//	_value.copy_from_bignum(BigNum(0));
+	//}
+
+	_value = symbol()->value_expr()->value();
 }
 
 // This should only ever be called for non-composite identifiers....  
