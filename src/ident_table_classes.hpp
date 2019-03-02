@@ -41,11 +41,11 @@ public:		// functions
 
 	inline void insert_or_assign(const Type& to_insert_or_assign)
 	{
-		at(to_insert_or_assign.name()) = to_insert_or_assign;
+		at(to_insert_or_assign.ident()) = to_insert_or_assign;
 	}
 	inline void insert_or_assign(Type&& to_insert_or_assign)
 	{
-		at(to_insert_or_assign.name()) = std::move(to_insert_or_assign);
+		at(to_insert_or_assign.ident()) = std::move(to_insert_or_assign);
 	}
 
 	GEN_GETTER_BY_CON_REF(table);
@@ -82,7 +82,7 @@ public:		// functions
 
 	inline void insert_or_assign(Type* to_insert_or_assign)
 	{
-		at(to_insert_or_assign->name()) = to_insert_or_assign;
+		at(to_insert_or_assign->ident()) = to_insert_or_assign;
 	}
 
 	GEN_GETTER_BY_CON_REF(table);

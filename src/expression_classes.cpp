@@ -1,4 +1,6 @@
 #include "expression_classes.hpp"
+#include "symbol_table_class.hpp"
+#include "hdl_type_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -42,7 +44,7 @@ void Expression::inner_full_evaluate()
 
 void Expression::_evaluate()
 {
-	set_value(ExprNum(0, 1, false));
+	_set_value(ExprNum(0, 1, false));
 }
 
 bool Expression::_children_affect_length() const
@@ -325,12 +327,27 @@ void ExprTernary::_evaluate()
 //	_set_ident(s_ident);
 //	_symbol_table = s_symbol_table;
 //}
-//
-//void ExprIdentName::_evaluate()
-//{
-//}
-//size_t ExprIdentName::_starting_length() const
-//{
-//}
+ExprIdentName::ExprIdentName(Symbol* s_symbol)
+{
+	_symbol = s_symbol;
+}
+
+bool ExprIdentName::is_constant() const
+{
+	return (Expression::is_constant() || symbol()->is_constant());
+}
+
+void ExprIdentName::_evaluate()
+{
+}
+
+// This should only ever be called for non-composite identifiers
+size_t ExprIdentName::_starting_length() const
+{
+	//if (symbol()->hdl_type()->is_packed_composite())
+	//{
+	//}
+	return symbol()->hdl_type()->left_dim();
+}
 
 } // namespace frost_hdl

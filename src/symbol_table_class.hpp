@@ -20,6 +20,8 @@ class Expression;
 class Symbol
 {
 protected:		// variables
+	SavedString _ident = nullptr;
+
 	// Whether or not this symbol is a named constant.
 	bool _is_constant = false;
 
@@ -28,7 +30,13 @@ protected:		// variables
 
 public:		// functions
 	Symbol() = default;
-	Symbol(bool s_is_constant);
+	inline Symbol(SavedString s_ident, bool s_is_constant,
+		HdlType* s_hdl_type)
+		: Symbol(s_ident, s_is_constant, s_hdl_type, nullptr)
+	{
+	}
+	Symbol(SavedString s_ident, bool s_is_constant, HdlType* s_hdl_type,
+		Expression* s_starting_value);
 
 
 	// We really don't want copies of "Symbol"s.
@@ -44,10 +52,10 @@ public:		// functions
 
 
 
-	//GEN_GETTER_BY_VAL(ident)
+	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_constant)
+	GEN_GETTER_BY_VAL(hdl_type)
 
-	GEN_GETTER_AND_SETTER_BY_VAL(hdl_type)
 	GEN_GETTER_AND_SETTER_BY_VAL(starting_value)
 };
 

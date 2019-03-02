@@ -11,6 +11,8 @@
 namespace frost_hdl
 {
 class Expression;
+class Symbol;
+class HdlType;
 
 typedef std::string RawSavedString;
 typedef const RawSavedString* SavedString;
@@ -26,6 +28,8 @@ private:		// static variables
 	static std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 		_expr_num_data_pool;
 	static std::vector<std::unique_ptr<Expression>> _expr_pool;
+	static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
+	static std::vector<std::unique_ptr<HdlType>> _hdl_type_pool;
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
@@ -36,14 +40,42 @@ public:		// static functions
 	template<typename ExprType>
 	static inline Expression* save_expr(ExprType&& to_save)
 	{
-		auto& pool = _expr_pool;
+		return _inner_save_generic<Expression, ExprType>(_expr_pool,
+			std::move(to_save));
+	}
+	template<typename ActualSymbol>
+	static inline Symbol* save_symbol(ActualSymbol&& to_save)
+	{
+		return _inner_save_generic<Symbol, ActualSymbol>(_symbol_pool,
+			std::move(to_save));
+	}
+	template<typename ActualHdlType>
+	static inline HdlType* save_hdl_type(ActualHdlType&& to_save)
+	{
+		return _inner_save_generic<HdlType, ActualHdlType>(_hdl_type_pool,
+			std::move(to_save));
+	}
 
-		std::unique_ptr<Expression> to_insert;
-		to_insert.reset(new ExprType(std::move(to_save)));
+
+private:		// static functions
+	template<typename ToSaveBaseType, typename ToSaveType>
+	static inline ToSaveBaseType* _inner_save_generic
+		(std::vector<std::unique_ptr<ToSaveBaseType>>& pool,
+		ToSaveType&& to_save)
+	{
+		std::unique_ptr<ToSaveBaseType> to_insert;
+		to_insert.reset(new ToSaveType(std::move(to_save)));
 		pool.push_back(std::move(to_insert));
 		return pool.back().get();
 	}
+
 };
+
+//#include "expression_classes.hpp"
+//#include "hdl_type_table_class.hpp"
+//#include "symbol_table_class.hpp"
+
+
 
 inline SavedString dup_str(const RawSavedString& to_dup)
 {
@@ -66,6 +98,17 @@ template<typename ExprType>
 inline Expression* save_expr(ExprType&& to_save)
 {
 	return GeneralAllocator::save_expr(std::move(to_save));
+}
+
+template<typename ActualSymbol>
+inline Symbol* save_symbol(ActualSymbol&& to_save)
+{
+	return GeneralAllocator::save_symbol(std::move(to_save));
+}
+template<typename ActualHdlType>
+inline HdlType* save_hdl_type(ActualHdlType&& to_save)
+{
+	return GeneralAllocator::save_hdl_type(std::move(to_save));
 }
 
 } // namespace frost_hdl

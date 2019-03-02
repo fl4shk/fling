@@ -1,6 +1,8 @@
 #include "general_allocator_class.hpp"
 #include "expr_num_class.hpp"
 #include "expression_classes.hpp"
+#include "symbol_table_class.hpp"
+#include "hdl_type_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -10,6 +12,8 @@ std::map<RawSavedString, std::unique_ptr<const RawSavedString>>
 std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 	GeneralAllocator::_expr_num_data_pool;
 std::vector<std::unique_ptr<Expression>> GeneralAllocator::_expr_pool;
+std::vector<std::unique_ptr<Symbol>> GeneralAllocator::_symbol_pool;
+std::vector<std::unique_ptr<HdlType>> GeneralAllocator::_hdl_type_pool;
 
 
 SavedString GeneralAllocator::dup_str(const RawSavedString& to_dup)

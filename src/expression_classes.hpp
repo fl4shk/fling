@@ -5,8 +5,8 @@
 
 #include "misc_includes.hpp"
 #include "expr_num_class.hpp"
-#include "general_allocator_class.hpp"
-#include "symbol_table_class.hpp"
+//#include "general_allocator_class.hpp"
+//#include "symbol_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -17,6 +17,7 @@ namespace frost_hdl
 //}
 //
 //typedef BigNum* ExprNum;
+class Symbol;
 
 class Expression
 {
@@ -134,10 +135,6 @@ public:		// functions
 	//	return (*_ident);
 	//}
 
-	inline void set_value(const ExprNum& n_value)
-	{
-		_value = n_value;
-	}
 
 
 	//inline void set_value(const BigNum& n_value_data,
@@ -164,6 +161,15 @@ public:		// functions
 		}
 	}
 
+	//Symbol* symbol() const
+	//{
+	//	return _symbol;
+	//}
+	//Symbol* set_symbol(Symbol* n_symbol)
+	//{
+	//	_symbol = n_symbol;
+	//	return _symbol;
+	//}
 
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_CON_REF(value)
@@ -175,6 +181,11 @@ public:		// functions
 
 
 protected:		// functions
+	inline void _set_value(const ExprNum& n_value)
+	{
+		_value = n_value;
+	}
+
 	// Don't call "_evaluate()" until after the size of the expression has
 	// been determined and the children have been modified.
 	virtual void _evaluate();
@@ -480,7 +491,7 @@ public:		// functions
 protected:		// functions
 	void _evaluate() final
 	{
-		set_value(_only_child_value());
+		_set_value(_only_child_value());
 	}
 };
 // "$signed()
@@ -496,7 +507,7 @@ public:		// functions
 protected:		// functions
 	void _evaluate() final
 	{
-		set_value(_only_child_value());
+		_set_value(_only_child_value());
 	}
 };
 
@@ -855,7 +866,7 @@ class ExprHardCodedNum : public Expression
 public:		// functions
 	ExprHardCodedNum(const ExprNum& s_value)
 	{
-		set_value(s_value);
+		_set_value(s_value);
 	}
 
 
@@ -939,10 +950,12 @@ class ExprIdentName : public Expression
 public:		// functions
 	ExprIdentName(Symbol* s_symbol);
 
-	bool is_constant() const final
-	{
-		return (Expression::is_constant() || symbol()->is_constant());
-	}
+	//bool is_constant() const final
+	//{
+	//	return (Expression::is_constant() || symbol()->is_constant());
+	//}
+
+	bool is_constant() const final;
 
 protected:		// functions
 	void _evaluate() final;
