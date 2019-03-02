@@ -14,9 +14,9 @@ class Expression;
 class Symbol;
 class HdlFunction;
 
-// The type of a "Symbol"
-// How can I implement parameterized HDL types?  "parameter"s will likely
-// be stored as "Symbol"s.
+// The type of a "Symbol".
+// All types (*not* "HdlModule"s) are represented with this type, even
+// built-in types.
 class HdlType
 {
 public:		// types
@@ -28,6 +28,9 @@ public:		// types
 	typedef CompositeVars EnumVals;
 	typedef std::vector<HdlFunction*> CompositeFuncs;
 
+	// Stuff for custom types, not counting those that are arrays.
+	// If custom types that are arrays are supported, another data
+	// structure will be necessary within the compiler.
 	class ComponentData
 	{
 	private:		// variables

@@ -58,8 +58,7 @@ ExprNumData GeneralAllocator::dup_expr_num_data
 
 	return pool.at(to_dup).get();
 }
-ExprNumData GeneralAllocator::dup_expr_num_data
-	(RawExprNumData&& to_dup)
+ExprNumData GeneralAllocator::dup_expr_num_data(RawExprNumData&& to_dup)
 {
 	auto& pool = _expr_num_data_pool;
 

@@ -330,6 +330,10 @@ void ExprTernary::_evaluate()
 ExprIdentName::ExprIdentName(Symbol* s_symbol)
 {
 	_symbol = s_symbol;
+
+	//_value.set_size(symbol()->hdl_type()->left_dim());
+	_value.set_size(_starting_length());
+	_value.set_is_signed(symbol()->hdl_type()->is_signed());
 }
 
 bool ExprIdentName::is_constant() const
@@ -339,9 +343,19 @@ bool ExprIdentName::is_constant() const
 
 void ExprIdentName::_evaluate()
 {
+	if (symbol()->is_constant())
+	{
+		_value = symbol()->starting_value_expr()->value();
+	}
+	else
+	{
+		_value.copy_from_bignum(BigNum(0));
+	}
 }
 
-// This should only ever be called for non-composite identifiers
+// This should only ever be called for non-composite identifiers....  
+// However, if that part of the language design changes, only *PACKED*
+// composite identifiers should be allowed here.
 size_t ExprIdentName::_starting_length() const
 {
 	//if (symbol()->hdl_type()->is_packed_composite())

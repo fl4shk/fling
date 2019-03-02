@@ -16,7 +16,12 @@ namespace frost_hdl
 class HdlType;
 class Expression;
 
-// This class represents variables and named constants.
+// This class represents variables and named constants, including named
+// constants used as parameters to a parameterized... thing (such as an
+// "HdlModule" or a composite type).
+//
+// An instantiation of a "parameter"ized construct will have a different
+// set of "Symbol"s for its "parameter"s than
 class Symbol
 {
 protected:		// variables
@@ -26,7 +31,7 @@ protected:		// variables
 	bool _is_constant = false;
 
 	HdlType* _hdl_type = nullptr;
-	Expression* _starting_value = nullptr;
+	Expression* _starting_value_expr = nullptr;
 
 public:		// functions
 	Symbol() = default;
@@ -50,13 +55,19 @@ public:		// functions
 	inline Symbol& operator = (const Symbol& to_copy) = delete;
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
+	// Used to determine if a "parameter" has a default value.
+	inline bool has_starting_val() const
+	{
+		return (_starting_value_expr != nullptr);
+	}
+
 
 
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(hdl_type)
 
-	GEN_GETTER_AND_SETTER_BY_VAL(starting_value)
+	GEN_GETTER_AND_SETTER_BY_VAL(starting_value_expr)
 };
 
 // "SymbolTable" isn't scoped because scoping information is stored in the
