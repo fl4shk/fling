@@ -61,8 +61,6 @@ protected:		// functions
 			iter->_inner_get_all_children_tables(ret);
 		}
 	}
-	
-
 };
 
 // This is kind of like a stack
@@ -77,10 +75,10 @@ class ScopedTableBase
 public:		// typedefs and constants
 	// We want the largest signed integer type here (new change to old
 	// code for this, as before it was simply using the "int64_t" type.)
-	typedef std::make_signed<size_t>::type ScopeLevel;
+	typedef intmax_t ScopeLevel;
 
-	static constexpr ScopeLevel builtin_scope_level = 0;
-	static constexpr ScopeLevel not_found_level = builtin_scope_level - 1;
+	//static constexpr ScopeLevel builtin_scope_level = 0;
+	//static constexpr ScopeLevel not_found_level = builtin_scope_level - 1;
 
 	typedef ScopedTableNode<Type, ContainerType> Node;
 
@@ -193,7 +191,6 @@ public:		// functions
 	}
 
 
-	// I don't remember what this was for....
 	//inline Type* find_func_arg(Node* some_func_node, Ident some_name)
 	//{
 	//	//auto func_node = _ident_to_func_node_map.at(some_func_name);

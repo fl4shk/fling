@@ -20,9 +20,8 @@ private:		// variables
 	std::map<Ident, Type> _table;
 
 public:		// functions
-	inline IdentTable()
-	{
-	}
+	IdentTable() = default;
+	virtual ~IdentTable() = default;
 
 	// Type accessors
 	inline Type& at(Ident some_name)
@@ -62,9 +61,8 @@ private:		// variables
 	std::map<Ident, Type*> _table;
 
 public:		// functions
-	inline IdentToPointerTable()
-	{
-	}
+	IdentToPointerTable() = default;
+	virtual ~IdentToPointerTable() = default;
 
 	// Type accessors
 	inline auto& at(Ident some_name)

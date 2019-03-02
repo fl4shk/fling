@@ -6,24 +6,29 @@
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
 #include "scoped_table_base_class.hpp"
-#include "expr_num_class.hpp"
-#include "hdl_type_table_class.hpp"
+#include "ident_table_classes.hpp"
+//#include "expression_classes.hpp"
+//#include "hdl_type_table_class.hpp"
 
 namespace frost_hdl
 {
 
+class HdlType;
+class Expression;
+
+// This class represents variables and named constants.
 class Symbol
 {
 protected:		// variables
-	SavedString _ident = nullptr;
+	// Whether or not this symbol is a named constant.
+	bool _is_constant = false;
+
 	HdlType* _hdl_type = nullptr;
-	//Context* _context = nullptr;
-	ExprNum* _value = nullptr;
+	Expression* _starting_value = nullptr;
 
 public:		// functions
-	inline Symbol() = default;
-	Symbol(SavedString s_ident, HdlType* s_hdl_type);
-	Symbol(SavedString s_ident, HdlType* s_hdl_type, ExprNum* s_value);
+	Symbol() = default;
+	Symbol(bool s_is_constant);
 
 
 	// We really don't want copies of "Symbol"s.
@@ -37,23 +42,18 @@ public:		// functions
 	inline Symbol& operator = (const Symbol& to_copy) = delete;
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
-	inline const HdlType& hdl_type() const
-	{
-		return (*_hdl_type);
-	}
 
-	inline const ExprNum& value() const
-	{
-		return (*_value);
-	}
 
-	inline bool is_constant() const
-	{
-		return (_value == nullptr);
-	}
+	//GEN_GETTER_BY_VAL(ident)
+	GEN_GETTER_BY_VAL(is_constant)
+
+	GEN_GETTER_AND_SETTER_BY_VAL(hdl_type)
+	GEN_GETTER_AND_SETTER_BY_VAL(starting_value)
 };
 
-class SymbolTable : public ScopedTableBase<Symbol>
+// "SymbolTable" isn't scoped because scoping information is stored in the
+// "StatementTable" class.
+class SymbolTable : public IdentToPointerTable<Symbol>
 {
 public:		// functions
 	SymbolTable() = default;

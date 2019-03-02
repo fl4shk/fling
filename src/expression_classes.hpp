@@ -81,15 +81,14 @@ public:		// types
 protected:		// variables
 	ChildrenList _children;
 
-	//Ident _ident;
-	//SymbolTable* _symbol_table;
-	Symbol* _symbol;
-	bool _is_self_determined;
+	Symbol* _symbol = nullptr;
+	bool _is_self_determined = false;
+	bool _handles_children_eval = false;
 	ExprNum _value;
 
 
 public:		// functions
-	Expression();
+	Expression() = default;
 
 
 	// Don't want copies of raw Expression's
@@ -109,6 +108,7 @@ public:		// functions
 	Expression& operator = (Expression&& to_move) = default;
 
 
+	void inner_full_evaluate();
 
 
 
@@ -164,10 +164,12 @@ public:		// functions
 		}
 	}
 
+
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_CON_REF(value)
 
 	GEN_GETTER_AND_SETTER_BY_VAL(is_self_determined)
+	GEN_GETTER_AND_SETTER_BY_VAL(handles_children_eval)
 
 	GEN_GETTER_AND_SETTER_BY_VAL(symbol)
 
@@ -195,7 +197,6 @@ protected:		// functions
 	// Stuff for evaluating constant expressions.
 	void _full_evaluate(bool is_real_top);
 
-	void _inner_full_evaluate();
 	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
 
 	size_t _highest_desc_size_with_effect() const;
@@ -891,10 +892,51 @@ protected:		// functions
 	size_t _starting_length() const final;
 };
 
+class ExprTernary : public Expression
+{
+public:		// functions
+	ExprTernary(Expression* condition_child, Expression* when_true_child,
+		Expression* when_false_child);
+
+protected:		// functions
+	inline Expression* _condition_child() const
+	{
+		return _children.at(0);
+	}
+	inline Expression* _when_true_child() const
+	{
+		return _children.at(1);
+	}
+	inline Expression* _when_false_child() const
+	{
+		return _children.at(2);
+	}
+
+	inline const ExprNum& _condition_child_value() const
+	{
+		return _condition_child()->value();
+	}
+	inline const ExprNum& _when_true_child_value() const
+	{
+		return _when_true_child()->value();
+	}
+	inline const ExprNum& _when_false_child_value() const
+	{
+		return _when_false_child()->value();
+	}
+
+	void _evaluate() final;
+	size_t _starting_length() const final
+	{
+		return max_va(_when_true_child()->value().size(),
+			_when_false_child()->value().size());
+	}
+};
+
+// Non-sliced reference to an identifier of some sort.
 class ExprIdentName : public Expression
 {
 public:		// functions
-	//ExprIdentName(const std::string& s_ident, SymbolTable* s_symbol_table);
 	ExprIdentName(Symbol* s_symbol);
 
 	bool is_constant() const final

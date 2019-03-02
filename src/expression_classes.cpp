@@ -6,18 +6,19 @@ namespace frost_hdl
 //typedef Expression::OpStr OpStr;
 //typedef Expression::Type ExprType;
 
-Expression::Expression()
-{
-	//for (auto& iter : _children)
-	//{
-	//	iter = nullptr;
-	//}
-
-	//_ident = nullptr;
-	_symbol = nullptr;
-	set_is_self_determined(false);
-
-}
+//Expression::Expression()
+//{
+//	//for (auto& iter : _children)
+//	//{
+//	//	iter = nullptr;
+//	//}
+//
+//	//_ident = nullptr;
+//	set_symbol(nullptr);
+//	set_is_self_determined(false);
+//	set_handles_children_eval(false);
+//
+//}
 
 
 
@@ -25,6 +26,19 @@ Expression::Expression()
 //{
 //	return dup_str("INVALID_EXPRESSION");
 //}
+
+void Expression::inner_full_evaluate()
+{
+	if (!handles_children_eval())
+	{
+		for (auto iter : _children)
+		{
+			iter->inner_full_evaluate();
+			iter->_evaluate();
+		}
+	}
+	_evaluate();
+}
 
 void Expression::_evaluate()
 {
@@ -91,19 +105,10 @@ void Expression::_full_evaluate(bool is_real_top)
 
 	if (is_real_top)
 	{
-		_inner_full_evaluate();
+		inner_full_evaluate();
 	}
 }
 
-void Expression::_inner_full_evaluate()
-{
-	for (auto iter : _children)
-	{
-		iter->_inner_full_evaluate();
-		iter->_evaluate();
-	}
-	_evaluate();
-}
 
 // Get pseudo top-level node descendants, but only the ones in the first
 // "layer" of descendants, relative to this "Expression".
@@ -284,6 +289,34 @@ size_t ExprConcat::_starting_length() const
 	}
 
 	return ret;
+}
+
+ExprTernary::ExprTernary(Expression* condition_child,
+	Expression* when_true_child, Expression* when_false_child)
+{
+	_set_children(condition_child, when_true_child, when_false_child);
+	//_value.set_size(_starting_length());
+	//_value.set_is_signed(_when_true_child_value().is_signed()
+	//	&& _when_false_child_value().is_signed());
+	set_handles_children_eval(true);
+}
+
+void ExprTernary::_evaluate()
+{
+	_condition_child()->inner_full_evaluate();
+
+	if (static_cast<BigNum>(_condition_child_value()))
+	{
+		_when_true_child()->inner_full_evaluate();
+		//_value.copy_from_bignum(static_cast<BigNum>
+		//	(_when_true_child_value()));
+		_value = _when_true_child_value();
+	}
+	else // if (!static_cast<BigNum>(_condition_child_value()))
+	{
+		_when_false_child()->inner_full_evaluate();
+		_value = _when_false_child_value();
+	}
 }
 
 //ExprIdentName::ExprIdentName(const std::string& s_ident,

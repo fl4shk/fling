@@ -174,7 +174,22 @@
 	\newpage
 	\doublespacing
 
-	\section{\texttt{module} Scopes Handling}
+	\section{Overall Handling of Scopes}
+	First, it is worthwhile to mention that all source files provided to
+	the compiler will be treated as if they had been concatenated together
+	into one big string.  This will work in part because the compiler will
+	use multiple passes to find all scopes.  As such, there is no per-file
+	scoping; the global scope in one source file is part of the same global
+	scope as any other source file.
+
+	Each scope is of a certain type, such as \texttt{module},
+	\texttt{struct}, or \texttt{package}.  Each type scope has different
+	contexts in which it can appear, and there is some support for nested
+	scoping.
+
+	\section{Types of Scopes}
+
+	\subsection{\texttt{module}s}
 
 	This is the primary type of scope, without which no Verilog code will
 	be generated.  The other types of scopes are intended to be used as
@@ -193,6 +208,12 @@
 	other than global scope.  If \texttt{module} definitions are ever
 	allowed in non-global scopes, such scopes will probably have to be
 	either a \texttt{package} or another \texttt{module}.
+
+	\subsection{\texttt{enum}s}
+
+	These are very similar to C++'s \texttt{enum class} construct, perhaps
+	without strongly.
+
 
 	%\printbibliography[heading=bibnumbered,title={Bibliography}]
 

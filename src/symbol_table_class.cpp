@@ -4,17 +4,10 @@ namespace frost_hdl
 {
 
 
-Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type)
-{
-	_ident = s_ident;
-	_value = nullptr;
-}
 
-Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type, ExprNum* s_value)
+Symbol::Symbol(bool s_is_constant)
 {
-	_ident = s_ident;
-	_hdl_type = s_hdl_type;
-	_value = s_value;
+	_is_constant = s_is_constant;
 }
 
 
