@@ -19,7 +19,7 @@ class Expression;
 
 // This class represents variables and named constants, including named
 // constants used as parameters to a parameterized... thing (such as an
-// "HdlModule" or a composite type).
+// "HdlDeclModule" or a composite type).
 //
 // An instantiation of a "parameter"ized construct will have a different
 // set of "Symbol"s for its "parameter"s than the set of "Symbol"s used for

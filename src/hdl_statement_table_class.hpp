@@ -11,7 +11,7 @@
 namespace frost_hdl
 {
 
-// Base class for a statement (primarily for the insides of an "HdlModule",
+// Base class for a statement (primarily for the insides of an "HdlDeclModule",
 // but also intended for use inside of an "HdlFunction")
 class HdlStatement
 {
@@ -30,6 +30,13 @@ public:		// functions
 
 	inline HdlStatement& operator = (const HdlStatement& to_copy) = delete;
 	inline HdlStatement& operator = (HdlStatement&& to_move) = default;
+
+
+	// Only some classes derived from "HdlStatement" need for this to
+	// sometimes return a message other than "nullptr".
+	// The returned message will be used as (part of?) an error message if
+	// it is not a "nullptr".
+	virtual SavedString is_valid() const;
 };
 
 class HdlStatementTable : public ScopedUnnamedTable<HdlStatement>
