@@ -7,7 +7,6 @@
 #include "scoped_table_base_class.hpp"
 #include "symbol_table_class.hpp"
 #include "hdl_type_table_class.hpp"
-#include "parameter_vars_type.hpp"
 
 namespace frost_hdl
 {
@@ -22,6 +21,13 @@ namespace frost_hdl
 class HdlScope
 {
 public:		// types
+	enum class Category
+	{
+		Module,
+		Composite,
+		Enum,
+		Package,
+	};
 
 private:		// variables
 	// One single "SymbolTable" per scope
@@ -30,10 +36,11 @@ private:		// variables
 	// One single "HdlTypeTable" per scope
 	HdlTypeTable _hdl_type_table;
 
-	// Relevant for "HdlModule", "HdlStruct", "HdlClass", etc.  
-	// Might not be relevant for "HdlPackage", but that may change.
-	ParameterVars _parameter_vars;
+	// Relevant for "HdlModule", "HdlStruct", and "HdlClass".
+	// Might eventually be relevant for "HdlPackage", but that may change.
+	OrderedIdentToPointerTable<Symbol> _parameter_vars;
 
+	// Relevant for "HdlStruct" and "HdlClass".
 	HdlType* _hdl_type = nullptr;
 
 public:		// functions
@@ -58,6 +65,8 @@ public:		// functions
 
 	GEN_GETTER_BY_REF(parameter_vars)
 	GEN_GETTER_BY_CON_REF(parameter_vars)
+
+	GEN_GETTER_AND_SETTER_BY_VAL(hdl_type)
 
 };
 

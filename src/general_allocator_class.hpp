@@ -13,6 +13,7 @@ namespace frost_hdl
 class Expression;
 class Symbol;
 class HdlType;
+//class HdlScope;
 
 typedef std::string RawSavedString;
 typedef const RawSavedString* SavedString;
@@ -30,6 +31,7 @@ private:		// static variables
 	static std::vector<std::unique_ptr<Expression>> _expr_pool;
 	static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
 	static std::vector<std::unique_ptr<HdlType>> _hdl_type_pool;
+	//static std::vector<std::unique_ptr<HdlScope>> _hdl_scope_pool;
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
@@ -55,6 +57,12 @@ public:		// static functions
 		return _inner_save_generic<HdlType, ActualHdlType>(_hdl_type_pool,
 			std::move(to_save));
 	}
+	//template<typename ActualHdlScope>
+	//static inline HdlScope* save_hdl_scope(ActualHdlScope&& to_save)
+	//{
+	//	return _inner_save_generic<HdlScope, ActualHdlScope>
+	//		(_hdl_scope_pool, std::move(to_save));
+	//}
 
 
 private:		// static functions
@@ -110,6 +118,11 @@ inline HdlType* save_hdl_type(ActualHdlType&& to_save)
 {
 	return GeneralAllocator::save_hdl_type(std::move(to_save));
 }
+//template<typename ActualHdlScope>
+//inline HdlScope* save_hdl_scope(ActualHdlScope&& to_save)
+//{
+//	return GeneralAllocator::save_hdl_scope(std::move(to_save));
+//}
 
 } // namespace frost_hdl
 

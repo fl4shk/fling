@@ -10,7 +10,6 @@
 //#include "expression_classes.hpp"
 //#include "hdl_type_table_class.hpp"
 
-#include "parameter_vars_type.hpp"
 
 namespace frost_hdl
 {
@@ -30,7 +29,7 @@ class Symbol
 public:		// types
 	typedef std::vector<Expression*> ValueExprs;
 
-	//typedef std::vector<Symbol*> ParameterVars;
+	//typedef std::vector<Symbol*> OrderedIdentToPointerTable<Symbol>;
 
 private:		// variables
 	SavedString _ident = nullptr;
@@ -38,6 +37,9 @@ private:		// variables
 	// Whether or not this symbol is a named constant.
 	bool _is_constant = false;
 
+	// If this "Symbol"'s declaration has not yet been seen, then
+	// "_hdl_type" will be set to "nullptr".  Use "actually_exists()" to
+	// get this information.
 	HdlType* _hdl_type = nullptr;
 
 	// For arrays, this *must* be set an Expression that evaluates to the
@@ -51,7 +53,8 @@ private:		// variables
 	// default value.
 	ValueExprs _value_exprs;
 
-	ParameterVars _parameter_vars;
+	// Actual parameter values for this "Symbol"'s "HdlType"
+	OrderedIdentToPointerTable<Symbol> _parameter_vars;
 
 public:		// functions
 	Symbol() = default;

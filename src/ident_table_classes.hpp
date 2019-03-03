@@ -90,6 +90,57 @@ public:		// functions
 	GEN_GETTER_BY_REF(table);
 };
 
+template<typename Type>
+class OrderedIdentToPointerTable : public std::vector<Type*>
+{
+public:		// types
+	typedef std::vector<Type*> Base;
+
+public:		// functions
+	OrderedIdentToPointerTable() = default;
+
+	inline OrderedIdentToPointerTable
+		(const OrderedIdentToPointerTable& to_copy) = delete;
+	inline OrderedIdentToPointerTable
+		(OrderedIdentToPointerTable&& to_move) = default;
+
+	virtual ~OrderedIdentToPointerTable() = default;
+
+	inline OrderedIdentToPointerTable& operator =
+		(const OrderedIdentToPointerTable& to_copy) = delete;
+	inline OrderedIdentToPointerTable& operator =
+		(OrderedIdentToPointerTable&& to_move) = default;
+
+	Type* find(SavedString some_name) const
+	{
+		for (size_t i=0; i<Base::size(); ++i)
+		{
+			if (Base::at(i).ident() == some_name)
+			{
+				return Base::at(i);
+			}
+		}
+
+		return nullptr;
+	}
+
+	inline bool contains(SavedString some_name) const
+	{
+		return (find(some_name) != nullptr);
+	}
+
+	bool attempt_push_back(Type* to_push)
+	{
+		if (!contains(to_push->ident()))
+		{
+			push_back(to_push);
+			return true;
+		}
+
+		return false;
+	}
+};
+
 } // namespace frost_hdl
 
 #endif		// src_ident_table_classes_hpp
