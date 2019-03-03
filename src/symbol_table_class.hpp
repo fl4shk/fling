@@ -8,7 +8,7 @@
 #include "ident_table_classes.hpp"
 //#include "expression_classes.hpp"
 //#include "hdl_type_table_class.hpp"
-#include "parameter_vars_type.hpp"
+#include "misc_types.hpp"
 
 
 namespace frost_hdl

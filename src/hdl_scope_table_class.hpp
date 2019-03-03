@@ -163,7 +163,8 @@ public:		// functions
 };
 
 // It's probably a good idea to allow one "HdlPackage" inside of another
-// "HdlPackage".  This is fascilitated via the "HdlScopeTable"
+// "HdlPackage".  This is fascilitated via the "HdlScopeTable" class rather
+// than being part of this one.
 class HdlPackage : public HdlScope
 {
 private:		// variables

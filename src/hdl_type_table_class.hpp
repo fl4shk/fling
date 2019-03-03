@@ -6,7 +6,7 @@
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
-#include "parameter_vars_type.hpp"
+#include "misc_types.hpp"
 
 namespace frost_hdl
 {

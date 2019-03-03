@@ -5,6 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "ident_table_classes.hpp"
+#include "misc_types.hpp"
 
 namespace frost_hdl
 {
@@ -287,22 +288,6 @@ public:		// functions
 	}
 };
 
-template<typename Type>
-class PointerVector : public std::vector<Type*>
-{
-public:		// functions
-	inline PointerVector() = default;
-
-	inline PointerVector(const PointerVector& to_copy) = default;
-	inline PointerVector(PointerVector&& to_move) = default;
-
-	virtual ~PointerVector() = default;
-
-	inline PointerVector& operator = (const PointerVector& to_copy)
-		= default;
-	inline PointerVector& operator = (PointerVector&& to_move)
-		= default;
-};
 
 // Primarily intended for use with "HdlStatementTable".
 template<typename Type, template<class> typename ContainerType=std::vector>
