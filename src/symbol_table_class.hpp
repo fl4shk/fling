@@ -27,7 +27,7 @@ class Symbol
 {
 public:		// types
 	typedef Expression* Dimension;
-	typedef Expression* OneValueExpr;
+	typedef Dimension OneValueExpr;
 	typedef std::vector<OneValueExpr> ValueExprs;
 
 protected:		// variables
@@ -57,8 +57,7 @@ public:		// functions
 
 	// Constant scalar constructor, or non-constant array constructor
 	Symbol(SavedString s_ident, HdlType* s_hdl_type,
-		bool s_is_array, Expression* two_uses);
-
+		bool s_is_array, Expression* scalar_val_or_arr_size);
 
 	// Constant array constructor
 	Symbol(SavedString s_ident, HdlType* s_hdl_type,

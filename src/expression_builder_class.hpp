@@ -24,6 +24,7 @@ public:		// static functions
 	{
 		static_assert(std::is_integral<NumType>(),
 			"NumType must be an integral type.");
+
 		if constexpr (std::is_integral<NumType>())
 		{
 			if constexpr (std::is_same<NumType, bool>())

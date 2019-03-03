@@ -6,22 +6,6 @@
 namespace frost_hdl
 {
 
-//Symbol::Symbol(SavedString s_ident, bool s_is_constant,
-//	HdlType* s_hdl_type, Dimension s_right_dim_expr)
-//{
-//}
-//
-//Symbol::Symbol(SavedString s_ident, bool s_is_constant,
-//	HdlType* s_hdl_type, ValueExprs&& s_value_exprs)
-//{
-//	_ident = s_ident;
-//	_is_constant = s_is_constant;
-//	_hdl_type = s_hdl_type;
-//	_value_exprs = std::move(s_value_expr);
-//	_right_dim_expr = ExpressionBuilder::make_expr_hc_num
-//		(_value_exprs.size(), (sizeof(_value_exprs.size()) * sizeof(u8)),
-//		false);
-//}
 
 // Scalar constructors
 // Non-constant scalar constructor
@@ -35,7 +19,7 @@ Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type)
 
 // Constant scalar constructor, or non-constant array constructor
 Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type,
-	bool s_is_array, Expression* two_uses)
+	bool s_is_array, Expression* scalar_val_or_arr_size)
 {
 	if (!s_is_array)
 	{
@@ -43,14 +27,14 @@ Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type,
 		_hdl_type = s_hdl_type;
 		_is_constant = true;
 		_right_dim_expr = nullptr;
-		_value_exprs.push_back(two_uses);
+		_value_exprs.push_back(scalar_val_or_arr_size);
 	}
 	else // if (s_is_array)
 	{
 		_ident = s_ident;
 		_is_constant = false;
 		_hdl_type = s_hdl_type;
-		_right_dim_expr = two_uses;
+		_right_dim_expr = scalar_val_or_arr_size;
 	}
 }
 
@@ -68,6 +52,11 @@ Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type,
 
 bool Symbol::has_default_value() const
 {
+	if (_value_exprs.size() == 0)
+	{
+		return false;
+	}
+
 	for (const auto& iter : _value_exprs)
 	{
 		if (iter == nullptr)
@@ -75,6 +64,7 @@ bool Symbol::has_default_value() const
 			return false;
 		}
 	}
+
 	return true;
 }
 
