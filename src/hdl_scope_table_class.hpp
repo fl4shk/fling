@@ -23,9 +23,19 @@ class HdlScope
 public:		// types
 	enum class Category
 	{
+		// Nonexistent... don't use this!
+		Bad,
+
+		// "HdlModule"
 		Module,
+
+		// "HdlStruct", "HdlClass"
 		Composite,
+
+		// "HdlEnum"
 		Enum,
+
+		// "HdlPackage"
 		Package,
 	};
 
@@ -40,7 +50,7 @@ private:		// variables
 	// Might eventually be relevant for "HdlPackage", but that may change.
 	OrderedIdentToPointerTable<Symbol> _parameter_vars;
 
-	// Relevant for "HdlStruct" and "HdlClass".
+	// Relevant for "HdlStruct", "HdlClass", and "HdlEnum".
 	HdlType* _hdl_type = nullptr;
 
 public:		// functions
@@ -55,6 +65,8 @@ public:		// functions
 	// We don't want copies of "HdlScope"
 	inline HdlScope& operator = (const HdlScope& to_copy) = default;
 	inline HdlScope& operator = (HdlScope&& to_move) = default;
+
+	virtual auto category() const -> Category;
 
 
 	GEN_GETTER_BY_REF(symbol_table)

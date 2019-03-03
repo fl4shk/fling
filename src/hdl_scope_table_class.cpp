@@ -3,6 +3,10 @@
 namespace frost_hdl
 {
 
+auto HdlScope::category() const -> Category
+{
+	return Category::Bad;
+}
 
 
 } // namespace frost_hdl
