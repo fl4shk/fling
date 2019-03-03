@@ -31,8 +31,10 @@ public:		// types
 	typedef OrderedIdentToPointerTable<HdlFunction> CompositeFuncs;
 
 	// Stuff for custom types, not counting those that are arrays.
-	// If custom types that are arrays are supported, another data
-	// structure will be necessary within the compiler.
+	// If custom types that are arrays are supported (most likely via some
+	// "HdlTypedef" functionality), another data structure will be
+	// necessary within the compiler, and it will be outside the realm of
+	// "HdlType".
 	class ComponentData
 	{
 	private:		// variables

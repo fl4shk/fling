@@ -37,29 +37,29 @@ public:		// functions
 		children.push_back(to_append);
 	}
 
-	////[[gnu::noinline]]
-	//ContainerType<std::map<Ident, Type*>*>
-	//	get_all_children_tables() const
-	//{
-	//	ContainerType<std::map<Ident, Type*>*> ret;
-
-	//	_inner_get_all_children_tables(ret);
-
-	//	return ret;
-	//}
-
-protected:		// functions
-	////[[gnu::noinline]]
-	//void _inner_get_all_children_tables
-	//	(ContainerType<std::map<Ident, Type*>*>& ret) const
-	//{
-	//	// Find all the tables
-	//	for (auto iter : children)
-	//	{
-	//		ret.push_back(&(iter->table.table()));
-	//		iter->_inner_get_all_children_tables(ret);
-	//	}
-	//}
+//	//[[gnu::noinline]]
+//	ContainerType<std::map<Ident, Type*>*>
+//		get_all_children_tables() const
+//	{
+//		ContainerType<std::map<Ident, Type*>*> ret;
+//
+//		_inner_get_all_children_tables(ret);
+//
+//		return ret;
+//	}
+//
+//protected:		// functions
+//	//[[gnu::noinline]]
+//	void _inner_get_all_children_tables
+//		(ContainerType<std::map<Ident, Type*>*>& ret) const
+//	{
+//		// Find all the tables
+//		for (auto iter : children)
+//		{
+//			ret.push_back(&(iter->table.table()));
+//			iter->_inner_get_all_children_tables(ret);
+//		}
+//	}
 };
 
 
@@ -158,10 +158,10 @@ public:		// functions
 };
 
 
-// Primarily intended for "HdlScope"s.
+// Primarily intended for use with "HdlScopeTable".
 template<typename Type, template<class> typename ContainerType=std::vector>
-class ScopedIdentTable : public ScopedTableBase<Type, IdentToPointerTable,
-	ContainerType>
+class ScopedIdentTable
+	: public ScopedTableBase<Type, IdentToPointerTable, ContainerType>
 {
 public:		// types
 	typedef ScopedTableBase<Type, IdentToPointerTable, ContainerType>
@@ -304,10 +304,10 @@ public:		// functions
 		= default;
 };
 
-// Primarily intended for "Statement"s.
+// Primarily intended for use with "HdlStatementTable".
 template<typename Type, template<class> typename ContainerType=std::vector>
-class ScopedUnnamedTable : public ScopedTableBase<Type, PointerVector,
-	ContainerType>
+class ScopedUnnamedTable
+	: public ScopedTableBase<Type, PointerVector, ContainerType>
 {
 public:		// types
 	typedef ScopedTableBase<Type, PointerVector, ContainerType> Base;

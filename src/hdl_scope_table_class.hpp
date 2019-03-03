@@ -4,7 +4,7 @@
 // src/hdl_scope_table_class.hpp
 
 #include "misc_includes.hpp"
-#include "statement_table_class.hpp"
+#include "hdl_statement_table_class.hpp"
 #include "hdl_function_table_class.hpp"
 
 namespace frost_hdl
@@ -50,7 +50,7 @@ private:		// variables
 	OrderedIdentToPointerTable<Symbol> _parameter_vars;
 
 	// Relevant for "HdlModule"
-	StatementTable _statement_table;
+	HdlStatementTable _statement_table;
 
 
 	// Relevant for "HdlStruct", "HdlClass", and "HdlEnum".
