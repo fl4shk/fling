@@ -66,7 +66,7 @@ public:		// functions
 	inline HdlScope& operator = (const HdlScope& to_copy) = default;
 	inline HdlScope& operator = (HdlScope&& to_move) = default;
 
-	virtual auto category() const -> Category;
+	virtual Category category() const;
 
 
 	GEN_GETTER_BY_REF(symbol_table)
