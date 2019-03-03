@@ -103,10 +103,10 @@ public:		// functions
 	inline HdlModule& operator = (const HdlModule& to_copy) = delete;
 	inline HdlModule& operator = (HdlModule&& to_move) = default;
 
-	//virtual GEN_GETTER_AS_POINTER(symbol_table)
-	//virtual GEN_GETTER_AS_POINTER(hdl_type_table)
-	//virtual GEN_GETTER_AS_POINTER(hdl_function_table)
-	//virtual GEN_GETTER_AS_POINTER(parameter_vars)
+	virtual GEN_GETTER_AS_POINTER(symbol_table)
+	virtual GEN_GETTER_AS_POINTER(hdl_type_table)
+	virtual GEN_GETTER_AS_POINTER(hdl_function_table)
+	virtual GEN_GETTER_AS_POINTER(parameter_vars)
 
 	//virtual SymbolTable* symbol_table() const
 	//{
