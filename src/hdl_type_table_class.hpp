@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
+#include "parameter_vars_type.hpp"
 
 namespace frost_hdl
 {
@@ -23,7 +24,7 @@ public:		// types
 	typedef Expression* DimensionExpr;
 
 
-	typedef std::vector<Symbol*> ParameterVars;
+	//typedef std::vector<Symbol*> ParameterVars;
 	typedef std::vector<Symbol*> CompositeVars;
 	typedef CompositeVars EnumVals;
 	typedef std::vector<HdlFunction*> CompositeFuncs;
@@ -95,7 +96,7 @@ public:		// types
 	};
 
 
-protected:		// variables
+private:		// variables
 	SavedString _ident = nullptr;
 
 	bool _is_signed = false;
@@ -178,7 +179,7 @@ public:		// functions
 
 
 // "HdlTypeTable" isn't scoped because scoping information is stored
-// in the "StatementTable" class.
+// in the "HdlScopeTable" class.
 class HdlTypeTable : public IdentToPointerTable<HdlType>
 {
 public:		// functions

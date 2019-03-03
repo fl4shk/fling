@@ -6,8 +6,16 @@
 namespace frost_hdl
 {
 
+// Unknown type symbol where all we have is its name, due to it being
+// used earlier than it was defined (needs stuff filled in later!)
+Symbol::Symbol(SavedString s_ident)
+{
+	_ident = s_ident;
+	_hdl_type = nullptr;
+	_is_constant = false;
+	_right_dim_expr = nullptr;
+}
 
-// Scalar constructors
 // Non-constant scalar constructor
 Symbol::Symbol(SavedString s_ident, HdlType* s_hdl_type)
 {

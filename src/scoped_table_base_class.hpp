@@ -111,6 +111,9 @@ public:		// functions
 		auto some_curr_node = &_tree;
 		mkscope(some_curr_node);
 	}
+
+	// This destructor may never be called before the compiler stops
+	// running.
 	virtual ~ScopedTableBase()
 	{
 		for (size_t i=0; i<_node_pool.size(); ++i)
@@ -129,7 +132,7 @@ public:		// functions
 	{
 		++_scope_num;
 
-		if (scope_num() < 0)
+		if (scope_num() < static_cast<ScopeLevel>(0))
 		{
 			printerr("ScopedTableBase::mkscope():  ",
 				"Far, FAR too many scopes!\n");

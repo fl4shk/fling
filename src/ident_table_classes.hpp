@@ -4,6 +4,7 @@
 // src/ident_table_classes.hpp
 
 #include "misc_includes.hpp"
+#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {

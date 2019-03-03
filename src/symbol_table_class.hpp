@@ -10,6 +10,8 @@
 //#include "expression_classes.hpp"
 //#include "hdl_type_table_class.hpp"
 
+#include "parameter_vars_type.hpp"
+
 namespace frost_hdl
 {
 
@@ -28,9 +30,9 @@ class Symbol
 public:		// types
 	typedef std::vector<Expression*> ValueExprs;
 
-	typedef std::vector<Symbol*> ParameterVars;
+	//typedef std::vector<Symbol*> ParameterVars;
 
-protected:		// variables
+private:		// variables
 	SavedString _ident = nullptr;
 
 	// Whether or not this symbol is a named constant.
@@ -54,14 +56,27 @@ protected:		// variables
 public:		// functions
 	Symbol() = default;
 
-	// Non-constant scalar constructor
+	// Unknown type symbol where all we have is its name, due to it being
+	// used earlier than it was defined (needs stuff filled in later!)
+	Symbol(SavedString s_ident);
+
+	// Non-constant scalar constructors
+	inline Symbol(HdlType* s_hdl_type)
+		: Symbol(_ident, s_hdl_type)
+	{
+	}
 	Symbol(SavedString s_ident, HdlType* s_hdl_type);
 
-	// Constant scalar constructor, or non-constant array constructor
+	// Constant scalar constructors, or non-constant array constructors
+	inline Symbol(HdlType* s_hdl_type, bool s_is_array,
+		Expression* scalar_val_or_arr_size)
+		: Symbol(_ident, s_hdl_type, s_is_array, scalar_val_or_arr_size)
+	{
+	}
 	Symbol(SavedString s_ident, HdlType* s_hdl_type,
 		bool s_is_array, Expression* scalar_val_or_arr_size);
 
-	// Constant array constructor
+	// Constant array constructors
 	Symbol(SavedString s_ident, HdlType* s_hdl_type,
 		ValueExprs&& s_value_exprs);
 
@@ -85,6 +100,12 @@ public:		// functions
 		return (_right_dim_expr != nullptr);
 	}
 
+	// Defined symbols *always* have a type.
+	inline bool actually_exists() const
+	{
+		return (_hdl_type != nullptr);
+	}
+
 
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_constant)
@@ -100,7 +121,7 @@ public:		// functions
 };
 
 // "SymbolTable" isn't scoped because scoping information is stored in the
-// "StatementTable" class.
+// "HdlScopeTable" class.
 class SymbolTable : public IdentToPointerTable<Symbol>
 {
 public:		// functions
