@@ -19,22 +19,6 @@ namespace frost_hdl
 // "HdlStruct", "HdlClass", "HdlPackage", "HdlForLoop", etc.
 class HdlScope
 {
-public:		// types
-	//enum class Category
-	//{
-	//	// Nonexistent... don't use this!
-	//	Bad,
-
-	//	// "HdlModule"
-	//	Module,
-
-	//	// "HdlStruct", "HdlClass", "HdlEnum"
-	//	CustomType,
-
-	//	// "HdlPackage"
-	//	Package,
-	//};
-
 public:		// functions
 	HdlScope() = default;
 
@@ -73,31 +57,12 @@ public:		// functions
 	// Relevant for "HdlStruct", "HdlClass", and "HdlEnum".
 	virtual HdlType* hdl_type() const;
 
-	inline bool has_symbol_table() const
-	{
-		return (symbol_table() != nullptr);
-	}
-	inline bool has_hdl_type_table() const
-	{
-		return (hdl_type_table() != nullptr);
-	}
-	inline bool has_hdl_function_table() const
-	{
-		return (hdl_function_table() != nullptr);
-	}
-	inline bool has_parameter_vars() const
-	{
-		return (parameter_vars() != nullptr);
-	}
-	inline bool has_statement_table() const
-	{
-		return (statement_table() != nullptr);
-	}
-	inline bool has_hdl_type() const
-	{
-		return (hdl_type() != nullptr);
-	}
-
+	bool has_symbol_table() const;
+	bool has_hdl_type_table() const;
+	bool has_hdl_function_table() const;
+	bool has_parameter_vars() const;
+	bool has_statement_table() const;
+	bool has_hdl_type() const;
 };
 
 class HdlModule : public HdlScope
@@ -196,6 +161,9 @@ public:		// functions
 	virtual GEN_GETTER_AS_POINTER(hdl_type)
 
 };
+
+// It's probably a good idea to allow one "HdlPackage" inside of another
+// "HdlPackage".  This is fascilitated via the "HdlScopeTable"
 class HdlPackage : public HdlScope
 {
 private:		// variables

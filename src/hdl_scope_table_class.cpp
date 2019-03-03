@@ -28,6 +28,31 @@ HdlType* HdlScope::hdl_type() const
 	return nullptr;
 }
 
+bool HdlScope::has_symbol_table() const
+{
+	return (symbol_table() != nullptr);
+}
+bool HdlScope::has_hdl_type_table() const
+{
+	return (hdl_type_table() != nullptr);
+}
+bool HdlScope::has_hdl_function_table() const
+{
+	return (hdl_function_table() != nullptr);
+}
+bool HdlScope::has_parameter_vars() const
+{
+	return (parameter_vars() != nullptr);
+}
+bool HdlScope::has_statement_table() const
+{
+	return (statement_table() != nullptr);
+}
+bool HdlScope::has_hdl_type() const
+{
+	return (hdl_type() != nullptr);
+}
+
 // Force the constructors of the private variables to be inlined here.
 HdlModule::HdlModule()
 {
