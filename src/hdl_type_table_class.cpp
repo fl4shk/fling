@@ -31,7 +31,7 @@ HdlType::HdlType(SavedString s_ident, bool s_is_signed)
 	_left_dim_expr = nullptr;
 }
 HdlType::HdlType(SavedString s_ident, bool s_is_signed,
-	Dimension s_left_dim_expr)
+	DimensionExpr s_left_dim_expr)
 {
 	_ident = s_ident;
 	_is_signed = s_is_signed;

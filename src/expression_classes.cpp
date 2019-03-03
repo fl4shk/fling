@@ -352,7 +352,7 @@ void ExprIdentName::_evaluate()
 	//	_value.copy_from_bignum(BigNum(0));
 	//}
 
-	_value = symbol()->value_expr()->value();
+	_value = symbol()->value_exprs().front()->value();
 }
 
 // This should only ever be called for non-composite identifiers....  

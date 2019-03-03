@@ -13,11 +13,33 @@ class ExpressionBuilder
 {
 public:		// static functions
 	template<typename NumType>
-	static inline auto make_expr_hc_num(const NumType& s_data,
+	static inline Expression* make_expr_hc_num(const NumType& s_data,
 		size_t s_data_size, bool s_is_signed)
 	{
 		return save_expr(ExprHardCodedNum(ExprNum(BigNum(s_data),
 			s_data_size, s_is_signed)));
+	}
+	template<typename NumType>
+	static inline Expression* make_expr_hc_num(const NumType& s_data)
+	{
+		static_assert(std::is_integral<NumType>(),
+			"NumType must be an integral type.");
+		if constexpr (std::is_integral<NumType>())
+		{
+			if constexpr (std::is_same<NumType, bool>())
+			{
+				return make_expr_hc_num(s_data, 1,
+					std::is_signed<NumType>());
+			}
+			else
+			{
+				return make_expr_hc_num(s_data,
+					(sizeof(NumType) * sizeof(u8)),
+					std::is_signed<NumType>());
+			}
+		}
+		// Eek!
+		return nullptr;
 	}
 
 	template<typename ExprType>

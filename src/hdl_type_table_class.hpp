@@ -15,12 +15,12 @@ class Symbol;
 class HdlFunction;
 
 // The type of a "Symbol".
-// All types (*not* "HdlModule"s) are represented with this type, even
-// built-in types.
+// *All* non-array types are represented with this type, even built-in
+// ones.
 class HdlType
 {
 public:		// types
-	typedef Expression* Dimension;
+	typedef Expression* DimensionExpr;
 
 
 	typedef std::vector<Symbol*> ParameterVars;
@@ -102,14 +102,14 @@ protected:		// variables
 	ComponentData _component_data;
 
 	// Only one set of dimensions left of the symbol's identifer.
-	Dimension _left_dim_expr = nullptr;
+	DimensionExpr _left_dim_expr = nullptr;
 
 
 public:		// functions
 	HdlType() = default;
 	HdlType(SavedString s_ident, bool s_is_signed);
 	HdlType(SavedString s_ident, bool s_is_signed,
-		Dimension s_left_dim_expr);
+		DimensionExpr s_left_dim_expr);
 	HdlType(SavedString s_ident, ComponentData&& s_component_data);
 
 	// We really don't want copies of "HdlType"s.

@@ -25,6 +25,11 @@ class Expression;
 // the construct's definition.
 class Symbol
 {
+public:		// types
+	typedef Expression* Dimension;
+	typedef Expression* OneValueExpr;
+	typedef std::vector<OneValueExpr> ValueExprs;
+
 protected:		// variables
 	SavedString _ident = nullptr;
 
@@ -32,17 +37,32 @@ protected:		// variables
 	bool _is_constant = false;
 
 	HdlType* _hdl_type = nullptr;
-	Expression* _value_expr = nullptr;
+
+	// For arrays, this *must* be set an Expression that evaluates to the
+	// size of the array.  If "_right_dim_expr" is set to "nullptr", then
+	// this "Symbol" is not an array.,
+	Dimension _right_dim_expr = nullptr;
+
+	// Compile-time values are stored here for both scalars and arrays.
+	// For parameters, store a "nullptr" in *any* of the elements of this
+	// "ValueExprs" to indicate that this parameter *does not* have a
+	// default value.
+	ValueExprs _value_exprs;
 
 public:		// functions
 	Symbol() = default;
-	inline Symbol(SavedString s_ident, bool s_is_constant,
-		HdlType* s_hdl_type)
-		: Symbol(s_ident, s_is_constant, s_hdl_type, nullptr)
-	{
-	}
-	Symbol(SavedString s_ident, bool s_is_constant, HdlType* s_hdl_type,
-		Expression* s_value);
+
+	// Non-constant scalar constructor
+	Symbol(SavedString s_ident, HdlType* s_hdl_type);
+
+	// Constant scalar constructor, or non-constant array constructor
+	Symbol(SavedString s_ident, HdlType* s_hdl_type,
+		bool s_is_array, Expression* two_uses);
+
+
+	// Constant array constructor
+	Symbol(SavedString s_ident, HdlType* s_hdl_type,
+		ValueExprs&& s_value_exprs);
 
 
 	// We really don't want copies of "Symbol"s.
@@ -57,18 +77,22 @@ public:		// functions
 	inline Symbol& operator = (Symbol&& to_move) = default;
 
 	// Used to determine if a "parameter" has a default value.
-	inline bool has_value() const
-	{
-		return (_value_expr != nullptr);
-	}
+	bool has_default_value() const;
 
+	inline bool is_array() const
+	{
+		return (_right_dim_expr != nullptr);
+	}
 
 
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(hdl_type)
 
-	GEN_GETTER_AND_SETTER_BY_VAL(value_expr)
+	GEN_GETTER_BY_VAL(right_dim_expr)
+	GEN_GETTER_BY_CON_REF(value_exprs)
+
+
 };
 
 // "SymbolTable" isn't scoped because scoping information is stored in the
