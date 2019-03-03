@@ -46,23 +46,28 @@ public:		// types
 	public:		// functions
 		ComponentData() = default;
 
+		// Construct data for a composite "HdlType"
 		ComponentData(bool s_is_packed,
 			ParameterVars&& s_parameter_vars,
 			CompositeVars&& s_composite_vars,
 			CompositeFuncs&& s_composite_funcs);
 
+		// Construct data for an enum "HdlType"
+		ComponentData(EnumVals&& s_vals_of_enum);
+
+		// We don't want copies of "HdlType::ComponentData".
 		inline ComponentData(const ComponentData& to_copy) = delete;
 		inline ComponentData(ComponentData&& to_move) = default;
 
-		virtual ~ComponentData() = default;
+		//virtual ~ComponentData() = default;
 
 
+		// We don't want copies of "HdlType::ComponentData".
 		inline ComponentData& operator = (const ComponentData& to_copy)
 			= delete;
 		inline ComponentData& operator = (ComponentData&& to_move)
 			= default;
 
-		void init_as_enum(EnumVals&& s_vals_of_enum);
 
 		inline bool can_be_parameterized() const
 		{
@@ -116,7 +121,7 @@ public:		// functions
 	inline HdlType(const HdlType& to_copy) = delete;
 	inline HdlType(HdlType&& to_move) = default;
 
-	virtual ~HdlType() = default;
+	//virtual ~HdlType() = default;
 
 	// We really don't want copies of "HdlType"s.
 	inline HdlType& operator = (const HdlType& to_copy) = delete;

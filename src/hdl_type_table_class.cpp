@@ -6,6 +6,7 @@
 namespace frost_hdl
 {
 
+// Construct data for a composite "HdlType"
 HdlType::ComponentData::ComponentData(bool s_is_packed,
 	ParameterVars&& s_parameter_vars, CompositeVars&& s_composite_vars,
 	CompositeFuncs&& s_composite_funcs)
@@ -16,12 +17,15 @@ HdlType::ComponentData::ComponentData(bool s_is_packed,
 {
 }
 
-void HdlType::ComponentData::init_as_enum(EnumVals&& s_vals_of_enum)
+// Construct data for an enum "HdlType"
+HdlType::ComponentData::ComponentData(EnumVals&& s_vals_of_enum)
+	// "_is_packed" might actually have no meaning for an enum.
+	: _is_packed(false),
+	_is_enum(true),
+	_composite_vars(std::move(s_vals_of_enum))
 {
-	_is_packed = false;
-	_is_enum = true;
-	_composite_vars = std::move(s_vals_of_enum);
 }
+
 
 HdlType::HdlType(SavedString s_ident, bool s_is_signed)
 {

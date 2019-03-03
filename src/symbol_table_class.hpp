@@ -26,9 +26,9 @@ class Expression;
 class Symbol
 {
 public:		// types
-	typedef Expression* Dimension;
-	typedef Dimension OneValueExpr;
-	typedef std::vector<OneValueExpr> ValueExprs;
+	typedef std::vector<Expression*> ValueExprs;
+
+	typedef std::vector<Symbol*> ParameterVars;
 
 protected:		// variables
 	SavedString _ident = nullptr;
@@ -41,13 +41,15 @@ protected:		// variables
 	// For arrays, this *must* be set an Expression that evaluates to the
 	// size of the array.  If "_right_dim_expr" is set to "nullptr", then
 	// this "Symbol" is not an array.,
-	Dimension _right_dim_expr = nullptr;
+	Expression* _right_dim_expr = nullptr;
 
 	// Compile-time values are stored here for both scalars and arrays.
 	// For parameters, store a "nullptr" in *any* of the elements of this
 	// "ValueExprs" to indicate that this parameter *does not* have a
 	// default value.
 	ValueExprs _value_exprs;
+
+	ParameterVars _parameter_vars;
 
 public:		// functions
 	Symbol() = default;
@@ -68,7 +70,7 @@ public:		// functions
 	inline Symbol(const Symbol& to_copy) = delete;
 	inline Symbol(Symbol&& to_move) = default;
 
-	virtual ~Symbol() = default;
+	//virtual ~Symbol() = default;
 
 
 	// We really don't want copies of "Symbol"s.
@@ -90,6 +92,9 @@ public:		// functions
 
 	GEN_GETTER_BY_VAL(right_dim_expr)
 	GEN_GETTER_BY_CON_REF(value_exprs)
+
+	GEN_GETTER_BY_CON_REF(parameter_vars)
+	GEN_SETTER_BY_RVAL_REF(parameter_vars)
 
 
 };
