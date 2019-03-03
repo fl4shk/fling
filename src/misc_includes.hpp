@@ -18,7 +18,7 @@
 #include "liborangepower_src/misc_utility_funcs.hpp"
 #include "liborangepower_src/misc_bitwise_funcs.hpp"
 #include "liborangepower_src/misc_defines.hpp"
-#include "liborangepower_src/gen_getter_setter_defines.hpp"
+#include "liborangepower_src/gen_class_innards_defines.hpp"
 #include "liborangepower_src/json_stuff.hpp"
 #include "liborangepower_src/prev_curr_pair_class.hpp"
 #include "liborangepower_src/gmp_stuff.hpp"
