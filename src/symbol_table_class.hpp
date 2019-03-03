@@ -5,7 +5,6 @@
 
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
-#include "scoped_table_base_class.hpp"
 #include "ident_table_classes.hpp"
 //#include "expression_classes.hpp"
 //#include "hdl_type_table_class.hpp"
