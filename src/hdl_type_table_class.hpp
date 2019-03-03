@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
+#include "parameter_vars_type.hpp"
 
 namespace frost_hdl
 {
@@ -25,7 +26,7 @@ public:		// types
 
 	//typedef std::vector<Symbol*> OrderedPointerList<Symbol>;
 	//typedef std::vector<Symbol*> CompositeVars;
-	typedef OrderedIdentToPointerTable<Symbol> ParameterVars;
+	//typedef OrderedIdentToPointerTable<Symbol> ParameterVars;
 	typedef OrderedIdentToPointerTable<Symbol> CompositeVars;
 	typedef CompositeVars EnumVals;
 	typedef OrderedIdentToPointerTable<HdlFunction> CompositeFuncs;

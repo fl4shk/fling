@@ -35,27 +35,6 @@ public:		// types
 	//	Package,
 	//};
 
-private:		// variables
-	//// One single "SymbolTable" per scope
-	//SymbolTable _symbol_table;
-
-	//// One single "HdlTypeTable" per scope
-	//HdlTypeTable _hdl_type_table;
-
-	//// One single "HdlFunctionTable" per scope
-	//HdlFunctionTable _hdl_function_table;
-
-	//// Relevant for "HdlModule", "HdlStruct", and "HdlClass".
-	//// Might eventually be relevant for "HdlPackage", but that may change.
-	//OrderedIdentToPointerTable<Symbol> _parameter_vars;
-
-	//// Relevant for "HdlModule"
-	//HdlStatementTable _statement_table;
-
-
-	//// Relevant for "HdlStruct", "HdlClass", and "HdlEnum".
-	//HdlType* _hdl_type = nullptr;
-
 public:		// functions
 	HdlScope() = default;
 
@@ -75,12 +54,49 @@ public:		// functions
 	//virtual bool is_custom_type() const;
 	//virtual bool is_function() const;
 
+	// One single "SymbolTable" per scope, if any.
 	virtual SymbolTable* symbol_table() const;
+
+	// One single "HdlTypeTable" per scope, if any.
 	virtual HdlTypeTable* hdl_type_table() const;
+
+	// One single "HdlFunctionTable" per scope, if any.
 	virtual HdlFunction* hdl_function_table() const;
-	virtual OrderedIdentToPointerTable<Symbol>* parameter_vars() const;
+
+	// Relevant for "HdlModule", "HdlStruct", and "HdlClass".
+	// Might eventually be relevant for "HdlPackage", too.
+	virtual ParameterVars* parameter_vars() const;
+
+	// Relevant for "HdlModule"
 	virtual HdlStatementTable* statement_table() const;
+
+	// Relevant for "HdlStruct", "HdlClass", and "HdlEnum".
 	virtual HdlType* hdl_type() const;
+
+	inline bool has_symbol_table() const
+	{
+		return (symbol_table() != nullptr);
+	}
+	inline bool has_hdl_type_table() const
+	{
+		return (hdl_type_table() != nullptr);
+	}
+	inline bool has_hdl_function_table() const
+	{
+		return (hdl_function_table() != nullptr);
+	}
+	inline bool has_parameter_vars() const
+	{
+		return (parameter_vars() != nullptr);
+	}
+	inline bool has_statement_table() const
+	{
+		return (statement_table() != nullptr);
+	}
+	inline bool has_hdl_type() const
+	{
+		return (hdl_type() != nullptr);
+	}
 
 };
 
@@ -90,10 +106,17 @@ private:		// variables
 	SymbolTable _symbol_table;
 	HdlTypeTable _hdl_type_table;
 	HdlFunctionTable _hdl_function_table;
-	OrderedIdentToPointerTable<Symbol> _parameter_vars;
+	ParameterVars _parameter_vars;
+	HdlStatementTable _statement_table;
 
 public:		// functions
 	HdlModule();
+
+	HdlModule(SymbolTable&& s_symbol_table,
+		HdlTypeTable&& s_hdl_type_table,
+		HdlFunctionTable&& s_hdl_function_table,
+		ParameterVars&& s_parameter_vars,
+		HdlStatementTable&& s_statement_table);
 
 	inline HdlModule(const HdlModule& to_copy) = delete;
 	inline HdlModule(HdlModule&& to_move) = default;
@@ -107,29 +130,100 @@ public:		// functions
 	virtual GEN_GETTER_AS_POINTER(hdl_type_table)
 	virtual GEN_GETTER_AS_POINTER(hdl_function_table)
 	virtual GEN_GETTER_AS_POINTER(parameter_vars)
-
-	//virtual SymbolTable* symbol_table() const
-	//{
-	//	return &_symbol_table;
-	//}
+	virtual GEN_GETTER_AS_POINTER(statement_table)
 };
+
 class HdlStruct : public HdlScope
 {
 private:		// variables
-	std::unique_ptr<HdlType> _hdl_type;
+	HdlType _hdl_type;
+
 public:		// functions
+	HdlStruct();
+
+	HdlStruct(HdlType&& s_hdl_type);
+
+	inline HdlStruct(const HdlStruct& to_copy) = delete;
+	inline HdlStruct(HdlStruct&& to_move) = default;
+
+	virtual ~HdlStruct() = default;
+
+	inline HdlStruct& operator = (const HdlStruct& to_copy) = delete;
+	inline HdlStruct& operator = (HdlStruct&& to_move) = default;
+
+	virtual GEN_GETTER_AS_POINTER(hdl_type)
+
 };
 class HdlClass : public HdlScope
 {
+private:		// variables
+	HdlType _hdl_type;
+
 public:		// functions
+	HdlClass();
+
+	HdlClass(HdlType&& s_hdl_type);
+
+	inline HdlClass(const HdlClass& to_copy) = delete;
+	inline HdlClass(HdlClass&& to_move) = default;
+
+	virtual ~HdlClass() = default;
+
+	inline HdlClass& operator = (const HdlClass& to_copy) = delete;
+	inline HdlClass& operator = (HdlClass&& to_move) = default;
+
+	virtual GEN_GETTER_AS_POINTER(hdl_type)
+
 };
 class HdlEnum : public HdlScope
 {
+private:		// variables
+	HdlType _hdl_type;
+
 public:		// functions
+	HdlEnum();
+
+	HdlEnum(HdlType&& s_hdl_type);
+
+	inline HdlEnum(const HdlEnum& to_copy) = delete;
+	inline HdlEnum(HdlEnum&& to_move) = default;
+
+	virtual ~HdlEnum() = default;
+
+	inline HdlEnum& operator = (const HdlEnum& to_copy) = delete;
+	inline HdlEnum& operator = (HdlEnum&& to_move) = default;
+
+	virtual GEN_GETTER_AS_POINTER(hdl_type)
+
 };
 class HdlPackage : public HdlScope
 {
+private:		// variables
+	SymbolTable _symbol_table;
+	HdlTypeTable _hdl_type_table;
+	HdlFunctionTable _hdl_function_table;
+	ParameterVars _parameter_vars;
+
 public:		// functions
+	HdlPackage();
+
+	HdlPackage(SymbolTable&& s_symbol_table,
+		HdlTypeTable&& s_hdl_type_table,
+		HdlFunctionTable&& s_hdl_function_table,
+		ParameterVars&& s_parameter_vars);
+
+	inline HdlPackage(const HdlPackage& to_copy) = delete;
+	inline HdlPackage(HdlPackage&& to_move) = default;
+
+	virtual ~HdlPackage() = default;
+
+	inline HdlPackage& operator = (const HdlPackage& to_copy) = delete;
+	inline HdlPackage& operator = (HdlPackage&& to_move) = default;
+
+	virtual GEN_GETTER_AS_POINTER(symbol_table)
+	virtual GEN_GETTER_AS_POINTER(hdl_type_table)
+	virtual GEN_GETTER_AS_POINTER(hdl_function_table)
+	virtual GEN_GETTER_AS_POINTER(parameter_vars)
 };
 
 // Scoping information is stored here.  The parse tree visitor ("Compiler")

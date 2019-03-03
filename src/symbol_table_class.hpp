@@ -8,6 +8,7 @@
 #include "ident_table_classes.hpp"
 //#include "expression_classes.hpp"
 //#include "hdl_type_table_class.hpp"
+#include "parameter_vars_type.hpp"
 
 
 namespace frost_hdl
@@ -53,7 +54,7 @@ private:		// variables
 	ValueExprs _value_exprs;
 
 	// Actual parameter values for this "Symbol"'s "HdlType"
-	OrderedIdentToPointerTable<Symbol> _parameter_vars;
+	ParameterVars _parameter_vars;
 
 public:		// functions
 	Symbol() = default;
@@ -63,18 +64,9 @@ public:		// functions
 	Symbol(SavedString s_ident);
 
 	// Non-constant scalar constructors
-	inline Symbol(HdlType* s_hdl_type)
-		: Symbol(_ident, s_hdl_type)
-	{
-	}
 	Symbol(SavedString s_ident, HdlType* s_hdl_type);
 
 	// Constant scalar constructors, or non-constant array constructors
-	inline Symbol(HdlType* s_hdl_type, bool s_is_array,
-		Expression* scalar_val_or_arr_size)
-		: Symbol(_ident, s_hdl_type, s_is_array, scalar_val_or_arr_size)
-	{
-	}
 	Symbol(SavedString s_ident, HdlType* s_hdl_type,
 		bool s_is_array, Expression* scalar_val_or_arr_size);
 
