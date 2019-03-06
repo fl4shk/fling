@@ -10,10 +10,6 @@
 namespace frost_hdl
 {
 
-//class Symbol;
-//class SymbolTable;
-//class HdlType;
-//class HdlTypeTable;
 
 // Base class for (almost?) any type of scope in HDL source code, which
 // includes "HdlDeclModule", "HdlDeclStruct", "HdlDeclClass",
@@ -24,14 +20,8 @@ public:		// functions
 	HdlScope() = default;
 
 	// We don't want copies of "HdlScope"
-	inline HdlScope(const HdlScope& to_copy) = default;
-	inline HdlScope(HdlScope&& to_move) = default;
-
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlScope, delete, default)
 	virtual ~HdlScope() = default;
-
-	// We don't want copies of "HdlScope"
-	inline HdlScope& operator = (const HdlScope& to_copy) = default;
-	inline HdlScope& operator = (HdlScope&& to_move) = default;
 
 
 	//virtual bool is_module() const;
@@ -48,28 +38,20 @@ public:		// functions
 	// One single "HdlFunctionTable" per scope, if any.
 	virtual HdlFunctionTable* hdl_function_table();
 
-	// Relevant for "HdlDeclModule", "HdlDeclStruct", and "HdlDeclClass".
-	// Might eventually be relevant for "HdlDeclPackage", too.
+	// Relevant for "HdlDeclModule".
+	// Might be relevant for "HdlDeclPackage", too.
 	virtual ParameterVars* parameter_vars();
 
-	// Relevant for "HdlDeclModule"
+	// Relevant for "HdlDeclModule".
 	virtual HdlStatementTable* statement_table();
+
 
 	// Relevant for "HdlDeclStruct", "HdlDeclClass", and "HdlDeclEnum".
 	virtual HdlType* hdl_type();
 
-	// Relevant for "HdlDeclModule", "HdlDeclStruct", "HdlDeclClass",
-	// "HdlDeclPackage", and "HdlDeclFunction"
+	// Relevant for "HdlDeclFunction"
 	virtual HdlFunction* hdl_function();
 
-	bool has_symbol_table();
-	bool has_hdl_type_table();
-	bool has_hdl_function_table();
-	bool has_parameter_vars();
-	bool has_statement_table();
-
-	bool has_hdl_type();
-	bool has_hdl_function();
 };
 
 class HdlDeclModule : public HdlScope
@@ -90,14 +72,10 @@ public:		// functions
 		ParameterVars&& s_parameter_vars,
 		HdlStatementTable&& s_statement_table);
 
-	inline HdlDeclModule(const HdlDeclModule& to_copy) = delete;
-	inline HdlDeclModule(HdlDeclModule&& to_move) = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlDeclModule, delete, default)
 
 	virtual ~HdlDeclModule() = default;
 
-	inline HdlDeclModule& operator = (const HdlDeclModule& to_copy)
-		= delete;
-	inline HdlDeclModule& operator = (HdlDeclModule&& to_move) = default;
 
 	virtual GEN_GETTER_AS_POINTER(symbol_table)
 	virtual GEN_GETTER_AS_POINTER(hdl_type_table)
@@ -106,6 +84,8 @@ public:		// functions
 	virtual GEN_GETTER_AS_POINTER(statement_table)
 };
 
+// This class exists to provide temporary information about scope for
+// "HdlType" instances that are structs.
 class HdlDeclStruct : public HdlScope
 {
 private:		// variables
@@ -116,19 +96,16 @@ public:		// functions
 
 	HdlDeclStruct(HdlType&& s_hdl_type);
 
-	inline HdlDeclStruct(const HdlDeclStruct& to_copy) = delete;
-	inline HdlDeclStruct(HdlDeclStruct&& to_move) = default;
-
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlDeclStruct, delete, default)
 	virtual ~HdlDeclStruct() = default;
 
-	inline HdlDeclStruct& operator = (const HdlDeclStruct& to_copy)
-		= delete;
-	inline HdlDeclStruct& operator = (HdlDeclStruct&& to_move) = default;
 
 	virtual GEN_GETTER_BY_VAL(hdl_type)
 
 };
 
+// This class exists to provide temporary information about scope for
+// "HdlType" instances that are classes.
 class HdlDeclClass : public HdlScope
 {
 private:		// variables
@@ -139,18 +116,16 @@ public:		// functions
 
 	HdlDeclClass(HdlType&& s_hdl_type);
 
-	inline HdlDeclClass(const HdlDeclClass& to_copy) = delete;
-	inline HdlDeclClass(HdlDeclClass&& to_move) = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlDeclClass, delete, default)
 
 	virtual ~HdlDeclClass() = default;
-
-	inline HdlDeclClass& operator = (const HdlDeclClass& to_copy) = delete;
-	inline HdlDeclClass& operator = (HdlDeclClass&& to_move) = default;
 
 	virtual GEN_GETTER_BY_VAL(hdl_type)
 
 };
 
+// This class exists to provide temporary information about scope for
+// "HdlType" instances that are enums.
 class HdlDeclEnum : public HdlScope
 {
 private:		// variables
@@ -161,13 +136,10 @@ public:		// functions
 
 	HdlDeclEnum(HdlType&& s_hdl_type);
 
-	inline HdlDeclEnum(const HdlDeclEnum& to_copy) = delete;
-	inline HdlDeclEnum(HdlDeclEnum&& to_move) = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlDeclEnum, delete, default)
 
 	virtual ~HdlDeclEnum() = default;
 
-	inline HdlDeclEnum& operator = (const HdlDeclEnum& to_copy) = delete;
-	inline HdlDeclEnum& operator = (HdlDeclEnum&& to_move) = default;
 
 	virtual GEN_GETTER_BY_VAL(hdl_type)
 
@@ -192,8 +164,7 @@ public:		// functions
 		HdlFunctionTable&& s_hdl_function_table,
 		ParameterVars&& s_parameter_vars);
 
-	inline HdlDeclPackage(const HdlDeclPackage& to_copy) = delete;
-	inline HdlDeclPackage(HdlDeclPackage&& to_move) = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlDeclPackage, delete, default)
 
 	virtual ~HdlDeclPackage() = default;
 
@@ -207,6 +178,8 @@ public:		// functions
 	virtual GEN_GETTER_AS_POINTER(parameter_vars)
 };
 
+// This class exists to provide temporary information about scope for
+// "HdlFunction" instances.
 class HdlDeclFunction : public HdlScope
 {
 private:		// variables
@@ -229,6 +202,7 @@ public:		// functions
 
 	virtual GEN_GETTER_BY_VAL(hdl_function)
 };
+
 
 // Scoping information is stored here.  The parse tree visitor ("Compiler")
 // builds this and operates on it.

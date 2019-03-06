@@ -34,34 +34,6 @@ HdlFunction* HdlScope::hdl_function()
 }
 
 
-bool HdlScope::has_symbol_table()
-{
-	return (symbol_table() != nullptr);
-}
-bool HdlScope::has_hdl_type_table()
-{
-	return (hdl_type_table() != nullptr);
-}
-bool HdlScope::has_hdl_function_table()
-{
-	return (hdl_function_table() != nullptr);
-}
-bool HdlScope::has_parameter_vars()
-{
-	return (parameter_vars() != nullptr);
-}
-bool HdlScope::has_statement_table()
-{
-	return (statement_table() != nullptr);
-}
-bool HdlScope::has_hdl_type()
-{
-	return (hdl_type() != nullptr);
-}
-bool HdlScope::has_hdl_function()
-{
-	return (hdl_function() != nullptr);
-}
 
 // Force the constructors of the private variables to be inlined here.
 HdlDeclModule::HdlDeclModule()
