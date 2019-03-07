@@ -19,15 +19,32 @@ class PointerVector : public std::vector<Type*>
 public:		// functions
 	inline PointerVector() = default;
 
-	inline PointerVector(const PointerVector& to_copy) = default;
-	inline PointerVector(PointerVector&& to_move) = default;
-
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(PointerVector, default, default);
 	virtual ~PointerVector() = default;
 
-	inline PointerVector& operator = (const PointerVector& to_copy)
-		= default;
-	inline PointerVector& operator = (PointerVector&& to_move)
-		= default;
+};
+
+// Used for error reporting during semantic analysis.
+// Many, many things derive from this.
+class HasSourceCodePosBase
+{
+protected:		// variables
+	size_t _line = 0, _pos_in_line = 0;
+
+public:		// functions
+	inline HasSourceCodePosBase() = default;
+
+	inline HasSourceCodePosBase(size_t s_line, size_t s_pos_in_line)
+		: _line(s_line), _pos_in_line(s_pos_in_line)
+	{
+	}
+
+
+	virtual ~HasSourceCodePosBase() = default;
+
+
+	GEN_GETTER_AND_SETTER_BY_VAL(line)
+	GEN_GETTER_AND_SETTER_BY_VAL(pos_in_line)
 };
 
 } // namespace frost_hdl

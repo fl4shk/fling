@@ -4,6 +4,7 @@
 // src/expression_classes.hpp
 
 #include "misc_includes.hpp"
+#include "misc_types.hpp"
 #include "expr_num_class.hpp"
 //#include "general_allocator_class.hpp"
 //#include "symbol_table_class.hpp"
@@ -93,22 +94,13 @@ public:		// functions
 
 
 	// Don't want copies of raw Expression's
-	Expression(const Expression& to_copy) = delete;
-
 	// Moves are okay, though
-	Expression(Expression&& to_move) = default;
-
-
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(Expression, delete, default);
 	virtual ~Expression() = default;
 
 
-	// Don't want copies of raw Expression's
-	Expression& operator = (const Expression& to_copy) = delete;
 
-	// Moves are okay, though
-	Expression& operator = (Expression&& to_move) = default;
-
-
+	// I didn't want this made public, but...
 	void inner_full_evaluate();
 
 
@@ -311,7 +303,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	size_t _starting_length() const final
+	size_t _starting_length() const
 	{
 		return _only_child_value().size();
 	}
@@ -376,12 +368,12 @@ protected:		// functions
 		}
 	}
 
-	bool _children_affect_length() const final
+	bool _children_affect_length() const
 	{
 		return false;
 	}
 
-	size_t _starting_length() const final
+	size_t _starting_length() const
 	{
 		return 1;
 	}
@@ -405,7 +397,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	size_t _starting_length() const final
+	size_t _starting_length() const
 	{
 		// max(sizeof(left_child), sizeof(right_child))
 		return max_va(_left_child()->value().size(),
@@ -435,7 +427,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	size_t _starting_length() const final
+	size_t _starting_length() const
 	{
 		// max(sizeof(left_child), sizeof(right_child))
 		return max_va(_left_child()->value().size(),
@@ -464,7 +456,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	size_t _starting_length() const final
+	size_t _starting_length() const
 	{
 		// Bit shifts take the size of the thing to be shifted as their
 		// size.
@@ -489,7 +481,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_set_value(_only_child_value());
 	}
@@ -505,7 +497,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_set_value(_only_child_value());
 	}
@@ -523,7 +515,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		//ExprNum left_expr_num, right_expr_num;
 		//_get_resized_child_expr_nums(left_expr_num, right_expr_num);
@@ -545,7 +537,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			|| static_cast<BigNum>(_right_child_value()));
@@ -562,7 +554,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
@@ -581,7 +573,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 		//	!= static_cast<BigNum>(_right_child_value()));
@@ -602,7 +594,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 		//	< static_cast<BigNum>(_right_child_value()));
@@ -625,7 +617,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
@@ -644,7 +636,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
@@ -663,7 +655,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
 			{
@@ -684,7 +676,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			+ static_cast<BigNum>(_right_child_value()));
@@ -701,7 +693,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			- static_cast<BigNum>(_right_child_value()));
@@ -718,7 +710,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			* static_cast<BigNum>(_right_child_value()));
@@ -735,7 +727,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			/ static_cast<BigNum>(_right_child_value()));
@@ -752,7 +744,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			% static_cast<BigNum>(_right_child_value()));
@@ -771,7 +763,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		// This may not match the Verilog standard due to zero-extension
 		// being dictated....
@@ -790,7 +782,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		// This may not match the Verilog standard due to zero-extension
 		// being dictated....
@@ -809,7 +801,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final
+	void _evaluate()
 	{
 		// This may not match the Verilog standard due to zero-extension
 		// being dictated....
@@ -830,7 +822,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final;
+	void _evaluate();
 };
 
 // ">>"
@@ -843,7 +835,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final;
+	void _evaluate();
 };
 
 // ">>>"
@@ -856,7 +848,7 @@ public:		// functions
 	}
 
 protected:		// functions
-	void _evaluate() final;
+	void _evaluate();
 };
 
 // "most derived" "Expression" classes that derive only from "Expression"
@@ -875,20 +867,20 @@ public:		// functions
 protected:		// functions
 
 	// Hard-coded numbers don't really evaluate to anything.
-	void _evaluate() final
+	void _evaluate()
 	{
 	}
 
-	bool _children_affect_length() const final
+	bool _children_affect_length() const
 	{
 		return false;
 	}
-	size_t _starting_length() const final
+	size_t _starting_length() const
 	{
 		return value().size();
 	}
 
-	bool _is_always_constant() const final
+	bool _is_always_constant() const
 	{
 		return true;
 	}
@@ -901,8 +893,8 @@ public:		// functions
 	ExprConcat(ChildrenList&& s_children);
 
 protected:		// functions
-	void _evaluate() final;
-	size_t _starting_length() const final;
+	void _evaluate();
+	size_t _starting_length() const;
 };
 
 class ExprTernary : public Expression
@@ -938,8 +930,8 @@ protected:		// functions
 		return _when_false_child()->value();
 	}
 
-	void _evaluate() final;
-	size_t _starting_length() const final
+	void _evaluate();
+	size_t _starting_length() const
 	{
 		return max_va(_when_true_child()->value().size(),
 			_when_false_child()->value().size());
@@ -952,16 +944,16 @@ class ExprIdentName : public Expression
 public:		// functions
 	ExprIdentName(Symbol* s_symbol);
 
-	//bool is_constant() const final
+	//bool is_constant() const
 	//{
 	//	return (Expression::is_constant() || symbol()->is_constant());
 	//}
 
-	bool is_constant() const final;
+	bool is_constant() const;
 
 protected:		// functions
-	void _evaluate() final;
-	size_t _starting_length() const final;
+	void _evaluate();
+	size_t _starting_length() const;
 };
 
 } // namespace frost_hdl

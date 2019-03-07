@@ -1,6 +1,7 @@
 #include "expression_classes.hpp"
 #include "symbol_table_class.hpp"
-#include "hdl_type_table_class.hpp"
+#include "hdl_lhs_type_table_class.hpp"
+#include "hdl_full_type_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -331,9 +332,10 @@ ExprIdentName::ExprIdentName(Symbol* s_symbol)
 {
 	_symbol = s_symbol;
 
-	//_value.set_size(symbol()->hdl_type()->left_dim());
+	//_value.set_size(symbol()->hdl_lhs_type()->left_dim());
 	_value.set_size(_starting_length());
-	_value.set_is_signed(symbol()->hdl_type()->is_signed());
+	_value.set_is_signed(symbol()->hdl_full_type()->hdl_lhs_type()
+		->is_signed());
 }
 
 bool ExprIdentName::is_constant() const
@@ -360,10 +362,11 @@ void ExprIdentName::_evaluate()
 // composite identifiers should be allowed here.
 size_t ExprIdentName::_starting_length() const
 {
-	//if (symbol()->hdl_type()->is_packed_composite())
-	//{
-	//}
-	return symbol()->hdl_type()->left_dim();
+	////if (symbol()->hdl_lhs_type()->is_packed_composite())
+	////{
+	////}
+	//return symbol()->hdl_lhs_type()->left_dim();
+	return symbol()->hdl_full_type()->hdl_lhs_type()->left_dim();
 }
 
 } // namespace frost_hdl

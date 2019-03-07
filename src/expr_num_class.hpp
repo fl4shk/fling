@@ -26,6 +26,7 @@ public:		// functions
 	explicit ExprNum(const BigNum& s_data, size_t s_data_size,
 		bool s_is_signed);
 
+	// size/signedness changing constructors
 	ExprNum(const ExprNum& src, size_t s_data_size);
 	ExprNum(const ExprNum& src, size_t s_data_size, bool s_is_signed);
 
@@ -37,6 +38,11 @@ public:		// functions
 
 
 	ExprNum& operator = (const ExprNum& to_copy) = default;
+
+	inline bool operator == (const ExprNum& other) const
+	{
+		return (static_cast<BigNum>(*this) == static_cast<BigNum>(other));
+	}
 
 
 
@@ -53,6 +59,8 @@ public:		// functions
 	}
 
 	BigNum convert_to_bignum() const;
+
+	// For when we need this "ExprNum" to be treated as unsigned.
 	inline BigNum convert_to_unsigned_bignum() const
 	{
 		return BigNum(ExprNum(*this, size(), false));

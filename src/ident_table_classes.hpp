@@ -99,17 +99,11 @@ public:		// types
 public:		// functions
 	OrderedIdentToPointerTable() = default;
 
-	inline OrderedIdentToPointerTable
-		(const OrderedIdentToPointerTable& to_copy) = delete;
-	inline OrderedIdentToPointerTable
-		(OrderedIdentToPointerTable&& to_move) = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(OrderedIdentToPointerTable, delete,
+		default);
 
 	virtual ~OrderedIdentToPointerTable() = default;
 
-	inline OrderedIdentToPointerTable& operator =
-		(const OrderedIdentToPointerTable& to_copy) = delete;
-	inline OrderedIdentToPointerTable& operator =
-		(OrderedIdentToPointerTable&& to_move) = default;
 
 	Type* find(SavedString some_name) const
 	{

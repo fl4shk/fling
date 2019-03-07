@@ -12,7 +12,8 @@ namespace frost_hdl
 {
 class Expression;
 class Symbol;
-class HdlType;
+class HdlLhsType;
+class HdlFullType;
 class HdlFunction;
 //class HdlScope;
 
@@ -21,6 +22,7 @@ typedef const RawSavedString* SavedString;
 
 typedef std::vector<bool> RawExprNumData;
 typedef const RawExprNumData* ExprNumData;
+
 
 class GeneralAllocator
 {
@@ -31,9 +33,9 @@ private:		// static variables
 		_expr_num_data_pool;
 	static std::vector<std::unique_ptr<Expression>> _expr_pool;
 	static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
-	static std::vector<std::unique_ptr<HdlType>> _hdl_type_pool;
+	static std::vector<std::unique_ptr<HdlLhsType>> _hdl_lhs_type_pool;
+	static std::vector<std::unique_ptr<HdlFullType>> _hdl_full_type_pool;
 	static std::vector<std::unique_ptr<HdlFunction>> _hdl_function_pool;
-	//static std::vector<std::unique_ptr<HdlScope>> _hdl_scope_pool;
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
@@ -53,11 +55,18 @@ public:		// static functions
 		return _inner_save_generic<Symbol, ActualSymbol>(_symbol_pool,
 			std::move(to_save));
 	}
-	template<typename ActualHdlType>
-	static inline HdlType* save_hdl_type(ActualHdlType&& to_save)
+	template<typename ActualHdlLhsType>
+	static inline HdlLhsType* save_hdl_lhs_type(ActualHdlLhsType&& to_save)
 	{
-		return _inner_save_generic<HdlType, ActualHdlType>(_hdl_type_pool,
-			std::move(to_save));
+		return _inner_save_generic<HdlLhsType, ActualHdlLhsType>
+			(_hdl_lhs_type_pool, std::move(to_save));
+	}
+	template<typename ActualHdlFullType>
+	static inline HdlFullType* save_hdl_full_type
+		(ActualHdlFullType&& to_save)
+	{
+		return _inner_save_generic<HdlFullType, ActualHdlFullType>
+			(_hdl_full_type_pool, std::move(to_save));
 	}
 	template<typename ActualHdlFunction>
 	static inline HdlFunction* save_hdl_function
@@ -111,10 +120,15 @@ inline Symbol* save_symbol(ActualSymbol&& to_save)
 {
 	return GeneralAllocator::save_symbol(std::move(to_save));
 }
-template<typename ActualHdlType>
-inline HdlType* save_hdl_type(ActualHdlType&& to_save)
+template<typename ActualHdlLhsType>
+inline HdlLhsType* save_hdl_lhs_type(ActualHdlLhsType&& to_save)
 {
-	return GeneralAllocator::save_hdl_type(std::move(to_save));
+	return GeneralAllocator::save_hdl_lhs_type(std::move(to_save));
+}
+template<typename ActualHdlFullType>
+inline HdlFullType* save_hdl_full_type(ActualHdlFullType&& to_save)
+{
+	return GeneralAllocator::save_hdl_full_type(std::move(to_save));
 }
 template<typename ActualHdlFunction>
 inline HdlFunction* save_hdl_function(ActualHdlFunction&& to_save)

@@ -4,6 +4,7 @@
 // src/hdl_function_table_class.hpp
 
 #include "misc_includes.hpp"
+#include "misc_types.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
 
