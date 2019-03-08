@@ -50,6 +50,11 @@ SavedString Expression::to_hdl_source() const
 	return nullptr;
 }
 
+auto Expression::lhs_category() const -> LhsCategory
+{
+	return LhsCategory::None;
+}
+
 void Expression::_evaluate()
 {
 	_set_value(ExprNum(0, 1, false));
@@ -292,6 +297,50 @@ ExprConcat::ExprConcat(ChildrenList&& s_children)
 	_value.set_is_signed(false);
 }
 
+SavedString ExprConcat::to_hdl_source() const
+{
+	std::string non_dupped_ret;
+
+	non_dupped_ret += "{";
+
+	//for (auto child : _children)
+	for (size_t i=0; i<children().size(); ++i)
+	{
+		non_dupped_ret += *children().at(i)->to_hdl_source();
+
+		if ((i + 1) != children().size())
+		{
+			non_dupped_ret += ", ";
+		}
+	}
+
+	non_dupped_ret += "}";
+
+	return dup_str(non_dupped_ret);
+}
+
+//SavedString ExprConcat::to_hdl_source() const
+//{
+//	std::string ret;
+//
+//	ret += "{";
+//
+//	for (size_t i=0; i<children().size(); ++i)
+//	{
+//		//ret += TO_HDL_SOURCE(children.at(i));
+//		ret += *children().at(i)->to_hdl_source();
+//
+//		if (i != children().size())
+//		{
+//			ret += ", ";
+//		}
+//	}
+//
+//	ret += "}";
+//
+//	return dup_str(ret);
+//}
+
 void ExprConcat::_evaluate()
 {
 	RawExprNumData n_value_data;
@@ -316,6 +365,71 @@ size_t ExprConcat::_starting_length() const
 	{
 		ret += child->value().size();
 	}
+
+	return ret;
+}
+
+ExprRepl::ExprRepl(Expression* s_width_child,
+	ChildrenList&& s_non_width_children)
+{
+	_children = std::move(s_non_width_children);
+	_children.push_back(s_width_child);
+
+	_value.set_size(_starting_length());
+	_value.set_is_signed(false);
+}
+
+SavedString ExprRepl::to_hdl_source() const
+{
+	std::string non_dupped_ret;
+
+	non_dupped_ret += sconcat("{", *_width_child()->to_hdl_source(), "{");
+
+	for (size_t i=0; i<_width_child_index(); ++i)
+	{
+		non_dupped_ret += *children().at(i)->to_hdl_source();
+
+		if ((i + 1) != _width_child_index())
+		{
+			non_dupped_ret += ", ";
+		}
+	}
+
+	non_dupped_ret += "}}";
+
+	return dup_str(non_dupped_ret);
+}
+
+void ExprRepl::_evaluate()
+{
+	RawExprNumData n_value_data;
+
+	for (auto child : _children)
+	{
+		for (size_t i=0;
+			i<static_cast<BigNum>(_width_child()->value()).get_ui();
+			++i)
+		{
+			for (size_t j=0; j<child->value().size(); ++j)
+			{
+				n_value_data.push_back(child->value().one_bit(j));
+			}
+		}
+	}
+
+	_value.set_data(std::move(n_value_data));
+}
+
+size_t ExprRepl::_starting_length()
+{
+	size_t ret = 0;
+
+	for (auto child : _children)
+	{
+		ret += child->value().size();
+	}
+
+	ret *= _width_child()->value().size();
 
 	return ret;
 }
@@ -346,27 +460,6 @@ void ExprTernary::_evaluate()
 		_when_false_child()->inner_full_evaluate();
 		_value = _when_false_child_value();
 	}
-}
-SavedString ExprConcat::to_hdl_source() const
-{
-	std::string ret;
-
-	ret += "{";
-
-	for (size_t i=0; i<children().size(); ++i)
-	{
-		//ret += TO_HDL_SOURCE(children.at(i));
-		ret += *children().at(i)->to_hdl_source();
-
-		if (i != children().size())
-		{
-			ret += ", ";
-		}
-	}
-
-	ret += "}";
-
-	return dup_str(ret);
 }
 
 //ExprIdentName::ExprIdentName(const std::string& s_ident,

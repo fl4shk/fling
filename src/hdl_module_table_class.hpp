@@ -17,8 +17,10 @@ class HdlModule
 private:		// variables
 	SavedString _ident = nullptr;
 	SymbolTable _symbol_table;
+
 	HdlLhsTypeTable _hdl_lhs_type_table;
 	HdlFullTypeTable _hdl_full_type_table;
+
 	HdlFunctionTable _hdl_function_table;
 
 	ParameterVars _parameter_vars;

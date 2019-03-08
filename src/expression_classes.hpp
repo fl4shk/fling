@@ -31,6 +31,17 @@ public:		// types
 	typedef std::set<Expression*> DescendantsList;
 	typedef std::vector<Expression*> ChildrenList;
 
+	// Uses of identifiers that can be on the left-hand side of an
+	// assignment.
+	enum class LhsCategory
+	{
+		None,
+
+		Concat,
+		IdentSliced,
+		IdentNonSliced,
+	};
+
 	//enum class Category
 	//{
 	//	UnOp,
@@ -106,7 +117,11 @@ public:		// functions
 	void inner_full_evaluate();
 
 
-	virtual SavedString to_hdl_source() const;
+
+	inline bool is_valid_lhs() const
+	{
+		return (lhs_category() != LhsCategory::None);
+	}
 
 
 
@@ -119,26 +134,8 @@ public:		// functions
 		return (num_children() == 0);
 	}
 
-	//inline Symbol* symbol() const
-	//{
-	//	return _symbol_table->at(_ident);
-	//}
-
-
-
-	//inline const auto& ident() const
-	//{
-	//	return (*_ident);
-	//}
-
-
-
-	//inline void set_value(const BigNum& n_value_data,
-	//	size_t n_value_data_size, bool n_value_is_signed)
-	//{
-	//	set_value(ExprNum(n_value_data, n_value_data_size,
-	//		n_value_is_signed));
-	//}
+	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const;
 
 
 	// This doesn't *need* to be stored anywhere.
@@ -157,15 +154,6 @@ public:		// functions
 		}
 	}
 
-	//Symbol* symbol() const
-	//{
-	//	return _symbol;
-	//}
-	//Symbol* set_symbol(Symbol* n_symbol)
-	//{
-	//	_symbol = n_symbol;
-	//	return _symbol;
-	//}
 
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_CON_REF(value)
@@ -1043,12 +1031,49 @@ public:		// functions
 	ExprConcat(ChildrenList&& s_children);
 
 	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::Concat;
+	}
+
 
 protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
 };
 
+// "$repl(...)"
+class ExprRepl : public Expression
+{
+public:		// functions
+	ExprRepl(Expression* s_width_child,
+		ChildrenList&& s_non_width_children);
+
+	virtual SavedString to_hdl_source() const;
+
+protected:		// functions
+	inline Expression* _width_child() const
+	{
+		return children().back();
+	}
+
+	inline size_t _width_child_index() const
+	{
+		return (children().size() - 1);
+	}
+
+	//// Intended for iteration
+	//inline Expression* _last_non_width_child() const
+	//{
+	//	return children().at(children.size() - 2);
+	//}
+
+	void _evaluate();
+	size_t _starting_length();
+
+};
+
+// "condition ? when_true : when_false"
 class ExprTernary : public Expression
 {
 public:		// functions
@@ -1109,6 +1134,11 @@ public:		// functions
 	//}
 
 	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::IdentNonSliced;
+	}
+
 	bool is_constant() const;
 
 protected:		// functions
