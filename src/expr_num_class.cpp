@@ -84,6 +84,31 @@ BigNum ExprNum::convert_to_bignum() const
 
 	return ret;
 }
+std::string ExprNum::convert_to_verilog_literal() const
+{
+	std::string ret;
+
+	if (is_negative())
+	{
+		ret += "(-";
+	}
+
+	ret += sconcat(size(), "'");
+
+	if (is_signed())
+	{
+		ret += "s";
+	}
+
+	ret += sconcat("d", convert_to_bignum());
+
+	if (is_negative())
+	{
+		ret += ")";
+	}
+
+	return ret;
+}
 
 void ExprNum::set_size(size_t n_size)
 {

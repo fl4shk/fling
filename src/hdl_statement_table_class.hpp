@@ -13,7 +13,7 @@
 namespace frost_hdl
 {
 
-#define TO_HDL_SOURCE(expr) *expr()->to_hdl_source()
+#define TO_HDL_SOURCE(expr) (*expr()->to_hdl_source())
 #define GEN_EXPR_GETTER(name, index) \
 	inline Expression* name() const \
 	{ \

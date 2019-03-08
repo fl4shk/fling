@@ -6,6 +6,8 @@
 namespace frost_hdl
 {
 
+#define TO_HDL_SOURCE(child) (*child()->to_hdl_source())
+
 //typedef Expression::OpStr OpStr;
 //typedef Expression::Type ExprType;
 
@@ -232,6 +234,25 @@ bool Expression::_has_only_constant_children() const
 	return true;
 }
 
+SavedString ExprBaseUnOp::to_hdl_source() const
+{
+	switch (_hdl_source_type())
+	{
+	case HdlSourceType::UnOp:
+		return dup_str(*_unop_str(), TO_HDL_SOURCE(_only_child));
+		break;
+	case HdlSourceType::DollarFunction:
+		return dup_str(*_unop_str(), "(", TO_HDL_SOURCE(_only_child), ")");
+		break;
+	default:
+		// Eek!
+		printerr("ExprBaseUnOp::to_hdl_source():  Eek!\n");
+		exit(1);
+		return nullptr;
+		break;
+	}
+}
+
 ExprBaseUnOp::ExprBaseUnOp(Expression* only_child)
 {
 	_set_children(only_child);
@@ -326,6 +347,27 @@ void ExprTernary::_evaluate()
 		_value = _when_false_child_value();
 	}
 }
+SavedString ExprConcat::to_hdl_source() const
+{
+	std::string ret;
+
+	ret += "{";
+
+	for (size_t i=0; i<children().size(); ++i)
+	{
+		//ret += TO_HDL_SOURCE(children.at(i));
+		ret += *children().at(i)->to_hdl_source();
+
+		if (i != children().size())
+		{
+			ret += ", ";
+		}
+	}
+
+	ret += "}";
+
+	return dup_str(ret);
+}
 
 //ExprIdentName::ExprIdentName(const std::string& s_ident,
 //	SymbolTable* s_symbol_table)
@@ -380,5 +422,7 @@ size_t ExprIdentName::_starting_length() const
 	//return symbol()->hdl_lhs_type()->left_dim();
 	return symbol()->hdl_full_type()->hdl_lhs_type()->left_dim();
 }
+
+#undef TO_HDL_SOURCE
 
 } // namespace frost_hdl

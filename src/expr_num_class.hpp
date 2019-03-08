@@ -71,6 +71,8 @@ public:		// functions
 			(convert_to_bignum());
 	}
 
+	std::string convert_to_verilog_literal() const;
+
 	inline operator BigNum() const
 	{
 		return convert_to_bignum();

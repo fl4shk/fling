@@ -20,7 +20,7 @@ namespace frost_hdl
 //typedef BigNum* ExprNum;
 class Symbol;
 
-#define TO_HDL_SOURCE(child) child()->to_hdl_source()
+#define TO_HDL_SOURCE(child) (*child()->to_hdl_source())
 
 class Expression
 {
@@ -253,11 +253,34 @@ protected:		// functions
 
 class ExprBaseUnOp : public Expression
 {
+public:		// types
+	enum class HdlSourceType
+	{
+		// "!", "~", unary "-", etc.
+		UnOp,
+
+		// "$unsigned", "$signed", etc.
+		DollarFunction,
+	};
+
 public:		// functions
 	ExprBaseUnOp(Expression* only_child);
 
+	virtual SavedString to_hdl_source() const;
 
 protected:		// functions
+	virtual SavedString _unop_str() const
+	{
+		return nullptr;
+	}
+
+	// I'm *guessing* that this is a good default, but I'm not totally sure
+	// yet.
+	virtual HdlSourceType _hdl_source_type() const
+	{
+		return HdlSourceType::DollarFunction;
+	}
+
 	Expression* _only_child() const
 	{
 		return children().at(0);
@@ -274,8 +297,19 @@ class ExprBaseBinOp : public Expression
 public:		// functions
 	ExprBaseBinOp(Expression* left_child, Expression* right_child);
 
+	virtual SavedString to_hdl_source() const
+	{
+		return dup_str(TO_HDL_SOURCE(_left_child), " ", *_binop_str(), " ",
+			TO_HDL_SOURCE(_right_child));
+	}
+
 
 protected:		// functions
+	virtual SavedString _binop_str() const
+	{
+		return nullptr;
+	}
+
 	inline Expression* _left_child() const
 	{
 		return children().at(0);
@@ -484,13 +518,18 @@ public:		// functions
 		_value.set_is_signed(false);
 	}
 
-	SavedString to_hdl_source() const
-	{
-		return dup_str("$unsigned(", TO_HDL_SOURCE(_only_child), ")");
-	}
+	//virtual SavedString to_hdl_source() const
+	//{
+	//	return dup_str("$unsigned(", TO_HDL_SOURCE(_only_child), ")");
+	//}
 
 
 protected:		// functions
+	virtual SavedString _unop_str() const
+	{
+		return dup_str("$unsigned");
+	}
+
 	void _evaluate()
 	{
 		_set_value(_only_child_value());
@@ -506,12 +545,16 @@ public:		// functions
 		_value.set_is_signed(true);
 	}
 
-	SavedString to_hdl_source() const
-	{
-		return dup_str("$signed(", TO_HDL_SOURCE(_only_child), ")");
-	}
+	//virtual SavedString to_hdl_source() const
+	//{
+	//	return dup_str("$signed(", TO_HDL_SOURCE(_only_child), ")");
+	//}
 
 protected:		// functions
+	virtual SavedString _unop_str() const
+	{
+		return dup_str("$signed");
+	}
 	void _evaluate()
 	{
 		_set_value(_only_child_value());
@@ -529,13 +572,11 @@ public:		// functions
 	{
 	}
 
-	SavedString to_hdl_source() const
-	{
-		return dup_str(TO_HDL_SOURCE(_left_child), " && ",
-			TO_HDL_SOURCE(_right_child));
-	}
-
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("&&");
+	}
 	void _evaluate()
 	{
 		//ExprNum left_expr_num, right_expr_num;
@@ -558,6 +599,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("||");
+	}
 	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -575,6 +620,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("==");
+	}
 	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
@@ -594,6 +643,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("!=");
+	}
 	void _evaluate()
 	{
 		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -615,6 +668,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("<");
+	}
 	void _evaluate()
 	{
 		//_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -638,6 +695,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str(">");
+	}
 	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
@@ -657,6 +718,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("<=");
+	}
 	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
@@ -675,7 +740,12 @@ public:		// functions
 	{
 	}
 
+
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str(">=");
+	}
 	void _evaluate()
 	{
 		_perf_compare([](const BigNum& left, const BigNum& right) -> BigNum
@@ -697,6 +767,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("+");
+	}
 	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -714,6 +788,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("-");
+	}
 	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -731,6 +809,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("*");
+	}
 	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -748,6 +830,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("/");
+	}
 	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -765,6 +851,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("%");
+	}
 	void _evaluate()
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
@@ -784,6 +874,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("&");
+	}
 	void _evaluate()
 	{
 		// This may not match the Verilog standard due to zero-extension
@@ -803,6 +897,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("|");
+	}
 	void _evaluate()
 	{
 		// This may not match the Verilog standard due to zero-extension
@@ -822,6 +920,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("^");
+	}
 	void _evaluate()
 	{
 		// This may not match the Verilog standard due to zero-extension
@@ -843,6 +945,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str("<<");
+	}
 	void _evaluate();
 };
 
@@ -856,6 +962,10 @@ public:		// functions
 	}
 
 protected:		// functions
+	SavedString _binop_str() const
+	{
+		return dup_str(">>");
+	}
 	void _evaluate();
 };
 
@@ -868,9 +978,23 @@ public:		// functions
 	{
 	}
 
+	// "ExprBaseBinOp"'s "to_hdl_source()" won't work here.
+	virtual SavedString to_hdl_source() const
+	{
+		// Verilog always treats the right argument of ">>>" as unsigned.
+		// Also, it will only perform an arithmetic shift right if the left
+		// argument of ">>>" is signed.
+		// For Frost HDL, all uses of ">>>" treat the left argument as
+		// signed, and this is also how I think the operator should work in
+		// Verilog.
+		return dup_str("$signed(", TO_HDL_SOURCE(_left_child), ") >>> ",
+			TO_HDL_SOURCE(_right_child));
+	}
+
 protected:		// functions
 	void _evaluate();
 };
+
 
 // "most derived" "Expression" classes that derive only from "Expression"
 
@@ -883,6 +1007,11 @@ public:		// functions
 		_set_value(s_value);
 	}
 
+	virtual SavedString to_hdl_source() const
+	{
+		//return dup_str(static_cast<std::string>(value()));
+		return dup_str(value().convert_to_verilog_literal());
+	}
 
 
 protected:		// functions
@@ -913,6 +1042,8 @@ class ExprConcat : public Expression
 public:		// functions
 	ExprConcat(ChildrenList&& s_children);
 
+	virtual SavedString to_hdl_source() const;
+
 protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
@@ -923,6 +1054,13 @@ class ExprTernary : public Expression
 public:		// functions
 	ExprTernary(Expression* condition_child, Expression* when_true_child,
 		Expression* when_false_child);
+
+	virtual SavedString to_hdl_source() const
+	{
+		return dup_str(TO_HDL_SOURCE(_condition_child), " ? ",
+			TO_HDL_SOURCE(_when_true_child), " : ",
+			TO_HDL_SOURCE(_when_false_child));
+	}
 
 protected:		// functions
 	inline Expression* _condition_child() const
@@ -970,7 +1108,7 @@ public:		// functions
 	//	return (Expression::is_constant() || symbol()->is_constant());
 	//}
 
-	SavedString to_hdl_source() const;
+	virtual SavedString to_hdl_source() const;
 	bool is_constant() const;
 
 protected:		// functions
