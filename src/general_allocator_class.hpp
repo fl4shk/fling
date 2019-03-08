@@ -100,6 +100,15 @@ inline SavedString dup_str(RawSavedString&& to_dup)
 {
 	return GeneralAllocator::dup_str(std::move(to_dup));
 }
+
+template<typename FirstArgType, typename SecondArgType,
+	typename... RemArgTypes>
+inline SavedString dup_str(FirstArgType&& first_arg,
+	SecondArgType&& second_arg, RemArgTypes&&... rem_args)
+{
+	return dup_str(sconcat(first_arg, second_arg, rem_args...));
+}
+
 inline ExprNumData dup_expr_num_data(const RawExprNumData& to_dup)
 {
 	return GeneralAllocator::dup_expr_num_data(to_dup);

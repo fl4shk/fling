@@ -43,6 +43,11 @@ void Expression::inner_full_evaluate()
 	_evaluate();
 }
 
+SavedString Expression::to_hdl_source() const
+{
+	return nullptr;
+}
+
 void Expression::_evaluate()
 {
 	_set_value(ExprNum(0, 1, false));
@@ -338,9 +343,16 @@ ExprIdentName::ExprIdentName(Symbol* s_symbol)
 		->is_signed());
 }
 
+SavedString ExprIdentName::to_hdl_source() const
+{
+	return symbol()->ident();
+}
+
 bool ExprIdentName::is_constant() const
 {
-	return (Expression::is_constant() || symbol()->is_constant());
+	// Why was this written this way?
+	//return (Expression::is_constant() || symbol()->is_constant());
+	return symbol()->is_constant();
 }
 
 void ExprIdentName::_evaluate()

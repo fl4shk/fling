@@ -49,15 +49,17 @@ HdlLhsType::HdlLhsType(SavedString s_ident,
 	_left_dim_expr = nullptr;
 }
 
-bool HdlLhsType::operator == (const HdlLhsType& other) const
-{
-	// ???
-}
+//bool HdlLhsType::operator == (const HdlLhsType& other) const
+//{
+//	// ???
+//}
 
 size_t HdlLhsType::left_dim() const
 {
 	return (_left_dim_expr != nullptr)
-		? BigNum(_left_dim_expr->value()).get_ui() : 1;
+		? static_cast<BigNum>(_left_dim_expr->value()).get_ui() : 1;
+	//return (_left_dim_expr != nullptr)
+	//	? _left_dim_expr->value().convert_to_unsigned_bignum() : 1;
 }
 
 } // namespace frost_hdl

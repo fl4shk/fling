@@ -34,10 +34,11 @@ protected:		// variables
 public:		// functions
 	inline HasSourceCodePosBase() = default;
 
-	inline HasSourceCodePosBase(size_t s_line, size_t s_pos_in_line)
-		: _line(s_line), _pos_in_line(s_pos_in_line)
-	{
-	}
+	//inline HasSourceCodePosBase(size_t s_line, size_t s_pos_in_line)
+	//	: _line(s_line), _pos_in_line(s_pos_in_line)
+	//{
+	//}
+	//GEN_CM_CONSTRUCTORS_AND_ASSIGN(HasSourceCodePosBase, delete, delete);
 
 
 	virtual ~HasSourceCodePosBase() = default;

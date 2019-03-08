@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 #include "hdl_statement_table_class.hpp"
 #include "hdl_function_table_class.hpp"
+#include "hdl_full_type_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -17,23 +18,21 @@ private:		// variables
 	SavedString _ident = nullptr;
 	SymbolTable _symbol_table;
 	HdlLhsTypeTable _hdl_lhs_type_table;
+	HdlFullTypeTable _hdl_full_type_table;
 	HdlFunctionTable _hdl_function_table;
+
 	ParameterVars _parameter_vars;
 	HdlStatementTable _statement_table;
 
-	// HdlPackageImportTable _hdl_package_import_table;
+	//HdlPackageImportTable _hdl_package_import_table;
 
 public:		// functions
 	HdlModule();
 
 
-	inline HdlModule(const HdlModule& to_copy) = delete;
-	inline HdlModule(HdlModule&& to_move) = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlModule, delete, default);
 
 	virtual ~HdlModule();
-
-	inline HdlModule& operator = (const HdlModule& to_copy) = delete;
-	inline HdlModule& operator = (HdlModule&& to_move) = default;
 
 
 	GEN_GETTER_AND_SETTER_BY_VAL(ident)
@@ -43,6 +42,9 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(hdl_lhs_type_table)
 	GEN_GETTER_BY_REF(hdl_lhs_type_table)
+
+	GEN_GETTER_BY_CON_REF(hdl_full_type_table)
+	GEN_GETTER_BY_REF(hdl_full_type_table)
 
 	GEN_GETTER_BY_CON_REF(hdl_function_table)
 	GEN_GETTER_BY_REF(hdl_function_table)

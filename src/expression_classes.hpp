@@ -20,6 +20,8 @@ namespace frost_hdl
 //typedef BigNum* ExprNum;
 class Symbol;
 
+#define TO_HDL_SOURCE(child) child()->to_hdl_source()
+
 class Expression
 {
 public:		// types
@@ -103,6 +105,8 @@ public:		// functions
 	// I didn't want this made public, but...
 	void inner_full_evaluate();
 
+
+	virtual SavedString to_hdl_source() const;
 
 
 
@@ -480,6 +484,12 @@ public:		// functions
 		_value.set_is_signed(false);
 	}
 
+	SavedString to_hdl_source() const
+	{
+		return dup_str("$unsigned(", TO_HDL_SOURCE(_only_child), ")");
+	}
+
+
 protected:		// functions
 	void _evaluate()
 	{
@@ -494,6 +504,11 @@ public:		// functions
 		: ExprBaseCastUnop(only_child)
 	{
 		_value.set_is_signed(true);
+	}
+
+	SavedString to_hdl_source() const
+	{
+		return dup_str("$signed(", TO_HDL_SOURCE(_only_child), ")");
 	}
 
 protected:		// functions
@@ -512,6 +527,12 @@ public:		// functions
 	ExprBinOpLogAnd(Expression* left_child, Expression* right_child)
 		: ExprBaseLogCmpBinOp(left_child, right_child)
 	{
+	}
+
+	SavedString to_hdl_source() const
+	{
+		return dup_str(TO_HDL_SOURCE(_left_child), " && ",
+			TO_HDL_SOURCE(_right_child));
 	}
 
 protected:		// functions
@@ -949,12 +970,15 @@ public:		// functions
 	//	return (Expression::is_constant() || symbol()->is_constant());
 	//}
 
+	SavedString to_hdl_source() const;
 	bool is_constant() const;
 
 protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
 };
+
+#undef TO_HDL_SOURCE
 
 } // namespace frost_hdl
 

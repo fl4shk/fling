@@ -101,7 +101,7 @@ public:		// functions
 	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlLhsType, delete, default);
 	virtual ~HdlLhsType() = default;
 
-	bool operator == (const HdlLhsType& other) const;
+	//bool operator == (const HdlLhsType& other) const;
 
 
 	inline bool can_be_parameterized() const
@@ -142,6 +142,13 @@ public:		// functions
 
 	size_t left_dim() const;
 
+	//// We don't need an "is_vector()" member function.
+	//inline bool is_vector() const
+	//{
+	//	//return (_left_dim_expr != nullptr)
+	//	//	&& static_cast<BigNum>(_left_dim_expr->values()).get_ui();
+	//}
+
 
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_signed)
@@ -163,6 +170,7 @@ public:		// functions
 	HdlLhsTypeTable() = default;
 	virtual ~HdlLhsTypeTable() = default;
 };
+
 
 } // namespace frost_hdl
 
