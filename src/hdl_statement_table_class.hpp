@@ -26,8 +26,10 @@ namespace frost_hdl
 class HdlStatement
 {
 public:		// types
-	typedef typename ScopedUnnamedTable<HdlStatement>::Node* TableNode;
+	typedef typename ScopedUnnamedTable<HdlStatement>::Node TableNode;
 
+
+	// How a "Symbol" is driven
 	enum class DriverType
 	{
 		None,
@@ -37,6 +39,7 @@ public:		// types
 		BehavBlockAlwaysSeq,
 	};
 
+	// Pretty much only relevant for "always_seq"
 	enum class EdgeSensType
 	{
 		None,
@@ -54,7 +57,7 @@ public:		// functions
 	virtual ~HdlStatement() = default;
 
 	virtual DriverType driver_type() const;
-	virtual EdgeSensType edge_sens_type() const;
+	//virtual EdgeSensType edge_sens_type() const;
 
 
 	//// Only some classes derived from "HdlStatement" need for this to
@@ -63,7 +66,11 @@ public:		// functions
 	//// it is not a "nullptr".
 	//virtual SavedString is_valid() const;
 
-	virtual SavedString to_hdl_source(TableNode top) const;
+
+	// This function takes the "top" parameter so that assignments inside
+	// of behavioral blocks can know whether to output blocking assignments
+	// ("=") or non-blocking assignments ("<=").
+	virtual SavedString to_hdl_source(TableNode* top) const;
 
 
 protected:		// functions
@@ -82,7 +89,7 @@ protected:		// functions
 
 };
 
-// Continuous assignment
+// Continuous assignment ("assign")
 class HdlStmtContAssign : public HdlStatement
 {
 public:		// functions
@@ -96,7 +103,7 @@ public:		// functions
 		return DriverType::ContAssign;
 	}
 
-	SavedString to_hdl_source(TableNode top) const
+	SavedString to_hdl_source(TableNode* top) const
 	{
 		return dup_str("assign ", TO_HDL_SOURCE(ident_expr), " = ",
 			TO_HDL_SOURCE(rhs), ";\n");
@@ -107,6 +114,7 @@ public:		// functions
 	GEN_EXPR_GETTER(rhs, 1)
 };
 
+// Base class for "initial", "always_comb", and "always_seq".
 class HdlStmtBaseBehavBlock : public HdlStatement
 {
 public:		// functions
@@ -114,7 +122,7 @@ public:		// functions
 
 	virtual ~HdlStmtBaseBehavBlock() = default;
 
-	SavedString to_hdl_source(TableNode top) const;
+	SavedString to_hdl_source(TableNode* top) const;
 
 protected:		// functions
 	virtual SavedString _output_behav_block_str() const
@@ -180,10 +188,10 @@ public:		// functions
 		return DriverType::BehavBlockAlwaysSeq;
 	}
 
-	virtual EdgeSensType edge_sens_type() const
-	{
-		return _edge_sens_type;
-	}
+	//virtual EdgeSensType edge_sens_type() const
+	//{
+	//	return _edge_sens_type;
+	//}
 
 
 	GEN_EXPR_GETTER(ident_expr, 0)

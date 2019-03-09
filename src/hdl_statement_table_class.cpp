@@ -5,7 +5,7 @@
 namespace frost_hdl
 {
 
-SavedString HdlStatement::to_hdl_source(TableNode top) const
+SavedString HdlStatement::to_hdl_source(TableNode* top) const
 {
 	return nullptr;
 }
@@ -14,10 +14,10 @@ auto HdlStatement::driver_type() const -> DriverType
 {
 	return DriverType::None;
 }
-auto HdlStatement::edge_sens_type() const -> EdgeSensType
-{
-	return EdgeSensType::None;
-}
+//auto HdlStatement::edge_sens_type() const -> EdgeSensType
+//{
+//	return EdgeSensType::None;
+//}
 
 HdlStmtContAssign::HdlStmtContAssign(Expression* s_ident_expr,
 	Expression* s_rhs)
@@ -25,7 +25,7 @@ HdlStmtContAssign::HdlStmtContAssign(Expression* s_ident_expr,
 	_set_exprs(s_ident_expr, s_rhs);
 }
 
-SavedString HdlStmtBaseBehavBlock::to_hdl_source(TableNode top) const
+SavedString HdlStmtBaseBehavBlock::to_hdl_source(TableNode* top) const
 {
 	std::string non_dupped_ret;
 
@@ -63,7 +63,8 @@ SavedString HdlStmtBehavBlockAlwaysSeq::_output_behav_block_str() const
 
 	non_dupped_ret += "always @(";
 
-	switch (edge_sens_type())
+	//switch (edge_sens_type())
+	switch (_edge_sens_type)
 	{
 	case EdgeSensType::Posedge:
 		non_dupped_ret += "posedge";
@@ -79,7 +80,8 @@ SavedString HdlStmtBehavBlockAlwaysSeq::_output_behav_block_str() const
 		break;
 	}
 
-	non_dupped_ret += sconcat(" ", *ident_expr()->to_hdl_source(), ")");
+	non_dupped_ret += sconcat(" ", *ident_expr()->to_hdl_source());
+	non_dupped_ret += ")";
 
 	return dup_str(non_dupped_ret);
 }
