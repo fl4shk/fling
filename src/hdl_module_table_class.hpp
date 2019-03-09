@@ -17,7 +17,8 @@ class HdlModule
 {
 private:		// variables
 	SavedString _ident = nullptr;
-	SymbolTable _symbol_table;
+	SymbolTable _input_symbol_table, _output_symbol_table,
+		_inout_symbol_table, _local_symbol_table;
 
 	HdlLhsTypeTable _hdl_lhs_type_table;
 	HdlFullTypeTable _hdl_full_type_table;
@@ -40,8 +41,15 @@ public:		// functions
 
 	GEN_GETTER_AND_SETTER_BY_VAL(ident)
 
-	GEN_GETTER_BY_CON_REF(symbol_table)
-	GEN_GETTER_BY_REF(symbol_table)
+	GEN_GETTER_BY_CON_REF(input_symbol_table)
+	GEN_GETTER_BY_REF(input_symbol_table)
+	GEN_GETTER_BY_CON_REF(output_symbol_table)
+	GEN_GETTER_BY_REF(output_symbol_table)
+	GEN_GETTER_BY_CON_REF(inout_symbol_table)
+	GEN_GETTER_BY_REF(inout_symbol_table)
+	GEN_GETTER_BY_CON_REF(local_symbol_table)
+	GEN_GETTER_BY_REF(local_symbol_table)
+
 
 	GEN_GETTER_BY_CON_REF(hdl_lhs_type_table)
 	GEN_GETTER_BY_REF(hdl_lhs_type_table)

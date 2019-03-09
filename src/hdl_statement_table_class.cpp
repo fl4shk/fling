@@ -131,7 +131,7 @@ SavedString HdlStmtBehavAssign::to_hdl_source(TableNode* top)
 		break;
 	}
 
-	non_dupped_ret += sconcat(" ", EXPR_TO_HDL_SOURCE(rhs), ";");
+	non_dupped_ret += sconcat(" ", EXPR_TO_HDL_SOURCE(rhs), ";\n");
 
 	return dup_str(non_dupped_ret);
 }
