@@ -9,8 +9,8 @@
 #include "gen_src/CompilerGrammarParser.h"
 #include "gen_src/CompilerGrammarVisitor.h"
 
-//#include "symbol_table_class.hpp"
-//#include "expr_chunk_class.hpp"
+
+#include "hdl_module_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -35,8 +35,12 @@ private:		// variables
 	//std::stack<ExprChunk> _expr_chunk_stack;
 
 
+	HdlModuleTable _hdl_module_table;
+	HdlModule* _curr_hdl_module = nullptr;
+
+
 	Parser::ProgramContext* _program_ctx;
-	int _pass;
+	intmax_t _pass;
 
 	//ScopedTableNode<Symbol>* _curr_scope_node = nullptr;
 

@@ -17,7 +17,7 @@
 #define ANY_PUSH_TOK_IF(arg) \
 	if (arg) \
 	{ \
-		push_str(cstm_str_dup(arg->toString())); \
+		push_str(dup_str(arg->toString())); \
 	}
 
 namespace frost_hdl

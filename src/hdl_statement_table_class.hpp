@@ -173,10 +173,8 @@ private:		// variables
 	EdgeSensType _edge_sens_type = EdgeSensType::None;
 
 public:		// functions
-	// The grammar will guarantee that "s_ident" is only ever an
-	// "ExprIdentName*".
 	HdlStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
-		Expression* s_ident);
+		Expression* s_ident_expr);
 
 	virtual ~HdlStmtBehavBlockAlwaysSeq() = default;
 

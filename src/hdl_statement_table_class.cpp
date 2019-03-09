@@ -63,10 +63,10 @@ SavedString HdlStmtBaseBehavBlock::to_hdl_source(TableNode* top) const
 
 // "always_seq"
 HdlStmtBehavBlockAlwaysSeq::HdlStmtBehavBlockAlwaysSeq
-	(EdgeSensType s_edge_sens_type, Expression* s_ident)
+	(EdgeSensType s_edge_sens_type, Expression* s_ident_expr)
 {
 	_edge_sens_type = s_edge_sens_type;
-	_set_exprs(s_ident);
+	_set_exprs(s_ident_expr);
 }
 
 SavedString HdlStmtBehavBlockAlwaysSeq::_output_behav_block_str() const

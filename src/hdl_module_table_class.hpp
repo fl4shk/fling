@@ -17,6 +17,7 @@ class HdlModule
 {
 private:		// variables
 	SavedString _ident = nullptr;
+	ParameterVars _parameter_vars;
 	SymbolTable _input_symbol_table, _output_symbol_table,
 		_inout_symbol_table, _local_symbol_table;
 
@@ -25,7 +26,6 @@ private:		// variables
 
 	HdlFunctionTable _hdl_function_table;
 
-	ParameterVars _parameter_vars;
 	HdlStatementTable _statement_table;
 
 	//HdlPackageImportTable _hdl_package_import_table;
@@ -37,6 +37,14 @@ public:		// functions
 	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlModule, delete, default);
 
 	virtual ~HdlModule();
+
+
+	Symbol* find_non_param_symbol(SavedString some_name) const;
+
+	inline bool contains_non_param_symbol(SavedString some_name) const
+	{
+		return (find_non_param_symbol(some_name) != nullptr);
+	}
 
 
 	GEN_GETTER_AND_SETTER_BY_VAL(ident)
