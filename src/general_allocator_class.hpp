@@ -43,38 +43,22 @@ public:		// static functions
 	static ExprNumData dup_expr_num_data(const RawExprNumData& to_dup); 
 	static ExprNumData dup_expr_num_data(RawExprNumData&& to_dup); 
 
-	template<typename ExprType>
-	static inline Expression* save_expr(ExprType&& to_save)
-	{
-		return _inner_save_generic<Expression, ExprType>(_expr_pool,
-			std::move(to_save));
-	}
-	template<typename ActualSymbol>
-	static inline Symbol* save_symbol(ActualSymbol&& to_save)
-	{
-		return _inner_save_generic<Symbol, ActualSymbol>(_symbol_pool,
-			std::move(to_save));
-	}
-	template<typename ActualHdlLhsType>
-	static inline HdlLhsType* save_hdl_lhs_type(ActualHdlLhsType&& to_save)
-	{
-		return _inner_save_generic<HdlLhsType, ActualHdlLhsType>
-			(_hdl_lhs_type_pool, std::move(to_save));
-	}
-	template<typename ActualHdlFullType>
-	static inline HdlFullType* save_hdl_full_type
-		(ActualHdlFullType&& to_save)
-	{
-		return _inner_save_generic<HdlFullType, ActualHdlFullType>
-			(_hdl_full_type_pool, std::move(to_save));
-	}
-	template<typename ActualHdlFunction>
-	static inline HdlFunction* save_hdl_function
-		(ActualHdlFunction&& to_save)
-	{
-		return _inner_save_generic<HdlFunction, ActualHdlFunction>
-			(_hdl_function_pool, std::move(to_save));
-	}
+
+	#define GEN_SAVE(reuse, ret_type, template_type) \
+		template<typename template_type> \
+		static inline ret_type* save_##reuse(template_type&& to_save) \
+		{ \
+			return _inner_save_generic<ret_type, template_type> \
+				(_##reuse##_pool, std::move(to_save)); \
+		}
+
+	GEN_SAVE(expr, Expression, ExprType)
+	GEN_SAVE(symbol, Symbol, ActualSymbol)
+	GEN_SAVE(hdl_lhs_type, HdlLhsType, ActualHdlLhsType)
+	GEN_SAVE(hdl_full_type, HdlFullType, ActualHdlFullType)
+	GEN_SAVE(hdl_function, HdlFunction, ActualHdlFunction)
+
+	#undef GEN_SAVE
 
 
 private:		// static functions
@@ -123,7 +107,6 @@ inline Expression* save_expr(ExprType&& to_save)
 {
 	return GeneralAllocator::save_expr(std::move(to_save));
 }
-
 template<typename ActualSymbol>
 inline Symbol* save_symbol(ActualSymbol&& to_save)
 {

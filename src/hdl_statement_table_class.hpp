@@ -14,7 +14,6 @@
 namespace frost_hdl
 {
 
-#define TO_HDL_SOURCE(expr) (*expr()->to_hdl_source())
 #define GEN_EXPR_GETTER(name, index) \
 	inline Expression* name() const \
 	{ \
@@ -103,11 +102,7 @@ public:		// functions
 		return DriverType::ContAssign;
 	}
 
-	SavedString to_hdl_source(TableNode* top) const
-	{
-		return dup_str("assign ", TO_HDL_SOURCE(ident_expr), " = ",
-			TO_HDL_SOURCE(rhs), ";\n");
-	}
+	SavedString to_hdl_source(TableNode* top) const;
 
 
 	GEN_EXPR_GETTER(ident_expr, 0)
@@ -178,6 +173,8 @@ private:		// variables
 	EdgeSensType _edge_sens_type = EdgeSensType::None;
 
 public:		// functions
+	// The grammar will guarantee that "s_ident" is only ever an
+	// "ExprIdentName*".
 	HdlStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
 		Expression* s_ident);
 
@@ -201,6 +198,39 @@ protected:		// functions
 };
 
 
+// Behavioral assignment operator.  Can become either a blocking or a
+// non-blocking assignment depending on whether it was in an "initial",
+// "always_comb", or "always_seq" block.
+//
+// This is *not* used for the statements inside the parentheses of an
+// "HdlStmtForLoop"!  For that, you'll want "HdlStmtForLoopAssign".
+//
+// This is also *not* used for the insides of a non-task "HdlFunction".
+class HdlStmtBehavAssign : public HdlStatement
+{
+public:		// functions
+	HdlStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
+
+	virtual ~HdlStmtBehavAssign() = default;
+
+	virtual SavedString to_hdl_source(TableNode* top);
+
+	GEN_EXPR_GETTER(ident_expr, 0)
+	GEN_EXPR_GETTER(rhs, 1)
+};
+
+//// "if" statement.
+//class HdlStmtBehavIf : public HdlStatement
+//{
+//public:		// functions
+//	HdlStmtBehavIf(Expression* s_condition_expr);
+//};
+//
+//// "else" statement.
+
+//// "if-elseif-else chain" 
+
+
 
 class HdlStatementTable : public ScopedUnnamedTable<HdlStatement>
 {
@@ -209,7 +239,6 @@ public:		// functions
 	virtual ~HdlStatementTable() = default;
 };
 
-#undef TO_HDL_SOURCE
 #undef GEN_EXPR_GETTER
 
 } // namespace frost_hdl

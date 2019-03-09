@@ -5,6 +5,8 @@
 namespace frost_hdl
 {
 
+#define EXPR_TO_HDL_SOURCE(expr) (*expr()->to_hdl_source())
+
 SavedString HdlStatement::to_hdl_source(TableNode* top) const
 {
 	return nullptr;
@@ -19,12 +21,22 @@ auto HdlStatement::driver_type() const -> DriverType
 //	return EdgeSensType::None;
 //}
 
+// Continuous assignment ("assign")
 HdlStmtContAssign::HdlStmtContAssign(Expression* s_ident_expr,
 	Expression* s_rhs)
 {
 	_set_exprs(s_ident_expr, s_rhs);
 }
+SavedString HdlStmtContAssign::to_hdl_source(TableNode* top) const
+{
+	//return dup_str("assign ", TO_HDL_SOURCE(ident_expr), " = ",
+	//	TO_HDL_SOURCE(rhs), ";\n");
+	return dup_str("assign ", EXPR_TO_HDL_SOURCE(ident_expr), " = ",
+		EXPR_TO_HDL_SOURCE(rhs), ";\n");
+}
 
+
+// "initial", "always_comb", "always_seq"
 SavedString HdlStmtBaseBehavBlock::to_hdl_source(TableNode* top) const
 {
 	std::string non_dupped_ret;
@@ -85,5 +97,45 @@ SavedString HdlStmtBehavBlockAlwaysSeq::_output_behav_block_str() const
 
 	return dup_str(non_dupped_ret);
 }
+
+// Behavioral assignment operator.  Can become either a blocking or a
+// non-blocking assignment depending on whether it was in an "initial",
+// "always_comb", or "always_seq" block.
+HdlStmtBehavAssign::HdlStmtBehavAssign(Expression* s_ident_expr,
+	Expression* s_rhs)
+{
+	_set_exprs(s_ident_expr, s_rhs);
+}
+
+SavedString HdlStmtBehavAssign::to_hdl_source(TableNode* top)
+{
+	std::string non_dupped_ret;
+
+	non_dupped_ret += sconcat(EXPR_TO_HDL_SOURCE(ident_expr), " ");
+
+	switch (top->table.front()->driver_type())
+	{
+	case DriverType::BehavBlockInitial:
+	case DriverType::BehavBlockAlwaysComb:
+		non_dupped_ret += "=";
+		break;
+
+	case DriverType::BehavBlockAlwaysSeq:
+		non_dupped_ret += "<=";
+		break;
+
+	default:
+		printerr("HdlStmtBehavAssign::to_hdl_source():  Eek!\n");
+		exit(1);
+		return nullptr;
+		break;
+	}
+
+	non_dupped_ret += sconcat(" ", EXPR_TO_HDL_SOURCE(rhs), ";");
+
+	return dup_str(non_dupped_ret);
+}
+
+#undef EXPR_TO_HDL_SOURCE
 
 } // namespace frost_hdl
