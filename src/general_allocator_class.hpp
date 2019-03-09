@@ -15,6 +15,7 @@ class Symbol;
 class HdlLhsType;
 class HdlFullType;
 class HdlFunction;
+class HdlModule;
 //class HdlScope;
 
 typedef std::string RawSavedString;
@@ -36,6 +37,7 @@ private:		// static variables
 	static std::vector<std::unique_ptr<HdlLhsType>> _hdl_lhs_type_pool;
 	static std::vector<std::unique_ptr<HdlFullType>> _hdl_full_type_pool;
 	static std::vector<std::unique_ptr<HdlFunction>> _hdl_function_pool;
+	static std::vector<std::unique_ptr<HdlModule>> _hdl_module_pool;
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
@@ -57,6 +59,7 @@ public:		// static functions
 	GEN_SAVE(hdl_lhs_type, HdlLhsType, ActualHdlLhsType)
 	GEN_SAVE(hdl_full_type, HdlFullType, ActualHdlFullType)
 	GEN_SAVE(hdl_function, HdlFunction, ActualHdlFunction)
+	GEN_SAVE(hdl_module, HdlModule, ActualHdlModule)
 
 	#undef GEN_SAVE
 
@@ -126,6 +129,11 @@ template<typename ActualHdlFunction>
 inline HdlFunction* save_hdl_function(ActualHdlFunction&& to_save)
 {
 	return GeneralAllocator::save_hdl_function(std::move(to_save));
+}
+template<typename ActualHdlModule>
+inline HdlModule* save_hdl_module(ActualHdlModule&& to_save)
+{
+	return GeneralAllocator::save_hdl_module(std::move(to_save));
 }
 
 } // namespace frost_hdl

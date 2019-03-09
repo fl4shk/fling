@@ -130,6 +130,7 @@ class SymbolTable : public IdentToPointerTable<Symbol>
 {
 public:		// functions
 	SymbolTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(SymbolTable, delete, default);
 	virtual ~SymbolTable() = default;
 };
 

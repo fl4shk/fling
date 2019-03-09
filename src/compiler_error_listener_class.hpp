@@ -4,7 +4,7 @@
 // src/compiler_error_listener_class_hpp
 
 #include "misc_includes.hpp"
-#include "ANTLRErrorListener.h"
+#include <ANTLRErrorListener.h>
 
 namespace frost_hdl
 {

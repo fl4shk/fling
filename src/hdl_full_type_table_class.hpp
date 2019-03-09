@@ -52,6 +52,7 @@ class HdlFullTypeTable : public IdentToPointerTable<HdlFullType>
 {
 public:		// functions
 	HdlFullTypeTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlFullTypeTable, delete, default);
 	virtual ~HdlFullTypeTable() = default;
 };
 

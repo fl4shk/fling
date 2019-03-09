@@ -31,6 +31,8 @@ public:		// functions
 	{
 	}
 
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedTableNode, delete, default);
+
 	virtual ~ScopedTableNode() = default;
 
 	inline void append_child(ScopedTableNode* to_append)
@@ -101,12 +103,15 @@ public:		// functions
 		mkscope(some_curr_node);
 	}
 
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedTableBase, delete, default);
+
 	// This destructor may never be called before the compiler stops
 	// running.
 	virtual ~ScopedTableBase()
 	{
 		for (size_t i=0; i<_node_pool.size(); ++i)
 		{
+			//printout((_node_pool.at(i)->parent == (&_tree)), "\n");
 			delete _node_pool.at(i);
 		}
 
@@ -174,6 +179,8 @@ public:		// types
 
 public:		// functions
 	ScopedIdentTable() = default;
+
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedIdentTable, delete, default);
 
 	virtual ~ScopedIdentTable() = default;
 
@@ -301,6 +308,9 @@ public:		// types
 
 public:		// functions
 	ScopedUnnamedTable() = default;
+
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedUnnamedTable, delete, default);
+
 	virtual ~ScopedUnnamedTable() = default;
 
 	//template<typename MaybeDerivedType>
@@ -309,6 +319,7 @@ public:		// functions
 	//	some_curr_node->tab
 	//}
 };
+
 
 
 

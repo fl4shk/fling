@@ -5,6 +5,7 @@
 #include "hdl_lhs_type_table_class.hpp"
 #include "hdl_full_type_table_class.hpp"
 #include "hdl_function_table_class.hpp"
+#include "hdl_module_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -21,6 +22,8 @@ std::vector<std::unique_ptr<HdlFullType>>
 	GeneralAllocator::_hdl_full_type_pool;
 std::vector<std::unique_ptr<HdlFunction>>
 	GeneralAllocator::_hdl_function_pool;
+std::vector<std::unique_ptr<HdlModule>>
+	GeneralAllocator::_hdl_module_pool;
 
 
 SavedString GeneralAllocator::dup_str(const RawSavedString& to_dup)

@@ -168,6 +168,7 @@ class HdlLhsTypeTable : public IdentToPointerTable<HdlLhsType>
 {
 public:		// functions
 	HdlLhsTypeTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlLhsTypeTable, delete, default);
 	virtual ~HdlLhsTypeTable() = default;
 };
 

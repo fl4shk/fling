@@ -36,6 +36,7 @@ public:		// functions
 
 	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlModule, delete, default);
 
+	//virtual ~HdlModule() = default;
 	virtual ~HdlModule();
 
 
@@ -82,6 +83,7 @@ class HdlModuleTable : public IdentToPointerTable<HdlModule>
 {
 public:		// functions
 	HdlModuleTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlModuleTable, delete, default);
 	virtual ~HdlModuleTable() = default;
 };
 

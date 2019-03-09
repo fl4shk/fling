@@ -1,21 +1,21 @@
 grammar CompilerGrammar;
 
 // Parser rules
+
+// In addition to module declarations, this includes things like "struct"
+// definitions and "package"s, too.
 program:
-	subProgram*
+	(
+		declModule
+		//| declStruct
+		//| declClass
+		//| declEnum
+		//| declTypedef
+		//| declPackage
+	)*
 	;
 
 
-// In addition to module declarations, "subProgram" includes things
-// like "struct" definitions and "package"s, too.
-subProgram:
-	declModule
-	//| declStruct
-	//| declClass
-	//| declEnum
-	//| declTypedef
-	//| declPackage
-	;
 
 
 // Variable declaration stuff
@@ -53,6 +53,7 @@ declPortInoutVarList:
 // "module" stuff
 declModule:
 	TokKwModule identName
+		// FUTURE:  allow "parameter"s here
 		TokLParen
 			// FUTURE:  allow "portsplit" structs here
 			((declPortInputVarList | declPortOutputVarList
@@ -67,14 +68,14 @@ declModule:
 
 
 
-
-
 moduleInsides:
-	declVarList TokSemicolon
-	| moduleStmtAssign TokSemicolon
-	//| moduleStmtInitial
-	//| moduleStmtAlwaysComb
-	//| moduleStmtAlwaysSeq
+	(
+		declVarList TokSemicolon
+		| moduleStmtAssign TokSemicolon
+		//| moduleStmtInitial
+		//| moduleStmtAlwaysComb
+		//| moduleStmtAlwaysSeq
+	)*
 	;
 
 moduleStmtAssign:

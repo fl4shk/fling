@@ -56,6 +56,7 @@ class HdlFunctionTable : public IdentToPointerTable<HdlFunction>
 {
 public:		// functions
 	HdlFunctionTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlFunctionTable, delete, default);
 	virtual ~HdlFunctionTable() = default;
 };
 

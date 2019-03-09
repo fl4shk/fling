@@ -1,0 +1,7 @@
+module Egg()
+{
+}
+
+module Egg(input logic egg)
+{
+}

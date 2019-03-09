@@ -54,6 +54,8 @@ protected:		// variables
 public:		// functions
 	HdlStatement() = default;
 
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlStatement, delete, default);
+
 	virtual ~HdlStatement() = default;
 
 	virtual DriverType driver_type() const
@@ -232,6 +234,7 @@ class HdlStatementTable : public ScopedUnnamedTable<HdlStatement>
 {
 public:		// functions
 	HdlStatementTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlStatementTable, delete, default);
 	virtual ~HdlStatementTable() = default;
 };
 

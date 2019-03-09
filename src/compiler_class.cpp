@@ -17,8 +17,11 @@
 #define ANY_PUSH_TOK_IF(arg) \
 	if (arg) \
 	{ \
-		push_str(dup_str(arg->toString())); \
+		_push_str(dup_str(arg->toString())); \
 	}
+
+#define TOK_TO_DUPPED_STR(arg) \
+	dup_str(arg->toString())
 
 namespace frost_hdl
 {
@@ -32,25 +35,37 @@ Compiler::Compiler(Parser& parser)
 
 int Compiler::run()
 {
+	// Temporary initialization of "Pass::ListModules".
+	set_pass(Pass::ListModules);
+
+
+	while (pass() < Pass::Done)
+	{
+		visitProgram(_program_ctx);
+		set_pass(static_cast<Pass>(static_cast<uintmax_t>(pass())
+			+ static_cast<uintmax_t>(1)));
+	}
+
 	return 0;
 }
 
 
+// In addition to module declarations, this includes things like "struct"
+// definitions and "package"s, too.
 VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
-	for (auto subprogram : ctx->subProgram())
+	if ((pass() == Pass::ListModules) || (pass() == Pass::ExpandModules))
 	{
+		for (auto subprogram : ctx->declModule())
+		{
+			ANY_JUST_ACCEPT_BASIC(subprogram);
+		}
 	}
+
 	return nullptr;
 }
 
 
-// In addition to module declarations, "subProgram" includes things like
-// "struct" definitions and "package"s, too.
-VisitorRetType Compiler::visitSubProgram(Parser::SubProgramContext *ctx)
-{
-	return nullptr;
-}
 
 
 // Variable declaration stuff
@@ -96,9 +111,32 @@ VisitorRetType Compiler::visitDeclPortInoutVarList
 	return nullptr;
 }
 
+
 // "module" stuff
 VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 {
+	if (pass() == Pass::ListModules)
+	{
+		if (_hdl_module_table.contains
+			(TOK_TO_DUPPED_STR(ctx->identName())))
+		{
+			_err(ctx, sconcat("Duplicate \"module\" called \"",
+				ctx->identName()->toString(), "\""));
+		}
+
+		_curr_hdl_module = save_hdl_module(HdlModule());
+		_curr_hdl_module->set_ident(TOK_TO_DUPPED_STR(ctx->identName()));
+		_hdl_module_table.insert_or_assign(_curr_hdl_module);
+	}
+	else if (pass() == Pass::ExpandModules)
+	{
+	}
+	else
+	{
+		_err(ctx, "Compiler::visitDeclModule():  Eek!");
+	}
+
+
 	return nullptr;
 }
 
