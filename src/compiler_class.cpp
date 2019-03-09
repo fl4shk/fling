@@ -23,6 +23,8 @@
 namespace frost_hdl
 {
 
+typedef Compiler::VisitorRetType VisitorRetType;
+
 Compiler::Compiler(Parser& parser)
 {
 	_program_ctx = parser.program();
@@ -34,213 +36,191 @@ int Compiler::run()
 }
 
 
-Compiler::VisitorRetType Compiler::visitProgram
-	(Parser::ProgramContext *ctx)
+VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
 	return nullptr;
 }
 
 
-// In addition to module declarations, "subProgram" includes things
-// like struct definitions and packages, too.
-Compiler::VisitorRetType Compiler::visitSubProgram
-	(Parser::SubProgramContext *ctx)
+// In addition to module declarations, "subProgram" includes things like
+// "struct" definitions and "package"s, too.
+VisitorRetType Compiler::visitSubProgram(Parser::SubProgramContext *ctx)
 {
 	return nullptr;
 }
 
 
-
-// declarations
-Compiler::VisitorRetType Compiler::visitDeclModule
-	(Parser::DeclModuleContext *ctx)
-{
-	return nullptr;
-}
-
-Compiler::VisitorRetType Compiler::visitDeclVar
-	(Parser::DeclVarContext *ctx)
+// Variable declaration stuff
+VisitorRetType Compiler::visitLhsTypeName
+	(Parser::LhsTypeNameContext *ctx)
 {
 	return nullptr;
 }
 
 
+VisitorRetType Compiler::visitDeclNoLhsTypeVar
+	(Parser::DeclNoLhsTypeVarContext *ctx)
+{
+	return nullptr;
+}
 
+VisitorRetType Compiler::visitDeclVarList
+	(Parser::DeclVarListContext *ctx)
+{
+	return nullptr;
+}
 
+VisitorRetType Compiler::visitDeclPortVarList
+	(Parser::DeclPortVarListContext *ctx)
+{
+	return nullptr;
+}
 
-Compiler::VisitorRetType Compiler::visitModuleInsides
+VisitorRetType Compiler::visitDeclPortInputVarList
+	(Parser::DeclPortInputVarListContext *ctx)
+{
+	return nullptr;
+}
+
+VisitorRetType Compiler::visitDeclPortOutputVarList
+	(Parser::DeclPortOutputVarListContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType Compiler::visitDeclPortInoutVarList
+	(Parser::DeclPortInoutVarListContext *ctx)
+{
+	return nullptr;
+}
+
+// "module" stuff
+VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
+{
+	return nullptr;
+}
+
+VisitorRetType Compiler::visitModuleInsides
 	(Parser::ModuleInsidesContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitModuleStmtAssign
+VisitorRetType Compiler::visitModuleStmtAssign
 	(Parser::ModuleStmtAssignContext *ctx)
 {
 	return nullptr;
 }
 
-
-//// initial behavioral block
-//Compiler::VisitorRetType Compiler::visitModuleStmtInitial
-//	(Parser::ModuleStmtInitialContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-//// always_comb behavioral block
-//Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysComb
-//	(Parser::ModuleStmtAlwaysCombContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-//// always_seq behavioral block
-//Compiler::VisitorRetType Compiler::visitModuleStmtAlwaysSeq
-//	(Parser::ModuleStmtAlwaysSeqContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-//Compiler::VisitorRetType Compiler::visitScopedListStmtBehavioral
-//	(Parser::ScopedListStmtBehavioralContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-//Compiler::VisitorRetType Compiler::visitListStmtBehavioral
-//	(Parser::ListStmtBehavioralContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-//Compiler::VisitorRetType Compiler::visitStmtBehavioral
-//	(Parser::StmtBehavioralContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-//Compiler::VisitorRetType Compiler::visitStmtBehavAssign
-//	(Parser::StmtBehavAssignContext *ctx)
-//{
-//	return nullptr;
-//}
-//
-////Compiler::VisitorRetType Compiler::visitStmtBehavIf
-////	(Parser::StmtBehavIfCon *ctx)
-////{
-////	return nullptr;
-////}
-
-
 // Expression parsing
-Compiler::VisitorRetType Compiler::visitExpr
+VisitorRetType Compiler::visitExpr
 	(Parser::ExprContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitExprLogical
+VisitorRetType Compiler::visitExprLogical
 	(Parser::ExprLogicalContext *ctx)
 {
 	return nullptr;
 }
-
-Compiler::VisitorRetType Compiler::visitExprCompare
+VisitorRetType Compiler::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitExprAddSub
+VisitorRetType Compiler::visitExprAddSub
 	(Parser::ExprAddSubContext *ctx)
 {
 	return nullptr;
 }
-
-Compiler::VisitorRetType Compiler::visitExprMulDivModEtc
+VisitorRetType Compiler::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitExprUnary
+VisitorRetType Compiler::visitExprUnary
 	(Parser::ExprUnaryContext *ctx)
 {
 	return nullptr;
 }
 
 
-Compiler::VisitorRetType Compiler::visitExprBitInvert
+VisitorRetType Compiler::visitExprBitInvert
 	(Parser::ExprBitInvertContext *ctx)
 {
 	return nullptr;
 }
-Compiler::VisitorRetType Compiler::visitExprNegate
+VisitorRetType Compiler::visitExprNegate
 	(Parser::ExprNegateContext *ctx)
 {
 	return nullptr;
 }
-Compiler::VisitorRetType Compiler::visitExprLogNot
+VisitorRetType Compiler::visitExprLogNot
 	(Parser::ExprLogNotContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitNumExpr
+VisitorRetType Compiler::visitNumExpr
 	(Parser::NumExprContext *ctx)
 {
 	return nullptr;
 }
 
 
-
-Compiler::VisitorRetType Compiler::visitIdentExpr
+VisitorRetType Compiler::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitIdentName
+
+VisitorRetType Compiler::visitIdentName
 	(Parser::IdentNameContext *ctx)
 {
 	return nullptr;
 }
 
 // For now, only support sliced identifiers.
-Compiler::VisitorRetType Compiler::visitIdentSliced
+VisitorRetType Compiler::visitIdentSliced
 	(Parser::IdentSlicedContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitIdentConcatExpr
+VisitorRetType Compiler::visitIdentConcatExpr
 	(Parser::IdentConcatExprContext *ctx)
 {
 	return nullptr;
 }
-Compiler::VisitorRetType Compiler::visitListIdentExpr
+
+VisitorRetType Compiler::visitListIdentExpr
 	(Parser::ListIdentExprContext *ctx)
 {
 	return nullptr;
 }
 
-Compiler::VisitorRetType Compiler::visitSlice
+
+
+VisitorRetType Compiler::visitSlice
 	(Parser::SliceContext *ctx)
 {
 	return nullptr;
 }
 
-
-Compiler::VisitorRetType Compiler::visitInnerSliceOne
+VisitorRetType Compiler::visitInnerSliceOne
 	(Parser::InnerSliceOneContext *ctx)
 {
 	return nullptr;
 }
-Compiler::VisitorRetType Compiler::visitInnerSliceTwo
+
+VisitorRetType Compiler::visitInnerSliceTwo
 	(Parser::InnerSliceTwoContext *ctx)
 {
 	return nullptr;
 }
+
 
 } // namespace frost_hdl

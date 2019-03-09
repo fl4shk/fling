@@ -19,6 +19,8 @@ class Compiler : public CompilerGrammarVisitor
 {
 public:		// typedefs
 	typedef antlr4::ParserRuleContext ParserRuleContext;
+
+	// VisitorRetType
 	typedef antlrcpp::Any VisitorRetType;
 
 	typedef CompilerGrammarParser Parser;
@@ -103,22 +105,36 @@ private:		// visitor functions
 
 
 	// In addition to module declarations, "subProgram" includes things
-	// like struct definitions and packages, too.
+	// like "struct" definitions and "package"s, too.
 	VisitorRetType visitSubProgram
 		(Parser::SubProgramContext *ctx);
 
+	// Variable declaration stuff
+	VisitorRetType visitLhsTypeName
+		(Parser::LhsTypeNameContext *ctx);
 
 
-	// declarations
+	VisitorRetType visitDeclNoLhsTypeVar
+		(Parser::DeclNoLhsTypeVarContext *ctx);
+
+	VisitorRetType visitDeclVarList
+		(Parser::DeclVarListContext *ctx);
+
+	VisitorRetType visitDeclPortVarList
+		(Parser::DeclPortVarListContext *ctx);
+
+	VisitorRetType visitDeclPortInputVarList
+		(Parser::DeclPortInputVarListContext *ctx);
+
+	VisitorRetType visitDeclPortOutputVarList
+		(Parser::DeclPortOutputVarListContext *ctx);
+	VisitorRetType visitDeclPortInoutVarList
+		(Parser::DeclPortInoutVarListContext *ctx);
+
+
+	// "module" stuff
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
-
-	VisitorRetType visitDeclVar
-		(Parser::DeclVarContext *ctx);
-
-
-
-
 
 	VisitorRetType visitModuleInsides
 		(Parser::ModuleInsidesContext *ctx);
@@ -126,48 +142,17 @@ private:		// visitor functions
 	VisitorRetType visitModuleStmtAssign
 		(Parser::ModuleStmtAssignContext *ctx);
 
-
-	//// initial behavioral block
-	//VisitorRetType visitModuleStmtInitial
-	//	(Parser::ModuleStmtInitialContext *ctx);
-
-	//// always_comb behavioral block
-	//VisitorRetType visitModuleStmtAlwaysComb
-	//	(Parser::ModuleStmtAlwaysCombContext *ctx);
-
-	//// always_seq behavioral block
-	//VisitorRetType visitModuleStmtAlwaysSeq
-	//	(Parser::ModuleStmtAlwaysSeqContext *ctx);
-
-	//VisitorRetType visitScopedListStmtBehavioral
-	//	(Parser::ScopedListStmtBehavioralContext *ctx);
-
-	//VisitorRetType visitListStmtBehavioral
-	//	(Parser::ListStmtBehavioralContext *ctx);
-
-	//VisitorRetType visitStmtBehavioral
-	//	(Parser::StmtBehavioralContext *ctx);
-
-	//VisitorRetType visitStmtBehavAssign
-	//	(Parser::StmtBehavAssignContext *ctx);
-
-	////VisitorRetType visitStmtBehavIf
-	////	(Parser::StmtBehavIfCon *ctx);
-
-
 	// Expression parsing
 	VisitorRetType visitExpr
 		(Parser::ExprContext *ctx);
 
 	VisitorRetType visitExprLogical
 		(Parser::ExprLogicalContext *ctx);
-
 	VisitorRetType visitExprCompare
 		(Parser::ExprCompareContext *ctx);
 
 	VisitorRetType visitExprAddSub
 		(Parser::ExprAddSubContext *ctx);
-
 	VisitorRetType visitExprMulDivModEtc
 		(Parser::ExprMulDivModEtcContext *ctx);
 
@@ -190,6 +175,7 @@ private:		// visitor functions
 	VisitorRetType visitIdentExpr
 		(Parser::IdentExprContext *ctx);
 
+
 	VisitorRetType visitIdentName
 		(Parser::IdentNameContext *ctx);
 
@@ -199,8 +185,10 @@ private:		// visitor functions
 
 	VisitorRetType visitIdentConcatExpr
 		(Parser::IdentConcatExprContext *ctx);
+
 	VisitorRetType visitListIdentExpr
 		(Parser::ListIdentExprContext *ctx);
+
 
 
 	VisitorRetType visitSlice
@@ -208,6 +196,7 @@ private:		// visitor functions
 
 	VisitorRetType visitInnerSliceOne
 		(Parser::InnerSliceOneContext *ctx);
+
 	VisitorRetType visitInnerSliceTwo
 		(Parser::InnerSliceTwoContext *ctx);
 
@@ -226,37 +215,7 @@ private:		// functions
 	//	_expr_chunk_stack.pop();
 	//	return ret;
 	//}
-	//inline void push_scope_child_num(s64 to_push)
-	//{
-	//	_scope_child_num_stack.push(to_push);
-	//}
-	//inline auto get_top_scope_child_num()
-	//{
-	//	return _scope_child_num_stack.top();
-	//}
-	//inline auto pop_scope_child_num()
-	//{
-	//	auto ret = _scope_child_num_stack.top();
-	//	_scope_child_num_stack.pop();
-	//	return ret;
-	//}
 
-	//inline void push_str(std::string* to_push)
-	//{
-	//	_str_stack.push(to_push);
-	//}
-	//inline auto get_top_str()
-	//{
-	//	return _str_stack.top();
-	//}
-	//inline auto pop_str()
-	//{
-	//	auto ret = _str_stack.top();
-	//	_str_stack.pop();
-	//	return ret;
-	//}
-
-	//GEN_GETTER_BY_REF(sym_tbl);
 };
 
 } // namespace frost_hdl

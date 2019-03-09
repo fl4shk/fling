@@ -38,6 +38,7 @@ public:		// types
 		BehavBlockAlwaysSeq,
 	};
 
+
 	// Pretty much only relevant for "always_seq"
 	enum class EdgeSensType
 	{
@@ -55,8 +56,10 @@ public:		// functions
 
 	virtual ~HdlStatement() = default;
 
-	virtual DriverType driver_type() const;
-	//virtual EdgeSensType edge_sens_type() const;
+	virtual DriverType driver_type() const
+	{
+		return DriverType::None;
+	}
 
 
 	//// Only some classes derived from "HdlStatement" need for this to
@@ -182,11 +185,6 @@ public:		// functions
 	{
 		return DriverType::BehavBlockAlwaysSeq;
 	}
-
-	//virtual EdgeSensType edge_sens_type() const
-	//{
-	//	return _edge_sens_type;
-	//}
 
 
 	GEN_EXPR_GETTER(ident_expr, 0)

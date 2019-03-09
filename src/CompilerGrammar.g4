@@ -6,26 +6,57 @@ program:
 	;
 
 
-// In addition to module declarations, "subProgram" includes things like
-// struct definitions and packages, too.
+// In addition to module declarations, "subProgram" includes things
+// like "struct" definitions and "package"s, too.
 subProgram:
 	declModule
 	//| declStruct
 	//| declClass
 	//| declEnum
 	//| declTypedef
-	//| declInterface
 	//| declPackage
 	;
 
 
+// Variable declaration stuff
+lhsTypeName:
+	(TokKwLogic (slice?))
+	| identName
+	;
 
-// declarations
+
+declNoLhsTypeVar:
+	identName TokLBracket expr TokRBracket
+	;
+
+declVarList:
+	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
+	;
+
+declPortVarList:
+	lhsTypeName identName ((',' identName)*)
+	;
+
+declPortInputVarList:
+	TokKwInput declPortVarList
+	;
+
+declPortOutputVarList:
+	TokKwOutput declPortVarList
+	;
+declPortInoutVarList:
+	TokKwInout declPortVarList
+	;
+
+
+
+// "module" stuff
 declModule:
 	TokKwModule identName
 		TokLParen
-			// FUTURE:  insert input/output/inout variable declarations
-			// here
+			// FUTURE:  allow "portsplit" structs here
+			((declPortInputVarList | declPortOutputVarList
+				| declPortInoutVarList)*)
 		TokRParen
 
 	TokLBrace
@@ -33,18 +64,13 @@ declModule:
 	TokRBrace
 	;
 
-declVar:
-	// FUTURE:  convert this to be able to handle sizes.
-	identName identName
-	;
 
 
 
 
 
 moduleInsides:
-	// FUTURE:  convert this to list of variable declarations
-	declVar TokSemicolon
+	declVarList TokSemicolon
 	| moduleStmtAssign TokSemicolon
 	//| moduleStmtInitial
 	//| moduleStmtAlwaysComb
@@ -247,11 +273,18 @@ TokKwOutput: 'output' ;
 TokKwInout: 'inout' ;
 
 TokKwLogic: 'logic' ;
-TokKwInterface: 'interface' ;
 TokKwStruct: 'struct' ;
 
+TokKwPacked: 'packed' ;
+TokKwUnpacked: 'unpacked' ;
+TokKwPortsplit: 'portsplit' ;
+
+
 TokKwPublic: 'public' ;
+TokKwProtected: 'protected' ;
 TokKwPrivate: 'private' ;
+TokKwVirtual: 'virtual' ;
+
 
 TokKwEnum: 'enum' ;
 TokKwUnion: 'union' ;

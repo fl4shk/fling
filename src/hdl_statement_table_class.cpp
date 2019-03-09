@@ -12,15 +12,6 @@ SavedString HdlStatement::to_hdl_source(TableNode* top) const
 	return nullptr;
 }
 
-auto HdlStatement::driver_type() const -> DriverType
-{
-	return DriverType::None;
-}
-//auto HdlStatement::edge_sens_type() const -> EdgeSensType
-//{
-//	return EdgeSensType::None;
-//}
-
 // Continuous assignment ("assign")
 HdlStmtContAssign::HdlStmtContAssign(Expression* s_ident_expr,
 	Expression* s_rhs)
@@ -29,8 +20,6 @@ HdlStmtContAssign::HdlStmtContAssign(Expression* s_ident_expr,
 }
 SavedString HdlStmtContAssign::to_hdl_source(TableNode* top) const
 {
-	//return dup_str("assign ", TO_HDL_SOURCE(ident_expr), " = ",
-	//	TO_HDL_SOURCE(rhs), ";\n");
 	return dup_str("assign ", EXPR_TO_HDL_SOURCE(ident_expr), " = ",
 		EXPR_TO_HDL_SOURCE(rhs), ";\n");
 }
@@ -75,7 +64,6 @@ SavedString HdlStmtBehavBlockAlwaysSeq::_output_behav_block_str() const
 
 	non_dupped_ret += "always @(";
 
-	//switch (edge_sens_type())
 	switch (_edge_sens_type)
 	{
 	case EdgeSensType::Posedge:
@@ -117,10 +105,12 @@ SavedString HdlStmtBehavAssign::to_hdl_source(TableNode* top)
 	{
 	case DriverType::BehavBlockInitial:
 	case DriverType::BehavBlockAlwaysComb:
+		// blocking assignment
 		non_dupped_ret += "=";
 		break;
 
 	case DriverType::BehavBlockAlwaysSeq:
+		// non-blocking assignment
 		non_dupped_ret += "<=";
 		break;
 
