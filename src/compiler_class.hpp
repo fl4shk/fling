@@ -17,7 +17,7 @@ namespace frost_hdl
 
 class Compiler : public CompilerGrammarVisitor
 {
-public:		// typedefs
+public:		// types
 	typedef antlr4::ParserRuleContext ParserRuleContext;
 
 	// VisitorRetType
@@ -31,10 +31,9 @@ private:		// variables
 	//SymbolTable _sym_tbl;
 
 
-	////std::stack<BigNum*> _num_stack;
-	//std::stack<s64> _scope_child_num_stack;
-	//std::stack<std::string*> _str_stack;
-	//std::stack<ExprChunk> _expr_chunk_stack;
+	std::stack<BigNum> _num_stack;
+	std::stack<Expression*> _expr_stack;
+	std::stack<SavedString> _str_stack;
 
 
 	HdlModuleTable _hdl_module_table;
@@ -42,7 +41,7 @@ private:		// variables
 
 
 	Parser::ProgramContext* _program_ctx;
-	intmax_t _pass;
+	intmax_t _pass = 0;
 
 	//ScopedTableNode<Symbol>* _curr_scope_node = nullptr;
 
@@ -52,8 +51,7 @@ public:		// functions
 	int run();
 
 private:		// functions
-	inline void err(antlr4::ParserRuleContext* ctx, 
-		const std::string& msg)
+	inline void err(antlr4::ParserRuleContext* ctx, const std::string& msg)
 	{
 		if (ctx == nullptr)
 		{
@@ -201,20 +199,50 @@ private:		// visitor functions
 		(Parser::InnerSliceTwoContext *ctx);
 
 private:		// functions
-	//inline void push_expr_chunk(ExprChunk to_push)
-	//{
-	//	_expr_chunk_stack.push(to_push);
-	//}
-	//inline auto get_top_expr_chunk()
-	//{
-	//	return _expr_chunk_stack.top();
-	//}
-	//inline auto pop_expr_chunk()
-	//{
-	//	auto ret = _expr_chunk_stack.top();
-	//	_expr_chunk_stack.pop();
-	//	return ret;
-	//}
+	inline void push_num(const BigNum& to_push)
+	{
+		_num_stack.push(to_push);
+	}
+	inline auto get_top_num()
+	{
+		return _num_stack.top();
+	}
+	inline auto pop_num()
+	{
+		auto ret = _num_stack.top();
+		_num_stack.pop();
+		return ret;
+	}
+
+	inline void push_expr(Expression* to_push)
+	{
+		_expr_stack.push(to_push);
+	}
+	inline auto get_top_expr()
+	{
+		return _expr_stack.top();
+	}
+	inline auto pop_expr()
+	{
+		auto ret = _expr_stack.top();
+		_expr_stack.pop();
+		return ret;
+	}
+
+	inline void push_str(SavedString to_push)
+	{
+		_str_stack.push(to_push);
+	}
+	inline auto get_top_str()
+	{
+		return _str_stack.top();
+	}
+	inline auto pop_str()
+	{
+		auto ret = _str_stack.top();
+		_str_stack.pop();
+		return ret;
+	}
 
 };
 

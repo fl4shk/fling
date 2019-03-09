@@ -38,6 +38,9 @@ int Compiler::run()
 
 VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
+	for (auto subprogram : ctx->subProgram())
+	{
+	}
 	return nullptr;
 }
 
