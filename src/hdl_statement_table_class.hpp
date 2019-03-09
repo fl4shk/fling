@@ -6,9 +6,10 @@
 #include "misc_includes.hpp"
 #include "misc_types.hpp"
 #include "scoped_table_classes.hpp"
-#include "symbol_table_class.hpp"
+//#include "symbol_table_class.hpp"
 #include "hdl_lhs_type_table_class.hpp"
 #include "expression_classes.hpp"
+#include "misc_utility_funcs.hpp"
 
 namespace frost_hdl
 {
@@ -24,6 +25,25 @@ namespace frost_hdl
 // but also intended for use inside of an "HdlFunction")
 class HdlStatement
 {
+public:		// types
+	typedef typename ScopedUnnamedTable<HdlStatement>::Node* TableNode;
+
+	enum class DriverType
+	{
+		None,
+		ContAssign,
+		BehavBlockInitial,
+		BehavBlockAlwaysComb,
+		BehavBlockAlwaysSeq,
+	};
+
+	enum class EdgeSensType
+	{
+		None,
+		Posedge,
+		Negedge
+	};
+
 protected:		// variables
 	// Component "Expression"s.
 	std::vector<Expression*> _exprs;
@@ -31,10 +51,10 @@ protected:		// variables
 public:		// functions
 	HdlStatement() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlStatement, delete, default);
-
-
 	virtual ~HdlStatement() = default;
+
+	virtual DriverType driver_type() const;
+	virtual EdgeSensType edge_sens_type() const;
 
 
 	//// Only some classes derived from "HdlStatement" need for this to
@@ -43,7 +63,8 @@ public:		// functions
 	//// it is not a "nullptr".
 	//virtual SavedString is_valid() const;
 
-	virtual SavedString to_hdl_source() const;
+	virtual SavedString to_hdl_source(TableNode top) const;
+
 
 protected:		// functions
 	// Require at LEAST one argument
@@ -58,6 +79,7 @@ protected:		// functions
 			_set_exprs(rem_exprs...);
 		}
 	}
+
 };
 
 // Continuous assignment
@@ -69,27 +91,108 @@ public:		// functions
 
 	virtual ~HdlStmtContAssign() = default;
 
-	//SavedString is_valid() const;
-	SavedString to_hdl_source() const
+	virtual DriverType driver_type() const
+	{
+		return DriverType::ContAssign;
+	}
+
+	SavedString to_hdl_source(TableNode top) const
 	{
 		return dup_str("assign ", TO_HDL_SOURCE(ident_expr), " = ",
-			TO_HDL_SOURCE(rhs), ";");
+			TO_HDL_SOURCE(rhs), ";\n");
 	}
+
+
 	GEN_EXPR_GETTER(ident_expr, 0)
 	GEN_EXPR_GETTER(rhs, 1)
-
-private:		// functions
-	//inline Expression* _ident_expr() const
-	//{
-	//	return _exprs.at(0);
-	//}
-
-	//inline Expression* _rhs() const
-	//{
-	//	return _exprs.at(1);
-	//}
-
 };
+
+class HdlStmtBaseBehavBlock : public HdlStatement
+{
+public:		// functions
+	HdlStmtBaseBehavBlock() = default;
+
+	virtual ~HdlStmtBaseBehavBlock() = default;
+
+	SavedString to_hdl_source(TableNode top) const;
+
+protected:		// functions
+	virtual SavedString _output_behav_block_str() const
+	{
+		return nullptr;
+	}
+};
+
+// "initial"
+class HdlStmtBehavBlockInitial : public HdlStatement
+{
+public:		// functions
+	HdlStmtBehavBlockInitial() = default;
+
+	virtual ~HdlStmtBehavBlockInitial() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::BehavBlockInitial;
+	}
+
+protected:		// functions
+	virtual SavedString _output_behav_block_str() const
+	{
+		return dup_str("initial");
+	}
+};
+
+// "always_comb"
+class HdlStmtBehavBlockAlwaysComb : public HdlStatement
+{
+public:		// functions
+	HdlStmtBehavBlockAlwaysComb() = default;
+
+	virtual ~HdlStmtBehavBlockAlwaysComb() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::BehavBlockAlwaysComb;
+	}
+
+protected:		// functions
+	virtual SavedString _output_behav_block_str() const
+	{
+		return dup_str("always @(*)");
+	}
+};
+
+// "always_seq"
+class HdlStmtBehavBlockAlwaysSeq : public HdlStatement
+{
+private:		// variables
+	EdgeSensType _edge_sens_type = EdgeSensType::None;
+
+public:		// functions
+	HdlStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
+		Expression* s_ident);
+
+	virtual ~HdlStmtBehavBlockAlwaysSeq() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::BehavBlockAlwaysSeq;
+	}
+
+	virtual EdgeSensType edge_sens_type() const
+	{
+		return _edge_sens_type;
+	}
+
+
+	GEN_EXPR_GETTER(ident_expr, 0)
+
+protected:		// functions
+	virtual SavedString _output_behav_block_str() const;
+};
+
+
 
 class HdlStatementTable : public ScopedUnnamedTable<HdlStatement>
 {

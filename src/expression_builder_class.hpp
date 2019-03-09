@@ -57,9 +57,9 @@ public:		// static functions
 	}
 
 protected:		// static functions
-	template<typename FirstType, typename... RemArgTypes>
+	template<typename FirstArgType, typename... RemArgTypes>
 	static void _inner_make_expr_concat
-		(Expression::ChildrenList& s_children, FirstType&& first_child,
+		(Expression::ChildrenList& s_children, FirstArgType&& first_child,
 		RemArgTypes&&... rem_children)
 	{
 		if constexpr (sizeof...(rem_children) > 0)
@@ -73,8 +73,8 @@ protected:		// static functions
 public:		// static functions
 
 	// Require at least one child
-	template<typename FirstType, typename... RemArgTypes>
-	static inline Expression* make_expr_concat(FirstType&& first_child,
+	template<typename FirstArgType, typename... RemArgTypes>
+	static inline Expression* make_expr_concat(FirstArgType&& first_child,
 		RemArgTypes&&... rem_children)
 	{
 		Expression::ChildrenList s_children;

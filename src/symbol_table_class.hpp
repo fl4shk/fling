@@ -9,6 +9,7 @@
 //#include "expression_classes.hpp"
 //#include "hdl_full_type_table_class.hpp"
 #include "misc_types.hpp"
+#include "hdl_statement_table_class.hpp"
 
 
 namespace frost_hdl
@@ -31,8 +32,18 @@ public:		// types
 
 	//typedef std::vector<Symbol*> OrderedIdentToPointerTable<Symbol>;
 
+	enum class PortType
+	{
+		NonPort,
+		Input,
+		Output,
+		Inout,
+	};
+
 private:		// variables
 	SavedString _ident = nullptr;
+
+	PortType _port_type = PortType::NonPort;
 
 	// Whether or not this symbol is a named constant.
 	bool _is_constant = false;
@@ -43,10 +54,6 @@ private:		// variables
 	// the validiy of an expression.
 	HdlFullType* _hdl_full_type = nullptr;
 
-	//// For arrays, this *must* be set an Expression that evaluates to the
-	//// size of the array.  If "_right_dim_expr" is set to "nullptr", then
-	//// this "Symbol" is not an array.,
-	//Expression* _right_dim_expr = nullptr;
 
 	// Compile-time values are stored here for both scalars and arrays.
 	// For parameters, store a "nullptr" in *any* of the elements of this
@@ -57,19 +64,27 @@ private:		// variables
 	// Actual parameter values for this "Symbol"'s "HdlFullType"
 	ParameterVars _parameter_vars;
 
+
+	// "_init_block" is part of what determines whether or not this
+	// "Symbol" becomes a wire in the generated HDL.
+	HdlStatementTable::Node* _init_block_context = nullptr;
+
+	// Where is this symbol driven?  The allowed options are
+	// "HdlStmtContAssign", "HdlStmtBehavBlockAlwaysComb", and
+	// "HdlStmtBehavBlockAlwaysSeq".
+	HdlStatementTable::Node* _driver_block_context = nullptr;
+
+
 public:		// functions
 	Symbol() = default;
 
-	// Unknown type symbol where all we have is its name, due to it being
-	// used earlier than it was defined (needs stuff filled in later!)
-	Symbol(SavedString s_ident);
-
 	// Non-constant scalar or array constructor
-	Symbol(SavedString s_ident, HdlFullType* s_hdl_full_type);
+	Symbol(SavedString s_ident, PortType s_port_type,
+		HdlFullType* s_hdl_full_type);
 
 	// Constant scalar or array constructor
-	Symbol(SavedString s_ident, HdlFullType* s_hdl_full_type,
-		ValueExprs&& s_value_exprs);
+	Symbol(SavedString s_ident, PortType s_port_type,
+		HdlFullType* s_hdl_full_type, ValueExprs&& s_value_exprs);
 
 
 	// We really don't want copies of "Symbol"s.
@@ -79,10 +94,6 @@ public:		// functions
 	// Used to determine if a "parameter" has a default value.
 	bool has_default_value() const;
 
-	//inline bool is_array() const
-	//{
-	//	return (_right_dim_expr != nullptr);
-	//}
 
 	// Defined symbols *always* have a type, so we don't need to store
 	// anything extra to figure out the type of a symbol.
@@ -91,17 +102,25 @@ public:		// functions
 		return (_hdl_full_type != nullptr);
 	}
 
+	bool becomes_wire() const;
+	inline bool becomes_reg() const
+	{
+		return (!becomes_wire());
+	}
+
 
 	GEN_GETTER_BY_VAL(ident)
+	GEN_GETTER_BY_VAL(port_type)
 	GEN_GETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(hdl_full_type)
 
-	//GEN_GETTER_BY_VAL(right_dim_expr)
 	GEN_GETTER_BY_CON_REF(value_exprs)
 
 	GEN_GETTER_BY_CON_REF(parameter_vars)
 	GEN_SETTER_BY_RVAL_REF(parameter_vars)
 
+	GEN_GETTER_AND_SETTER_BY_VAL(init_block_context)
+	GEN_GETTER_AND_SETTER_BY_VAL(driver_block_context)
 
 };
 

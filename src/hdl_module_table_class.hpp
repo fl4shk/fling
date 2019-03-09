@@ -4,7 +4,8 @@
 // src/hdl_module_table_class.hpp
 
 #include "misc_includes.hpp"
-#include "hdl_statement_table_class.hpp"
+//#include "hdl_statement_table_class.hpp"
+#include "symbol_table_class.hpp"
 #include "hdl_function_table_class.hpp"
 #include "hdl_full_type_table_class.hpp"
 

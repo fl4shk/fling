@@ -6,28 +6,23 @@
 namespace frost_hdl
 {
 
-// Unknown type symbol where all we have is its name, due to it being
-// used earlier than it was defined (needs stuff filled in later!)
-Symbol::Symbol(SavedString s_ident)
-{
-	_ident = s_ident;
-	_hdl_full_type = nullptr;
-	_is_constant = false;
-}
 
 // Non-constant scalar or array constructor
-Symbol::Symbol(SavedString s_ident, HdlFullType* s_hdl_full_type)
+Symbol::Symbol(SavedString s_ident, PortType s_port_type,
+	HdlFullType* s_hdl_full_type)
 {
 	_ident = s_ident;
+	_port_type = s_port_type;
 	_hdl_full_type = s_hdl_full_type;
 	_is_constant = false;
 }
 
 	// Constant scalar or array constructor
-Symbol::Symbol(SavedString s_ident, HdlFullType* s_hdl_full_type,
-	ValueExprs&& s_value_exprs)
+Symbol::Symbol(SavedString s_ident, PortType s_port_type,
+	HdlFullType* s_hdl_full_type, ValueExprs&& s_value_exprs)
 {
 	_ident = s_ident;
+	_port_type = s_port_type;
 	_is_constant = true;
 	_hdl_full_type = s_hdl_full_type;
 	_value_exprs = std::move(s_value_exprs);
@@ -51,6 +46,14 @@ bool Symbol::has_default_value() const
 	}
 
 	return true;
+}
+
+bool Symbol::becomes_wire() const
+{
+	return ((_init_block_context != nullptr)
+		&& (_driver_block_context != nullptr)
+		&& (_driver_block_context->table.front()->driver_type()
+		== HdlStatement::DriverType::ContAssign));
 }
 
 } // namespace frost_hdl
