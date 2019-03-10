@@ -274,7 +274,7 @@ VisitorRetType Compiler::visitNumExpr
 VisitorRetType Compiler::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 {
-
+	std::stringstream sstm;
 	if (ctx->TokDecNum())
 	{
 	}
