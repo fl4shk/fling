@@ -240,6 +240,25 @@ VisitorRetType Compiler::visitNumExpr
 	return nullptr;
 }
 
+VisitorRetType Compiler::visitRawNumExpr
+	(Parser::RawNumExprContext *ctx)
+{
+	ANY_PUSH_TOK_IF(ctx->TokDecNum())
+	else ANY_PUSH_TOK_IF(ctx->TokHexNum())
+	else ANY_PUSH_TOK_IF(ctx->TokBinNum())
+	else
+	{
+		//err
+	}
+
+	return nullptr;
+}
+VisitorRetType Compiler::visitSizedNumExpr
+	(Parser::SizedNumExprContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
+	return nullptr;
+}
 
 VisitorRetType Compiler::visitIdentExpr
 	(Parser::IdentExprContext *ctx)

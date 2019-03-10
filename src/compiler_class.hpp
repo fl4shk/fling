@@ -47,7 +47,7 @@ public:		// types
 
 
 private:		// variables
-	class
+	class Stacks
 	{
 	private:		// variables
 		std::stack<BigNum> _num_stack;
@@ -82,13 +82,15 @@ private:		// variables
 	} _stacks;
 
 
-	FrostProgram _frost_program;
-
 
 	Parser::ProgramContext* _program_ctx;
 
 	Pass _pass = static_cast<Pass>(0);
 
+	// For when a pass needs multiple sub-passes.
+	PassUint _subpass = 0;
+
+	FrostProgram _frost_program;
 
 	//ScopedTableNode<Symbol>* _curr_scope_node = nullptr;
 
@@ -226,6 +228,11 @@ private:		// visitor functions
 
 	VisitorRetType visitNumExpr
 		(Parser::NumExprContext *ctx);
+
+	VisitorRetType visitRawNumExpr
+		(Parser::RawNumExprContext *ctx);
+	VisitorRetType visitSizedNumExpr
+		(Parser::SizedNumExprContext *ctx);
 
 
 

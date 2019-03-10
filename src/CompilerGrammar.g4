@@ -20,8 +20,9 @@ program:
 
 // Variable declaration stuff
 lhsTypeName:
-	(TokKwLogic (slice?))
-	| identName
+	(TokKwLogic ((TokLBracket expr TokRBracket)?))
+	| //((identName TokScope)?)
+		identName
 	;
 
 
@@ -49,6 +50,10 @@ declPortOutputVarList:
 declPortInoutVarList:
 	TokKwInout declPortVarList
 	;
+
+//declPortPortsplitVarList:
+//	TokKwPortsplit declPortVarList
+//	;
 
 
 
@@ -175,7 +180,19 @@ exprLogNot: TokExclamPoint expr ;
 //	TokKwDollarConcat TokLParen expr TokRParen
 //	;
 
-numExpr: TokDecNum | TokHexNum | TokBinNum ;
+numExpr:
+	rawNumExpr
+	| sizedNumExpr
+	;
+
+
+rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
+sizedNumExpr:
+	TokKwDollarMksize
+	TokLParen
+		TokDecNum TokComma rawNumExpr
+	TokRParen
+	;
 
 
 
@@ -191,7 +208,7 @@ identExpr:
 identName: TokIdent ;
 
 // For now, only support sliced identifiers.
-identSliced: TokIdent (slice+) ;
+identSliced: identName (slice+) ;
 
 identConcatExpr:
 	TokKwDollarConcat TokLParen listIdentExpr TokRParen
@@ -296,7 +313,7 @@ TokKwFunction: 'function' ;
 TokKwPackage: 'package' ;
 
 
-
+TokKwDollarMksize: '$mksize' ;
 TokKwDollarConcat: '$concat' ;
 TokKwDollarRepl: '$repl' ;
 TokKwDollarUnsigned: '$unsigned' ;

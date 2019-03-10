@@ -9,6 +9,9 @@
 namespace frost_hdl
 {
 
+// Contains the partially-processed contents of a program written in
+// Frost HDL, for the first set of passes that the "Compiler" goes through.
+// This is simply used as a container.
 class FrostProgram
 {
 public:		// variables
@@ -21,6 +24,10 @@ public:		// variables
 	// "FrostModule"s are always global anyway
 	FrostModuleTable frost_module_table;
 	FrostModule* curr_frost_module = nullptr;
+
+	//// "FrostPackage"s are always global anyway
+	//FrostPackageTable frost_package_table;
+	//FrostPackage* curr_frost_package = nullptr;
 
 public:		// functions
 	FrostProgram();
