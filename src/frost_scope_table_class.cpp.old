@@ -1,0 +1,105 @@
+#include "frost_scope_table_class.hpp"
+#include "general_allocator_class.hpp"
+
+namespace frost_hdl
+{
+//bool FrostScope::is_module() const
+//{
+//	return false;
+//}
+//bool FrostScope::is_package() const
+//{
+//	return false;
+//}
+//bool FrostScope::is_custom_type() const
+//{
+//	return false;
+//}
+//bool FrostScope::is_function() const
+//{
+//	return false;
+//}
+//
+//SymbolTable* FrostScope::symbol_table()
+//{
+//	return nullptr;
+//}
+//FrostLhsTypeTable* FrostScope::frost_lhs_type_table()
+//{
+//	return nullptr;
+//}
+//FrostFunctionTable* FrostScope::frost_function_table()
+//{
+//	return nullptr;
+//}
+//ParameterVars* FrostScope::parameter_vars()
+//{
+//	return nullptr;
+//}
+//FrostStatementTable* FrostScope::statement_table()
+//{
+//	return nullptr;
+//}
+//FrostLhsType* FrostScope::frost_lhs_type()
+//{
+//	return nullptr;
+//}
+//FrostFunction* FrostScope::frost_function()
+//{
+//	return nullptr;
+//}
+//
+//
+//
+//// Force the constructors of the private variables to be inlined here.
+//FrostDeclModule::FrostDeclModule()
+//{
+//}
+//FrostDeclModule::FrostDeclModule(SymbolTable&& s_symbol_table,
+//	FrostLhsTypeTable&& s_frost_lhs_type_table,
+//	FrostFunctionTable&& s_frost_function_table,
+//	ParameterVars&& s_parameter_vars,
+//	FrostStatementTable&& s_statement_table)
+//	: _symbol_table(std::move(s_symbol_table)),
+//	_frost_lhs_type_table(std::move(s_frost_lhs_type_table)),
+//	_frost_function_table(std::move(s_frost_function_table)),
+//	_parameter_vars(std::move(s_parameter_vars)),
+//	_statement_table(std::move(s_statement_table))
+//{
+//}
+//
+//FrostDeclStruct::FrostDeclStruct(FrostLhsType&& s_frost_lhs_type)
+//	: _frost_lhs_type(save_frost_lhs_type(std::move(s_frost_lhs_type)))
+//{
+//}
+//
+//FrostDeclClass::FrostDeclClass(FrostLhsType&& s_frost_lhs_type)
+//	: _frost_lhs_type(save_frost_lhs_type(std::move(s_frost_lhs_type)))
+//{
+//}
+//
+//FrostDeclEnum::FrostDeclEnum(FrostLhsType&& s_frost_lhs_type)
+//	: _frost_lhs_type(save_frost_lhs_type(std::move(s_frost_lhs_type)))
+//{
+//}
+//
+//FrostDeclPackage::FrostDeclPackage()
+//{
+//}
+//FrostDeclPackage::FrostDeclPackage(SymbolTable&& s_symbol_table,
+//	FrostLhsTypeTable&& s_frost_lhs_type_table,
+//	FrostFunctionTable&& s_frost_function_table,
+//	ParameterVars&& s_parameter_vars)
+//	: _symbol_table(std::move(s_symbol_table)),
+//	_frost_lhs_type_table(std::move(s_frost_lhs_type_table)),
+//	_frost_function_table(std::move(s_frost_function_table)),
+//	_parameter_vars(std::move(s_parameter_vars))
+//{
+//}
+//
+//FrostDeclFunction::FrostDeclFunction(FrostFunction&& s_frost_function)
+//	: _frost_function(save_frost_function(std::move(s_frost_function)))
+//{
+//}
+
+} // namespace frost_hdl

@@ -1,20 +1,21 @@
-#include "hdl_module_table_class.hpp"
+#include "frost_module_table_class.hpp"
 
 namespace frost_hdl
 {
 
 // Stick this in here so that things don't get inlined.
-HdlModule::HdlModule()
+FrostModule::FrostModule(SavedString s_ident)
 {
+	_ident = s_ident;
 }
 
-HdlModule::~HdlModule()
-{
-}
+//FrostModule::~FrostModule()
+//{
+//}
 
 
 
-Symbol* HdlModule::find_non_param_symbol(SavedString some_name) const
+Symbol* FrostModule::find_non_param_symbol(SavedString some_name) const
 {
 	if (input_symbol_table().contains(some_name))
 	{

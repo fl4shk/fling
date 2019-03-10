@@ -14,14 +14,16 @@
 		ANY_JUST_ACCEPT_BASIC(arg); \
 	}
 
+#define TOK_TO_DUPPED_STR(arg) \
+	dup_str(arg->toString())
+
 #define ANY_PUSH_TOK_IF(arg) \
 	if (arg) \
 	{ \
-		_push_str(dup_str(arg->toString())); \
+		_push_str(TOK_TO_DUPPED_STR(arg)); \
 	}
 
-#define TOK_TO_DUPPED_STR(arg) \
-	dup_str(arg->toString())
+
 
 namespace frost_hdl
 {
@@ -54,7 +56,16 @@ int Compiler::run()
 // definitions and "package"s, too.
 VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
-	if ((pass() == Pass::ListModules) || (pass() == Pass::ExpandModules))
+	//if ((pass() == Pass::ListModules) || (pass() == Pass::ExpandModules))
+
+	if (in_package_pass())
+	{
+		//for (auto subprogram : ctx->declPackage())
+		//{
+		//	ANY_JUST_ACCEPT_BASIC(subprogram);
+		//}
+	}
+	else if (in_module_pass())
 	{
 		for (auto subprogram : ctx->declModule())
 		{
@@ -117,19 +128,37 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 {
 	if (pass() == Pass::ListModules)
 	{
-		if (_hdl_module_table.contains
-			(TOK_TO_DUPPED_STR(ctx->identName())))
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		auto ident_name = _pop_str();
+
+		if (_frost_module_table.contains(ident_name))
 		{
-			_err(ctx, sconcat("Duplicate \"module\" called \"",
-				ctx->identName()->toString(), "\""));
+			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
+				"\""));
 		}
 
-		_curr_hdl_module = save_hdl_module(HdlModule());
-		_curr_hdl_module->set_ident(TOK_TO_DUPPED_STR(ctx->identName()));
-		_hdl_module_table.insert_or_assign(_curr_hdl_module);
+		_curr_frost_module = save_frost_module(FrostModule(ident_name));
+
+		// Process ports of this module
+		for (auto port_list : ctx->declPortInputVarList())
+		{
+			ANY_JUST_ACCEPT_BASIC(port_list);
+		}
+		for (auto port_list : ctx->declPortOutputVarList())
+		{
+			ANY_JUST_ACCEPT_BASIC(port_list);
+		}
+		for (auto port_list : ctx->declPortInoutVarList())
+		{
+			ANY_JUST_ACCEPT_BASIC(port_list);
+		}
+
+		_frost_module_table.insert_or_assign(_curr_frost_module);
 	}
 	else if (pass() == Pass::ExpandModules)
 	{
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		auto ident_name = _pop_str();
 	}
 	else
 	{
@@ -221,6 +250,8 @@ VisitorRetType Compiler::visitIdentExpr
 VisitorRetType Compiler::visitIdentName
 	(Parser::IdentNameContext *ctx)
 {
+	_push_str(TOK_TO_DUPPED_STR(ctx->TokIdent()));
+
 	return nullptr;
 }
 

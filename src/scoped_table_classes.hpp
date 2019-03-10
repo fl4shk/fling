@@ -164,7 +164,6 @@ public:		// functions
 };
 
 
-// Primarily intended for use with "HdlScopeTable".
 template<typename Type, template<class> typename ContainerType=std::vector>
 class ScopedIdentTable
 	: public ScopedTableBase<Type, IdentToPointerTable, ContainerType>
@@ -296,7 +295,7 @@ public:		// functions
 };
 
 
-// Primarily intended for use with "HdlStatementTable".
+// Primarily intended for use with "FrostStatementTable".
 template<typename Type, template<class> typename ContainerType=std::vector>
 class ScopedUnnamedTable
 	: public ScopedTableBase<Type, PointerVector, ContainerType>

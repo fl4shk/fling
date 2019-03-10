@@ -1,7 +1,8 @@
+// Egg
 module Egg()
 {
 }
 
-module Egg(input logic egg)
+module Egg2(input logic egg)
 {
 }

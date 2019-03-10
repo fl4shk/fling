@@ -10,7 +10,7 @@
 #include "gen_src/CompilerGrammarVisitor.h"
 
 
-#include "hdl_module_table_class.hpp"
+#include "frost_module_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -37,6 +37,7 @@ public:		// types
 	};
 
 
+
 private:		// variables
 	std::stack<BigNum> _num_stack;
 	std::stack<Expression*> _expr_stack;
@@ -44,8 +45,15 @@ private:		// variables
 	std::stack<Symbol*> _sym_stack;
 
 
-	HdlModuleTable _hdl_module_table;
-	HdlModule* _curr_hdl_module = nullptr;
+	// Global "FrostLhsType"s
+	FrostLhsTypeTable _frost_lhs_type_table;
+
+	// Global "FrostFullType"s
+	FrostFullTypeTable _frost_full_type_table;
+
+	// "FrostModule"s are always global anyway
+	FrostModuleTable _frost_module_table;
+	FrostModule* _curr_frost_module = nullptr;
 
 
 	Parser::ProgramContext* _program_ctx;
@@ -60,7 +68,6 @@ public:		// functions
 	virtual ~Compiler() = default;
 	int run();
 
-	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 
 private:		// functions
 	inline void _err(antlr4::ParserRuleContext* ctx,
@@ -109,6 +116,19 @@ private:		// functions
 	{
 		printerr("Warning:  ", msg, "\n");
 	}
+
+	inline bool in_package_pass() const
+	{
+		return ((pass() == Pass::ListPackages)
+			|| (pass() == Pass::ExpandPackages));
+	}
+	inline bool in_module_pass() const
+	{
+		return ((pass() == Pass::ListModules)
+			|| (pass() == Pass::ExpandModules));
+	}
+
+	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 
 private:		// visitor functions
 	// In addition to module declarations, this includes things like

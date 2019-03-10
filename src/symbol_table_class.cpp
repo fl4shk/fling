@@ -9,22 +9,22 @@ namespace frost_hdl
 
 // Non-constant scalar or array constructor
 Symbol::Symbol(SavedString s_ident, PortType s_port_type,
-	HdlFullType* s_hdl_full_type)
+	FrostFullType* s_frost_full_type)
 {
 	_ident = s_ident;
 	_port_type = s_port_type;
-	_hdl_full_type = s_hdl_full_type;
+	_frost_full_type = s_frost_full_type;
 	_is_constant = false;
 }
 
 	// Constant scalar or array constructor
 Symbol::Symbol(SavedString s_ident, PortType s_port_type,
-	HdlFullType* s_hdl_full_type, ValueExprs&& s_value_exprs)
+	FrostFullType* s_frost_full_type, ValueExprs&& s_value_exprs)
 {
 	_ident = s_ident;
 	_port_type = s_port_type;
 	_is_constant = true;
-	_hdl_full_type = s_hdl_full_type;
+	_frost_full_type = s_frost_full_type;
 	_value_exprs = std::move(s_value_exprs);
 	//_right_dim_expr = ExpressionBuilder::make_expr_hc_num
 	//	(_value_exprs.size());
@@ -53,7 +53,7 @@ bool Symbol::becomes_wire() const
 	return ((_init_block_context != nullptr)
 		&& (_driver_block_context != nullptr)
 		&& (_driver_block_context->table.front()->driver_type()
-		== HdlStatement::DriverType::ContAssign));
+		== FrostStatement::DriverType::ContAssign));
 }
 
 } // namespace frost_hdl

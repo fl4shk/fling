@@ -1,13 +1,13 @@
-#ifndef src_hdl_statement_table_class_hpp
-#define src_hdl_statement_table_class_hpp
+#ifndef src_frost_statement_table_class_hpp
+#define src_frost_statement_table_class_hpp
 
-// src/hdl_statement_table_class.hpp
+// src/frost_statement_table_class.hpp
 
 #include "misc_includes.hpp"
 #include "misc_types.hpp"
 #include "scoped_table_classes.hpp"
 //#include "symbol_table_class.hpp"
-#include "hdl_lhs_type_table_class.hpp"
+#include "frost_lhs_type_table_class.hpp"
 #include "expression_classes.hpp"
 #include "misc_utility_funcs.hpp"
 
@@ -20,12 +20,13 @@ namespace frost_hdl
 		return _exprs.at(index); \
 	}
 
-// Base class for a statement (primarily for the insides of an "HdlModule",
-// but also intended for use inside of an "HdlFunction")
-class HdlStatement
+// Base class for a statement (primarily for the insides of an
+// "FrostModule", but also intended for use inside of an
+// "FrostFunction")
+class FrostStatement
 {
 public:		// types
-	typedef typename ScopedUnnamedTable<HdlStatement>::Node TableNode;
+	typedef typename ScopedUnnamedTable<FrostStatement>::Node TableNode;
 
 
 	// How a "Symbol" is driven
@@ -52,11 +53,11 @@ protected:		// variables
 	std::vector<Expression*> _exprs;
 
 public:		// functions
-	HdlStatement() = default;
+	FrostStatement() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlStatement, delete, default);
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatement, delete, default);
 
-	virtual ~HdlStatement() = default;
+	virtual ~FrostStatement() = default;
 
 	virtual DriverType driver_type() const
 	{
@@ -64,10 +65,10 @@ public:		// functions
 	}
 
 
-	//// Only some classes derived from "HdlStatement" need for this to
-	//// sometimes return a message other than "nullptr".
-	//// The returned message will be used as (part of?) an error message if
-	//// it is not a "nullptr".
+	//// Only some classes derived from "FrostStatement" need for this to
+	//// sometimes return a message other than "nullptr".  The returned
+	//// message will be used as (part of?) an error message if it is not a
+	//// "nullptr".
 	//virtual SavedString is_valid() const;
 
 
@@ -94,13 +95,13 @@ protected:		// functions
 };
 
 // Continuous assignment ("assign")
-class HdlStmtContAssign : public HdlStatement
+class FrostStmtContAssign : public FrostStatement
 {
 public:		// functions
-	//HdlStmtContAssign() = default;
-	HdlStmtContAssign(Expression* s_ident_expr, Expression* s_rhs);
+	//FrostStmtContAssign() = default;
+	FrostStmtContAssign(Expression* s_ident_expr, Expression* s_rhs);
 
-	virtual ~HdlStmtContAssign() = default;
+	virtual ~FrostStmtContAssign() = default;
 
 	virtual DriverType driver_type() const
 	{
@@ -115,12 +116,12 @@ public:		// functions
 };
 
 // Base class for "initial", "always_comb", and "always_seq".
-class HdlStmtBaseBehavBlock : public HdlStatement
+class FrostStmtBaseBehavBlock : public FrostStatement
 {
 public:		// functions
-	HdlStmtBaseBehavBlock() = default;
+	FrostStmtBaseBehavBlock() = default;
 
-	virtual ~HdlStmtBaseBehavBlock() = default;
+	virtual ~FrostStmtBaseBehavBlock() = default;
 
 	SavedString to_hdl_source(TableNode* top) const;
 
@@ -132,12 +133,12 @@ protected:		// functions
 };
 
 // "initial"
-class HdlStmtBehavBlockInitial : public HdlStatement
+class FrostStmtBehavBlockInitial : public FrostStmtBaseBehavBlock
 {
 public:		// functions
-	HdlStmtBehavBlockInitial() = default;
+	FrostStmtBehavBlockInitial() = default;
 
-	virtual ~HdlStmtBehavBlockInitial() = default;
+	virtual ~FrostStmtBehavBlockInitial() = default;
 
 	virtual DriverType driver_type() const
 	{
@@ -152,12 +153,12 @@ protected:		// functions
 };
 
 // "always_comb"
-class HdlStmtBehavBlockAlwaysComb : public HdlStatement
+class FrostStmtBehavBlockAlwaysComb : public FrostStmtBaseBehavBlock
 {
 public:		// functions
-	HdlStmtBehavBlockAlwaysComb() = default;
+	FrostStmtBehavBlockAlwaysComb() = default;
 
-	virtual ~HdlStmtBehavBlockAlwaysComb() = default;
+	virtual ~FrostStmtBehavBlockAlwaysComb() = default;
 
 	virtual DriverType driver_type() const
 	{
@@ -172,16 +173,16 @@ protected:		// functions
 };
 
 // "always_seq"
-class HdlStmtBehavBlockAlwaysSeq : public HdlStatement
+class FrostStmtBehavBlockAlwaysSeq : public FrostStmtBaseBehavBlock
 {
 private:		// variables
 	EdgeSensType _edge_sens_type = EdgeSensType::None;
 
 public:		// functions
-	HdlStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
+	FrostStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
 		Expression* s_ident_expr);
 
-	virtual ~HdlStmtBehavBlockAlwaysSeq() = default;
+	virtual ~FrostStmtBehavBlockAlwaysSeq() = default;
 
 	virtual DriverType driver_type() const
 	{
@@ -201,15 +202,17 @@ protected:		// functions
 // "always_comb", or "always_seq" block.
 //
 // This is *not* used for the statements inside the parentheses of an
-// "HdlStmtForLoop"!  For that, you'll want "HdlStmtForLoopAssign".
+// "FrostStmtForLoop"!  For that, you'll want
+// "FrostStmtForLoopAssign".
 //
-// This is also *not* used for the insides of a non-task "HdlFunction".
-class HdlStmtBehavAssign : public HdlStatement
+// This is also *not* used for the insides of a non-task
+// "FrostFunction".
+class FrostStmtBehavAssign : public FrostStatement
 {
 public:		// functions
-	HdlStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
+	FrostStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
 
-	virtual ~HdlStmtBehavAssign() = default;
+	virtual ~FrostStmtBehavAssign() = default;
 
 	virtual SavedString to_hdl_source(TableNode* top);
 
@@ -218,10 +221,10 @@ public:		// functions
 };
 
 //// "if" statement.
-//class HdlStmtBehavIf : public HdlStatement
+//class FrostStmtBehavIf : public FrostStatement
 //{
 //public:		// functions
-//	HdlStmtBehavIf(Expression* s_condition_expr);
+//	FrostStmtBehavIf(Expression* s_condition_expr);
 //};
 //
 //// "else" statement.
@@ -230,12 +233,12 @@ public:		// functions
 
 
 
-class HdlStatementTable : public ScopedUnnamedTable<HdlStatement>
+class FrostStatementTable : public ScopedUnnamedTable<FrostStatement>
 {
 public:		// functions
-	HdlStatementTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(HdlStatementTable, delete, default);
-	virtual ~HdlStatementTable() = default;
+	FrostStatementTable() = default;
+	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatementTable, delete, default);
+	virtual ~FrostStatementTable() = default;
 };
 
 #undef GEN_EXPR_GETTER
@@ -243,4 +246,4 @@ public:		// functions
 } // namespace frost_hdl
 
 
-#endif		// src_hdl_statement_table_class_hpp
+#endif		// src_frost_statement_table_class_hpp

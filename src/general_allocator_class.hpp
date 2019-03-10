@@ -12,11 +12,11 @@ namespace frost_hdl
 {
 class Expression;
 class Symbol;
-class HdlLhsType;
-class HdlFullType;
-class HdlFunction;
-class HdlModule;
-//class HdlScope;
+class FrostLhsType;
+class FrostFullType;
+class FrostFunction;
+class FrostModule;
+//class FrostScope;
 
 typedef std::string RawSavedString;
 typedef const RawSavedString* SavedString;
@@ -34,10 +34,12 @@ private:		// static variables
 		_expr_num_data_pool;
 	static std::vector<std::unique_ptr<Expression>> _expr_pool;
 	static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
-	static std::vector<std::unique_ptr<HdlLhsType>> _hdl_lhs_type_pool;
-	static std::vector<std::unique_ptr<HdlFullType>> _hdl_full_type_pool;
-	static std::vector<std::unique_ptr<HdlFunction>> _hdl_function_pool;
-	static std::vector<std::unique_ptr<HdlModule>> _hdl_module_pool;
+	static std::vector<std::unique_ptr<FrostLhsType>> _frost_lhs_type_pool;
+	static std::vector<std::unique_ptr<FrostFullType>>
+		_frost_full_type_pool;
+	static std::vector<std::unique_ptr<FrostFunction>>
+		_frost_function_pool;
+	static std::vector<std::unique_ptr<FrostModule>> _frost_module_pool;
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
@@ -56,10 +58,10 @@ public:		// static functions
 
 	GEN_SAVE(expr, Expression, ExprType)
 	GEN_SAVE(symbol, Symbol, ActualSymbol)
-	GEN_SAVE(hdl_lhs_type, HdlLhsType, ActualHdlLhsType)
-	GEN_SAVE(hdl_full_type, HdlFullType, ActualHdlFullType)
-	GEN_SAVE(hdl_function, HdlFunction, ActualHdlFunction)
-	GEN_SAVE(hdl_module, HdlModule, ActualHdlModule)
+	GEN_SAVE(frost_lhs_type, FrostLhsType, ActualFrostLhsType)
+	GEN_SAVE(frost_full_type, FrostFullType, ActualFrostFullType)
+	GEN_SAVE(frost_function, FrostFunction, ActualFrostFunction)
+	GEN_SAVE(frost_module, FrostModule, ActualFrostModule)
 
 	#undef GEN_SAVE
 
@@ -115,25 +117,29 @@ inline Symbol* save_symbol(ActualSymbol&& to_save)
 {
 	return GeneralAllocator::save_symbol(std::move(to_save));
 }
-template<typename ActualHdlLhsType>
-inline HdlLhsType* save_hdl_lhs_type(ActualHdlLhsType&& to_save)
+template<typename ActualFrostLhsType>
+inline FrostLhsType* save_frost_lhs_type
+	(ActualFrostLhsType&& to_save)
 {
-	return GeneralAllocator::save_hdl_lhs_type(std::move(to_save));
+	return GeneralAllocator::save_frost_lhs_type(std::move(to_save));
 }
-template<typename ActualHdlFullType>
-inline HdlFullType* save_hdl_full_type(ActualHdlFullType&& to_save)
+template<typename ActualFrostFullType>
+inline FrostFullType* save_frost_full_type
+	(ActualFrostFullType&& to_save)
 {
-	return GeneralAllocator::save_hdl_full_type(std::move(to_save));
+	return GeneralAllocator::save_frost_full_type(std::move(to_save));
 }
-template<typename ActualHdlFunction>
-inline HdlFunction* save_hdl_function(ActualHdlFunction&& to_save)
+template<typename ActualFrostFunction>
+inline FrostFunction* save_frost_function
+	(ActualFrostFunction&& to_save)
 {
-	return GeneralAllocator::save_hdl_function(std::move(to_save));
+	return GeneralAllocator::save_frost_function(std::move(to_save));
 }
-template<typename ActualHdlModule>
-inline HdlModule* save_hdl_module(ActualHdlModule&& to_save)
+template<typename ActualFrostModule>
+inline FrostModule* save_frost_module
+	(ActualFrostModule&& to_save)
 {
-	return GeneralAllocator::save_hdl_module(std::move(to_save));
+	return GeneralAllocator::save_frost_module(std::move(to_save));
 }
 
 } // namespace frost_hdl

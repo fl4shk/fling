@@ -1,7 +1,7 @@
 #include "expression_classes.hpp"
 #include "symbol_table_class.hpp"
-#include "hdl_lhs_type_table_class.hpp"
-#include "hdl_full_type_table_class.hpp"
+#include "frost_lhs_type_table_class.hpp"
+#include "frost_full_type_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -241,12 +241,12 @@ bool Expression::_has_only_constant_children() const
 
 SavedString ExprBaseUnOp::to_hdl_source() const
 {
-	switch (_hdl_source_type())
+	switch (_frost_source_type())
 	{
-	case HdlSourceType::UnOp:
+	case FrostSourceType::UnOp:
 		return dup_str(*_unop_str(), TO_HDL_SOURCE(_only_child));
 		break;
-	case HdlSourceType::DollarFunction:
+	case FrostSourceType::DollarFunction:
 		return dup_str(*_unop_str(), "(", TO_HDL_SOURCE(_only_child), ")");
 		break;
 	default:
@@ -472,9 +472,9 @@ ExprIdentName::ExprIdentName(Symbol* s_symbol)
 {
 	_symbol = s_symbol;
 
-	//_value.set_size(symbol()->hdl_lhs_type()->left_dim());
+	//_value.set_size(symbol()->frost_lhs_type()->left_dim());
 	_value.set_size(_starting_length());
-	_value.set_is_signed(symbol()->hdl_full_type()->hdl_lhs_type()
+	_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
 		->is_signed());
 }
 
@@ -509,11 +509,11 @@ void ExprIdentName::_evaluate()
 // composite identifiers should be allowed here.
 size_t ExprIdentName::_starting_length() const
 {
-	////if (symbol()->hdl_lhs_type()->is_packed_composite())
+	////if (symbol()->frost_lhs_type()->is_packed_composite())
 	////{
 	////}
-	//return symbol()->hdl_lhs_type()->left_dim();
-	return symbol()->hdl_full_type()->hdl_lhs_type()->left_dim();
+	//return symbol()->frost_lhs_type()->left_dim();
+	return symbol()->frost_full_type()->frost_lhs_type()->left_dim();
 }
 
 #undef TO_HDL_SOURCE

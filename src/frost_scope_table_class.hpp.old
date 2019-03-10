@@ -1,0 +1,204 @@
+#ifndef src_frost_scope_table_class_hpp
+#define src_frost_scope_table_class_hpp
+
+// src/frost_scope_table_class.hpp
+
+#include "misc_includes.hpp"
+#include "frost_statement_table_class.hpp"
+#include "frost_function_table_class.hpp"
+
+namespace frost_hdl
+{
+
+
+//// Base class for (almost?) any type of scope in HDL source code, which
+//// includes "FrostDeclModule", "FrostDeclStruct", "FrostDeclClass",
+//// "FrostDeclPackage", etc.
+//class FrostScope
+//{
+//public:		// functions
+//	FrostScope() = default;
+//
+//	// We don't want copies of "FrostScope"
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostScope, delete, default)
+//	virtual ~FrostScope() = default;
+//
+//
+//	virtual bool is_module() const;
+//	virtual bool is_package() const;
+//	virtual bool is_custom_type() const;
+//	virtual bool is_function() const;
+//
+//	// One single "SymbolTable" per scope, if any.
+//	virtual SymbolTable* symbol_table();
+//
+//	// One single "FrostLhsTypeTable" per scope, if any.
+//	virtual FrostLhsTypeTable* frost_lhs_type_table();
+//
+//	// One single "FrostFunctionTable" per scope, if any.
+//	virtual FrostFunctionTable* frost_function_table();
+//
+//	// Relevant for "FrostDeclModule".
+//	// Might be relevant for "FrostDeclPackage", too.
+//	virtual ParameterVars* parameter_vars();
+//
+//	// Relevant for "FrostDeclModule".
+//	virtual FrostStatementTable* statement_table();
+//
+//
+//	// Relevant for "FrostDeclStruct", "FrostDeclClass", and "FrostDeclEnum".
+//	virtual FrostLhsType* frost_lhs_type();
+//
+//	// Relevant for "FrostDeclFunction"
+//	virtual FrostFunction* frost_function();
+//
+//};
+//
+//class FrostDeclModule : public FrostScope
+//{
+//private:		// variables
+//	SymbolTable _symbol_table;
+//	FrostLhsTypeTable _frost_lhs_type_table;
+//	FrostFunctionTable _frost_function_table;
+//	ParameterVars _parameter_vars;
+//	FrostStatementTable _statement_table;
+//
+//public:		// functions
+//	FrostDeclModule();
+//
+//	FrostDeclModule(SymbolTable&& s_symbol_table,
+//		FrostLhsTypeTable&& s_frost_lhs_type_table,
+//		FrostFunctionTable&& s_frost_function_table,
+//		ParameterVars&& s_parameter_vars,
+//		FrostStatementTable&& s_statement_table);
+//
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclModule, delete, default)
+//	virtual ~FrostDeclModule() = default;
+//
+//
+//	virtual GEN_GETTER_AS_POINTER(symbol_table)
+//	virtual GEN_GETTER_AS_POINTER(frost_lhs_type_table)
+//	virtual GEN_GETTER_AS_POINTER(frost_function_table)
+//	virtual GEN_GETTER_AS_POINTER(parameter_vars)
+//	virtual GEN_GETTER_AS_POINTER(statement_table)
+//};
+//
+//// This class exists to provide temporary information about scope for
+//// "FrostLhsType" instances that are structs.
+//class FrostDeclStruct : public FrostScope
+//{
+//private:		// variables
+//	FrostLhsType* _frost_lhs_type = nullptr;
+//
+//public:		// functions
+//	FrostDeclStruct() = default;
+//
+//	FrostDeclStruct(FrostLhsType&& s_frost_lhs_type);
+//
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclStruct, delete, default)
+//	virtual ~FrostDeclStruct() = default;
+//
+//
+//	virtual GEN_GETTER_BY_VAL(frost_lhs_type)
+//
+//};
+//
+//// This class exists to provide temporary information about scope for
+//// "FrostLhsType" instances that are classes.
+//class FrostDeclClass : public FrostScope
+//{
+//private:		// variables
+//	FrostLhsType* _frost_lhs_type = nullptr;
+//
+//public:		// functions
+//	FrostDeclClass() = default;
+//
+//	FrostDeclClass(FrostLhsType&& s_frost_lhs_type);
+//
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclClass, delete, default)
+//	virtual ~FrostDeclClass() = default;
+//
+//	virtual GEN_GETTER_BY_VAL(frost_lhs_type)
+//
+//};
+//
+//// This class exists to provide temporary information about scope for
+//// "FrostLhsType" instances that are enums.
+//class FrostDeclEnum : public FrostScope
+//{
+//private:		// variables
+//	FrostLhsType* _frost_lhs_type = nullptr;
+//
+//public:		// functions
+//	FrostDeclEnum();
+//
+//	FrostDeclEnum(FrostLhsType&& s_frost_lhs_type);
+//
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclEnum, delete, default)
+//	virtual ~FrostDeclEnum() = default;
+//
+//
+//	virtual GEN_GETTER_BY_VAL(frost_lhs_type)
+//
+//};
+//
+//// It's probably a good idea to allow one "FrostDeclPackage" inside of
+//// another "FrostDeclPackage".  This is fascilitated via the "FrostScopeTable"
+//// class rather than being part of this one.
+//class FrostDeclPackage : public FrostScope
+//{
+//private:		// variables
+//	SymbolTable _symbol_table;
+//	FrostLhsTypeTable _frost_lhs_type_table;
+//	FrostFunctionTable _frost_function_table;
+//	ParameterVars _parameter_vars;
+//
+//public:		// functions
+//	FrostDeclPackage();
+//
+//	FrostDeclPackage(SymbolTable&& s_symbol_table,
+//		FrostLhsTypeTable&& s_frost_lhs_type_table,
+//		FrostFunctionTable&& s_frost_function_table,
+//		ParameterVars&& s_parameter_vars);
+//
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclPackage, delete, default)
+//	virtual ~FrostDeclPackage() = default;
+//
+//	virtual GEN_GETTER_AS_POINTER(symbol_table)
+//	virtual GEN_GETTER_AS_POINTER(frost_lhs_type_table)
+//	virtual GEN_GETTER_AS_POINTER(frost_function_table)
+//	virtual GEN_GETTER_AS_POINTER(parameter_vars)
+//};
+//
+//// This class exists to provide temporary information about scope for
+//// "FrostFunction" instances.
+//class FrostDeclFunction : public FrostScope
+//{
+//private:		// variables
+//	FrostFunction* _frost_function = nullptr;
+//
+//public:		// functions
+//	FrostDeclFunction() = default;
+//
+//	FrostDeclFunction(FrostFunction&& s_frost_function);
+//
+//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclFunction, delete, default)
+//	virtual ~FrostDeclFunction() = default;
+//
+//	virtual GEN_GETTER_BY_VAL(frost_function)
+//};
+//
+//
+//// Scoping information is stored here.  The parse tree visitor ("Compiler")
+//// builds this and operates on it.
+//class FrostScopeTable : public ScopedIdentTable<FrostScope>
+//{
+//public:		// functions
+//	FrostScopeTable() = default;
+//	virtual ~FrostScopeTable() = default;
+//};
+
+} // namespace frost_hdl
+
+
+#endif		// src_frost_scope_table_class_hpp

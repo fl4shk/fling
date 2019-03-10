@@ -2,10 +2,10 @@
 #include "expr_num_class.hpp"
 #include "expression_classes.hpp"
 #include "symbol_table_class.hpp"
-#include "hdl_lhs_type_table_class.hpp"
-#include "hdl_full_type_table_class.hpp"
-#include "hdl_function_table_class.hpp"
-#include "hdl_module_table_class.hpp"
+#include "frost_lhs_type_table_class.hpp"
+#include "frost_full_type_table_class.hpp"
+#include "frost_function_table_class.hpp"
+#include "frost_module_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -16,14 +16,14 @@ std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 	GeneralAllocator::_expr_num_data_pool;
 std::vector<std::unique_ptr<Expression>> GeneralAllocator::_expr_pool;
 std::vector<std::unique_ptr<Symbol>> GeneralAllocator::_symbol_pool;
-std::vector<std::unique_ptr<HdlLhsType>>
-	GeneralAllocator::_hdl_lhs_type_pool;
-std::vector<std::unique_ptr<HdlFullType>>
-	GeneralAllocator::_hdl_full_type_pool;
-std::vector<std::unique_ptr<HdlFunction>>
-	GeneralAllocator::_hdl_function_pool;
-std::vector<std::unique_ptr<HdlModule>>
-	GeneralAllocator::_hdl_module_pool;
+std::vector<std::unique_ptr<FrostLhsType>>
+	GeneralAllocator::_frost_lhs_type_pool;
+std::vector<std::unique_ptr<FrostFullType>>
+	GeneralAllocator::_frost_full_type_pool;
+std::vector<std::unique_ptr<FrostFunction>>
+	GeneralAllocator::_frost_function_pool;
+std::vector<std::unique_ptr<FrostModule>>
+	GeneralAllocator::_frost_module_pool;
 
 
 SavedString GeneralAllocator::dup_str(const RawSavedString& to_dup)

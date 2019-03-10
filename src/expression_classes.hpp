@@ -242,7 +242,7 @@ protected:		// functions
 class ExprBaseUnOp : public Expression
 {
 public:		// types
-	enum class HdlSourceType
+	enum class FrostSourceType
 	{
 		// "!", "~", unary "-", etc.
 		UnOp,
@@ -264,9 +264,9 @@ protected:		// functions
 
 	// I'm *guessing* that this is a good default, but I'm not totally sure
 	// yet.
-	virtual HdlSourceType _hdl_source_type() const
+	virtual FrostSourceType _frost_source_type() const
 	{
-		return HdlSourceType::DollarFunction;
+		return FrostSourceType::DollarFunction;
 	}
 
 	Expression* _only_child() const

@@ -7,11 +7,11 @@ grammar CompilerGrammar;
 program:
 	(
 		declModule
+		//| declPackage
 		//| declStruct
 		//| declClass
 		//| declEnum
 		//| declTypedef
-		//| declPackage
 	)*
 	;
 
@@ -25,14 +25,16 @@ lhsTypeName:
 	;
 
 
+// Array dimensions
 declNoLhsTypeVar:
-	identName TokLBracket expr TokRBracket
+	identName ((TokLBracket expr TokRBracket)?)
 	;
 
 declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
 
+// Port variables can't be arrays.
 declPortVarList:
 	lhsTypeName identName ((',' identName)*)
 	;
@@ -333,4 +335,5 @@ TokKwDefault: 'default' ;
 
 
 TokIdent: [A-Za-z_] (([A-Za-z_] | [0-9])*) ;
+
 TokOther: . ;
