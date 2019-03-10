@@ -20,7 +20,7 @@
 #define ANY_PUSH_TOK_IF(arg) \
 	if (arg) \
 	{ \
-		_push_str(TOK_TO_DUPPED_STR(arg)); \
+		_stacks.push_str(TOK_TO_DUPPED_STR(arg)); \
 	}
 
 
@@ -37,35 +37,34 @@ Compiler::Compiler(Parser& parser)
 
 int Compiler::run()
 {
-	// Temporary initialization of "Pass::ListModules".
-	set_pass(Pass::ListModules);
+	// Temporary initialization of "Pass::FrostListModules".
+	set_pass(Pass::FrostListModules);
 
 
 	while (pass() < Pass::Done)
 	{
 		visitProgram(_program_ctx);
-		set_pass(static_cast<Pass>(static_cast<uintmax_t>(pass())
-			+ static_cast<uintmax_t>(1)));
+		set_pass(static_cast<Pass>(static_cast<PassUint>(pass())
+			+ static_cast<PassUint>(1)));
 	}
 
 	return 0;
 }
 
 
-// In addition to module declarations, this includes things like "struct"
-// definitions and "package"s, too.
+// Basically just "module" and "package" declarations.  There are no other
+// things at global scope.
 VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
-	//if ((pass() == Pass::ListModules) || (pass() == Pass::ExpandModules))
 
-	if (in_package_pass())
+	if (in_frost_package_pass())
 	{
 		//for (auto subprogram : ctx->declPackage())
 		//{
 		//	ANY_JUST_ACCEPT_BASIC(subprogram);
 		//}
 	}
-	else if (in_module_pass())
+	else if (in_frost_module_pass())
 	{
 		for (auto subprogram : ctx->declModule())
 		{
@@ -126,18 +125,19 @@ VisitorRetType Compiler::visitDeclPortInoutVarList
 // "module" stuff
 VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 {
-	if (pass() == Pass::ListModules)
+	if (pass() == Pass::FrostListModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		auto ident_name = _pop_str();
+		auto ident_name = _stacks.pop_str();
 
-		if (_frost_module_table.contains(ident_name))
+		if (_frost_program.frost_module_table.contains(ident_name))
 		{
 			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
 				"\""));
 		}
 
-		_curr_frost_module = save_frost_module(FrostModule(ident_name));
+		_frost_program.curr_frost_module = save_frost_module(FrostModule
+			(ident_name));
 
 		// Process ports of this module
 		for (auto port_list : ctx->declPortInputVarList())
@@ -153,12 +153,13 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 			ANY_JUST_ACCEPT_BASIC(port_list);
 		}
 
-		_frost_module_table.insert_or_assign(_curr_frost_module);
+		_frost_program.frost_module_table.insert_or_assign
+			(_frost_program.curr_frost_module);
 	}
-	else if (pass() == Pass::ExpandModules)
+	else if (pass() == Pass::FrostExpandModules)
 	{
 		//ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		//auto ident_name = _pop_str();
+		//auto ident_name = _stacks.pop_str();
 	}
 	else
 	{
@@ -250,7 +251,7 @@ VisitorRetType Compiler::visitIdentExpr
 VisitorRetType Compiler::visitIdentName
 	(Parser::IdentNameContext *ctx)
 {
-	_push_str(TOK_TO_DUPPED_STR(ctx->TokIdent()));
+	_stacks.push_str(TOK_TO_DUPPED_STR(ctx->TokIdent()));
 
 	return nullptr;
 }

@@ -2,16 +2,16 @@ grammar CompilerGrammar;
 
 // Parser rules
 
-// In addition to module declarations, this includes things like "struct"
-// definitions and "package"s, too.
+// Basically just "module" and "package" declarations.  There are no other
+// things at global scope.
 program:
 	(
 		declModule
 		//| declPackage
-		//| declStruct
-		//| declClass
-		//| declEnum
-		//| declTypedef
+		////| declStruct
+		////| declClass
+		////| declEnum
+		////| declTypedef
 	)*
 	;
 

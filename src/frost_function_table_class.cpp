@@ -3,6 +3,10 @@
 namespace frost_hdl
 {
 
+FrostFunction::FrostFunction()
+{
+}
+
 FrostFunction::FrostFunction(SavedString s_ident, bool s_is_task,
 	FrostStatementTable&& s_frost_statement_table, FrostModule* s_context)
 {

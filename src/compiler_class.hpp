@@ -10,7 +10,8 @@
 #include "gen_src/CompilerGrammarVisitor.h"
 
 
-#include "frost_module_table_class.hpp"
+//#include "frost_module_table_class.hpp"
+#include "frost_program_class.hpp"
 
 namespace frost_hdl
 {
@@ -20,40 +21,68 @@ class Compiler : public CompilerGrammarVisitor
 public:		// types
 	typedef antlr4::ParserRuleContext ParserRuleContext;
 
-	// VisitorRetType
 	typedef antlrcpp::Any VisitorRetType;
-
 	typedef CompilerGrammarParser Parser;
 
-	enum class Pass : uintmax_t
-	{
-		ListPackages,
-		ExpandPackages,
 
-		ListModules,
-		ExpandModules,
+	typedef uintmax_t PassUint;
+
+	enum class Pass : PassUint
+	{
+		// Passes for processing Frost HDL source code
+		FrostListPackages,
+		FrostExpandPackages,
+
+		FrostListModules,
+		FrostExpandModules,
+
+		//// Passes for processing the output of processing Frost HDL source
+		//// code
+
+		//// Passes for generation of code in the destination HDL (most
+		//// likely Verilog)
 
 		Done,
 	};
 
 
-
 private:		// variables
-	std::stack<BigNum> _num_stack;
-	std::stack<Expression*> _expr_stack;
-	std::stack<SavedString> _str_stack;
-	std::stack<Symbol*> _sym_stack;
+	class
+	{
+	private:		// variables
+		std::stack<BigNum> _num_stack;
+		std::stack<Expression*> _expr_stack;
+		std::stack<SavedString> _str_stack;
+		std::stack<Symbol*> _sym_stack;
+
+	public:		// functions
+		#define GEN_STACK_FUNCS(type, whateverfix) \
+			inline void push_##whateverfix(type to_push) \
+			{ \
+				_##whateverfix##_stack.push(to_push); \
+			} \
+			inline auto get_top_##whateverfix() \
+			{ \
+				return _##whateverfix##_stack.top(); \
+			} \
+			inline auto pop_##whateverfix() \
+			{ \
+				auto ret = _##whateverfix##_stack.top(); \
+				_##whateverfix##_stack.pop(); \
+				return ret; \
+			}
+
+		GEN_STACK_FUNCS(const BigNum&, num)
+		GEN_STACK_FUNCS(Expression*, expr)
+		GEN_STACK_FUNCS(Symbol*, sym)
+		GEN_STACK_FUNCS(SavedString, str)
+
+		#undef GEN_STACK_FUNCS
+
+	} _stacks;
 
 
-	// Global "FrostLhsType"s
-	FrostLhsTypeTable _frost_lhs_type_table;
-
-	// Global "FrostFullType"s
-	FrostFullTypeTable _frost_full_type_table;
-
-	// "FrostModule"s are always global anyway
-	FrostModuleTable _frost_module_table;
-	FrostModule* _curr_frost_module = nullptr;
+	FrostProgram _frost_program;
 
 
 	Parser::ProgramContext* _program_ctx;
@@ -117,22 +146,22 @@ private:		// functions
 		printerr("Warning:  ", msg, "\n");
 	}
 
-	inline bool in_package_pass() const
+	inline bool in_frost_package_pass() const
 	{
-		return ((pass() == Pass::ListPackages)
-			|| (pass() == Pass::ExpandPackages));
+		return ((pass() == Pass::FrostListPackages)
+			|| (pass() == Pass::FrostExpandPackages));
 	}
-	inline bool in_module_pass() const
+	inline bool in_frost_module_pass() const
 	{
-		return ((pass() == Pass::ListModules)
-			|| (pass() == Pass::ExpandModules));
+		return ((pass() == Pass::FrostListModules)
+			|| (pass() == Pass::FrostExpandModules));
 	}
 
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 
 private:		// visitor functions
-	// In addition to module declarations, this includes things like
-	// "struct" definitions and "package"s, too.
+	// Basically just "module" and "package" declarations.  There are no
+	// other things at global scope.
 	VisitorRetType visitProgram
 		(Parser::ProgramContext *ctx);
 
@@ -229,65 +258,6 @@ private:		// visitor functions
 		(Parser::InnerSliceTwoContext *ctx);
 
 private:		// functions
-	inline void _push_num(const BigNum& to_push)
-	{
-		_num_stack.push(to_push);
-	}
-	inline auto _get_top_num()
-	{
-		return _num_stack.top();
-	}
-	inline auto _pop_num()
-	{
-		auto ret = _num_stack.top();
-		_num_stack.pop();
-		return ret;
-	}
-
-	inline void _push_expr(Expression* to_push)
-	{
-		_expr_stack.push(to_push);
-	}
-	inline auto _get_top_expr()
-	{
-		return _expr_stack.top();
-	}
-	inline auto _pop_expr()
-	{
-		auto ret = _expr_stack.top();
-		_expr_stack.pop();
-		return ret;
-	}
-
-	inline void _push_sym(Symbol* to_push)
-	{
-		_sym_stack.push(to_push);
-	}
-	inline auto _get_top_sym()
-	{
-		return _sym_stack.top();
-	}
-	inline auto _pop_sym()
-	{
-		auto ret = _sym_stack.top();
-		_sym_stack.pop();
-		return ret;
-	}
-
-	inline void _push_str(SavedString to_push)
-	{
-		_str_stack.push(to_push);
-	}
-	inline auto _get_top_str()
-	{
-		return _str_stack.top();
-	}
-	inline auto _pop_str()
-	{
-		auto ret = _str_stack.top();
-		_str_stack.pop();
-		return ret;
-	}
 
 };
 

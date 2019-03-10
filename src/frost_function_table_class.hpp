@@ -29,7 +29,7 @@ private:		// variables
 
 
 public:		// functions
-	FrostFunction() = default;
+	FrostFunction();
 
 	FrostFunction(SavedString s_ident, bool s_is_task,
 		FrostStatementTable&& s_frost_statement_table,
