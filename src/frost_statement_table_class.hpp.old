@@ -55,7 +55,7 @@ protected:		// variables
 public:		// functions
 	FrostStatement() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatement, delete, default);
+	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatement, delete, default);
 
 	virtual ~FrostStatement() = default;
 
@@ -237,7 +237,7 @@ class FrostStatementTable : public ScopedUnnamedTable<FrostStatement>
 {
 public:		// functions
 	FrostStatementTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatementTable, delete, default);
+	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatementTable, delete, default);
 	virtual ~FrostStatementTable() = default;
 };
 

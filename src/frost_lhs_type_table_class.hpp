@@ -80,7 +80,7 @@ public:		// types
 		ComponentData(EnumVals&& s_vals_of_enum);
 
 		// We don't want copies of "FrostLhsType::ComponentData".
-		GEN_CM_CONSTRUCTORS_AND_ASSIGN(ComponentData, delete, default);
+		GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ComponentData);
 
 		virtual ~ComponentData() = default;
 
@@ -125,7 +125,7 @@ public:		// functions
 	FrostLhsType(SavedString s_ident, ComponentData&& s_component_data);
 
 	// We really don't want copies of "FrostLhsType"s.
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostLhsType, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostLhsType);
 	virtual ~FrostLhsType() = default;
 
 	//bool operator == (const FrostLhsType& other) const;
@@ -190,7 +190,7 @@ class FrostLhsTypeTable : public IdentToPointerTable<FrostLhsType>
 {
 public:		// functions
 	FrostLhsTypeTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostLhsTypeTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostLhsTypeTable);
 	virtual ~FrostLhsTypeTable() = default;
 };
 

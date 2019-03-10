@@ -31,7 +31,7 @@ public:		// functions
 	{
 	}
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedTableNode, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ScopedTableNode);
 
 	virtual ~ScopedTableNode() = default;
 
@@ -103,7 +103,7 @@ public:		// functions
 		mkscope(some_curr_node);
 	}
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedTableBase, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ScopedTableBase);
 
 	// This destructor may never be called before the compiler stops
 	// running.
@@ -179,7 +179,7 @@ public:		// types
 public:		// functions
 	ScopedIdentTable() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedIdentTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ScopedIdentTable);
 
 	virtual ~ScopedIdentTable() = default;
 
@@ -308,7 +308,7 @@ public:		// types
 public:		// functions
 	ScopedUnnamedTable() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(ScopedUnnamedTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ScopedUnnamedTable);
 
 	virtual ~ScopedUnnamedTable() = default;
 

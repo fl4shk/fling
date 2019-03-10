@@ -28,7 +28,7 @@ public:		// functions
 		FrostLhsType* s_frost_lhs_type,
 		Expression* s_right_dim_expr);
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostFullType, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFullType);
 	virtual ~FrostFullType() = default;
 
 	bool operator == (const FrostFullType& other) const;
@@ -53,7 +53,7 @@ class FrostFullTypeTable : public IdentToPointerTable<FrostFullType>
 {
 public:		// functions
 	FrostFullTypeTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostFullTypeTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFullTypeTable);
 	virtual ~FrostFullTypeTable() = default;
 };
 

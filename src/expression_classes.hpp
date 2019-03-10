@@ -108,7 +108,7 @@ public:		// functions
 
 	// Don't want copies of raw Expression's
 	// Moves are okay, though
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(Expression, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Expression);
 	virtual ~Expression() = default;
 
 

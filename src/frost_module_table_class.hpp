@@ -34,7 +34,7 @@ public:		// functions
 	FrostModule(SavedString s_ident);
 
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostModule, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModule);
 
 	virtual ~FrostModule() = default;
 
@@ -89,7 +89,7 @@ class FrostModuleTable : public IdentToPointerTable<FrostModule>
 {
 public:		// functions
 	FrostModuleTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostModuleTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModuleTable);
 	virtual ~FrostModuleTable() = default;
 };
 

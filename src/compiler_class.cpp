@@ -157,8 +157,8 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 	}
 	else if (pass() == Pass::ExpandModules)
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		auto ident_name = _pop_str();
+		//ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		//auto ident_name = _pop_str();
 	}
 	else
 	{

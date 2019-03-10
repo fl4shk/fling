@@ -57,7 +57,7 @@ protected:		// variables
 public:		// functions
 	FrostStatement() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatement, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStatement);
 
 	virtual ~FrostStatement() = default;
 
@@ -89,7 +89,7 @@ class FrostStmtContAssign : public FrostStatement
 public:		// functions
 	FrostStmtContAssign(Expression* s_ident_expr, Expression* s_rhs);
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtContAssign, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtContAssign);
 
 	virtual ~FrostStmtContAssign() = default;
 
@@ -119,8 +119,7 @@ class FrostStmtBehavBlockInitial : public FrostStatement
 {
 public:		// functions
 	FrostStmtBehavBlockInitial() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockInitial, delete,
-		default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockInitial);
 
 	virtual ~FrostStmtBehavBlockInitial() = default;
 
@@ -135,8 +134,7 @@ class FrostStmtBehavBlockAlwaysComb : public FrostStatement
 {
 public:		// functions
 	FrostStmtBehavBlockAlwaysComb() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysComb, delete,
-		default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysComb);
 
 	virtual ~FrostStmtBehavBlockAlwaysComb() = default;
 
@@ -155,8 +153,7 @@ private:		// variables
 public:		// functions
 	FrostStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
 		Expression* s_ident_expr);
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysSeq, delete,
-		default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysSeq);
 
 	virtual ~FrostStmtBehavBlockAlwaysSeq() = default;
 
@@ -184,7 +181,7 @@ class FrostStmtBehavAssign : public FrostStatement
 {
 public:		// functions
 	FrostStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavAssign, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavAssign);
 
 	virtual ~FrostStmtBehavAssign() = default;
 
@@ -199,7 +196,7 @@ class FrostStmtBehavIf : public FrostStatement
 {
 public:		// functions
 	FrostStmtBehavIf(Expression* s_condition_expr);
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavIf, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavIf);
 };
 
 // "else" statement.
@@ -212,7 +209,7 @@ class FrostStatementTable : public ScopedUnnamedTable<FrostStatement>
 {
 public:		// functions
 	FrostStatementTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatementTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStatementTable);
 	virtual ~FrostStatementTable() = default;
 };
 

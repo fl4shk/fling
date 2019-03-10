@@ -93,7 +93,7 @@ public:		// functions
 
 
 	// We really don't want copies of "Symbol"s.
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(Symbol, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Symbol);
 	virtual ~Symbol() = default;
 
 	// Used to determine if a "parameter" has a default value.
@@ -135,7 +135,7 @@ class SymbolTable : public IdentToPointerTable<Symbol>
 {
 public:		// functions
 	SymbolTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(SymbolTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SymbolTable);
 	virtual ~SymbolTable() = default;
 };
 

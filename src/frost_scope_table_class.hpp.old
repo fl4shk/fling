@@ -20,7 +20,7 @@ namespace frost_hdl
 //	FrostScope() = default;
 //
 //	// We don't want copies of "FrostScope"
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostScope, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostScope, delete, default)
 //	virtual ~FrostScope() = default;
 //
 //
@@ -72,7 +72,7 @@ namespace frost_hdl
 //		ParameterVars&& s_parameter_vars,
 //		FrostStatementTable&& s_statement_table);
 //
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclModule, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclModule, delete, default)
 //	virtual ~FrostDeclModule() = default;
 //
 //
@@ -95,7 +95,7 @@ namespace frost_hdl
 //
 //	FrostDeclStruct(FrostLhsType&& s_frost_lhs_type);
 //
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclStruct, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclStruct, delete, default)
 //	virtual ~FrostDeclStruct() = default;
 //
 //
@@ -115,7 +115,7 @@ namespace frost_hdl
 //
 //	FrostDeclClass(FrostLhsType&& s_frost_lhs_type);
 //
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclClass, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclClass, delete, default)
 //	virtual ~FrostDeclClass() = default;
 //
 //	virtual GEN_GETTER_BY_VAL(frost_lhs_type)
@@ -134,7 +134,7 @@ namespace frost_hdl
 //
 //	FrostDeclEnum(FrostLhsType&& s_frost_lhs_type);
 //
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclEnum, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclEnum, delete, default)
 //	virtual ~FrostDeclEnum() = default;
 //
 //
@@ -161,7 +161,7 @@ namespace frost_hdl
 //		FrostFunctionTable&& s_frost_function_table,
 //		ParameterVars&& s_parameter_vars);
 //
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclPackage, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclPackage, delete, default)
 //	virtual ~FrostDeclPackage() = default;
 //
 //	virtual GEN_GETTER_AS_POINTER(symbol_table)
@@ -182,7 +182,7 @@ namespace frost_hdl
 //
 //	FrostDeclFunction(FrostFunction&& s_frost_function);
 //
-//	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclFunction, delete, default)
+//	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclFunction, delete, default)
 //	virtual ~FrostDeclFunction() = default;
 //
 //	virtual GEN_GETTER_BY_VAL(frost_function)

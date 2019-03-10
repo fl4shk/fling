@@ -22,7 +22,7 @@ private:		// variables
 
 public:		// functions
 	IdentTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(IdentTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(IdentTable);
 	virtual ~IdentTable() = default;
 
 	// Type accessors
@@ -64,7 +64,7 @@ private:		// variables
 
 public:		// functions
 	IdentToPointerTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(IdentToPointerTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(IdentToPointerTable);
 	virtual ~IdentToPointerTable() = default;
 
 	// Type accessors
@@ -101,8 +101,7 @@ public:		// types
 public:		// functions
 	OrderedIdentToPointerTable() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(OrderedIdentToPointerTable, delete,
-		default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(OrderedIdentToPointerTable);
 
 	virtual ~OrderedIdentToPointerTable() = default;
 

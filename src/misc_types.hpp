@@ -19,7 +19,7 @@ class PointerVector : public std::vector<Type*>
 public:		// functions
 	inline PointerVector() = default;
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(PointerVector, default, default);
+	GEN_COPY_CONSTRUCTOR_AND_ASSIGN(PointerVector);
 	virtual ~PointerVector() = default;
 
 };
@@ -38,7 +38,7 @@ public:		// functions
 //	//	: _line(s_line), _pos_in_line(s_pos_in_line)
 //	//{
 //	//}
-//	//GEN_CM_CONSTRUCTORS_AND_ASSIGN(HasSourceCodePosBase, delete, delete);
+//	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(HasSourceCodePosBase);
 //
 //
 //	virtual ~HasSourceCodePosBase() = default;

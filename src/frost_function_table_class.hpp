@@ -41,7 +41,7 @@ public:		// functions
 		FrostStatementTable&& s_frost_statement_table,
 		FrostLhsType* s_context);
 
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostFunction, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFunction);
 	virtual ~FrostFunction();
 
 	//bool in_frost_module() const;
@@ -59,7 +59,7 @@ class FrostFunctionTable : public IdentToPointerTable<FrostFunction>
 {
 public:		// functions
 	FrostFunctionTable() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostFunctionTable, delete, default);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFunctionTable);
 	virtual ~FrostFunctionTable() = default;
 };
 
