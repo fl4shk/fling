@@ -92,6 +92,7 @@ private:		// variables
 
 	FrostProgram _frost_program;
 
+
 	//ScopedTableNode<Symbol>* _curr_scope_node = nullptr;
 
 public:		// functions
@@ -148,12 +149,18 @@ private:		// functions
 		printerr("Warning:  ", msg, "\n");
 	}
 
-	inline bool in_frost_package_pass() const
+	static inline const BigNum _default_hard_coded_num_size()
+	{
+		return BigNum(32);
+	}
+
+	// "Pass"es
+	inline bool _in_frost_package_pass() const
 	{
 		return ((pass() == Pass::FrostListPackages)
 			|| (pass() == Pass::FrostExpandPackages));
 	}
-	inline bool in_frost_module_pass() const
+	inline bool _in_frost_module_pass() const
 	{
 		return ((pass() == Pass::FrostListModules)
 			|| (pass() == Pass::FrostExpandModules));

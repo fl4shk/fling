@@ -1,5 +1,6 @@
 #include "compiler_class.hpp"
 #include "general_allocator_class.hpp"
+#include "expression_builder_class.hpp"
 
 #include <sstream>
 
@@ -57,14 +58,14 @@ int Compiler::run()
 VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
 
-	if (in_frost_package_pass())
+	if (_in_frost_package_pass())
 	{
 		//for (auto subprogram : ctx->declPackage())
 		//{
 		//	ANY_JUST_ACCEPT_BASIC(subprogram);
 		//}
 	}
-	else if (in_frost_module_pass())
+	else if (_in_frost_module_pass())
 	{
 		for (auto subprogram : ctx->declModule())
 		{
@@ -237,15 +238,52 @@ VisitorRetType Compiler::visitExprLogNot
 VisitorRetType Compiler::visitNumExpr
 	(Parser::NumExprContext *ctx)
 {
+	//ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr(0));
+	//const auto size = _stacks.pop_num();
+
+	//ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr(1));
+	//const auto value = _stacks.pop_num();
+
+	if (ctx->rawNumExpr())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
+		const auto value = _stacks.pop_num();
+
+		const auto size = _default_hard_coded_num_size();
+
+		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
+			false);
+	}
+	else if (ctx->sizedNumExpr())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->sizedNumExpr());
+		const auto value = _stacks.pop_num();
+		const auto size = _stacks.pop_num();
+
+		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
+			false);
+	}
+	else
+	{
+		_err(ctx, "Compiler::visitNumExpr():  Eek!");
+	}
+
 	return nullptr;
 }
 
 VisitorRetType Compiler::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 {
-	ANY_PUSH_TOK_IF(ctx->TokDecNum())
-	else ANY_PUSH_TOK_IF(ctx->TokHexNum())
-	else ANY_PUSH_TOK_IF(ctx->TokBinNum())
+
+	if (ctx->TokDecNum())
+	{
+	}
+	else if (ctx->TokHexNum())
+	{
+	}
+	else if (ctx->TokBinNum())
+	{
+	}
 	else
 	{
 		_err(ctx, "Compiler::visitRawNumExpr():  Eek!");
@@ -256,7 +294,10 @@ VisitorRetType Compiler::visitRawNumExpr
 VisitorRetType Compiler::visitSizedNumExpr
 	(Parser::SizedNumExprContext *ctx)
 {
-	ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
+	for (auto raw_num_expr : ctx->rawNumExpr())
+	{
+		ANY_JUST_ACCEPT_BASIC(raw_num_expr);
+	}
 	return nullptr;
 }
 

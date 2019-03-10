@@ -5,6 +5,7 @@
 
 SHARED_SRC_DIRS:=src \
 	src/gen_src \
+	src/liborangepower_src/gmp_stuff \
 
 CXX_DIRS:=$(SHARED_SRC_DIRS)
 # End of source directories

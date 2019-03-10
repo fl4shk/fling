@@ -187,12 +187,7 @@ numExpr:
 
 
 rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
-sizedNumExpr:
-	TokKwDollarMksize
-	TokLParen
-		TokDecNum TokComma rawNumExpr
-	TokRParen
-	;
+sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 
 
@@ -313,7 +308,6 @@ TokKwFunction: 'function' ;
 TokKwPackage: 'package' ;
 
 
-TokKwDollarMksize: '$mksize' ;
 TokKwDollarConcat: '$concat' ;
 TokKwDollarRepl: '$repl' ;
 TokKwDollarUnsigned: '$unsigned' ;
