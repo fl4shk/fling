@@ -248,7 +248,7 @@ VisitorRetType Compiler::visitRawNumExpr
 	else ANY_PUSH_TOK_IF(ctx->TokBinNum())
 	else
 	{
-		//err
+		_err(ctx, "Compiler::visitRawNumExpr():  Eek!");
 	}
 
 	return nullptr;
