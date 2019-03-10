@@ -274,15 +274,51 @@ VisitorRetType Compiler::visitNumExpr
 VisitorRetType Compiler::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 {
-	std::stringstream sstm;
+
+
 	if (ctx->TokDecNum())
 	{
+		BigNum to_push(0);
+
+		for (auto c : ctx->TokDecNum()->toString())
+		{
+			to_push = (to_push * 10) + (c - '0');
+		}
+
+		_stacks.push_num(to_push);
 	}
 	else if (ctx->TokHexNum())
 	{
+		BigNum to_push(0);
+
+		for (auto c : ctx->TokHexNum()->toString())
+		{
+			if ((c >= 'A') && (c <= 'F'))
+			{
+				to_push = (to_push * 16) + (c - 'A' + 0xA);
+			}
+			else if ((c >= 'a') && (c <= 'f'))
+			{
+				to_push = (to_push * 16) + (c - 'a' + 0xa);
+			}
+			else // if ((c >= '0') && (c <= '9'))
+			{
+				to_push = (to_push * 16) + (c - '0' + 0x0);
+			}
+		}
+
+		_stacks.push_num(to_push);
 	}
 	else if (ctx->TokBinNum())
 	{
+		BigNum to_push(0);
+
+		for (auto c : ctx->TokBinNum()->toString())
+		{
+			to_push = (to_push * 2) + (c - '0');
+		}
+
+		_stacks.push_num(to_push);
 	}
 	else
 	{
