@@ -13,7 +13,7 @@ namespace frost_hdl
 {
 
 class FrostModule;
-//class FrostPackage;
+class FrostPackage;
 class FrostLhsType;
 
 // Barebones for now...
@@ -25,7 +25,7 @@ private:		// variables
 
 	FrostStatementTable _frost_statement_table;
 
-	//std::variant<FrostModule*, FrostPackage*, FrostLhsType*> _context;
+	std::variant<FrostModule*, FrostPackage*, FrostLhsType*> _context;
 
 
 public:		// functions
@@ -34,9 +34,9 @@ public:		// functions
 	FrostFunction(SavedString s_ident, bool s_is_task,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostModule* s_context);
-	//FrostFunction(SavedString s_ident, bool s_is_task,
-	//	FrostStatementTable&& s_frost_statement_table,
-	//	FrostPackage* s_context);
+	FrostFunction(SavedString s_ident, bool s_is_task,
+		FrostStatementTable&& s_frost_statement_table,
+		FrostPackage* s_context);
 	FrostFunction(SavedString s_ident, bool s_is_task,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostLhsType* s_context);
