@@ -21,13 +21,12 @@ namespace frost_hdl
 	}
 
 // Base class for a statement (primarily for the insides of an
-// "FrostModule", but also intended for use inside of an "FrostFunction"),
-// to be processed into a direct equivalent of the destination HDL
-// (probably Verilog-2001).
+// "FrostModule", but also intended for use inside of an
+// "FrostFunction")
 class FrostStatement
 {
 public:		// types
-	//typedef typename ScopedUnnamedTable<FrostStatement>::Node TableNode;
+	typedef typename ScopedUnnamedTable<FrostStatement>::Node TableNode;
 
 
 	// How a "Symbol" is driven
@@ -40,19 +39,18 @@ public:		// types
 		BehavBlockAlwaysSeq,
 	};
 
+
 	// Pretty much only relevant for "always_seq"
 	enum class EdgeSensType
 	{
-		//None,
+		None,
 		Posedge,
 		Negedge
 	};
 
-	typedef std::vector<Expression*> ExprsList;
-
 protected:		// variables
 	// Component "Expression"s.
-	ExprsList _exprs;
+	std::vector<Expression*> _exprs;
 
 public:		// functions
 	FrostStatement() = default;
@@ -65,6 +63,19 @@ public:		// functions
 	{
 		return DriverType::None;
 	}
+
+
+	//// Only some classes derived from "FrostStatement" need for this to
+	//// sometimes return a message other than "nullptr".  The returned
+	//// message will be used as (part of?) an error message if it is not a
+	//// "nullptr".
+	//virtual SavedString is_valid() const;
+
+
+	//// This function takes the "top" parameter so that assignments inside
+	//// of behavioral blocks can know whether to output blocking assignments
+	//// ("=") or non-blocking assignments ("<=").
+	//virtual SavedString to_hdl_source(TableNode* top) const;
 
 
 protected:		// functions
@@ -87,9 +98,8 @@ protected:		// functions
 class FrostStmtContAssign : public FrostStatement
 {
 public:		// functions
+	//FrostStmtContAssign() = default;
 	FrostStmtContAssign(Expression* s_ident_expr, Expression* s_rhs);
-
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtContAssign, delete, default);
 
 	virtual ~FrostStmtContAssign() = default;
 
@@ -98,29 +108,35 @@ public:		// functions
 		return DriverType::ContAssign;
 	}
 
+	//SavedString to_hdl_source(TableNode* top) const;
+
 
 	GEN_EXPR_GETTER(ident_expr, 0)
 	GEN_EXPR_GETTER(rhs, 1)
 };
 
-//// Base class for "initial", "always_comb", and "always_seq".
-//class FrostStmtBaseBehavBlock : public FrostStatement
-//{
-//public:		// functions
-//	FrostStmtBaseBehavBlock() = default;
-//
-//	virtual ~FrostStmtBaseBehavBlock() = default;
-//
-//	SavedString to_hdl_source(TableNode* top) const;
-//};
+// Base class for "initial", "always_comb", and "always_seq".
+class FrostStmtBaseBehavBlock : public FrostStatement
+{
+public:		// functions
+	FrostStmtBaseBehavBlock() = default;
+
+	virtual ~FrostStmtBaseBehavBlock() = default;
+
+	SavedString to_hdl_source(TableNode* top) const;
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const
+//	{
+//		return nullptr;
+//	}
+};
 
 // "initial"
-class FrostStmtBehavBlockInitial : public FrostStatement
+class FrostStmtBehavBlockInitial : public FrostStmtBaseBehavBlock
 {
 public:		// functions
 	FrostStmtBehavBlockInitial() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockInitial, delete,
-		default);
 
 	virtual ~FrostStmtBehavBlockInitial() = default;
 
@@ -128,15 +144,19 @@ public:		// functions
 	{
 		return DriverType::BehavBlockInitial;
 	}
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const
+//	{
+//		return dup_str("initial");
+//	}
 };
 
 // "always_comb"
-class FrostStmtBehavBlockAlwaysComb : public FrostStatement
+class FrostStmtBehavBlockAlwaysComb : public FrostStmtBaseBehavBlock
 {
 public:		// functions
 	FrostStmtBehavBlockAlwaysComb() = default;
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysComb, delete,
-		default);
 
 	virtual ~FrostStmtBehavBlockAlwaysComb() = default;
 
@@ -144,19 +164,23 @@ public:		// functions
 	{
 		return DriverType::BehavBlockAlwaysComb;
 	}
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const
+//	{
+//		return dup_str("always @(*)");
+//	}
 };
 
 // "always_seq"
-class FrostStmtBehavBlockAlwaysSeq : public FrostStatement
+class FrostStmtBehavBlockAlwaysSeq : public FrostStmtBaseBehavBlock
 {
 private:		// variables
-	EdgeSensType _edge_sens_type = EdgeSensType::Posedge;
+	EdgeSensType _edge_sens_type = EdgeSensType::None;
 
 public:		// functions
 	FrostStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
 		Expression* s_ident_expr);
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysSeq, delete,
-		default);
 
 	virtual ~FrostStmtBehavBlockAlwaysSeq() = default;
 
@@ -167,6 +191,9 @@ public:		// functions
 
 
 	GEN_EXPR_GETTER(ident_expr, 0)
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const;
 };
 
 
@@ -184,7 +211,6 @@ class FrostStmtBehavAssign : public FrostStatement
 {
 public:		// functions
 	FrostStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavAssign, delete, default);
 
 	virtual ~FrostStmtBehavAssign() = default;
 
@@ -199,7 +225,6 @@ class FrostStmtBehavIf : public FrostStatement
 {
 public:		// functions
 	FrostStmtBehavIf(Expression* s_condition_expr);
-	GEN_CM_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavIf, delete, default);
 };
 
 // "else" statement.
