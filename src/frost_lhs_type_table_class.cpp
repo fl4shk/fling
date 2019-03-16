@@ -100,10 +100,8 @@ FrostLhsType::FrostLhsType(SavedString s_ident,
 
 size_t FrostLhsType::left_dim() const
 {
-	return static_cast<BigNum>(_left_dim_expr->value()).get_ui();
-
-	//return (_left_dim_expr != nullptr)
-	//	? static_cast<BigNum>(_left_dim_expr->value()).get_ui() : 1;
+	return (_left_dim_expr != nullptr)
+		? static_cast<BigNum>(_left_dim_expr->value()).get_ui() : 1;
 
 	//return (_left_dim_expr != nullptr)
 	//	? _left_dim_expr->value().convert_to_unsigned_bignum() : 1;

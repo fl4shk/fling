@@ -164,12 +164,10 @@ public:		// functions
 
 	size_t left_dim() const;
 
-	//// We don't need an "is_vector()" member function.
-	//inline bool is_vector() const
-	//{
-	//	//return (_left_dim_expr != nullptr)
-	//	//	&& static_cast<BigNum>(_left_dim_expr->values()).get_ui();
-	//}
+	inline bool is_vector() const
+	{
+		return (_left_dim_expr != nullptr);
+	}
 
 
 	GEN_GETTER_BY_VAL(ident)

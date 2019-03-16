@@ -106,10 +106,6 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 		ANY_JUST_ACCEPT_BASIC(ctx->expr());
 		s_left_dim_expr = _stacks.pop_expr();
 	}
-	else
-	{
-		s_left_dim_expr = ExpressionBuilder::make_expr_hc_num(1, 1, false);
-	}
 
 	if (s_left_dim_expr->is_constant())
 	{
