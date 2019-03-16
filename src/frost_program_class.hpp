@@ -5,6 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "frost_module_table_class.hpp"
+#include "frost_package_table_class.hpp"
 
 namespace frost_hdl
 {
@@ -25,9 +26,9 @@ public:		// variables
 	FrostModuleTable frost_module_table;
 	FrostModule* curr_frost_module = nullptr;
 
-	//// "FrostPackage"s are always global anyway
-	//FrostPackageTable frost_package_table;
-	//FrostPackage* curr_frost_package = nullptr;
+	// "FrostPackage"s are always global anyway
+	FrostPackageTable frost_package_table;
+	FrostPackage* curr_frost_package = nullptr;
 
 public:		// functions
 	FrostProgram();

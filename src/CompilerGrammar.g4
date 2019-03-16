@@ -2,18 +2,14 @@ grammar CompilerGrammar;
 
 // Parser rules
 
-// Basically just "module" and "package" declarations.  There are no other
-// things at global scope.
+// Basically just "module", "package", and "interface" declarations.  There
+// are no other things at global scope.
 program:
 	(
 		declModule
 		//| declPackage
-		////| declStruct
-		////| declClass
-		////| declEnum
-		////| declTypedef
-		////| declInterface
-	)*
+		//| declInterface
+	)+
 	;
 
 
@@ -21,9 +17,24 @@ program:
 
 // Variable declaration stuff
 lhsTypeName:
-	(TokKwLogic ((TokLBracket expr TokRBracket)?))
-	| //((identName TokScope)?)
-		identName
+	lhsBuiltinTypeName
+	//| lhsUnscopedTypeName
+	//| lhsScopedTypeName
+	;
+
+lhsBuiltinTypeName:
+	TokKwLogic ((TokKwUnsigned | TokKwSigned)?)
+		((TokLBracket expr TokRBracket)?)
+	;
+
+// type name from the current scope, be it a module or a package.
+lhsUnscopedTypeName:
+	identName
+	;
+
+// type name from a package.
+lhsScopedTypeName:
+	scopedIdentName
 	;
 
 
@@ -36,7 +47,7 @@ declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
 
-// Port variables can't be arrays.
+// For now, port vars can't be arrays.
 declPortVarList:
 	lhsTypeName identName ((',' identName)*)
 	;
@@ -52,10 +63,6 @@ declPortInoutVarList:
 	TokKwInout declPortVarList
 	;
 
-//declPortSplitvarVarList:
-//	TokKwSplitvar declPortVarList
-//	;
-
 
 
 // "module" stuff
@@ -63,7 +70,7 @@ declModule:
 	TokKwModule identName
 		// FUTURE:  allow "parameter"s here
 		TokLParen
-			// FUTURE:  allow "splitvar" structs here
+			// FUTURE:  allow "interface" "modport"s here
 			((declPortInputVarList | declPortOutputVarList
 				| declPortInoutVarList)*)
 		TokRParen
@@ -90,50 +97,6 @@ moduleStmtAssign:
 	TokKwAssign identExpr TokAssign expr
 	;
 
-//// initial behavioral block
-//moduleStmtInitial:
-//	TokKwInitial
-//	scopedListStmtBehavioral
-//	;
-//
-//// always_comb behavioral block
-//moduleStmtAlwaysComb:
-//	TokKwAlwaysComb
-//	scopedListStmtBehavioral
-//	;
-//
-//// always_seq behavioral block
-//moduleStmtAlwaysSeq:
-//	TokKwAlwaysSeq
-//	scopedListStmtBehavioral
-//	;
-//
-//scopedListStmtBehavioral:
-//	TokLBrace
-//		listStmtBehavioral
-//	TokRBrace
-//	;
-//
-//listStmtBehavioral:
-//	stmtBehavioral*
-//	;
-//
-//stmtBehavioral:
-//	stmtBehavAssign
-//	//| stmtBehavIf
-//	//| stmtBehavFor
-//	//| stmtBehavWhile
-//	| scopedListStmtBehavioral
-//	;
-//
-//stmtBehavAssign:
-//	identExpr TokAssign expr TokSemicolon
-//	;
-//
-////stmtBehavIf:
-////	TokKwIf TokLParen expr TokRParen
-////	scopedListStmtBehavioral
-////	;
 
 
 // Expression parsing
@@ -177,9 +140,6 @@ exprBitInvert: TokBitInvert expr ;
 exprNegate: TokMinus expr ;
 exprLogNot: TokExclamPoint expr ;
 
-//exprConcat:
-//	TokKwDollarConcat TokLParen expr TokRParen
-//	;
 
 numExpr:
 	rawNumExpr
@@ -194,42 +154,14 @@ sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 identExpr:
 	identName
-	| identSliced
-	| identConcatExpr
-	//| memberAccessNonSliced
-	//| memberAccessSliced
+	| scopedIdentName
+	//| identConcatExpr
+	//| identSliced
 	;
 
 
 identName: TokIdent ;
-
-// For now, only support sliced identifiers.
-identSliced: identName (slice+) ;
-
-identConcatExpr:
-	TokKwDollarConcat TokLParen listIdentExpr TokRParen
-	;
-
-listIdentExpr:
-	identExpr ((TokComma identExpr)*)
-	;
-
-
-
-slice:
-	TokLBracket 
-	(innerSliceOne
-	| innerSliceTwo)
-	TokRBracket
-	;
-
-innerSliceOne:
-	expr
-	;
-
-innerSliceTwo:
-	expr TokColon expr
-	;
+scopedIdentName: identName TokScope identName;
 
 
 // Lexer rules
@@ -284,6 +216,9 @@ TokKwModule: 'module' ;
 TokKwParameter: 'parameter' ;
 TokKwLocalparam: 'localparam' ;
 
+TokKwInterface: 'interface' ;
+TokKwModport: 'modport' ;
+
 TokKwInput: 'input' ;
 TokKwOutput: 'output' ;
 TokKwInout: 'inout' ;
@@ -294,6 +229,9 @@ TokKwStruct: 'struct' ;
 TokKwPacked: 'packed' ;
 TokKwUnpacked: 'unpacked' ;
 TokKwSplitvar: 'splitvar' ;
+
+TokKwUnsigned: 'unsigned' ;
+TokKwSigned: 'signed' ;
 
 
 TokKwPublic: 'public' ;

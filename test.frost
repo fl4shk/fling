@@ -1,5 +1,5 @@
 // Egg
-module Egg()
+module Egg(input DogeCoin doge_coin)
 {
 }
 

@@ -38,8 +38,8 @@ Compiler::Compiler(Parser& parser)
 
 int Compiler::run()
 {
-	// Temporary initialization of "Pass::FrostListModules".
-	set_pass(Pass::FrostListModules);
+	//// Temporary initialization of "Pass::FrostListModules".
+	//set_pass(Pass::FrostListModules);
 
 
 	while (pass() < Pass::Done)
@@ -58,14 +58,15 @@ int Compiler::run()
 VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 {
 
-	if (_in_frost_package_pass())
-	{
-		//for (auto subprogram : ctx->declPackage())
-		//{
-		//	ANY_JUST_ACCEPT_BASIC(subprogram);
-		//}
-	}
-	else if (_in_frost_module_pass())
+	//if (_in_frost_package_pass())
+	//{
+	//	//for (auto subprogram : ctx->declPackage())
+	//	//{
+	//	//	ANY_JUST_ACCEPT_BASIC(subprogram);
+	//	//}
+	//}
+	//else
+	if (_in_frost_module_pass())
 	{
 		for (auto subprogram : ctx->declModule())
 		{
@@ -83,9 +84,35 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 VisitorRetType Compiler::visitLhsTypeName
 	(Parser::LhsTypeNameContext *ctx)
 {
+	ANY_ACCEPT_IF_BASIC(ctx->lhsBuiltinTypeName())
+	//else ANY_ACCEPT_IF_BASIC(ctx->lhsUnscopedTypeName())
+	//else ANY_ACCEPT_IF_BASIC(ctx->lhsScopedTypeName())
+	else
+	{
+		_err(ctx, "Compiler::visitLhsTypeName():  Eek!");
+	}
 	return nullptr;
 }
 
+VisitorRetType Compiler::visitLhsBuiltinTypeName
+	(Parser::LhsBuiltinTypeNameContext *ctx)
+{
+	return nullptr;
+}
+
+// Future
+VisitorRetType Compiler::visitLhsUnscopedTypeName
+	(Parser::LhsUnscopedTypeNameContext *ctx)
+{
+	return nullptr;
+}
+
+// Future
+VisitorRetType Compiler::visitLhsScopedTypeName
+	(Parser::LhsScopedTypeNameContext *ctx)
+{
+	return nullptr;
+}
 
 VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
@@ -159,8 +186,8 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 	}
 	else if (pass() == Pass::FrostExpandModules)
 	{
-		//ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		//auto ident_name = _stacks.pop_str();
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		auto ident_name = _stacks.pop_str();
 	}
 	else
 	{
@@ -238,12 +265,6 @@ VisitorRetType Compiler::visitExprLogNot
 VisitorRetType Compiler::visitNumExpr
 	(Parser::NumExprContext *ctx)
 {
-	//ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr(0));
-	//const auto size = _stacks.pop_num();
-
-	//ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr(1));
-	//const auto value = _stacks.pop_num();
-
 	if (ctx->rawNumExpr())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
@@ -274,8 +295,6 @@ VisitorRetType Compiler::visitNumExpr
 VisitorRetType Compiler::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 {
-
-
 	if (ctx->TokDecNum())
 	{
 		BigNum to_push(0);
@@ -340,6 +359,13 @@ VisitorRetType Compiler::visitSizedNumExpr
 VisitorRetType Compiler::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 {
+	ANY_ACCEPT_IF_BASIC(ctx->identName())
+	else ANY_ACCEPT_IF_BASIC(ctx->scopedIdentName())
+	else
+	{
+		_err(ctx, "Compiler::visitIdentExpr():  Eek!");
+	}
+
 	return nullptr;
 }
 
@@ -352,44 +378,15 @@ VisitorRetType Compiler::visitIdentName
 	return nullptr;
 }
 
-// For now, only support sliced identifiers.
-VisitorRetType Compiler::visitIdentSliced
-	(Parser::IdentSlicedContext *ctx)
+VisitorRetType Compiler::visitScopedIdentName
+	(Parser::ScopedIdentNameContext *ctx)
 {
+	for (auto iter : ctx->identName())
+	{
+		ANY_JUST_ACCEPT_BASIC(iter);
+	}
+
 	return nullptr;
 }
-
-VisitorRetType Compiler::visitIdentConcatExpr
-	(Parser::IdentConcatExprContext *ctx)
-{
-	return nullptr;
-}
-
-VisitorRetType Compiler::visitListIdentExpr
-	(Parser::ListIdentExprContext *ctx)
-{
-	return nullptr;
-}
-
-
-
-VisitorRetType Compiler::visitSlice
-	(Parser::SliceContext *ctx)
-{
-	return nullptr;
-}
-
-VisitorRetType Compiler::visitInnerSliceOne
-	(Parser::InnerSliceOneContext *ctx)
-{
-	return nullptr;
-}
-
-VisitorRetType Compiler::visitInnerSliceTwo
-	(Parser::InnerSliceTwoContext *ctx)
-{
-	return nullptr;
-}
-
 
 } // namespace frost_hdl

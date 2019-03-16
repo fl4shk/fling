@@ -29,9 +29,12 @@ public:		// types
 
 	enum class Pass : PassUint
 	{
-		// Passes for processing Frost HDL source code
-		FrostListPackages,
-		FrostExpandPackages,
+		//// Passes for the initial processing of Frost HDL source code
+		//FrostListPackages,
+		//FrostExpandPackages,
+
+		////FrostListInterfaces,
+		////FrostExpandInterfaces,
 
 		FrostListModules,
 		FrostExpandModules,
@@ -93,8 +96,6 @@ private:		// variables
 	FrostProgram _frost_program;
 
 
-	//ScopedTableNode<Symbol>* _curr_scope_node = nullptr;
-
 public:		// functions
 	Compiler(Parser& parser);
 	virtual ~Compiler() = default;
@@ -155,11 +156,11 @@ private:		// functions
 	}
 
 	// "Pass"es
-	inline bool _in_frost_package_pass() const
-	{
-		return ((pass() == Pass::FrostListPackages)
-			|| (pass() == Pass::FrostExpandPackages));
-	}
+	//inline bool _in_frost_package_pass() const
+	//{
+	//	return ((pass() == Pass::FrostListPackages)
+	//		|| (pass() == Pass::FrostExpandPackages));
+	//}
 	inline bool _in_frost_module_pass() const
 	{
 		return ((pass() == Pass::FrostListModules)
@@ -178,6 +179,13 @@ private:		// visitor functions
 	// Variable declaration stuff
 	VisitorRetType visitLhsTypeName
 		(Parser::LhsTypeNameContext *ctx);
+
+	VisitorRetType visitLhsBuiltinTypeName
+		(Parser::LhsBuiltinTypeNameContext *ctx);
+	VisitorRetType visitLhsUnscopedTypeName
+		(Parser::LhsUnscopedTypeNameContext *ctx);
+	VisitorRetType visitLhsScopedTypeName
+		(Parser::LhsScopedTypeNameContext *ctx);
 
 
 	VisitorRetType visitDeclNoLhsTypeVar
@@ -249,28 +257,8 @@ private:		// visitor functions
 
 	VisitorRetType visitIdentName
 		(Parser::IdentNameContext *ctx);
-
-	// For now, only support sliced identifiers.
-	VisitorRetType visitIdentSliced
-		(Parser::IdentSlicedContext *ctx);
-
-	VisitorRetType visitIdentConcatExpr
-		(Parser::IdentConcatExprContext *ctx);
-
-	VisitorRetType visitListIdentExpr
-		(Parser::ListIdentExprContext *ctx);
-
-
-
-	VisitorRetType visitSlice
-		(Parser::SliceContext *ctx);
-
-	VisitorRetType visitInnerSliceOne
-		(Parser::InnerSliceOneContext *ctx);
-
-	VisitorRetType visitInnerSliceTwo
-		(Parser::InnerSliceTwoContext *ctx);
-
+	VisitorRetType visitScopedIdentName
+		(Parser::ScopedIdentNameContext *ctx);
 private:		// functions
 
 };

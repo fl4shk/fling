@@ -80,8 +80,6 @@ public:		// functions
 };
 
 // Nested "module"s are not permitted, and they are always at global scope.
-// This class holds *only* the "module"s that were in the Frost HDL
-// source code, and not the ones generated at compile time.
 class FrostModuleTable : public IdentToPointerTable<FrostModule>
 {
 public:		// functions
