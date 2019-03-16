@@ -17,11 +17,13 @@ class FrostPackage;
 class FrostLhsType;
 
 // Barebones for now...
+// This will eventually be used for both "function"s and "task"s.
 class FrostFunction
 {
 private:		// variables
 	SavedString _ident = nullptr;
 	bool _is_task = false;
+	bool _is_constexpr = false;
 
 	FrostStatementTable _frost_statement_table;
 
@@ -31,13 +33,13 @@ private:		// variables
 public:		// functions
 	FrostFunction();
 
-	FrostFunction(SavedString s_ident, bool s_is_task,
+	FrostFunction(SavedString s_ident, bool s_is_task, bool s_is_constexpr,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostModule* s_context);
-	FrostFunction(SavedString s_ident, bool s_is_task,
+	FrostFunction(SavedString s_ident, bool s_is_task, bool s_is_constexpr,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostPackage* s_context);
-	FrostFunction(SavedString s_ident, bool s_is_task,
+	FrostFunction(SavedString s_ident, bool s_is_task, bool s_is_constexpr,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostLhsType* s_context);
 
@@ -49,8 +51,10 @@ public:		// functions
 	//bool in_frost_lhs_type() const;
 
 
+
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_task)
+	GEN_GETTER_BY_VAL(is_constexpr)
 };
 
 // "FrostFunctionTable" isn't scoped because scoping information is

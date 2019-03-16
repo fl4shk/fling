@@ -4,19 +4,20 @@
 // src/general_allocator_class.hpp
 
 #include "misc_includes.hpp"
+#include "list_for_gen_save_define.hpp"
 
 
 #include <map>
 
 namespace frost_hdl
 {
-class Expression;
-class Symbol;
-class FrostLhsType;
-class FrostFullType;
-class FrostFunction;
-class FrostModule;
-//class FrostScope;
+
+#define GEN_SAVE(dummy_0, needed, dummy_1) \
+	class needed;
+
+LIST_FOR_GEN_SAVE(GEN_SAVE)
+
+#undef GEN_SAVE
 
 typedef std::string RawSavedString;
 typedef const RawSavedString* SavedString;
@@ -32,14 +33,22 @@ private:		// static variables
 		_str_pool;
 	static std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 		_expr_num_data_pool;
-	static std::vector<std::unique_ptr<Expression>> _expr_pool;
-	static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
-	static std::vector<std::unique_ptr<FrostLhsType>> _frost_lhs_type_pool;
-	static std::vector<std::unique_ptr<FrostFullType>>
-		_frost_full_type_pool;
-	static std::vector<std::unique_ptr<FrostFunction>>
-		_frost_function_pool;
-	static std::vector<std::unique_ptr<FrostModule>> _frost_module_pool;
+
+	//static std::vector<std::unique_ptr<Expression>> _expr_pool;
+	//static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
+	//static std::vector<std::unique_ptr<FrostLhsType>> _frost_lhs_type_pool;
+	//static std::vector<std::unique_ptr<FrostFullType>>
+	//	_frost_full_type_pool;
+	//static std::vector<std::unique_ptr<FrostFunction>>
+	//	_frost_function_pool;
+	//static std::vector<std::unique_ptr<FrostModule>> _frost_module_pool;
+	#define GEN_SAVE(pool_prefix, contained_type, dummy) \
+		static std::vector<std::unique_ptr<contained_type>> \
+			_##pool_prefix##_pool;
+
+	LIST_FOR_GEN_SAVE(GEN_SAVE)
+
+	#undef GEN_SAVE
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
@@ -56,12 +65,7 @@ public:		// static functions
 				(_##reuse##_pool, std::move(to_save)); \
 		}
 
-	GEN_SAVE(expr, Expression, ExprType)
-	GEN_SAVE(symbol, Symbol, ActualSymbol)
-	GEN_SAVE(frost_lhs_type, FrostLhsType, ActualFrostLhsType)
-	GEN_SAVE(frost_full_type, FrostFullType, ActualFrostFullType)
-	GEN_SAVE(frost_function, FrostFunction, ActualFrostFunction)
-	GEN_SAVE(frost_module, FrostModule, ActualFrostModule)
+	LIST_FOR_GEN_SAVE(GEN_SAVE)
 
 	#undef GEN_SAVE
 
@@ -107,40 +111,17 @@ inline ExprNumData dup_expr_num_data(RawExprNumData&& to_dup)
 	return GeneralAllocator::dup_expr_num_data(std::move(to_dup));
 }
 
-template<typename ExprType>
-inline Expression* save_expr(ExprType&& to_save)
-{
-	return GeneralAllocator::save_expr(std::move(to_save));
-}
-template<typename ActualSymbol>
-inline Symbol* save_symbol(ActualSymbol&& to_save)
-{
-	return GeneralAllocator::save_symbol(std::move(to_save));
-}
-template<typename ActualFrostLhsType>
-inline FrostLhsType* save_frost_lhs_type
-	(ActualFrostLhsType&& to_save)
-{
-	return GeneralAllocator::save_frost_lhs_type(std::move(to_save));
-}
-template<typename ActualFrostFullType>
-inline FrostFullType* save_frost_full_type
-	(ActualFrostFullType&& to_save)
-{
-	return GeneralAllocator::save_frost_full_type(std::move(to_save));
-}
-template<typename ActualFrostFunction>
-inline FrostFunction* save_frost_function
-	(ActualFrostFunction&& to_save)
-{
-	return GeneralAllocator::save_frost_function(std::move(to_save));
-}
-template<typename ActualFrostModule>
-inline FrostModule* save_frost_module
-	(ActualFrostModule&& to_save)
-{
-	return GeneralAllocator::save_frost_module(std::move(to_save));
-}
+#define GEN_SAVE(suffix, ret_type, template_type) \
+	template<typename template_type> \
+	inline ret_type* save_##suffix(template_type&& to_save) \
+	{ \
+		return GeneralAllocator::save_##suffix(std::move(to_save)); \
+	}
+
+LIST_FOR_GEN_SAVE(GEN_SAVE)
+
+#undef GEN_SAVE
+#undef LIST_FOR_GEN_SAVE
 
 } // namespace frost_hdl
 

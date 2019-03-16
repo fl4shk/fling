@@ -9,9 +9,9 @@ FrostModule::FrostModule(SavedString s_ident)
 	_ident = s_ident;
 }
 
-//FrostModule::~FrostModule()
-//{
-//}
+FrostModule::~FrostModule()
+{
+}
 
 
 

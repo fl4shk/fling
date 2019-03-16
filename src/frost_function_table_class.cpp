@@ -8,24 +8,30 @@ FrostFunction::FrostFunction()
 }
 
 FrostFunction::FrostFunction(SavedString s_ident, bool s_is_task,
+	bool s_is_constexpr,
 	FrostStatementTable&& s_frost_statement_table, FrostModule* s_context)
 {
 	_ident = s_ident;
 	_is_task = s_is_task;
+	_is_constexpr = s_is_constexpr;
 	_frost_statement_table = std::move(s_frost_statement_table);
 }
 FrostFunction::FrostFunction(SavedString s_ident, bool s_is_task,
-	FrostStatementTable&& s_frost_statement_table, FrostPackage* s_context)
+	bool s_is_constexpr, FrostStatementTable&& s_frost_statement_table,
+	FrostPackage* s_context)
 {
 	_ident = s_ident;
 	_is_task = s_is_task;
+	_is_constexpr = s_is_constexpr;
 	_frost_statement_table = std::move(s_frost_statement_table);
 }
 FrostFunction::FrostFunction(SavedString s_ident, bool s_is_task,
-	FrostStatementTable&& s_frost_statement_table, FrostLhsType* s_context)
+	bool s_is_constexpr, FrostStatementTable&& s_frost_statement_table,
+	FrostLhsType* s_context)
 {
 	_ident = s_ident;
 	_is_task = s_is_task;
+	_is_constexpr = s_is_constexpr;
 	_frost_statement_table = std::move(s_frost_statement_table);
 }
 

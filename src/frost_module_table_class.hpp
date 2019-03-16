@@ -19,7 +19,7 @@ private:		// variables
 	SavedString _ident = nullptr;
 	ParameterVars _parameter_vars;
 	SymbolTable _input_symbol_table, _output_symbol_table,
-		_inout_symbol_table, _splitvar_symbol_table, _local_symbol_table;
+		_inout_symbol_table, _local_symbol_table;
 
 	FrostLhsTypeTable _frost_lhs_type_table;
 	FrostFullTypeTable _frost_full_type_table;
@@ -36,7 +36,7 @@ public:		// functions
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModule);
 
-	virtual ~FrostModule() = default;
+	virtual ~FrostModule();
 
 
 	Symbol* find_non_param_symbol(SavedString some_name) const;
@@ -57,9 +57,6 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(inout_symbol_table)
 	GEN_GETTER_BY_REF(inout_symbol_table)
-
-	GEN_GETTER_BY_CON_REF(splitvar_symbol_table)
-	GEN_GETTER_BY_REF(splitvar_symbol_table)
 
 	GEN_GETTER_BY_CON_REF(local_symbol_table)
 	GEN_GETTER_BY_REF(local_symbol_table)

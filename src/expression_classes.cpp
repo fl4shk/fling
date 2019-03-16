@@ -462,12 +462,6 @@ void ExprTernary::_evaluate()
 	}
 }
 
-//ExprIdentName::ExprIdentName(const std::string& s_ident,
-//	SymbolTable* s_symbol_table)
-//{
-//	_set_ident(s_ident);
-//	_symbol_table = s_symbol_table;
-//}
 ExprIdentName::ExprIdentName(Symbol* s_symbol)
 {
 	_symbol = s_symbol;
