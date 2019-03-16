@@ -17,7 +17,7 @@ class FrostModule
 {
 private:		// variables
 	SavedString _ident = nullptr;
-	ParameterVars _parameter_vars;
+	ListVars _parameter_vars;
 	SymbolTable _input_symbol_table, _output_symbol_table,
 		_inout_symbol_table, _local_symbol_table;
 

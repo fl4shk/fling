@@ -12,12 +12,4 @@ FrostPackage::~FrostPackage()
 {
 }
 
-FrostPackageTable::FrostPackageTable()
-{
-}
-
-FrostPackageTable::~FrostPackageTable()
-{
-}
-
 } // namespace frost_hdl

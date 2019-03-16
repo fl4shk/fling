@@ -8,7 +8,7 @@ namespace frost_hdl
 
 // Construct data for a non-splitvar composite "FrostLhsType"
 FrostLhsType::ComponentData::ComponentData(bool s_is_packed,
-	ParameterVars&& s_parameter_vars, CompositeVars&& s_non_splitvar_vars,
+	ListVars&& s_parameter_vars, CompositeVars&& s_non_splitvar_vars,
 	CompositeFuncs&& s_funcs)
 {
 	_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
@@ -21,7 +21,7 @@ FrostLhsType::ComponentData::ComponentData(bool s_is_packed,
 
 // Construct data for a splitvar composite "FrostLhsType"
 FrostLhsType::ComponentData::ComponentData
-	(ParameterVars&& s_parameter_vars,
+	(ListVars&& s_parameter_vars,
 	CompositeVars&& s_splitvar_input_vars,
 	CompositeVars&& s_splitvar_output_vars,
 	CompositeVars&& s_splitvar_inout_vars, CompositeFuncs&& s_funcs)
@@ -100,8 +100,11 @@ FrostLhsType::FrostLhsType(SavedString s_ident,
 
 size_t FrostLhsType::left_dim() const
 {
-	return (_left_dim_expr != nullptr)
-		? static_cast<BigNum>(_left_dim_expr->value()).get_ui() : 1;
+	return static_cast<BigNum>(_left_dim_expr->value()).get_ui();
+
+	//return (_left_dim_expr != nullptr)
+	//	? static_cast<BigNum>(_left_dim_expr->value()).get_ui() : 1;
+
 	//return (_left_dim_expr != nullptr)
 	//	? _left_dim_expr->value().convert_to_unsigned_bignum() : 1;
 }

@@ -48,9 +48,9 @@ public:		// functions
 class FrostPackageTable : public IdentToPointerTable<FrostPackage>
 {
 public:		// functions
-	FrostPackageTable();
+	FrostPackageTable() = default;
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostPackageTable);
-	virtual ~FrostPackageTable();
+	virtual ~FrostPackageTable() = default;
 };
 
 } // namespace frost_hdl

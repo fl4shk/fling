@@ -66,7 +66,7 @@ private:		// variables
 	ValueExprs _value_exprs;
 
 	// Actual parameter values for this "Symbol"'s "FrostFullType"
-	ParameterVars _parameter_vars;
+	ListVars _parameter_vars;
 
 
 	// "_init_block" is part of what determines whether or not this

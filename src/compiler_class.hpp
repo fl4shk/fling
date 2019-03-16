@@ -50,43 +50,53 @@ public:		// types
 
 
 private:		// variables
+
+	//X(stack_type, ret_type, whateverfix)
+	#define LIST_FOR_GEN_STACK(X) \
+		X(BigNum, const BigNum&, num) \
+		X(SavedString, SavedString, str) \
+		X(Expression*, Expression*, expr) \
+		X(Symbol*, Symbol*, sym) \
+		X(FrostLhsType*, FrostLhsType*, lhs_type) \
+		X(FrostFullType*, FrostFullType*, full_type) \
+		X(ListVars*, ListVars*, ordered_vars) \
+
 	class Stacks
 	{
 	private:		// variables
-		std::stack<BigNum> _num_stack;
-		std::stack<Expression*> _expr_stack;
-		std::stack<SavedString> _str_stack;
-		std::stack<Symbol*> _sym_stack;
+		#define GEN_STACK(stack_type, dummy, whateverfix) \
+			std::stack<stack_type> _##whateverfix##_inner_stack; 
+
+		LIST_FOR_GEN_STACK(GEN_STACK)
+		#undef GEN_STACK
 
 	public:		// functions
-		#define GEN_STACK_FUNCS(type, whateverfix) \
-			inline void push_##whateverfix(type to_push) \
+		#define GEN_STACK_FUNCS(dummy, ret_type, whateverfix) \
+			inline void push_##whateverfix(ret_type to_push) \
 			{ \
-				_##whateverfix##_stack.push(to_push); \
+				_##whateverfix##_inner_stack.push(to_push); \
 			} \
 			inline auto get_top_##whateverfix() \
 			{ \
-				return _##whateverfix##_stack.top(); \
+				return _##whateverfix##_inner_stack.top(); \
 			} \
 			inline auto pop_##whateverfix() \
 			{ \
-				auto ret = _##whateverfix##_stack.top(); \
-				_##whateverfix##_stack.pop(); \
+				auto ret = _##whateverfix##_inner_stack.top(); \
+				_##whateverfix##_inner_stack.pop(); \
 				return ret; \
 			}
 
-		GEN_STACK_FUNCS(const BigNum&, num)
-		GEN_STACK_FUNCS(Expression*, expr)
-		GEN_STACK_FUNCS(Symbol*, sym)
-		GEN_STACK_FUNCS(SavedString, str)
-
+		LIST_FOR_GEN_STACK(GEN_STACK_FUNCS)
 		#undef GEN_STACK_FUNCS
 
 	} _stacks;
 
+	#undef LIST_FOR_GEN_STACK
 
 
-	Parser::ProgramContext* _program_ctx;
+
+	Parser::ProgramContext* _program_ctx = nullptr;
 
 	Pass _pass = static_cast<Pass>(0);
 
@@ -98,7 +108,7 @@ private:		// variables
 
 public:		// functions
 	Compiler(Parser& parser);
-	virtual ~Compiler() = default;
+	virtual ~Compiler();
 	int run();
 
 
@@ -182,18 +192,27 @@ private:		// visitor functions
 
 	VisitorRetType visitLhsBuiltinTypeName
 		(Parser::LhsBuiltinTypeNameContext *ctx);
-	VisitorRetType visitLhsUnscopedTypeName
-		(Parser::LhsUnscopedTypeNameContext *ctx);
-	VisitorRetType visitLhsScopedTypeName
-		(Parser::LhsScopedTypeNameContext *ctx);
+
+	// custom type name from the current scope, be it a module or a
+	// package.
+	// (FUTURE)
+	VisitorRetType visitLhsUnscopedCstmTypeName
+		(Parser::LhsUnscopedCstmTypeNameContext *ctx);
+	// custom type name from a package.
+	// (FUTURE)
+	VisitorRetType visitLhsScopedCstmTypeName
+		(Parser::LhsScopedCstmTypeNameContext *ctx);
 
 
+	// Array dimensions go here
 	VisitorRetType visitDeclNoLhsTypeVar
 		(Parser::DeclNoLhsTypeVarContext *ctx);
 
+	// List of (local?) variables
 	VisitorRetType visitDeclVarList
 		(Parser::DeclVarListContext *ctx);
 
+	// For now, port vars can't be arrays.
 	VisitorRetType visitDeclPortVarList
 		(Parser::DeclPortVarListContext *ctx);
 

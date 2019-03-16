@@ -25,7 +25,7 @@ public:		// types
 
 	//typedef std::vector<Symbol*> OrderedPointerList<Symbol>;
 	//typedef std::vector<Symbol*> CompositeVars;
-	//typedef OrderedIdentToPointerTable<Symbol> ParameterVars;
+	//typedef OrderedIdentToPointerTable<Symbol> ListVars;
 	typedef OrderedIdentToPointerTable<Symbol> CompositeVars;
 	typedef CompositeVars EnumVals;
 	typedef OrderedIdentToPointerTable<FrostFunction> CompositeFuncs;
@@ -48,7 +48,7 @@ public:		// types
 	{
 	private:		// variables
 		ComponentType _type = ComponentType::None;
-		ParameterVars _parameter_vars;
+		ListVars _parameter_vars;
 
 		CompositeVars _splitvar_input_vars, _splitvar_output_vars,
 			_splitvar_inout_vars;
@@ -65,12 +65,12 @@ public:		// types
 
 		// Construct data for a non-splitvar composite "FrostLhsType"
 		ComponentData(bool s_is_packed,
-			ParameterVars&& s_parameter_vars,
+			ListVars&& s_parameter_vars,
 			CompositeVars&& s_non_splitvar_vars,
 			CompositeFuncs&& s_funcs);
 
 		// Construct data for a splitvar composite "FrostLhsType"
-		ComponentData(ParameterVars&& s_parameter_vars,
+		ComponentData(ListVars&& s_parameter_vars,
 			CompositeVars&& s_splitvar_input_vars,
 			CompositeVars&& s_splitvar_output_vars,
 			CompositeVars&& s_splitvar_inout_vars,

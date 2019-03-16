@@ -11,7 +11,7 @@ namespace frost_hdl
 
 class Symbol;
 
-typedef OrderedIdentToPointerTable<Symbol> ParameterVars;
+typedef OrderedIdentToPointerTable<Symbol> ListVars;
 
 template<typename Type>
 class PointerVector : public std::vector<Type*>

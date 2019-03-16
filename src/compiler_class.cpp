@@ -35,6 +35,9 @@ Compiler::Compiler(Parser& parser)
 {
 	_program_ctx = parser.program();
 }
+Compiler::~Compiler()
+{
+}
 
 int Compiler::run()
 {
@@ -85,8 +88,8 @@ VisitorRetType Compiler::visitLhsTypeName
 	(Parser::LhsTypeNameContext *ctx)
 {
 	ANY_ACCEPT_IF_BASIC(ctx->lhsBuiltinTypeName())
-	//else ANY_ACCEPT_IF_BASIC(ctx->lhsUnscopedTypeName())
-	//else ANY_ACCEPT_IF_BASIC(ctx->lhsScopedTypeName())
+	//else ANY_ACCEPT_IF_BASIC(ctx->lhsUnscopedCstmTypeName())
+	//else ANY_ACCEPT_IF_BASIC(ctx->lhsScopedCstmTypeName())
 	else
 	{
 		_err(ctx, "Compiler::visitLhsTypeName():  Eek!");
@@ -97,35 +100,73 @@ VisitorRetType Compiler::visitLhsTypeName
 VisitorRetType Compiler::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 {
+	Expression* s_left_dim_expr = nullptr;
+	if (ctx->expr())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->expr());
+		s_left_dim_expr = _stacks.pop_expr();
+	}
+	else
+	{
+		s_left_dim_expr = ExpressionBuilder::make_expr_hc_num(1, 1, false);
+	}
+
+	if (s_left_dim_expr->is_constant())
+	{
+		s_left_dim_expr->full_evaluate_if_constant();
+	}
+	else // if (!to_save.left_dim_expr()->is_constant())
+	{
+		_err(ctx, "Vectors must have constant dimensions.");
+	}
+
+	// Helpful warning
+	if (static_cast<BigNum>(s_left_dim_expr->value())
+		< static_cast<BigNum>(0))
+	{
+		_warn(ctx, "Dimensions of vector are signed and evaluate to less"
+			" than zero.  They will be treated as an unsigned value."
+			"  This is might not be what you want.");
+	}
+
+	// "ctx->TokKwUnsigned()" is only for those who want to be pedantic.
+	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType
+		(dup_str("builtin::logic"), (ctx->TokKwSigned() != nullptr),
+		s_left_dim_expr)));
 	return nullptr;
 }
 
-// Future
-VisitorRetType Compiler::visitLhsUnscopedTypeName
-	(Parser::LhsUnscopedTypeNameContext *ctx)
+// custom type name from the current scope, be it a module or a package.
+// (FUTURE)
+VisitorRetType Compiler::visitLhsUnscopedCstmTypeName
+	(Parser::LhsUnscopedCstmTypeNameContext *ctx)
 {
 	return nullptr;
 }
 
-// Future
-VisitorRetType Compiler::visitLhsScopedTypeName
-	(Parser::LhsScopedTypeNameContext *ctx)
+// custom type name from a package.
+// (FUTURE)
+VisitorRetType Compiler::visitLhsScopedCstmTypeName
+	(Parser::LhsScopedCstmTypeNameContext *ctx)
 {
 	return nullptr;
 }
 
+// Array dimensions go here
 VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
 {
 	return nullptr;
 }
 
+// List of (local?) variables
 VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
 	return nullptr;
 }
 
+// For now, port vars can't be arrays.
 VisitorRetType Compiler::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 {

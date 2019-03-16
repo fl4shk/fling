@@ -40,7 +40,7 @@ namespace frost_hdl
 //
 //	// Relevant for "FrostDeclModule".
 //	// Might be relevant for "FrostDeclPackage", too.
-//	virtual ParameterVars* parameter_vars();
+//	virtual ListVars* parameter_vars();
 //
 //	// Relevant for "FrostDeclModule".
 //	virtual FrostStatementTable* statement_table();
@@ -60,7 +60,7 @@ namespace frost_hdl
 //	SymbolTable _symbol_table;
 //	FrostLhsTypeTable _frost_lhs_type_table;
 //	FrostFunctionTable _frost_function_table;
-//	ParameterVars _parameter_vars;
+//	ListVars _parameter_vars;
 //	FrostStatementTable _statement_table;
 //
 //public:		// functions
@@ -69,7 +69,7 @@ namespace frost_hdl
 //	FrostDeclModule(SymbolTable&& s_symbol_table,
 //		FrostLhsTypeTable&& s_frost_lhs_type_table,
 //		FrostFunctionTable&& s_frost_function_table,
-//		ParameterVars&& s_parameter_vars,
+//		ListVars&& s_parameter_vars,
 //		FrostStatementTable&& s_statement_table);
 //
 //	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclModule, delete, default)
@@ -151,7 +151,7 @@ namespace frost_hdl
 //	SymbolTable _symbol_table;
 //	FrostLhsTypeTable _frost_lhs_type_table;
 //	FrostFunctionTable _frost_function_table;
-//	ParameterVars _parameter_vars;
+//	ListVars _parameter_vars;
 //
 //public:		// functions
 //	FrostDeclPackage();
@@ -159,7 +159,7 @@ namespace frost_hdl
 //	FrostDeclPackage(SymbolTable&& s_symbol_table,
 //		FrostLhsTypeTable&& s_frost_lhs_type_table,
 //		FrostFunctionTable&& s_frost_function_table,
-//		ParameterVars&& s_parameter_vars);
+//		ListVars&& s_parameter_vars);
 //
 //	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclPackage, delete, default)
 //	virtual ~FrostDeclPackage() = default;

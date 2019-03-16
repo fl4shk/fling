@@ -2,13 +2,13 @@ grammar CompilerGrammar;
 
 // Parser rules
 
-// Basically just "module", "package", and "interface" declarations.  There
+// Basically just "module", "interface", and "package" declarations.  There
 // are no other things at global scope.
 program:
 	(
 		declModule
-		//| declPackage
 		//| declInterface
+		//| declPackage
 	)+
 	;
 
@@ -18,8 +18,8 @@ program:
 // Variable declaration stuff
 lhsTypeName:
 	lhsBuiltinTypeName
-	//| lhsUnscopedTypeName
-	//| lhsScopedTypeName
+	//| lhsUnscopedCstmTypeName
+	//| lhsScopedCstmTypeName
 	;
 
 lhsBuiltinTypeName:
@@ -27,27 +27,31 @@ lhsBuiltinTypeName:
 		((TokLBracket expr TokRBracket)?)
 	;
 
-// type name from the current scope, be it a module or a package.
-lhsUnscopedTypeName:
+// custom type name from the current scope, be it a module or a package.
+// (FUTURE)
+lhsUnscopedCstmTypeName:
 	identName
 	;
 
-// type name from a package.
-lhsScopedTypeName:
+// custom type name from a package.
+// (FUTURE)
+lhsScopedCstmTypeName:
 	scopedIdentName
 	;
 
 
-// Array dimensions
+// Array dimensions go here
 declNoLhsTypeVar:
 	identName ((TokLBracket expr TokRBracket)?)
 	;
 
+// List of (local?) variables
 declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
 
-// For now, port vars can't be arrays.
+// For now, port vars can't be arrays.  Perhaps things will actually stay
+// that way (such that arrays on ports *must* be in "splitvar" "struct"s)
 declPortVarList:
 	lhsTypeName identName ((',' identName)*)
 	;
