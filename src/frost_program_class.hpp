@@ -34,8 +34,6 @@ public:		// functions
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostProgram);
 	virtual ~FrostProgram();
-
-
 };
 
 } // namespace frost_hdl

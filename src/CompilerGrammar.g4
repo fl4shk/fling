@@ -12,6 +12,7 @@ program:
 		////| declClass
 		////| declEnum
 		////| declTypedef
+		////| declInterface
 	)*
 	;
 
@@ -51,8 +52,8 @@ declPortInoutVarList:
 	TokKwInout declPortVarList
 	;
 
-//declPortPortsplitVarList:
-//	TokKwPortsplit declPortVarList
+//declPortSplitvarVarList:
+//	TokKwSplitvar declPortVarList
 //	;
 
 
@@ -62,7 +63,7 @@ declModule:
 	TokKwModule identName
 		// FUTURE:  allow "parameter"s here
 		TokLParen
-			// FUTURE:  allow "portsplit" structs here
+			// FUTURE:  allow "splitvar" structs here
 			((declPortInputVarList | declPortOutputVarList
 				| declPortInoutVarList)*)
 		TokRParen
@@ -292,7 +293,7 @@ TokKwStruct: 'struct' ;
 
 TokKwPacked: 'packed' ;
 TokKwUnpacked: 'unpacked' ;
-TokKwPortsplit: 'portsplit' ;
+TokKwSplitvar: 'splitvar' ;
 
 
 TokKwPublic: 'public' ;

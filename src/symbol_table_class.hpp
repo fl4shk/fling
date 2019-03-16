@@ -41,7 +41,7 @@ public:		// types
 		Input,
 		Output,
 		Inout,
-		Portsplit,
+		Splitvar,
 	};
 
 private:		// variables

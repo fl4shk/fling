@@ -36,7 +36,7 @@ public:		// types
 		Enum,
 		Packed,
 		Unpacked,
-		Portsplit,
+		Splitvar,
 	};
 
 	// Stuff for custom types, not counting those that are arrays.
@@ -50,12 +50,12 @@ public:		// types
 		ComponentType _type = ComponentType::None;
 		ParameterVars _parameter_vars;
 
-		CompositeVars _portsplit_input_vars, _portsplit_output_vars,
-			_portsplit_inout_vars;
+		CompositeVars _splitvar_input_vars, _splitvar_output_vars,
+			_splitvar_inout_vars;
 
-		// Both enum values and non-portsplit composite variables are
+		// Both enum values and non-splitvar composite variables are
 		// stored here.
-		CompositeVars _non_portsplit_vars;
+		CompositeVars _non_splitvar_vars;
 
 
 		CompositeFuncs _funcs;
@@ -63,17 +63,17 @@ public:		// types
 	public:		// functions
 		ComponentData() = default;
 
-		// Construct data for a non-portsplit composite "FrostLhsType"
+		// Construct data for a non-splitvar composite "FrostLhsType"
 		ComponentData(bool s_is_packed,
 			ParameterVars&& s_parameter_vars,
-			CompositeVars&& s_non_portsplit_vars,
+			CompositeVars&& s_non_splitvar_vars,
 			CompositeFuncs&& s_funcs);
 
-		// Construct data for a portsplit composite "FrostLhsType"
+		// Construct data for a splitvar composite "FrostLhsType"
 		ComponentData(ParameterVars&& s_parameter_vars,
-			CompositeVars&& s_portsplit_input_vars,
-			CompositeVars&& s_portsplit_output_vars,
-			CompositeVars&& s_portsplit_inout_vars,
+			CompositeVars&& s_splitvar_input_vars,
+			CompositeVars&& s_splitvar_output_vars,
+			CompositeVars&& s_splitvar_inout_vars,
 			CompositeFuncs&& s_funcs);
 
 		// Construct data for an enum "FrostLhsType"
@@ -89,18 +89,18 @@ public:		// types
 
 		inline const EnumVals& vals_of_enum() const
 		{
-			return _non_portsplit_vars;
+			return _non_splitvar_vars;
 		}
 
 		GEN_GETTER_BY_CON_REF(type)
 
 		GEN_GETTER_BY_CON_REF(parameter_vars)
 
-		GEN_GETTER_BY_CON_REF(portsplit_input_vars)
-		GEN_GETTER_BY_CON_REF(portsplit_output_vars)
-		GEN_GETTER_BY_CON_REF(portsplit_inout_vars)
+		GEN_GETTER_BY_CON_REF(splitvar_input_vars)
+		GEN_GETTER_BY_CON_REF(splitvar_output_vars)
+		GEN_GETTER_BY_CON_REF(splitvar_inout_vars)
 
-		GEN_GETTER_BY_CON_REF(non_portsplit_vars)
+		GEN_GETTER_BY_CON_REF(non_splitvar_vars)
 		GEN_GETTER_BY_CON_REF(funcs)
 	};
 
@@ -157,9 +157,9 @@ public:		// functions
 	{
 		return (component_type() == ComponentType::Unpacked);
 	}
-	inline bool is_portsplit_composite() const
+	inline bool is_splitvar_composite() const
 	{
-		return (component_type() == ComponentType::Portsplit);
+		return (component_type() == ComponentType::Splitvar);
 	}
 
 	size_t left_dim() const;

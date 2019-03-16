@@ -6,32 +6,32 @@
 namespace frost_hdl
 {
 
-// Construct data for a non-portsplit composite "FrostLhsType"
+// Construct data for a non-splitvar composite "FrostLhsType"
 FrostLhsType::ComponentData::ComponentData(bool s_is_packed,
-	ParameterVars&& s_parameter_vars, CompositeVars&& s_non_portsplit_vars,
+	ParameterVars&& s_parameter_vars, CompositeVars&& s_non_splitvar_vars,
 	CompositeFuncs&& s_funcs)
 {
 	_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
 
 	_parameter_vars = std::move(s_parameter_vars);
-	_non_portsplit_vars = std::move(s_non_portsplit_vars);
+	_non_splitvar_vars = std::move(s_non_splitvar_vars);
 	_funcs = std::move(s_funcs);
 
 }
 
-// Construct data for a portsplit composite "FrostLhsType"
+// Construct data for a splitvar composite "FrostLhsType"
 FrostLhsType::ComponentData::ComponentData
 	(ParameterVars&& s_parameter_vars,
-	CompositeVars&& s_portsplit_input_vars,
-	CompositeVars&& s_portsplit_output_vars,
-	CompositeVars&& s_portsplit_inout_vars, CompositeFuncs&& s_funcs)
+	CompositeVars&& s_splitvar_input_vars,
+	CompositeVars&& s_splitvar_output_vars,
+	CompositeVars&& s_splitvar_inout_vars, CompositeFuncs&& s_funcs)
 {
-	_type = ComponentType::Portsplit;
+	_type = ComponentType::Splitvar;
 
 	_parameter_vars = std::move(s_parameter_vars);
-	_portsplit_input_vars = std::move(s_portsplit_input_vars);
-	_portsplit_output_vars = std::move(s_portsplit_output_vars);
-	_portsplit_inout_vars = std::move(s_portsplit_inout_vars);
+	_splitvar_input_vars = std::move(s_splitvar_input_vars);
+	_splitvar_output_vars = std::move(s_splitvar_output_vars);
+	_splitvar_inout_vars = std::move(s_splitvar_inout_vars);
 	_funcs = std::move(s_funcs);
 }
 
@@ -39,7 +39,7 @@ FrostLhsType::ComponentData::ComponentData
 FrostLhsType::ComponentData::ComponentData(EnumVals&& s_vals_of_enum)
 {
 	_type = ComponentType::Enum;
-	_non_portsplit_vars = std::move(s_vals_of_enum);
+	_non_splitvar_vars = std::move(s_vals_of_enum);
 }
 
 //bool FrostLhsType::ComponentData::operator ==
