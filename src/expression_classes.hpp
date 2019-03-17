@@ -524,6 +524,11 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_only_child_value()));
 	}
 
+	virtual FrostSourceType _frost_source_type() const
+	{
+		return FrostSourceType::UnOp;
+	}
+
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
@@ -548,6 +553,11 @@ protected:		// functions
 	void _evaluate()
 	{
 		_value.copy_from_bignum(-static_cast<BigNum>(_only_child_value()));
+	}
+
+	virtual FrostSourceType _frost_source_type() const
+	{
+		return FrostSourceType::UnOp;
 	}
 
 	inline Expression* _inner_dup_with_changed_symbols
@@ -585,6 +595,13 @@ protected:		// functions
 	{
 		_set_value(_only_child_value());
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprUnOpCastUnsigned
+			(DUP_CHILD(_only_child())));
+	}
 };
 // "$signed()
 class ExprUnOpCastSigned : public ExprBaseCastUnop
@@ -609,6 +626,13 @@ protected:		// functions
 	void _evaluate()
 	{
 		_set_value(_only_child_value());
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprUnOpCastSigned
+			(DUP_CHILD(_only_child())));
 	}
 };
 
