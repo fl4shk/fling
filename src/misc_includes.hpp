@@ -32,5 +32,7 @@ using namespace liborangepower::json;
 
 using liborangepower::bignum::BigNum;
 
+using liborangepower::containers::PrevCurrPair;
+
 
 #endif		// src_misc_includes_hpp

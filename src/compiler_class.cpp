@@ -9,11 +9,18 @@
 #define ANY_JUST_ACCEPT_BASIC(arg) \
 	arg->accept(this)
 
+#define ANY_JUST_ACCEPT_LOOPED(iter, arg) \
+	for (auto iter : arg) \
+	{ \
+		ANY_JUST_ACCEPT_BASIC(iter); \
+	}
+
 #define ANY_ACCEPT_IF_BASIC(arg) \
 	if (arg) \
 	{ \
 		ANY_JUST_ACCEPT_BASIC(arg); \
 	}
+
 
 #define TOK_TO_DUPPED_STR(arg) \
 	dup_str(arg->toString())
@@ -41,10 +48,6 @@ Compiler::~Compiler()
 
 int Compiler::run()
 {
-	//// Temporary initialization of "Pass::FrostListModules".
-	//set_pass(Pass::FrostListModules);
-
-
 	while (pass() < Pass::Done)
 	{
 		visitProgram(_program_ctx);
@@ -71,10 +74,7 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	//else
 	if (_in_frost_module_pass())
 	{
-		for (auto subprogram : ctx->declModule())
-		{
-			ANY_JUST_ACCEPT_BASIC(subprogram);
-		}
+		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule())
 	}
 
 	return nullptr;
@@ -152,6 +152,33 @@ VisitorRetType Compiler::visitLhsScopedCstmTypeName
 VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->identName());
+
+
+	if (ctx->expr())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->expr());
+
+		auto s_right_dim_expr = _stacks.get_top_expr();
+
+		if (s_right_dim_expr->is_constant())
+		{
+			s_right_dim_expr->full_evaluate_if_constant();
+		}
+		else // if (!s_right_dim_expr->is_constant())
+		{
+			_err(ctx, "Arrays must have constant dimensions.");
+		}
+
+		_stacks.push_small_num(static_cast<SmallNum>
+			(ScalarOrArray::Array));
+	}
+	else
+	{
+		_stacks.push_small_num(static_cast<SmallNum>
+			(ScalarOrArray::Scalar));
+	}
+
 	return nullptr;
 }
 
@@ -159,6 +186,8 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+
 	return nullptr;
 }
 
@@ -195,31 +224,23 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident_name = _stacks.pop_str();
 
-		if (_frost_program.frost_module_table.contains(ident_name))
+		if (_frost_program_pcp.curr.frost_module_table.contains
+			(ident_name))
 		{
 			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
 				"\""));
 		}
 
-		_frost_program.curr_frost_module = save_frost_module(FrostModule
-			(ident_name));
+		_frost_program_pcp.curr.curr_frost_module
+			= save_frost_module(FrostModule(ident_name));
 
 		// Process ports of this module
-		for (auto port_list : ctx->declPortInputVarList())
-		{
-			ANY_JUST_ACCEPT_BASIC(port_list);
-		}
-		for (auto port_list : ctx->declPortOutputVarList())
-		{
-			ANY_JUST_ACCEPT_BASIC(port_list);
-		}
-		for (auto port_list : ctx->declPortInoutVarList())
-		{
-			ANY_JUST_ACCEPT_BASIC(port_list);
-		}
+		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInputVarList())
+		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortOutputVarList())
+		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInoutVarList())
 
-		_frost_program.frost_module_table.insert_or_assign
-			(_frost_program.curr_frost_module);
+		_frost_program_pcp.curr.frost_module_table.insert_or_assign
+			(_frost_program_pcp.curr.curr_frost_module);
 	}
 	else if (pass() == Pass::FrostExpandModules)
 	{
@@ -305,7 +326,7 @@ VisitorRetType Compiler::visitNumExpr
 	if (ctx->rawNumExpr())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
-		const auto value = _stacks.pop_num();
+		const auto value = _stacks.pop_big_num();
 
 		const auto size = _default_hard_coded_num_size();
 
@@ -315,8 +336,8 @@ VisitorRetType Compiler::visitNumExpr
 	else if (ctx->sizedNumExpr())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->sizedNumExpr());
-		const auto value = _stacks.pop_num();
-		const auto size = _stacks.pop_num();
+		const auto value = _stacks.pop_big_num();
+		const auto size = _stacks.pop_big_num();
 
 		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
 			false);
@@ -341,7 +362,7 @@ VisitorRetType Compiler::visitRawNumExpr
 			to_push = (to_push * 10) + (c - '0');
 		}
 
-		_stacks.push_num(to_push);
+		_stacks.push_big_num(to_push);
 	}
 	else if (ctx->TokHexNum())
 	{
@@ -363,7 +384,7 @@ VisitorRetType Compiler::visitRawNumExpr
 			}
 		}
 
-		_stacks.push_num(to_push);
+		_stacks.push_big_num(to_push);
 	}
 	else if (ctx->TokBinNum())
 	{
@@ -374,7 +395,7 @@ VisitorRetType Compiler::visitRawNumExpr
 			to_push = (to_push * 2) + (c - '0');
 		}
 
-		_stacks.push_num(to_push);
+		_stacks.push_big_num(to_push);
 	}
 	else
 	{
@@ -386,10 +407,8 @@ VisitorRetType Compiler::visitRawNumExpr
 VisitorRetType Compiler::visitSizedNumExpr
 	(Parser::SizedNumExprContext *ctx)
 {
-	for (auto raw_num_expr : ctx->rawNumExpr())
-	{
-		ANY_JUST_ACCEPT_BASIC(raw_num_expr);
-	}
+	ANY_JUST_ACCEPT_LOOPED(raw_num_expr, ctx->rawNumExpr())
+
 	return nullptr;
 }
 
@@ -418,10 +437,7 @@ VisitorRetType Compiler::visitIdentName
 VisitorRetType Compiler::visitScopedIdentName
 	(Parser::ScopedIdentNameContext *ctx)
 {
-	for (auto iter : ctx->identName())
-	{
-		ANY_JUST_ACCEPT_BASIC(iter);
-	}
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName());
 
 	return nullptr;
 }

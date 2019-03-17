@@ -24,6 +24,15 @@ public:		// types
 	typedef antlrcpp::Any VisitorRetType;
 	typedef CompilerGrammarParser Parser;
 
+	// Please excuse me calling something with "max" in its name "Small".
+	// In comparison to "BigNum"s, these actually *are* small.
+	typedef uintmax_t SmallNum;
+
+	enum class ScalarOrArray : SmallNum
+	{
+		Scalar,
+		Array
+	};
 
 	typedef uintmax_t PassUint;
 
@@ -53,7 +62,8 @@ private:		// variables
 
 	//X(stack_type, ret_type, whateverfix)
 	#define LIST_FOR_GEN_STACK(X) \
-		X(BigNum, const BigNum&, num) \
+		X(BigNum, const BigNum&, big_num) \
+		X(SmallNum, SmallNum, small_num) \
 		X(SavedString, SavedString, str) \
 		X(Expression*, Expression*, expr) \
 		X(Symbol*, Symbol*, sym) \
@@ -103,7 +113,7 @@ private:		// variables
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
 
-	FrostProgram _frost_program;
+	PrevCurrPair<FrostProgram> _frost_program_pcp;
 
 
 public:		// functions
