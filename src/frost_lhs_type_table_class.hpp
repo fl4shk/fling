@@ -127,6 +127,7 @@ public:		// functions
 	//bool operator == (const FrostLhsType& other) const;
 
 
+
 	inline bool can_be_parameterized() const
 	{
 		return (component_data().parameter_vars().size() > 0);

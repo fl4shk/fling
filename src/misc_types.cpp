@@ -6,6 +6,14 @@
 namespace frost_hdl
 {
 
+ReplaceSymsMap::ReplaceSymsMap()
+{
+}
+
+ReplaceSymsMap::~ReplaceSymsMap()
+{
+}
+
 SrcCodePos::SrcCodePos()
 	: _ctx(nullptr)
 {

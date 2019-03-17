@@ -16,6 +16,7 @@ namespace frost_hdl
 class FrostModule
 {
 private:		// variables
+	SrcCodePos _src_code_pos;
 	SavedString _ident = nullptr;
 	ListVars _parameter_vars;
 	SymbolTable _input_symbol_table, _output_symbol_table,
@@ -31,7 +32,7 @@ private:		// variables
 	//FrostPackageImportTable _frost_package_import_table;
 
 public:		// functions
-	FrostModule(SavedString s_ident);
+	FrostModule(const SrcCodePos& s_src_code_pos, SavedString s_ident);
 
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModule);
@@ -47,6 +48,7 @@ public:		// functions
 	}
 
 
+	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 
 	GEN_GETTERS_BY_CON_REF_AND_REF(input_symbol_table)

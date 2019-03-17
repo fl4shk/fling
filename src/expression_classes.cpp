@@ -65,6 +65,12 @@ bool Expression::references_symbol(Symbol* to_check) const
 	return false;
 }
 
+Expression* Expression::dup_with_changed_symbols
+	(const ReplaceSymsMap& replace_syms_map) const
+{
+	return nullptr;
+}
+
 SavedString Expression::to_hdl_source() const
 {
 	return nullptr;
@@ -74,6 +80,7 @@ auto Expression::lhs_category() const -> LhsCategory
 {
 	return LhsCategory::None;
 }
+
 
 void Expression::_evaluate()
 {

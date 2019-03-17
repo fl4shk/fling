@@ -68,11 +68,18 @@ declPortInoutVarList:
 	;
 
 
+//declParameterVarList:
+//	declParameterVar ((TokComma declParameterVar)*)
+//	;
+
 
 // "module" stuff
 declModule:
 	TokKwModule identName
-		// FUTURE:  allow "parameter"s here
+		// FUTURE:  parameters
+		//((TokKwParameter TokLParen declParameterVarList TokRParen)?)
+
+		// ports
 		TokLParen
 			// FUTURE:  allow "interface" "modport"s here
 			((declPortInputVarList | declPortOutputVarList

@@ -14,6 +14,41 @@ class Symbol;
 
 typedef OrderedIdentToPointerTable<Symbol> ListVars;
 
+class ReplaceSymsMap
+{
+private:		// variables
+	std::map<Symbol*, Symbol*> _inner_map;
+
+public:		// functions
+	ReplaceSymsMap();
+
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ReplaceSymsMap);
+	virtual ~ReplaceSymsMap();
+
+	inline Symbol*& at(Symbol* some_orig_sym)
+	{
+		return _inner_map[some_orig_sym];
+	}
+
+	inline Symbol* at(Symbol* some_orig_sym) const
+	{
+		return _inner_map.at(some_orig_sym);
+	}
+
+	inline bool contains(Symbol* some_orig_sym) const
+	{
+		return (_inner_map.count(some_orig_sym) == 1);
+	}
+
+	inline void insert_or_assign(Symbol* some_orig_sym,
+		Symbol* to_insert_or_assign)
+	{
+		at(some_orig_sym) = to_insert_or_assign;
+	}
+
+	GEN_GETTER_BY_CON_REF(inner_map);
+};
+
 template<typename Type>
 class PointerVector : public std::vector<Type*>
 {
@@ -22,7 +57,6 @@ public:		// functions
 
 	GEN_COPY_CONSTRUCTOR_AND_ASSIGN(PointerVector);
 	virtual ~PointerVector() = default;
-
 };
 
 
@@ -40,7 +74,7 @@ public:		// functions
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(MoveOnlyPrevCurrPair);
 	virtual ~MoveOnlyPrevCurrPair() = default;
 
-	inline void back_up()
+	inline void next()
 	{
 		_prev = std::move(curr);
 		curr = Type();

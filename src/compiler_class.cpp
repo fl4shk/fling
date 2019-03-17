@@ -196,7 +196,8 @@ VisitorRetType Compiler::visitDeclVarList
 	return nullptr;
 }
 
-// For now, port vars can't be arrays.
+// For now, port vars can't be arrays.  Perhaps things will actually stay
+// that way (such that arrays on ports *must* be in "splitvar" "struct"s)
 VisitorRetType Compiler::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 {
@@ -237,7 +238,7 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		}
 
 		_frost_program_pcp.curr.curr_frost_module
-			= save_frost_module(FrostModule(ident_name));
+			= save_frost_module(FrostModule(SrcCodePos(ctx), ident_name));
 
 		// Process ports of this module
 		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInputVarList())

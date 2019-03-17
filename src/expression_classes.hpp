@@ -12,6 +12,13 @@
 namespace frost_hdl
 {
 
+#define REMOVE_CONST_REF(to_remove_from) \
+	std::remove_const<std::remove_reference<to_remove_from>::type>::type
+
+// Used to prevent accidentally doing a "save_expr" of the wrong type.
+#define SAFE_SAVE_EXPR save_expr<REMOVE_CONST_REF(decltype(*this))>
+#define DUP_CHILD(child) child->dup_with_changed_symbols(replace_syms_map)
+
 //inline BigNum max(const BigNum& a, const BigNum& b)
 //{
 //	return (a > b) ? a : b;
@@ -74,6 +81,8 @@ public:		// functions
 
 
 
+
+
 	// I didn't want this made public, but...
 	void inner_full_evaluate();
 
@@ -100,8 +109,14 @@ public:		// functions
 		return (num_children() == 0);
 	}
 
+	// Unfortunately, replacing the references to "Symbol"s has come down
+	// to this.  Each most-derived "Expression" class will now have to
+	// implement this.  It's a pain.
+	virtual Expression* dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const;
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const;
+
 
 
 	// This doesn't *need* to be stored anywhere.
@@ -136,6 +151,7 @@ protected:		// functions
 	{
 		_value = n_value;
 	}
+
 
 	// Don't call "_evaluate()" until after the size of the expression has
 	// been determined and the children have been modified.
@@ -1018,6 +1034,10 @@ public:		// functions
 	ExprRepl(Expression* s_width_child,
 		ChildrenList&& s_non_width_children);
 
+	//inline Expression* dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//}
 	virtual SavedString to_hdl_source() const;
 
 protected:		// functions
@@ -1048,6 +1068,14 @@ class ExprTernary : public Expression
 public:		// functions
 	ExprTernary(Expression* condition_child, Expression* when_true_child,
 		Expression* when_false_child);
+
+	inline Expression* dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
+			DUP_CHILD(_when_true_child()),
+			DUP_CHILD(_when_false_child())));
+	}
 
 	virtual SavedString to_hdl_source() const
 	{
@@ -1097,11 +1125,20 @@ class ExprIdentName : public Expression
 public:		// functions
 	ExprIdentName(Symbol* s_symbol);
 
-	//bool is_constant() const
-	//{
-	//	return (Expression::is_constant() || symbol()->is_constant());
-	//}
 
+	virtual Expression* dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		if (replace_syms_map.contains(_symbol))
+		{
+			return SAFE_SAVE_EXPR(ExprIdentName(replace_syms_map.at
+				(_symbol)));
+		}
+		else
+		{
+			return SAFE_SAVE_EXPR(ExprIdentName(_symbol));
+		}
+	}
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const
 	{
@@ -1116,6 +1153,9 @@ protected:		// functions
 };
 
 #undef TO_HDL_SOURCE
+#undef DUP_CHILD
+#undef SAFE_SAVE_EXPR
+#undef REMOVE_CONST_REF
 
 } // namespace frost_hdl
 

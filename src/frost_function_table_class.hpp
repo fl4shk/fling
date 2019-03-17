@@ -65,6 +65,7 @@ public:		// functions
 
 
 
+	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_task)
 	GEN_GETTER_BY_VAL(is_constexpr)

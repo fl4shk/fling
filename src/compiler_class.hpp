@@ -45,14 +45,12 @@ public:		// types
 		////FrostListInterfaces,
 		////FrostExpandInterfaces,
 
+		// List "module"s, their "parameter"s, and their ports.
 		FrostListModules,
+
+		// Produce non-"parameter"ized "module"s.
 		FrostExpandModules,
 
-		//// Passes for processing the output of processing Frost HDL source
-		//// code
-
-		//// Passes for generation of code in the destination HDL (most
-		//// likely Verilog)
 
 		Done,
 	};

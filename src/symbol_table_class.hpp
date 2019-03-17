@@ -34,7 +34,7 @@ public:		// types
 
 	enum class PortType
 	{
-		// Local vars
+		// "parameter"s, Local vars
 		NonPort,
 
 		// Ports
@@ -52,10 +52,6 @@ private:		// variables
 	// Whether or not this symbol is a named constant.
 	bool _is_constant = false;
 
-	// If this "Symbol"'s declaration has not yet been seen, then
-	// "_frost_full_type" will be set to "nullptr".  Use
-	// "actually_exists()" to get this information.  This information is
-	// useful to determine the validiy of an expression.
 	FrostFullType* _frost_full_type = nullptr;
 
 
@@ -69,7 +65,7 @@ private:		// variables
 	ListVars _parameter_vars;
 
 
-	// "_init_block" is part of what determines whether or not this
+	// "_init_block_context" is part of what determines whether or not this
 	// "Symbol" becomes a wire in the generated HDL.
 	FrostStatementTable::Node* _init_block_context = nullptr;
 

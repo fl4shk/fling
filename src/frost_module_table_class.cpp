@@ -4,8 +4,10 @@ namespace frost_hdl
 {
 
 // Stick this in here so that things don't get inlined.
-FrostModule::FrostModule(SavedString s_ident)
+FrostModule::FrostModule(const SrcCodePos& s_src_code_pos,
+	SavedString s_ident)
 {
+	_src_code_pos = s_src_code_pos;
 	_ident = s_ident;
 }
 
