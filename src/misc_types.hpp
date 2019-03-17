@@ -48,6 +48,22 @@ public:		// functions
 //	GEN_GETTER_AND_SETTER_BY_VAL(pos_in_line)
 //};
 
+template<typename Type>
+class MoveOnlyPrevCurrPair
+{
+protected:		// variables
+	Type _prev, _curr;
+
+public:		// functions
+	inline MoveOnlyPrevCurrPair() = default;
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(MoveOnlyPrevCurrPair);
+	virtual ~MoveOnlyPrevCurrPair() = default;
+
+	GEN_GETTER_BY_CON_REF(prev)
+
+	GEN_GETTER_BY_CON_REF_AND_REF(curr)
+};
+
 } // namespace frost_hdl
 
 

@@ -69,7 +69,6 @@ private:		// variables
 		X(Symbol*, Symbol*, sym) \
 		X(FrostLhsType*, FrostLhsType*, lhs_type) \
 		X(FrostFullType*, FrostFullType*, full_type) \
-		X(ListVars*, ListVars*, ordered_vars) \
 
 	class Stacks
 	{
@@ -113,7 +112,7 @@ private:		// variables
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
 
-	PrevCurrPair<FrostProgram> _frost_program_pcp;
+	MoveOnlyPrevCurrPair<FrostProgram> _frost_program_pcp;
 
 
 public:		// functions

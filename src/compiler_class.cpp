@@ -224,14 +224,14 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident_name = _stacks.pop_str();
 
-		if (_frost_program_pcp.curr.frost_module_table.contains
+		if (_frost_program_pcp.curr().frost_module_table.contains
 			(ident_name))
 		{
 			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
 				"\""));
 		}
 
-		_frost_program_pcp.curr.curr_frost_module
+		_frost_program_pcp.curr().curr_frost_module
 			= save_frost_module(FrostModule(ident_name));
 
 		// Process ports of this module
@@ -239,8 +239,8 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortOutputVarList())
 		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInoutVarList())
 
-		_frost_program_pcp.curr.frost_module_table.insert_or_assign
-			(_frost_program_pcp.curr.curr_frost_module);
+		_frost_program_pcp.curr().frost_module_table.insert_or_assign
+			(_frost_program_pcp.curr().curr_frost_module);
 	}
 	else if (pass() == Pass::FrostExpandModules)
 	{
