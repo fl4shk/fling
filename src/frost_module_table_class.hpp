@@ -49,34 +49,18 @@ public:		// functions
 
 	GEN_GETTER_BY_VAL(ident)
 
-	GEN_GETTER_BY_CON_REF(input_symbol_table)
-	GEN_GETTER_BY_REF(input_symbol_table)
-
-	GEN_GETTER_BY_CON_REF(output_symbol_table)
-	GEN_GETTER_BY_REF(output_symbol_table)
-
-	GEN_GETTER_BY_CON_REF(inout_symbol_table)
-	GEN_GETTER_BY_REF(inout_symbol_table)
-
-	GEN_GETTER_BY_CON_REF(local_symbol_table)
-	GEN_GETTER_BY_REF(local_symbol_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(input_symbol_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(output_symbol_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(inout_symbol_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(local_symbol_table)
 
 
 
-	GEN_GETTER_BY_CON_REF(frost_lhs_type_table)
-	GEN_GETTER_BY_REF(frost_lhs_type_table)
-
-	GEN_GETTER_BY_CON_REF(frost_full_type_table)
-	GEN_GETTER_BY_REF(frost_full_type_table)
-
-	GEN_GETTER_BY_CON_REF(frost_function_table)
-	GEN_GETTER_BY_REF(frost_function_table)
-
-	GEN_GETTER_BY_CON_REF(parameter_vars)
-	GEN_GETTER_BY_REF(parameter_vars)
-
-	GEN_GETTER_BY_CON_REF(statement_table)
-	GEN_GETTER_BY_REF(statement_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_lhs_type_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_vars)
+	GEN_GETTERS_BY_CON_REF_AND_REF(statement_table)
 };
 
 // Nested "module"s are not permitted, and they are always at global scope.

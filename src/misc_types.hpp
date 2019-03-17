@@ -61,7 +61,7 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(prev)
 
-	GEN_GETTER_BY_CON_REF_AND_REF(curr)
+	GEN_GETTERS_BY_CON_REF_AND_REF(curr)
 };
 
 } // namespace frost_hdl
