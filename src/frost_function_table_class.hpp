@@ -21,6 +21,7 @@ class FrostLhsType;
 class FrostFunction
 {
 private:		// variables
+	SrcCodePos _src_code_pos;
 	SavedString _ident = nullptr;
 	bool _is_task = false;
 	bool _is_constexpr = false;
@@ -33,22 +34,34 @@ private:		// variables
 public:		// functions
 	FrostFunction();
 
-	FrostFunction(SavedString s_ident, bool s_is_task, bool s_is_constexpr,
+	FrostFunction(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		bool s_is_task, bool s_is_constexpr,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostModule* s_context);
-	FrostFunction(SavedString s_ident, bool s_is_task, bool s_is_constexpr,
+	FrostFunction(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		bool s_is_task, bool s_is_constexpr,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostPackage* s_context);
-	FrostFunction(SavedString s_ident, bool s_is_task, bool s_is_constexpr,
+	FrostFunction(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		bool s_is_task, bool s_is_constexpr,
 		FrostStatementTable&& s_frost_statement_table,
 		FrostLhsType* s_context);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFunction);
 	virtual ~FrostFunction();
 
-	//bool in_frost_module() const;
-	//bool in_frost_package() const;
-	//bool in_frost_lhs_type() const;
+	inline bool in_frost_module() const
+	{
+		return std::holds_alternative<FrostModule*>(_context);
+	}
+	inline bool in_frost_package() const
+	{
+		return std::holds_alternative<FrostPackage*>(_context);
+	}
+	inline bool in_frost_lhs_type() const
+	{
+		return std::holds_alternative<FrostLhsType*>(_context);
+	}
 
 
 

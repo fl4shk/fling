@@ -100,6 +100,8 @@ VisitorRetType Compiler::visitLhsTypeName
 VisitorRetType Compiler::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 {
+	// only call this when pass() == Pass::FrostListModules
+
 	Expression* s_left_dim_expr = nullptr;
 	if (ctx->expr())
 	{
@@ -107,27 +109,27 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 		s_left_dim_expr = _stacks.pop_expr();
 	}
 
-	if (s_left_dim_expr->is_constant())
-	{
-		s_left_dim_expr->full_evaluate_if_constant();
-	}
-	else // if (!to_save.left_dim_expr()->is_constant())
-	{
-		_err(ctx, "Vectors must have constant dimensions.");
-	}
+	//if (s_left_dim_expr->is_constant())
+	//{
+	//	s_left_dim_expr->full_evaluate_if_constant();
+	//}
+	//else // if (!to_save.left_dim_expr()->is_constant())
+	//{
+	//	_err(ctx, "Vectors must have constant dimensions.");
+	//}
 
-	// Helpful warning
-	if (static_cast<BigNum>(s_left_dim_expr->value())
-		< static_cast<BigNum>(0))
-	{
-		_warn(ctx, "Dimensions of vector are signed and evaluate to less"
-			" than zero.  They will be treated as an unsigned value."
-			"  This is might not be what you want.");
-	}
+	//// Helpful warning
+	//if (static_cast<BigNum>(s_left_dim_expr->value())
+	//	< static_cast<BigNum>(0))
+	//{
+	//	_warn(ctx, "Dimensions of vector are signed and evaluate to less"
+	//		" than zero.  They will be treated as an unsigned value."
+	//		"  This is might not be what you want.");
+	//}
 
 	// "ctx->TokKwUnsigned()" is only for those who want to be pedantic.
-	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType
-		(dup_str("builtin::logic"), (ctx->TokKwSigned() != nullptr),
+	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType(SrcCodePos(ctx),
+		dup_str("builtin::logic"), (ctx->TokKwSigned() != nullptr),
 		s_left_dim_expr)));
 	return nullptr;
 }
@@ -152,6 +154,7 @@ VisitorRetType Compiler::visitLhsScopedCstmTypeName
 VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
 {
+	// only call this when pass() == Pass::FrostListModules
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 
 
@@ -159,16 +162,16 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->expr());
 
-		auto s_right_dim_expr = _stacks.get_top_expr();
+		//auto s_right_dim_expr = _stacks.get_top_expr();
 
-		if (s_right_dim_expr->is_constant())
-		{
-			s_right_dim_expr->full_evaluate_if_constant();
-		}
-		else // if (!s_right_dim_expr->is_constant())
-		{
-			_err(ctx, "Arrays must have constant dimensions.");
-		}
+		//if (s_right_dim_expr->is_constant())
+		//{
+		//	s_right_dim_expr->full_evaluate_if_constant();
+		//}
+		//else // if (!s_right_dim_expr->is_constant())
+		//{
+		//	_err(ctx, "Arrays must have constant dimensions.");
+		//}
 
 		_stacks.push_small_num(static_cast<SmallNum>
 			(ScalarOrArray::Array));
@@ -187,6 +190,8 @@ VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+
+	//ANY_JUST_ACCEPT_LOOPED(ctx->declNoLhsTypeVar())
 
 	return nullptr;
 }
@@ -224,14 +229,14 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident_name = _stacks.pop_str();
 
-		if (_frost_program_pcp.curr().frost_module_table.contains
+		if (_frost_program_pcp.curr.frost_module_table.contains
 			(ident_name))
 		{
 			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
 				"\""));
 		}
 
-		_frost_program_pcp.curr().curr_frost_module
+		_frost_program_pcp.curr.curr_frost_module
 			= save_frost_module(FrostModule(ident_name));
 
 		// Process ports of this module
@@ -239,8 +244,8 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortOutputVarList())
 		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInoutVarList())
 
-		_frost_program_pcp.curr().frost_module_table.insert_or_assign
-			(_frost_program_pcp.curr().curr_frost_module);
+		_frost_program_pcp.curr.frost_module_table.insert_or_assign
+			(_frost_program_pcp.curr.curr_frost_module);
 	}
 	else if (pass() == Pass::FrostExpandModules)
 	{

@@ -20,7 +20,7 @@
 #include "liborangepower_src/misc_defines.hpp"
 #include "liborangepower_src/gen_class_innards_defines.hpp"
 #include "liborangepower_src/json_stuff.hpp"
-//#include "liborangepower_src/prev_curr_pair_class.hpp"
+#include "liborangepower_src/prev_curr_pair_class.hpp"
 #include "liborangepower_src/gmp_stuff.hpp"
 
 using namespace liborangepower::printout_etc;
@@ -32,7 +32,6 @@ using namespace liborangepower::json;
 
 using liborangepower::bignum::BigNum;
 
-//using liborangepower::containers::PrevCurrPair;
 
 
 #endif		// src_misc_includes_hpp

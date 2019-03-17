@@ -44,6 +44,26 @@ void Expression::inner_full_evaluate()
 	}
 	_evaluate();
 }
+bool Expression::references_symbol(Symbol* to_check) const
+{
+	if (_symbol == to_check)
+	{
+		return true;
+	}
+
+	// Here we execute the recursion.  This *only* works if "Expression"s
+	// are truly trees.  I *really* hope there are no bugs that can cause
+	// an "Expression" to have itself as a descendant.
+	for (auto iter : _children)
+	{
+		if (iter->references_symbol(to_check))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 SavedString Expression::to_hdl_source() const
 {

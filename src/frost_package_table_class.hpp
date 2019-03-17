@@ -31,17 +31,10 @@ public:		// functions
 
 	GEN_GETTER_BY_VAL(ident)
 
-	GEN_GETTER_BY_CON_REF(symbol_table)
-	GEN_GETTER_BY_REF(symbol_table)
-
-	GEN_GETTER_BY_CON_REF(frost_lhs_type_table)
-	GEN_GETTER_BY_REF(frost_lhs_type_table)
-
-	GEN_GETTER_BY_CON_REF(frost_full_type_table)
-	GEN_GETTER_BY_REF(frost_full_type_table)
-
-	GEN_GETTER_BY_CON_REF(frost_function_table)
-	GEN_GETTER_BY_REF(frost_function_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(symbol_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_lhs_type_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
 };
 
 // "FrostPackage"s can't be nested.

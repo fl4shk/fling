@@ -5,6 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "ident_table_classes.hpp"
+#include <ANTLRErrorListener.h>
 
 namespace frost_hdl
 {
@@ -24,44 +25,62 @@ public:		// functions
 
 };
 
-//// Used for error reporting during semantic analysis.
-//// Many, many things derive from this.
-//class HasSourceCodePosBase
-//{
-//protected:		// variables
-//	size_t _line = 0, _pos_in_line = 0;
-//
-//public:		// functions
-//	inline HasSourceCodePosBase() = default;
-//
-//	//inline HasSourceCodePosBase(size_t s_line, size_t s_pos_in_line)
-//	//	: _line(s_line), _pos_in_line(s_pos_in_line)
-//	//{
-//	//}
-//	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(HasSourceCodePosBase);
-//
-//
-//	virtual ~HasSourceCodePosBase() = default;
-//
-//
-//	GEN_GETTER_AND_SETTER_BY_VAL(line)
-//	GEN_GETTER_AND_SETTER_BY_VAL(pos_in_line)
-//};
 
 template<typename Type>
 class MoveOnlyPrevCurrPair
 {
 protected:		// variables
-	Type _prev, _curr;
+	Type _prev;
+	
+public:		// variables
+	Type curr;
 
 public:		// functions
 	inline MoveOnlyPrevCurrPair() = default;
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(MoveOnlyPrevCurrPair);
 	virtual ~MoveOnlyPrevCurrPair() = default;
 
-	GEN_GETTER_BY_CON_REF(prev)
+	inline void back_up()
+	{
+		_prev = std::move(curr);
+		curr = Type();
+	}
 
-	GEN_GETTERS_BY_CON_REF_AND_REF(curr)
+	GEN_GETTER_BY_CON_REF(prev)
+};
+
+// Used for error reporting during semantic analysis.
+// Many, many things use this.
+class SrcCodePos
+{
+private:		// variables
+	antlr4::ParserRuleContext* _ctx = nullptr;
+	size_t _src_line = 0, _src_pos_in_line = 0;
+
+public:		// functions
+	SrcCodePos();
+	SrcCodePos(antlr4::ParserRuleContext* s_ctx);
+
+	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
+
+	virtual ~SrcCodePos();
+
+	inline void err(const std::string& msg) const
+	{
+		printerr("Error on line ", _src_line, ", position ",
+			_src_pos_in_line, ":  ", msg, "\n");
+		exit(1);
+	}
+	inline void warn(const std::string& msg) const
+	{
+		printerr("Warning on line ", _src_line, ", position ",
+			_src_pos_in_line, ":  ", msg, "\n");
+	}
+
+
+	GEN_GETTER_BY_VAL(src_line)
+	GEN_GETTER_BY_VAL(src_pos_in_line)
 };
 
 } // namespace frost_hdl

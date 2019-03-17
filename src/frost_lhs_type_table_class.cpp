@@ -6,40 +6,44 @@
 namespace frost_hdl
 {
 
-// Construct data for a non-splitvar composite "FrostLhsType"
-FrostLhsType::ComponentData::ComponentData(bool s_is_packed,
-	ListVars&& s_parameter_vars, CompositeVars&& s_non_splitvar_vars,
+// Construct data for a composite "FrostLhsType"
+FrostLhsType::ComponentData::ComponentData(CompositeType s_composite_type,
+	ListVars&& s_parameter_vars, CompositeVars&& s_composite_vars,
 	CompositeFuncs&& s_funcs)
 {
-	_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
+	//_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
+	switch (s_composite_type)
+	{
+	case CompositeType::CompositePacked:
+		_type = ComponentType::Packed;
+		break;
+	case CompositeType::CompositeUnpacked:
+		_type = ComponentType::Unpacked;
+		break;
+	case CompositeType::CompositeSplitvar:
+		_type = ComponentType::Splitvar;
+		break;
+	default:
+		printerr("Internal Compiler Error:  FrostLhsType::ComponentData",
+			"::ComponentData():  Eek!\n");
+		exit(1);
+
+		// Useless "break"; only here for consistency.
+		break;
+	}
 
 	_parameter_vars = std::move(s_parameter_vars);
-	_non_splitvar_vars = std::move(s_non_splitvar_vars);
+	_composite_vars = std::move(s_composite_vars);
 	_funcs = std::move(s_funcs);
 
 }
 
-// Construct data for a splitvar composite "FrostLhsType"
-FrostLhsType::ComponentData::ComponentData
-	(ListVars&& s_parameter_vars,
-	CompositeVars&& s_splitvar_input_vars,
-	CompositeVars&& s_splitvar_output_vars,
-	CompositeVars&& s_splitvar_inout_vars, CompositeFuncs&& s_funcs)
-{
-	_type = ComponentType::Splitvar;
-
-	_parameter_vars = std::move(s_parameter_vars);
-	_splitvar_input_vars = std::move(s_splitvar_input_vars);
-	_splitvar_output_vars = std::move(s_splitvar_output_vars);
-	_splitvar_inout_vars = std::move(s_splitvar_inout_vars);
-	_funcs = std::move(s_funcs);
-}
 
 // Construct data for an enum "FrostLhsType"
 FrostLhsType::ComponentData::ComponentData(EnumVals&& s_vals_of_enum)
 {
 	_type = ComponentType::Enum;
-	_non_splitvar_vars = std::move(s_vals_of_enum);
+	_composite_vars = std::move(s_vals_of_enum);
 }
 
 //bool FrostLhsType::ComponentData::operator ==
@@ -61,16 +65,18 @@ FrostLhsType::ComponentData::ComponentData(EnumVals&& s_vals_of_enum)
 //	_is_signed = s_is_signed;
 //	_left_dim_expr = nullptr;
 //}
-FrostLhsType::FrostLhsType(SavedString s_ident, bool s_is_signed,
-	DimensionExpr s_left_dim_expr)
+FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
+	SavedString s_ident, bool s_is_signed, DimensionExpr s_left_dim_expr)
 {
+	_src_code_pos = s_src_code_pos;
 	_ident = s_ident;
 	_is_signed = s_is_signed;
 	_left_dim_expr = s_left_dim_expr;
 }
-FrostLhsType::FrostLhsType(SavedString s_ident,
-	ComponentData&& s_component_data)
+FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
+	SavedString s_ident, ComponentData&& s_component_data)
 {
+	_src_code_pos = s_src_code_pos;
 	_ident = s_ident;
 	_is_signed = false;
 	_component_data = std::move(s_component_data);

@@ -39,6 +39,13 @@ public:		// types
 		Splitvar,
 	};
 
+	enum class CompositeType
+	{
+		CompositePacked,
+		CompositeUnpacked,
+		CompositeSplitvar,
+	};
+
 	// Stuff for custom types, not counting those that are arrays.
 	// If custom types that are arrays are supported (most likely via some
 	// "FrostLhsTypedef" functionality), another data structure will be
@@ -50,12 +57,8 @@ public:		// types
 		ComponentType _type = ComponentType::None;
 		ListVars _parameter_vars;
 
-		CompositeVars _splitvar_input_vars, _splitvar_output_vars,
-			_splitvar_inout_vars;
-
-		// Both enum values and non-splitvar composite variables are
-		// stored here.
-		CompositeVars _non_splitvar_vars;
+		// Both enum values and composite variables are stored here.
+		CompositeVars _composite_vars;
 
 
 		CompositeFuncs _funcs;
@@ -63,18 +66,11 @@ public:		// types
 	public:		// functions
 		ComponentData() = default;
 
-		// Construct data for a non-splitvar composite "FrostLhsType"
-		ComponentData(bool s_is_packed,
-			ListVars&& s_parameter_vars,
-			CompositeVars&& s_non_splitvar_vars,
+		// Construct data for a composite "FrostLhsType"
+		ComponentData(CompositeType s_composite_type,
+			ListVars&& s_parameter_vars, CompositeVars&& s_composite_vars,
 			CompositeFuncs&& s_funcs);
 
-		// Construct data for a splitvar composite "FrostLhsType"
-		ComponentData(ListVars&& s_parameter_vars,
-			CompositeVars&& s_splitvar_input_vars,
-			CompositeVars&& s_splitvar_output_vars,
-			CompositeVars&& s_splitvar_inout_vars,
-			CompositeFuncs&& s_funcs);
 
 		// Construct data for an enum "FrostLhsType"
 		ComponentData(EnumVals&& s_vals_of_enum);
@@ -89,23 +85,22 @@ public:		// types
 
 		inline const EnumVals& vals_of_enum() const
 		{
-			return _non_splitvar_vars;
+			return _composite_vars;
 		}
 
 		GEN_GETTER_BY_CON_REF(type)
 
 		GEN_GETTER_BY_CON_REF(parameter_vars)
 
-		GEN_GETTER_BY_CON_REF(splitvar_input_vars)
-		GEN_GETTER_BY_CON_REF(splitvar_output_vars)
-		GEN_GETTER_BY_CON_REF(splitvar_inout_vars)
 
-		GEN_GETTER_BY_CON_REF(non_splitvar_vars)
+		GEN_GETTER_BY_CON_REF(composite_vars)
 		GEN_GETTER_BY_CON_REF(funcs)
 	};
 
 
 private:		// variables
+	SrcCodePos _src_code_pos;
+
 	SavedString _ident = nullptr;
 
 	bool _is_signed = false;
@@ -120,9 +115,10 @@ private:		// variables
 public:		// functions
 	FrostLhsType() = default;
 	//FrostLhsType(SavedString s_ident, bool s_is_signed);
-	FrostLhsType(SavedString s_ident, bool s_is_signed,
-		DimensionExpr s_left_dim_expr);
-	FrostLhsType(SavedString s_ident, ComponentData&& s_component_data);
+	FrostLhsType(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		bool s_is_signed, DimensionExpr s_left_dim_expr);
+	FrostLhsType(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		ComponentData&& s_component_data);
 
 	// We really don't want copies of "FrostLhsType"s.
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostLhsType);
@@ -170,9 +166,10 @@ public:		// functions
 	}
 
 
+	GEN_GETTER_BY_CON_REF(src_code_pos)
+
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(is_signed)
-
 
 
 	GEN_GETTER_BY_CON_REF(component_data)

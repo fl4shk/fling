@@ -52,45 +52,6 @@ public:		// types
 	//	HardCodedConstant,
 	//};
 
-	//enum class Type
-	//{
-	//	BinOpLogAnd,
-	//	BinOpLogOr,
-
-	//	BinOpCmpEq,
-	//	BinOpCmpNe,
-	//	BinOpCmpLt,
-	//	BinOpCmpGt,
-	//	BinOpCmpLe,
-	//	BinOpCmpGe,
-
-	//	BinOpPlus,
-	//	BinOpMinus,
-
-	//	UnOpPlus,
-	//	UnOpMinus,
-	//	UnOpBitInvert,
-
-	//	BinOpMul,
-	//	BinOpDiv,
-	//	BinOpMod,
-
-	//	BinOpBitAnd,
-	//	BinOpBitOr,
-	//	BinOpBitXor,
-
-	//	BinOpBitLsl,
-	//	BinOpBitLsr,
-	//	BinOpBitAsr,
-
-	//	Ternary,
-
-	//	Ident,
-	//	IdentSliced,
-	//	HardCodedConstant,
-
-	//	Lim,
-	//};
 
 
 protected:		// variables
@@ -115,6 +76,11 @@ public:		// functions
 
 	// I didn't want this made public, but...
 	void inner_full_evaluate();
+
+	// Recursively search the tree for a reference to a particular
+	// "Symbol".  This is (exclusively?) used to prevent defining a
+	// "parameter" in terms of itself.
+	bool references_symbol(Symbol* to_check) const;
 
 
 
@@ -153,6 +119,7 @@ public:		// functions
 			_full_evaluate(true);
 		}
 	}
+
 
 
 	GEN_GETTER_BY_CON_REF(children)
@@ -809,6 +776,7 @@ protected:		// functions
 };
 
 // "/"
+// FUTURE:  add some way to detect division by zero.
 class ExprBinOpDiv : public ExprBaseArithBinOp
 {
 public:		// functions
@@ -830,6 +798,7 @@ protected:		// functions
 };
 
 // "%"
+// FUTURE:  add some way to detect division by zero.
 class ExprBinOpMod : public ExprBaseArithBinOp
 {
 public:		// functions
