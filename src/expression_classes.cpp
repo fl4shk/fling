@@ -68,11 +68,13 @@ bool Expression::references_symbol(Symbol* to_check) const
 Expression* Expression::dup_with_changed_symbols
 	(const ReplaceSymsMap& replace_syms_map) const
 {
-	return nullptr;
+	return _inner_dup_with_changed_symbols(replace_syms_map);
 }
 
 SavedString Expression::to_hdl_source() const
 {
+	printerr("Expression::to_hdl_source():  Eek!");
+	exit(1);
 	return nullptr;
 }
 
@@ -84,6 +86,9 @@ auto Expression::lhs_category() const -> LhsCategory
 
 void Expression::_evaluate()
 {
+	printerr("Expression::_evaluate():  Eek!");
+	exit(1);
+
 	_set_value(ExprNum(0, 1, false));
 }
 
@@ -95,12 +100,24 @@ bool Expression::_children_affect_length() const
 
 size_t Expression::_starting_length() const
 {
+	printerr("Expression::_starting_length():  Eek!");
+	exit(1);
+
 	return 0;
 }
 
 bool Expression::_is_always_constant() const
 {
 	return false;
+}
+
+Expression* Expression::_inner_dup_with_changed_symbols
+	(const ReplaceSymsMap& replace_syms_map) const
+{
+	printerr("Expression::_inner_dup_with_changed_symbols():  Eek!");
+	exit(1);
+
+	return nullptr;
 }
 
 void Expression::_full_evaluate(bool is_real_top)

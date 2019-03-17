@@ -112,7 +112,7 @@ public:		// functions
 	// Unfortunately, replacing the references to "Symbol"s has come down
 	// to this.  Each most-derived "Expression" class will now have to
 	// implement this.  It's a pain.
-	virtual Expression* dup_with_changed_symbols
+	Expression* dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const;
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const;
@@ -164,6 +164,8 @@ protected:		// functions
 	virtual size_t _starting_length() const;
 
 	virtual bool _is_always_constant() const;
+	virtual Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const;
 
 
 
@@ -298,6 +300,29 @@ protected:		// functions
 	inline const ExprNum& _right_child_value() const
 	{
 		return _right_child()->value();
+	}
+};
+
+// "+", "-"
+class ExprBaseArithUnOp : public ExprBaseUnOp
+{
+public:		// functions
+	ExprBaseArithUnOp(Expression* only_child)
+		: ExprBaseUnOp(only_child)
+	{
+		// This *has* to be done in this class or later down the hierarchy,
+		// and not in one of the classes this one is derived from, at least
+		// if done in the *constructor* of one of the classes this one is
+		// derived from.
+		_value.set_size(_starting_length());
+
+		_value.set_is_signed(_only_child_value().is_signed());
+	}
+
+protected:		// functions
+	size_t _starting_length() const
+	{
+		return _only_child_value().size();
 	}
 };
 
@@ -474,8 +499,63 @@ protected:		// functions
 };
 
 
+
 // Finally, here are the "most derived" "Expression" classes, the ones at
 // the bottom of the class hierarchy.
+
+// "Expression" classes derived from "ExprBaseArithUnOp"
+
+// Unary "+"
+class ExprUnOpPlus : public ExprBaseArithUnOp
+{
+public:		// functions
+	ExprUnOpPlus(Expression* only_child)
+		: ExprBaseArithUnOp(only_child)
+	{
+	}
+
+protected:		// functions
+	SavedString _unop_str() const
+	{
+		return dup_str("+");
+	}
+	void _evaluate()
+	{
+		_value.copy_from_bignum(static_cast<BigNum>(_only_child_value()));
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprUnOpPlus(DUP_CHILD(_only_child())));
+	}
+};
+
+// Unary "-"
+class ExprUnOpMinus : public ExprBaseArithUnOp
+{
+public:		// functions
+	ExprUnOpMinus(Expression* only_child)
+		: ExprBaseArithUnOp(only_child)
+	{
+	}
+
+protected:		// functions
+	SavedString _unop_str() const
+	{
+		return dup_str("-");
+	}
+	void _evaluate()
+	{
+		_value.copy_from_bignum(-static_cast<BigNum>(_only_child_value()));
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprUnOpMinus(DUP_CHILD(_only_child())));
+	}
+};
 
 // "Expression" classes derived from "ExprBaseCastUnop"
 
@@ -532,6 +612,7 @@ protected:		// functions
 	}
 };
 
+
 // "Expression" classes derived from "ExprBaseLogCmpBinOp"
 
 // "&&"
@@ -558,6 +639,13 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			&& static_cast<BigNum>(_right_child_value()));
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpLogAnd(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "||"
@@ -578,6 +666,13 @@ protected:		// functions
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			|| static_cast<BigNum>(_right_child_value()));
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpLogOr(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -601,6 +696,13 @@ protected:		// functions
 			{
 				return (left == right);
 			});
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpCmpEq(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -626,6 +728,13 @@ protected:		// functions
 			{
 				return (left != right);
 			});
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpCmpNe(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -654,6 +763,13 @@ protected:		// functions
 				return (left < right);
 			});
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpCmpLt(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // ">"
@@ -677,6 +793,13 @@ protected:		// functions
 				return (left > right);
 			});
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpCmpGt(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "<="
@@ -699,6 +822,13 @@ protected:		// functions
 			{
 				return (left <= right);
 			});
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpCmpLe(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -724,6 +854,13 @@ protected:		// functions
 				return (left >= right);
 			});
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpCmpGe(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "Expression" classes derived from "ExprBaseArithBinOp"
@@ -747,6 +884,13 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			+ static_cast<BigNum>(_right_child_value()));
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpPlus(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // Binop "-"
@@ -768,6 +912,13 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			- static_cast<BigNum>(_right_child_value()));
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpMinus(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "*"
@@ -788,6 +939,13 @@ protected:		// functions
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			* static_cast<BigNum>(_right_child_value()));
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpMul(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -811,6 +969,13 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			/ static_cast<BigNum>(_right_child_value()));
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpDiv(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "%"
@@ -832,6 +997,13 @@ protected:		// functions
 	{
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			% static_cast<BigNum>(_right_child_value()));
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpMod(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -858,6 +1030,13 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			& static_cast<BigNum>(_right_child_value()));
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpBitAnd(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "|"
@@ -880,6 +1059,13 @@ protected:		// functions
 		// being dictated....
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			| static_cast<BigNum>(_right_child_value()));
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpBitOr(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
 	}
 };
 
@@ -904,6 +1090,13 @@ protected:		// functions
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			^ static_cast<BigNum>(_right_child_value()));
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpBitXor(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // "Expression" classes derived from "ExprBaseBitShiftBinOp"
@@ -923,6 +1116,13 @@ protected:		// functions
 		return dup_str("<<");
 	}
 	void _evaluate();
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpBitLsl(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // ">>"
@@ -940,6 +1140,13 @@ protected:		// functions
 		return dup_str(">>");
 	}
 	void _evaluate();
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpBitLsr(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 // ">>>"
@@ -966,6 +1173,13 @@ public:		// functions
 
 protected:		// functions
 	void _evaluate();
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprBinOpBitAsr(DUP_CHILD(_left_child()),
+			DUP_CHILD(_right_child())));
+	}
 };
 
 
@@ -1007,6 +1221,12 @@ protected:		// functions
 	{
 		return true;
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprHardCodedNum(value()));
+	}
 };
 
 // "$concat(...)"
@@ -1025,6 +1245,18 @@ public:		// functions
 protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		ChildrenList dupped_children;
+
+		for (auto iter : dupped_children)
+		{
+			dupped_children.push_back(DUP_CHILD(iter));
+		}
+
+		return SAFE_SAVE_EXPR(ExprConcat(std::move(dupped_children)));
+	}
 };
 
 // "$repl(...)"
@@ -1060,6 +1292,23 @@ protected:		// functions
 	void _evaluate();
 	size_t _starting_length();
 
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		//return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
+		//	DUP_CHILD(_when_true_child()),
+		//	DUP_CHILD(_when_false_child())));
+		ChildrenList dupped_non_width_children;
+
+		for (size_t i=0; i<_width_child_index(); ++i)
+		{
+			dupped_non_width_children.push_back
+				(DUP_CHILD(_children.at(i)));
+		}
+
+		return SAFE_SAVE_EXPR(ExprRepl(DUP_CHILD(_width_child()),
+			std::move(dupped_non_width_children)));
+	}
 };
 
 // "condition ? when_true : when_false"
@@ -1069,13 +1318,6 @@ public:		// functions
 	ExprTernary(Expression* condition_child, Expression* when_true_child,
 		Expression* when_false_child);
 
-	inline Expression* dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
-			DUP_CHILD(_when_true_child()),
-			DUP_CHILD(_when_false_child())));
-	}
 
 	virtual SavedString to_hdl_source() const
 	{
@@ -1117,6 +1359,14 @@ protected:		// functions
 		return max_va(_when_true_child()->value().size(),
 			_when_false_child()->value().size());
 	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
+			DUP_CHILD(_when_true_child()),
+			DUP_CHILD(_when_false_child())));
+	}
 };
 
 // Non-sliced reference to an identifier of some sort.
@@ -1126,7 +1376,19 @@ public:		// functions
 	ExprIdentName(Symbol* s_symbol);
 
 
-	virtual Expression* dup_with_changed_symbols
+	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::IdentNonSliced;
+	}
+
+	bool is_constant() const;
+
+protected:		// functions
+	void _evaluate();
+	size_t _starting_length() const;
+
+	virtual Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
 		if (replace_syms_map.contains(_symbol))
@@ -1139,17 +1401,6 @@ public:		// functions
 			return SAFE_SAVE_EXPR(ExprIdentName(_symbol));
 		}
 	}
-	virtual SavedString to_hdl_source() const;
-	virtual LhsCategory lhs_category() const
-	{
-		return LhsCategory::IdentNonSliced;
-	}
-
-	bool is_constant() const;
-
-protected:		// functions
-	void _evaluate();
-	size_t _starting_length() const;
 };
 
 #undef TO_HDL_SOURCE
