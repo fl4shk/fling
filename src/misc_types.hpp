@@ -60,28 +60,6 @@ public:		// functions
 };
 
 
-template<typename Type>
-class MoveOnlyPrevCurrPair
-{
-protected:		// variables
-	Type _prev;
-	
-public:		// variables
-	Type curr;
-
-public:		// functions
-	inline MoveOnlyPrevCurrPair() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(MoveOnlyPrevCurrPair);
-	virtual ~MoveOnlyPrevCurrPair() = default;
-
-	inline void next()
-	{
-		_prev = std::move(curr);
-		curr = Type();
-	}
-
-	GEN_GETTER_BY_CON_REF(prev)
-};
 
 // Used for error reporting during semantic analysis.
 // Many, many things use this.

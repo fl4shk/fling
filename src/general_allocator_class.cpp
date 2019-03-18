@@ -17,24 +17,13 @@ std::map<RawSavedString, std::unique_ptr<const RawSavedString>>
 std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 	GeneralAllocator::_expr_num_data_pool;
 
-//std::vector<std::unique_ptr<Expression>> GeneralAllocator::_expr_pool;
-//std::vector<std::unique_ptr<Symbol>> GeneralAllocator::_symbol_pool;
-//std::vector<std::unique_ptr<FrostLhsType>>
-//	GeneralAllocator::_frost_lhs_type_pool;
-//std::vector<std::unique_ptr<FrostFullType>>
-//	GeneralAllocator::_frost_full_type_pool;
-//std::vector<std::unique_ptr<FrostFunction>>
-//	GeneralAllocator::_frost_function_pool;
-//std::vector<std::unique_ptr<FrostModule>>
-//	GeneralAllocator::_frost_module_pool;
-
-#define GEN_SAVE(pool_prefix, contained_type, dummy) \
+#define GEN_SAVE_POOLS(pool_prefix, contained_type, dummy) \
 	std::vector<std::unique_ptr<contained_type>> \
 		GeneralAllocator::_##pool_prefix##_pool;
 
-LIST_FOR_GEN_SAVE(GEN_SAVE)
+LIST_FOR_GEN_SAVE(GEN_SAVE_POOLS)
 
-#undef GEN_SAVE
+#undef GEN_SAVE_POOLS
 
 
 SavedString GeneralAllocator::dup_str(const RawSavedString& to_dup)

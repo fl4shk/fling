@@ -4,6 +4,7 @@
 // src/general_allocator_class.hpp
 
 #include "misc_includes.hpp"
+#include "misc_types.hpp"
 #include "list_for_gen_save_define.hpp"
 
 
@@ -42,13 +43,13 @@ private:		// static variables
 	//static std::vector<std::unique_ptr<FrostFunction>>
 	//	_frost_function_pool;
 	//static std::vector<std::unique_ptr<FrostModule>> _frost_module_pool;
-	#define GEN_SAVE(pool_prefix, contained_type, dummy) \
-		static std::vector<std::unique_ptr<contained_type>> \
+	#define GEN_SAVE_POOLS(pool_prefix, contained_type, dummy) \
+		static MoveOnlyPrevCurrPair<std::vector<std::unique_ptr<contained_type>> \
 			_##pool_prefix##_pool;
 
-	LIST_FOR_GEN_SAVE(GEN_SAVE)
+	LIST_FOR_GEN_SAVE(GEN_SAVE_POOLS)
 
-	#undef GEN_SAVE
+	#undef GEN_SAVE_POOLS
 
 public:		// static functions
 	static SavedString dup_str(const RawSavedString& to_dup);
