@@ -201,7 +201,7 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	return nullptr;
 }
 
-// List of (local?) variables
+// List of local variables
 VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
@@ -323,6 +323,35 @@ VisitorRetType Compiler::visitModuleStmtAssign
 VisitorRetType Compiler::visitExpr
 	(Parser::ExprContext *ctx)
 {
+	if (ctx->TokOpLogical())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->expr());
+		auto left = _stacks.pop_expr();
+
+		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
+		auto right = _stacks.pop_expr();
+
+		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpLogical());
+
+		if (tok == dup_str("&&"))
+		{
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpLogAnd>(left, right));
+		}
+		else if (tok == dup_str("||"))
+		{
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpLogOr>(left, right));
+		}
+		else
+		{
+			_err(ctx, "Compiler::visitExpr():  Eek!");
+		}
+	}
+	else
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
+	}
 	return nullptr;
 }
 
@@ -679,8 +708,35 @@ VisitorRetType Compiler::visitSizedNumExpr
 VisitorRetType Compiler::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 {
-	ANY_ACCEPT_IF_BASIC(ctx->identName())
-	else ANY_ACCEPT_IF_BASIC(ctx->scopedIdentName())
+	if (ctx->identName())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		auto ident = _stacks.pop_str();
+		switch (pass())
+		{
+		////case Pass::FrostListPackages:
+		//case Pass::FrostExpandPackages:
+		//	break;
+
+		////case Pass::FrostListInterfaces:
+		//case Pass::FrostExpandInterfaces:
+		//	break;
+
+		//case Pass::FrostListModules:
+		case Pass::FrostExpandModules:
+			break;
+		}
+	}
+	//else if(ctx->scopedIdentName())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
+
+	//	// The identifier of whatever is inside the package.
+	//	auto inner_ident = _stacks.pop_str();
+
+	//	// What package does this identifier come from?
+	//	auto scope_ident = _stacks.pop_str();
+	//}
 	else
 	{
 		_err(ctx, "Compiler::visitIdentExpr():  Eek!");
@@ -694,6 +750,7 @@ VisitorRetType Compiler::visitIdentName
 	(Parser::IdentNameContext *ctx)
 {
 	_stacks.push_str(TOK_TO_DUPPED_STR(ctx->TokIdent()));
+	//auto ident = TOK_TO_DUPPED_STR(ctx->TokIdent());
 
 	return nullptr;
 }
@@ -701,8 +758,7 @@ VisitorRetType Compiler::visitIdentName
 VisitorRetType Compiler::visitScopedIdentName
 	(Parser::ScopedIdentNameContext *ctx)
 {
-	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName());
-
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName())
 	return nullptr;
 }
 

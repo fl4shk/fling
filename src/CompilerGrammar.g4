@@ -45,7 +45,7 @@ declNoLhsTypeVar:
 	identName ((TokLBracket expr TokRBracket)?)
 	;
 
-// List of (local?) variables
+// List of local variables
 declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
@@ -171,9 +171,9 @@ sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 identExpr:
 	identName
-	| scopedIdentName
-	//| identConcatExpr
-	//| identSliced
+	//| scopedIdentName
+	////| identConcatExpr
+	////| identSliced
 	;
 
 

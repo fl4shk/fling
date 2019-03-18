@@ -204,7 +204,7 @@ private:		// visitor functions
 	VisitorRetType visitDeclNoLhsTypeVar
 		(Parser::DeclNoLhsTypeVarContext *ctx);
 
-	// List of (local?) variables
+	// List of local variables
 	VisitorRetType visitDeclVarList
 		(Parser::DeclVarListContext *ctx);
 
