@@ -38,7 +38,8 @@ public:		// types
 
 	enum class Pass : PassUint
 	{
-		//// Passes for the initial processing of Frost HDL source code
+		// Passes for the initial processing of Frost HDL source code
+
 		//FrostListPackages,
 		//FrostExpandPackages,
 
@@ -172,18 +173,6 @@ private:		// functions
 		return BigNum(32);
 	}
 
-	// "Pass"es
-	//inline bool _in_frost_package_pass() const
-	//{
-	//	return ((pass() == Pass::FrostListPackages)
-	//		|| (pass() == Pass::FrostExpandPackages));
-	//}
-	inline bool _in_frost_module_pass() const
-	{
-		return ((pass() == Pass::FrostListModules)
-			|| (pass() == Pass::FrostExpandModules));
-	}
-
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 
 private:		// visitor functions
@@ -260,12 +249,14 @@ private:		// visitor functions
 		(Parser::ExprUnaryContext *ctx);
 
 
-	VisitorRetType visitExprBitInvert
-		(Parser::ExprBitInvertContext *ctx);
-	VisitorRetType visitExprNegate
-		(Parser::ExprNegateContext *ctx);
+	VisitorRetType visitExprPlusUnary
+		(Parser::ExprPlusUnaryContext *ctx);
+	VisitorRetType visitExprMinusUnary
+		(Parser::ExprMinusUnaryContext *ctx);
 	VisitorRetType visitExprLogNot
 		(Parser::ExprLogNotContext *ctx);
+	VisitorRetType visitExprBitNot
+		(Parser::ExprBitNotContext *ctx);
 
 	VisitorRetType visitNumExpr
 		(Parser::NumExprContext *ctx);

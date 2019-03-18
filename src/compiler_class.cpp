@@ -37,6 +37,7 @@ namespace frost_hdl
 {
 
 typedef Compiler::VisitorRetType VisitorRetType;
+typedef ExpressionBuilder Eb;
 
 Compiler::Compiler(Parser& parser)
 {
@@ -71,10 +72,30 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	//	//	ANY_JUST_ACCEPT_BASIC(subprogram);
 	//	//}
 	//}
-	//else
-	if (_in_frost_module_pass())
+	//else if (_in_frost_module_pass())
+	//{
+	//}
+
+	switch (pass())
 	{
-		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule())
+	//case Pass::FrostListPackages:
+	//case Pass::FrostExpandPackages:
+	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
+	//	break;
+
+	//case Pass::FrostListInterfaces:
+	//case Pass::FrostExpandInterfaces:
+	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declInterface());
+	//	break;
+
+	case Pass::FrostListModules:
+	case Pass::FrostExpandModules:
+		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
+		break;
+
+	case Pass::Done:
+		_err(ctx, "Compiler::visitProgram():  Eek!");
+		break;
 	}
 
 	return nullptr;
@@ -109,15 +130,6 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 		s_left_dim_expr = _stacks.pop_expr();
 	}
 
-	//if (s_left_dim_expr->is_constant())
-	//{
-	//	s_left_dim_expr->full_evaluate_if_constant();
-	//}
-	//else // if (!to_save.left_dim_expr()->is_constant())
-	//{
-	//	_err(ctx, "Vectors must have constant dimensions.");
-	//}
-
 	//// Helpful warning
 	//if (static_cast<BigNum>(s_left_dim_expr->value())
 	//	< static_cast<BigNum>(0))
@@ -127,7 +139,16 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 	//		"  This is might not be what you want.");
 	//}
 
+	if (!s_left_dim_expr->is_constant())
+	{
+		_err(ctx, "Vectors must have constant dimensions.");
+	}
+
 	// "ctx->TokKwUnsigned()" is only for those who want to be pedantic.
+
+	// Need some way to make the name unique!
+	// Also, how do I handle cases where I don't know the values of named
+	// constants yet?
 	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType(SrcCodePos(ctx),
 		dup_str("builtin::logic"), (ctx->TokKwSigned() != nullptr),
 		s_left_dim_expr)));
@@ -154,28 +175,24 @@ VisitorRetType Compiler::visitLhsScopedCstmTypeName
 VisitorRetType Compiler::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
 {
-	// only call this when pass() == Pass::FrostListModules
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 
-
+	// [ expr ]
 	if (ctx->expr())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->expr());
 
-		//auto s_right_dim_expr = _stacks.get_top_expr();
+		auto s_right_dim_expr = _stacks.get_top_expr();
 
-		//if (s_right_dim_expr->is_constant())
-		//{
-		//	s_right_dim_expr->full_evaluate_if_constant();
-		//}
-		//else // if (!s_right_dim_expr->is_constant())
-		//{
-		//	_err(ctx, "Arrays must have constant dimensions.");
-		//}
+		if (!s_right_dim_expr->is_constant())
+		{
+			_err(ctx, "Arrays must have constant dimensions.");
+		}
 
 		_stacks.push_small_num(static_cast<SmallNum>
 			(ScalarOrArray::Array));
 	}
+	// no [ expr ]
 	else
 	{
 		_stacks.push_small_num(static_cast<SmallNum>
@@ -190,8 +207,30 @@ VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+	auto frost_lhs_type = _stacks.pop_lhs_type();
 
-	//ANY_JUST_ACCEPT_LOOPED(ctx->declNoLhsTypeVar())
+	for (auto iter : ctx->declNoLhsTypeVar())
+	{
+		ANY_JUST_ACCEPT_BASIC(iter);
+
+		auto ident = _stacks.pop_str();
+
+		const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
+			(_stacks.pop_small_num());
+
+		switch (scalar_or_array)
+		{
+		case ScalarOrArray::Scalar:
+			break;
+
+		case ScalarOrArray::Array:
+			break;
+
+		default:
+			_err(ctx, "Compiler::visitDeclVarList():  Eek!");
+			break;
+		}
+	}
 
 	return nullptr;
 }
@@ -201,6 +240,14 @@ VisitorRetType Compiler::visitDeclVarList
 VisitorRetType Compiler::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+
+	for (auto iter : ctx->identName())
+	{
+		ANY_JUST_ACCEPT_BASIC(iter);
+	}
+
+
 	return nullptr;
 }
 
@@ -283,45 +330,237 @@ VisitorRetType Compiler::visitExpr
 VisitorRetType Compiler::visitExprLogical
 	(Parser::ExprLogicalContext *ctx)
 {
+	if (ctx->TokOpCompare())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
+		auto left = _stacks.pop_expr();
+
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+		auto right = _stacks.pop_expr();
+
+		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpCompare());
+
+		if (tok == dup_str("=="))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpEq>(left,
+				right));
+		}
+		else if (tok == dup_str("!"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpNe>(left,
+				right));
+		}
+		else if (tok == dup_str("<"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpLt>(left,
+				right));
+		}
+		else if (tok == dup_str(">"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpGt>(left,
+				right));
+		}
+		else if (tok == dup_str("<="))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpLe>(left,
+				right));
+		}
+		else if (tok == dup_str(">="))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpGe>(left,
+				right));
+		}
+		else
+		{
+			_err(ctx, "Compiler::visitExprLogical():  Eek!");
+		}
+	}
+	else
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+	}
 	return nullptr;
 }
 VisitorRetType Compiler::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 {
+	if (ctx->TokPlus())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+		auto left = _stacks.pop_expr();
+
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		auto right = _stacks.pop_expr();
+
+		_stacks.push_expr(Eb::make_expr_binop<ExprBinOpPlus>(left, right));
+	}
+	else if (ctx->TokMinus())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+		auto left = _stacks.pop_expr();
+
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		auto right = _stacks.pop_expr();
+
+		_stacks.push_expr(Eb::make_expr_binop<ExprBinOpMinus>(left,
+			right));
+	}
+	else
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+	}
 	return nullptr;
 }
 
 VisitorRetType Compiler::visitExprAddSub
 	(Parser::ExprAddSubContext *ctx)
 {
+	if (ctx->TokOpMulDivMod())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		auto left = _stacks.pop_expr();
+
+		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
+		auto right = _stacks.pop_expr();
+
+		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpMulDivMod());
+
+		if (tok == dup_str("*"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpMul>(left,
+				right));
+		}
+		else if (tok == dup_str("/"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpDiv>(left,
+				right));
+		}
+		else if (tok == dup_str("%"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpMod>(left,
+				right));
+		}
+		else
+		{
+			_err(ctx, "Compiler::visitExprAddSub():  TokOpMulDivMod() "
+				"Eek!");
+		}
+	}
+	else if (ctx->TokOpBitwise())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		auto left = _stacks.pop_expr();
+
+		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
+		auto right = _stacks.pop_expr();
+
+		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpMulDivMod());
+
+		if (tok == dup_str("&"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitAnd>(left,
+				right));
+		}
+		else if (tok == dup_str("|"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitOr>(left,
+				right));
+		}
+		else if (tok == dup_str("^"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitXor>(left,
+				right));
+		}
+		else if (tok == dup_str("<<"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitLsl>(left,
+				right));
+		}
+		else if (tok == dup_str(">>"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitLsr>(left,
+				right));
+		}
+		else if (tok == dup_str(">>>"))
+		{
+			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitAsr>(left,
+				right));
+		}
+		else
+		{
+			_err(ctx, "Compiler::visitExprAddSub():  TokOpBitwise() "
+				"Eek!");
+		}
+	}
+	else
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
+	}
 	return nullptr;
 }
 VisitorRetType Compiler::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 {
+	ANY_ACCEPT_IF_BASIC(ctx->exprUnary())
+	else ANY_ACCEPT_IF_BASIC(ctx->numExpr())
+	else ANY_ACCEPT_IF_BASIC(ctx->identExpr())
+	else ANY_ACCEPT_IF_BASIC(ctx->expr())
+	else
+	{
+		_err(ctx, "Compiler::visitExprMulDivModEtc():  Eek!");
+	}
 	return nullptr;
 }
 
 VisitorRetType Compiler::visitExprUnary
 	(Parser::ExprUnaryContext *ctx)
 {
+	ANY_ACCEPT_IF_BASIC(ctx->exprPlusUnary())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprMinusUnary())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprLogNot())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprBitNot())
+	else
+	{
+		_err(ctx, "Compiler::visitExprUnary():  Eek!");
+	}
 	return nullptr;
 }
 
 
-VisitorRetType Compiler::visitExprBitInvert
-	(Parser::ExprBitInvertContext *ctx)
+VisitorRetType Compiler::visitExprPlusUnary
+	(Parser::ExprPlusUnaryContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpPlus>
+		(_stacks.pop_expr()));
+
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprNegate
-	(Parser::ExprNegateContext *ctx)
+VisitorRetType Compiler::visitExprMinusUnary
+	(Parser::ExprMinusUnaryContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpMinus>
+		(_stacks.pop_expr()));
+
 	return nullptr;
 }
 VisitorRetType Compiler::visitExprLogNot
 	(Parser::ExprLogNotContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpLogNot>
+		(_stacks.pop_expr()));
+
+	return nullptr;
+}
+VisitorRetType Compiler::visitExprBitNot
+	(Parser::ExprBitNotContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpBitNot>
+		(_stacks.pop_expr()));
+
 	return nullptr;
 }
 
@@ -335,7 +574,7 @@ VisitorRetType Compiler::visitNumExpr
 
 		const auto size = _default_hard_coded_num_size();
 
-		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
+		return Eb::make_expr_hc_num(value, size.get_ui(),
 			false);
 	}
 	else if (ctx->sizedNumExpr())
@@ -344,8 +583,7 @@ VisitorRetType Compiler::visitNumExpr
 		const auto value = _stacks.pop_big_num();
 		const auto size = _stacks.pop_big_num();
 
-		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
-			false);
+		return Eb::make_expr_hc_num(value, size.get_ui(), false);
 	}
 	else
 	{

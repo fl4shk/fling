@@ -12,12 +12,12 @@
 namespace frost_hdl
 {
 
-#define GEN_SAVE(dummy_0, needed, dummy_1) \
+#define GEN_SAVE_FORWARD_DECLARE(dummy_0, needed, dummy_1) \
 	class needed;
 
-LIST_FOR_GEN_SAVE(GEN_SAVE)
+LIST_FOR_GEN_SAVE(GEN_SAVE_FORWARD_DECLARE)
 
-#undef GEN_SAVE
+#undef GEN_SAVE_FORWARD_DECLARE
 
 typedef std::string RawSavedString;
 typedef const RawSavedString* SavedString;
@@ -60,6 +60,8 @@ public:		// static functions
 	LIST_FOR_GEN_SAVE(GEN_SAVE)
 
 	#undef GEN_SAVE
+
+	static void back_up_move_only_pcps();
 
 
 

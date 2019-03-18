@@ -141,15 +141,17 @@ exprMulDivModEtc:
 	;
 
 exprUnary:
-	exprBitInvert
-	| exprNegate
+	| exprPlusUnary
+	| exprMinusUnary
 	| exprLogNot
+	| exprBitNot
 	;
 
 
-exprBitInvert: TokBitInvert expr ;
-exprNegate: TokMinus expr ;
+exprPlusUnary: TokPlus expr ;
+exprMinusUnary: TokMinus expr ;
 exprLogNot: TokExclamPoint expr ;
+exprBitNot: TokBitInvert expr ;
 
 
 numExpr:

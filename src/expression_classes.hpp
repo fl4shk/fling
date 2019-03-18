@@ -303,11 +303,11 @@ protected:		// functions
 	}
 };
 
-// "+", "-"
-class ExprBaseArithUnOp : public ExprBaseUnOp
+// "+", "-", "!", "~"
+class ExprBaseArithLogBitUnOp : public ExprBaseUnOp
 {
 public:		// functions
-	ExprBaseArithUnOp(Expression* only_child)
+	ExprBaseArithLogBitUnOp(Expression* only_child)
 		: ExprBaseUnOp(only_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
@@ -503,14 +503,14 @@ protected:		// functions
 // Finally, here are the "most derived" "Expression" classes, the ones at
 // the bottom of the class hierarchy.
 
-// "Expression" classes derived from "ExprBaseArithUnOp"
+// "Expression" classes derived from "ExprBaseArithLogBitUnOp"
 
 // Unary "+"
-class ExprUnOpPlus : public ExprBaseArithUnOp
+class ExprUnOpPlus : public ExprBaseArithLogBitUnOp
 {
 public:		// functions
 	ExprUnOpPlus(Expression* only_child)
-		: ExprBaseArithUnOp(only_child)
+		: ExprBaseArithLogBitUnOp(only_child)
 	{
 	}
 
@@ -537,11 +537,11 @@ protected:		// functions
 };
 
 // Unary "-"
-class ExprUnOpMinus : public ExprBaseArithUnOp
+class ExprUnOpMinus : public ExprBaseArithLogBitUnOp
 {
 public:		// functions
 	ExprUnOpMinus(Expression* only_child)
-		: ExprBaseArithUnOp(only_child)
+		: ExprBaseArithLogBitUnOp(only_child)
 	{
 	}
 
@@ -564,6 +564,68 @@ protected:		// functions
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
 		return SAFE_SAVE_EXPR(ExprUnOpMinus(DUP_CHILD(_only_child())));
+	}
+};
+
+// "!"
+class ExprUnOpLogNot : public ExprBaseArithLogBitUnOp
+{
+public:		// functions
+	ExprUnOpLogNot(Expression* only_child)
+		: ExprBaseArithLogBitUnOp(only_child)
+	{
+	}
+
+protected:		// functions
+	SavedString _unop_str() const
+	{
+		return dup_str("!");
+	}
+	void _evaluate()
+	{
+		_value.copy_from_bignum(!static_cast<BigNum>(_only_child_value()));
+	}
+
+	virtual FrostSourceType _frost_source_type() const
+	{
+		return FrostSourceType::UnOp;
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprUnOpLogNot(DUP_CHILD(_only_child())));
+	}
+};
+
+// "~"
+class ExprUnOpBitNot : public ExprBaseArithLogBitUnOp
+{
+public:		// functions
+	ExprUnOpBitNot(Expression* only_child)
+		: ExprBaseArithLogBitUnOp(only_child)
+	{
+	}
+
+protected:		// functions
+	SavedString _unop_str() const
+	{
+		return dup_str("!");
+	}
+	void _evaluate()
+	{
+		_value.copy_from_bignum(~static_cast<BigNum>(_only_child_value()));
+	}
+
+	virtual FrostSourceType _frost_source_type() const
+	{
+		return FrostSourceType::UnOp;
+	}
+
+	inline Expression* _inner_dup_with_changed_symbols
+		(const ReplaceSymsMap& replace_syms_map) const
+	{
+		return SAFE_SAVE_EXPR(ExprUnOpBitNot(DUP_CHILD(_only_child())));
 	}
 };
 

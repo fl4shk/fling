@@ -83,5 +83,14 @@ ExprNumData GeneralAllocator::dup_expr_num_data(RawExprNumData&& to_dup)
 	return pool.at(to_dup).get();
 }
 
+void GeneralAllocator::back_up_move_only_pcps()
+{
+	#define GEN_SAVE_BACK_UP(pool_prefix, dummy_0, dummy_1) \
+		_##pool_prefix##_pool.back_up();
+
+	LIST_FOR_GEN_SAVE(GEN_SAVE_BACK_UP)
+
+	#undef GEN_SAVE_BACK_UP
+}
 
 } // namespace frost_hdl
