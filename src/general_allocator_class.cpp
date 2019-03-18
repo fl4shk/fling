@@ -18,7 +18,7 @@ std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 	GeneralAllocator::_expr_num_data_pool;
 
 #define GEN_SAVE_POOLS(pool_prefix, contained_type, dummy) \
-	std::vector<std::unique_ptr<contained_type>> \
+	MoveOnlyPrevCurrPair<std::vector<std::unique_ptr<contained_type>>> \
 		GeneralAllocator::_##pool_prefix##_pool;
 
 LIST_FOR_GEN_SAVE(GEN_SAVE_POOLS)

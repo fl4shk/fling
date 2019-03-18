@@ -35,17 +35,9 @@ private:		// static variables
 	static std::map<RawExprNumData, std::unique_ptr<const RawExprNumData>>
 		_expr_num_data_pool;
 
-	//static std::vector<std::unique_ptr<Expression>> _expr_pool;
-	//static std::vector<std::unique_ptr<Symbol>> _symbol_pool;
-	//static std::vector<std::unique_ptr<FrostLhsType>> _frost_lhs_type_pool;
-	//static std::vector<std::unique_ptr<FrostFullType>>
-	//	_frost_full_type_pool;
-	//static std::vector<std::unique_ptr<FrostFunction>>
-	//	_frost_function_pool;
-	//static std::vector<std::unique_ptr<FrostModule>> _frost_module_pool;
 	#define GEN_SAVE_POOLS(pool_prefix, contained_type, dummy) \
-		static MoveOnlyPrevCurrPair<std::vector<std::unique_ptr<contained_type>> \
-			_##pool_prefix##_pool;
+		static MoveOnlyPrevCurrPair<std::vector<std::unique_ptr \
+			<contained_type>> _##pool_prefix##_pool;
 
 	LIST_FOR_GEN_SAVE(GEN_SAVE_POOLS)
 
@@ -71,16 +63,17 @@ public:		// static functions
 	#undef GEN_SAVE
 
 
+
 private:		// static functions
 	template<typename ToSaveBaseType, typename ToSaveType>
-	static inline ToSaveBaseType* _inner_save_generic
-		(std::vector<std::unique_ptr<ToSaveBaseType>>& pool,
+	static inline ToSaveBaseType* _inner_save_generic(MoveOnlyPrevCurrPair
+		<std::vector<std::unique_ptr<ToSaveBaseType>>>& pool,
 		ToSaveType&& to_save)
 	{
 		std::unique_ptr<ToSaveBaseType> to_insert;
 		to_insert.reset(new ToSaveType(std::move(to_save)));
-		pool.push_back(std::move(to_insert));
-		return pool.back().get();
+		pool().push_back(std::move(to_insert));
+		return pool().back().get();
 	}
 
 };
