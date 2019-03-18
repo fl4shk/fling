@@ -37,7 +37,6 @@ namespace frost_hdl
 {
 
 typedef Compiler::VisitorRetType VisitorRetType;
-typedef ExpressionBuilder Eb;
 
 Compiler::Compiler(Parser& parser)
 {
@@ -342,33 +341,33 @@ VisitorRetType Compiler::visitExprLogical
 
 		if (tok == dup_str("=="))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpEq>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpCmpEq>(left, right));
 		}
 		else if (tok == dup_str("!"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpNe>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpCmpNe>(left, right));
 		}
 		else if (tok == dup_str("<"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpLt>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpCmpLt>(left, right));
 		}
 		else if (tok == dup_str(">"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpGt>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpCmpGt>(left, right));
 		}
 		else if (tok == dup_str("<="))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpLe>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpCmpLe>(left, right));
 		}
 		else if (tok == dup_str(">="))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpCmpGe>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpCmpGe>(left, right));
 		}
 		else
 		{
@@ -392,7 +391,8 @@ VisitorRetType Compiler::visitExprCompare
 		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
 		auto right = _stacks.pop_expr();
 
-		_stacks.push_expr(Eb::make_expr_binop<ExprBinOpPlus>(left, right));
+		_stacks.push_expr(ExpressionBuilder::make_expr_binop
+			<ExprBinOpPlus>(left, right));
 	}
 	else if (ctx->TokMinus())
 	{
@@ -402,8 +402,8 @@ VisitorRetType Compiler::visitExprCompare
 		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
 		auto right = _stacks.pop_expr();
 
-		_stacks.push_expr(Eb::make_expr_binop<ExprBinOpMinus>(left,
-			right));
+		_stacks.push_expr(ExpressionBuilder::make_expr_binop
+			<ExprBinOpMinus>(left, right));
 	}
 	else
 	{
@@ -427,18 +427,18 @@ VisitorRetType Compiler::visitExprAddSub
 
 		if (tok == dup_str("*"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpMul>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpMul>(left, right));
 		}
 		else if (tok == dup_str("/"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpDiv>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpDiv>(left, right));
 		}
 		else if (tok == dup_str("%"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpMod>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpMod>(left, right));
 		}
 		else
 		{
@@ -458,33 +458,33 @@ VisitorRetType Compiler::visitExprAddSub
 
 		if (tok == dup_str("&"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitAnd>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpBitAnd>(left, right));
 		}
 		else if (tok == dup_str("|"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitOr>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpBitOr>(left, right));
 		}
 		else if (tok == dup_str("^"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitXor>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpBitXor>(left, right));
 		}
 		else if (tok == dup_str("<<"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitLsl>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpBitLsl>(left, right));
 		}
 		else if (tok == dup_str(">>"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitLsr>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpBitLsr>(left, right));
 		}
 		else if (tok == dup_str(">>>"))
 		{
-			_stacks.push_expr(Eb::make_expr_binop<ExprBinOpBitAsr>(left,
-				right));
+			_stacks.push_expr(ExpressionBuilder::make_expr_binop
+				<ExprBinOpBitAsr>(left, right));
 		}
 		else
 		{
@@ -531,7 +531,7 @@ VisitorRetType Compiler::visitExprPlusUnary
 	(Parser::ExprPlusUnaryContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpPlus>
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpPlus>
 		(_stacks.pop_expr()));
 
 	return nullptr;
@@ -540,7 +540,7 @@ VisitorRetType Compiler::visitExprMinusUnary
 	(Parser::ExprMinusUnaryContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpMinus>
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpMinus>
 		(_stacks.pop_expr()));
 
 	return nullptr;
@@ -549,7 +549,7 @@ VisitorRetType Compiler::visitExprLogNot
 	(Parser::ExprLogNotContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpLogNot>
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpLogNot>
 		(_stacks.pop_expr()));
 
 	return nullptr;
@@ -558,7 +558,7 @@ VisitorRetType Compiler::visitExprBitNot
 	(Parser::ExprBitNotContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	_stacks.push_expr(Eb::make_expr_unop<ExprUnOpBitNot>
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpBitNot>
 		(_stacks.pop_expr()));
 
 	return nullptr;
@@ -574,7 +574,7 @@ VisitorRetType Compiler::visitNumExpr
 
 		const auto size = _default_hard_coded_num_size();
 
-		return Eb::make_expr_hc_num(value, size.get_ui(),
+		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
 			false);
 	}
 	else if (ctx->sizedNumExpr())
@@ -583,7 +583,8 @@ VisitorRetType Compiler::visitNumExpr
 		const auto value = _stacks.pop_big_num();
 		const auto size = _stacks.pop_big_num();
 
-		return Eb::make_expr_hc_num(value, size.get_ui(), false);
+		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
+			false);
 	}
 	else
 	{
