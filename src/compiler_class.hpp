@@ -110,7 +110,7 @@ private:		// variables
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
 
-	MoveOnlyPrevCurrPair<FrostProgram> _frost_program_pcp;
+	MoveOnlyPrevCurrPair<FrostProgram> _frost_program;
 
 
 public:		// functions
