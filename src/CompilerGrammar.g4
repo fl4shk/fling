@@ -145,6 +145,8 @@ exprUnary:
 	| exprMinusUnary
 	| exprLogNot
 	| exprBitNot
+	| exprCastUnsigned
+	| exprCastSigned
 	;
 
 
@@ -152,6 +154,8 @@ exprPlusUnary: TokPlus expr ;
 exprMinusUnary: TokMinus expr ;
 exprLogNot: TokExclamPoint expr ;
 exprBitNot: TokBitInvert expr ;
+exprCastUnsigned: TokKwDollarUnsigned TokLParen expr TokRParen ;
+exprCastSigned: TokKwDollarSigned TokLParen expr TokRParen ;
 
 
 numExpr:

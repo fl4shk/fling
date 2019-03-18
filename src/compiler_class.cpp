@@ -519,6 +519,8 @@ VisitorRetType Compiler::visitExprUnary
 	else ANY_ACCEPT_IF_BASIC(ctx->exprMinusUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprLogNot())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprBitNot())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprCastUnsigned())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprCastSigned())
 	else
 	{
 		_err(ctx, "Compiler::visitExprUnary():  Eek!");
@@ -560,6 +562,24 @@ VisitorRetType Compiler::visitExprBitNot
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpBitNot>
 		(_stacks.pop_expr()));
+
+	return nullptr;
+}
+VisitorRetType Compiler::visitExprCastUnsigned
+	(Parser::ExprCastUnsignedContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop
+		<ExprUnOpCastUnsigned>(_stacks.pop_expr()));
+
+	return nullptr;
+}
+VisitorRetType Compiler::visitExprCastSigned
+	(Parser::ExprCastSignedContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop
+		<ExprUnOpCastSigned>(_stacks.pop_expr()));
 
 	return nullptr;
 }

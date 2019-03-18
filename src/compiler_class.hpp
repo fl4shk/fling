@@ -257,6 +257,10 @@ private:		// visitor functions
 		(Parser::ExprLogNotContext *ctx);
 	VisitorRetType visitExprBitNot
 		(Parser::ExprBitNotContext *ctx);
+	VisitorRetType visitExprCastUnsigned
+		(Parser::ExprCastUnsignedContext *ctx);
+	VisitorRetType visitExprCastSigned
+		(Parser::ExprCastSignedContext *ctx);
 
 	VisitorRetType visitNumExpr
 		(Parser::NumExprContext *ctx);
