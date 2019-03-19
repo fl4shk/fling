@@ -127,29 +127,43 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->expr());
 		s_left_dim_expr = _stacks.pop_expr();
+
+		//// Helpful warning
+		//if (static_cast<BigNum>(s_left_dim_expr->value())
+		//	< static_cast<BigNum>(0))
+		//{
+		//	_warn(ctx, "Dimensions of vector are signed and evaluate to less"
+		//		" than zero.  They will be treated as an unsigned value."
+		//		"  This is might not be what you want.");
+		//}
+
+		if (!s_left_dim_expr->is_constant())
+		{
+			_err(ctx, "Vectors must have constant dimensions.");
+		}
 	}
 
-	//// Helpful warning
-	//if (static_cast<BigNum>(s_left_dim_expr->value())
-	//	< static_cast<BigNum>(0))
-	//{
-	//	_warn(ctx, "Dimensions of vector are signed and evaluate to less"
-	//		" than zero.  They will be treated as an unsigned value."
-	//		"  This is might not be what you want.");
-	//}
+	std::string s_ident = "logic";
 
-	if (!s_left_dim_expr->is_constant())
+	if (ctx->TokKwSigned() != nullptr)
 	{
-		_err(ctx, "Vectors must have constant dimensions.");
+		s_ident += " signed";
 	}
+
+	if (s_left_dim_expr != nullptr)
+	{
+		//// Need some way to make the name unique!  Also, how do I handle
+		//// cases where I don't know the values of named constants yet?
+		s_ident += sconcat(" [",
+			reinterpret_cast<uintptr_t>(s_left_dim_expr),
+			"]");
+	}
+
 
 	// "ctx->TokKwUnsigned()" is only for those who want to be pedantic.
 
-	// Need some way to make the name unique!
-	// Also, how do I handle cases where I don't know the values of named
-	// constants yet?
 	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType(SrcCodePos(ctx),
-		dup_str("builtin::logic"), (ctx->TokKwSigned() != nullptr),
+		dup_str(s_ident), (ctx->TokKwSigned() != nullptr),
 		s_left_dim_expr)));
 	return nullptr;
 }
