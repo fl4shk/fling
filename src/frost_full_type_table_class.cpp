@@ -1,9 +1,22 @@
 #include "frost_full_type_table_class.hpp"
 #include "expression_classes.hpp"
+#include "expression_builder_class.hpp"
 
 namespace frost_hdl
 {
 
+FrostFullType::FrostFullType(FrostLhsType* s_frost_lhs_type)
+	: FrostFullType(s_frost_lhs_type->ident(), s_frost_lhs_type,
+	ExpressionBuilder::make_expr_hc_num(static_cast<size_t>(1)))
+{
+}
+FrostFullType::FrostFullType(FrostLhsType* s_frost_lhs_type,
+	Expression* s_right_dim_expr)
+	: FrostFullType(construct_type_ident_from_dim
+	(s_frost_lhs_type->ident(), s_right_dim_expr),
+	s_frost_lhs_type, s_right_dim_expr)
+{
+}
 FrostFullType::FrostFullType(SavedString s_ident,
 	FrostLhsType* s_frost_lhs_type, Expression* s_right_dim_expr)
 	: _ident(s_ident), _frost_lhs_type(s_frost_lhs_type),

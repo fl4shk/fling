@@ -24,6 +24,9 @@ private:		// variables
 public:		// functions
 	inline FrostFullType() = default;
 
+	FrostFullType(FrostLhsType* s_frost_lhs_type);
+	FrostFullType(FrostLhsType* s_frost_lhs_type,
+		Expression* s_right_dim_expr);
 	FrostFullType(SavedString s_ident,
 		FrostLhsType* s_frost_lhs_type,
 		Expression* s_right_dim_expr);

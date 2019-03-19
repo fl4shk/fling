@@ -154,9 +154,8 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 	{
 		//// Need some way to make the name unique!  Also, how do I handle
 		//// cases where I don't know the values of named constants yet?
-		s_ident += sconcat(" [",
-			reinterpret_cast<uintptr_t>(s_left_dim_expr),
-			"]");
+		s_ident += *construct_type_ident_from_dim(dup_str(s_ident),
+			s_left_dim_expr);
 	}
 
 
@@ -219,31 +218,31 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
-	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
-	auto frost_lhs_type = _stacks.pop_lhs_type();
+	//ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+	//auto frost_lhs_type = _stacks.pop_lhs_type();
 
-	for (auto iter : ctx->declNoLhsTypeVar())
-	{
-		ANY_JUST_ACCEPT_BASIC(iter);
+	//for (auto iter : ctx->declNoLhsTypeVar())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(iter);
 
-		auto ident = _stacks.pop_str();
+	//	auto ident = _stacks.pop_str();
 
-		const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
-			(_stacks.pop_small_num());
+	//	const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
+	//		(_stacks.pop_small_num());
 
-		switch (scalar_or_array)
-		{
-		case ScalarOrArray::Scalar:
-			break;
+	//	switch (scalar_or_array)
+	//	{
+	//	case ScalarOrArray::Scalar:
+	//		break;
 
-		case ScalarOrArray::Array:
-			break;
+	//	case ScalarOrArray::Array:
+	//		break;
 
-		default:
-			_err(ctx, "Compiler::visitDeclVarList():  Eek!");
-			break;
-		}
-	}
+	//	default:
+	//		_err(ctx, "Compiler::visitDeclVarList():  Eek!");
+	//		break;
+	//	}
+	//}
 
 	return nullptr;
 }
@@ -254,6 +253,8 @@ VisitorRetType Compiler::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+
+	_stacks.push_small_num(ctx->identName().size());
 
 	for (auto iter : ctx->identName())
 	{
@@ -267,17 +268,33 @@ VisitorRetType Compiler::visitDeclPortVarList
 VisitorRetType Compiler::visitDeclPortInputVarList
 	(Parser::DeclPortInputVarListContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
+
+	auto frost_lhs_type = _stacks.pop_lhs_type();
+
+	const size_t num_ident_names = _stacks.pop_small_num();
+
+	for (size_t i=0; i<num_ident_names; ++i)
+	{
+		_insert_module_port_var(ctx, _stacks.pop_str(),
+			Symbol::PortType::Input, frost_lhs_type);
+	}
+
+
 	return nullptr;
 }
-
 VisitorRetType Compiler::visitDeclPortOutputVarList
 	(Parser::DeclPortOutputVarListContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
+
 	return nullptr;
 }
 VisitorRetType Compiler::visitDeclPortInoutVarList
 	(Parser::DeclPortInoutVarListContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
+
 	return nullptr;
 }
 
@@ -774,6 +791,39 @@ VisitorRetType Compiler::visitScopedIdentName
 {
 	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName())
 	return nullptr;
+}
+
+void Compiler::_insert_module_port_var(antlr4::ParserRuleContext* ctx,
+	SavedString s_ident, Symbol::PortType s_port_type,
+	FrostLhsType* s_frost_lhs_type)
+{
+	auto module = _frost_program().curr_frost_module;
+	SymbolTable* symbol_table = nullptr;
+
+	switch (s_port_type)
+	{
+	case Symbol::PortType::Input:
+		symbol_table = &module->input_symbol_table();
+		break;
+
+	case Symbol::PortType::Output:
+		symbol_table = &module->output_symbol_table();
+		break;
+
+	case Symbol::PortType::Inout:
+		symbol_table = &module->inout_symbol_table();
+		break;
+
+	default:
+		_err(ctx, "Compiler::_insert_module_port_var():  Eek!");
+		break;
+	}
+
+	auto s_frost_full_type = save_frost_full_type(FrostFullType
+		(s_frost_lhs_type));
+
+	symbol_table->insert_or_assign(save_symbol(Symbol(SrcCodePos(ctx),
+		s_ident, s_port_type, s_frost_full_type)));
 }
 
 } // namespace frost_hdl

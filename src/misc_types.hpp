@@ -11,8 +11,14 @@ namespace frost_hdl
 {
 
 class Symbol;
+class Expression;
 
 typedef OrderedIdentToPointerTable<Symbol> ListVars;
+
+// Used for temporary type identifiers before actual dimensions are
+// evaluated.
+SavedString construct_type_ident_from_dim(SavedString base_ident,
+	Expression* some_dim_expr);
 
 class ReplaceSymsMap
 {

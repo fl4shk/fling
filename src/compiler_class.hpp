@@ -281,7 +281,9 @@ private:		// visitor functions
 	VisitorRetType visitScopedIdentName
 		(Parser::ScopedIdentNameContext *ctx);
 private:		// functions
-
+	void _insert_module_port_var(antlr4::ParserRuleContext* ctx,
+		SavedString s_ident, Symbol::PortType s_port_type,
+		FrostLhsType* s_frost_lhs_type);
 };
 
 } // namespace frost_hdl

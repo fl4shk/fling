@@ -8,9 +8,10 @@ namespace frost_hdl
 
 
 // Non-constant scalar or array constructor
-Symbol::Symbol(SavedString s_ident, PortType s_port_type,
-	FrostFullType* s_frost_full_type)
+Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+	PortType s_port_type, FrostFullType* s_frost_full_type)
 {
+	_src_code_pos = s_src_code_pos;
 	_ident = s_ident;
 	_port_type = s_port_type;
 	_frost_full_type = s_frost_full_type;
@@ -18,9 +19,11 @@ Symbol::Symbol(SavedString s_ident, PortType s_port_type,
 }
 
 	// Constant scalar or array constructor
-Symbol::Symbol(SavedString s_ident, PortType s_port_type,
-	FrostFullType* s_frost_full_type, ValueExprs&& s_value_exprs)
+Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+	PortType s_port_type, FrostFullType* s_frost_full_type,
+	ValueExprs&& s_value_exprs)
 {
+	_src_code_pos = s_src_code_pos;
 	_ident = s_ident;
 	_port_type = s_port_type;
 	_is_constant = true;

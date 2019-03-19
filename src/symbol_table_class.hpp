@@ -41,10 +41,12 @@ public:		// types
 		Input,
 		Output,
 		Inout,
-		Splitvar,
+		//Splitvar,
 	};
 
 private:		// variables
+	SrcCodePos _src_code_pos;
+
 	SavedString _ident = nullptr;
 
 	PortType _port_type = PortType::NonPort;
@@ -79,12 +81,12 @@ public:		// functions
 	Symbol() = default;
 
 	// Non-constant scalar or array constructor
-	Symbol(SavedString s_ident, PortType s_port_type,
-		FrostFullType* s_frost_full_type);
+	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		PortType s_port_type, FrostFullType* s_frost_full_type);
 
 	// Constant scalar or array constructor
-	Symbol(SavedString s_ident, PortType s_port_type,
-		FrostFullType* s_frost_full_type,
+	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		PortType s_port_type, FrostFullType* s_frost_full_type,
 		ValueExprs&& s_value_exprs);
 
 
@@ -110,6 +112,7 @@ public:		// functions
 	}
 
 
+	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(port_type)
 	GEN_GETTER_BY_VAL(is_constant)
