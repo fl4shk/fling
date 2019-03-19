@@ -280,7 +280,6 @@ VisitorRetType Compiler::visitDeclPortInputVarList
 			Symbol::PortType::Input, frost_lhs_type);
 	}
 
-
 	return nullptr;
 }
 VisitorRetType Compiler::visitDeclPortOutputVarList
@@ -288,12 +287,32 @@ VisitorRetType Compiler::visitDeclPortOutputVarList
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
 
+	auto frost_lhs_type = _stacks.pop_lhs_type();
+
+	const size_t num_ident_names = _stacks.pop_small_num();
+
+	for (size_t i=0; i<num_ident_names; ++i)
+	{
+		_insert_module_port_var(ctx, _stacks.pop_str(),
+			Symbol::PortType::Output, frost_lhs_type);
+	}
+
 	return nullptr;
 }
 VisitorRetType Compiler::visitDeclPortInoutVarList
 	(Parser::DeclPortInoutVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
+
+	auto frost_lhs_type = _stacks.pop_lhs_type();
+
+	const size_t num_ident_names = _stacks.pop_small_num();
+
+	for (size_t i=0; i<num_ident_names; ++i)
+	{
+		_insert_module_port_var(ctx, _stacks.pop_str(),
+			Symbol::PortType::Inout, frost_lhs_type);
+	}
 
 	return nullptr;
 }
@@ -798,6 +817,14 @@ void Compiler::_insert_module_port_var(antlr4::ParserRuleContext* ctx,
 	FrostLhsType* s_frost_lhs_type)
 {
 	auto module = _frost_program().curr_frost_module;
+
+	if (module->contains_symbol(s_ident))
+	{
+		_err(ctx, sconcat("Module \"", module->ident(), 
+			"\" already has a port variable with identifier \"", s_ident,
+			"\"."));
+	}
+
 	SymbolTable* symbol_table = nullptr;
 
 	switch (s_port_type)

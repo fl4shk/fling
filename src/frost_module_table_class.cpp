@@ -15,10 +15,12 @@ FrostModule::~FrostModule()
 {
 }
 
-
-
-Symbol* FrostModule::find_non_param_symbol(SavedString some_name) const
+Symbol* FrostModule::find_symbol(SavedString some_name) const
 {
+	if (parameter_vars().contains(some_name))
+	{
+		return parameter_vars().find(some_name);
+	}
 	if (input_symbol_table().contains(some_name))
 	{
 		return input_symbol_table().at(some_name);
@@ -38,6 +40,29 @@ Symbol* FrostModule::find_non_param_symbol(SavedString some_name) const
 
 	return nullptr;
 }
+
+
+//Symbol* FrostModule::find_non_param_symbol(SavedString some_name) const
+//{
+//	if (input_symbol_table().contains(some_name))
+//	{
+//		return input_symbol_table().at(some_name);
+//	}
+//	if (output_symbol_table().contains(some_name))
+//	{
+//		return output_symbol_table().at(some_name);
+//	}
+//	if (inout_symbol_table().contains(some_name))
+//	{
+//		return inout_symbol_table().at(some_name);
+//	}
+//	if (local_symbol_table().contains(some_name))
+//	{
+//		return local_symbol_table().at(some_name);
+//	}
+//
+//	return nullptr;
+//}
 
 
 } // namespace frost_hdl

@@ -40,12 +40,17 @@ public:		// functions
 	virtual ~FrostModule();
 
 
-	Symbol* find_non_param_symbol(SavedString some_name) const;
-
-	inline bool contains_non_param_symbol(SavedString some_name) const
+	Symbol* find_symbol(SavedString some_name) const;
+	inline bool contains_symbol(SavedString some_name) const
 	{
-		return (find_non_param_symbol(some_name) != nullptr);
+		return (find_symbol(some_name) != nullptr);
 	}
+	//Symbol* find_non_param_symbol(SavedString some_name) const;
+
+	//inline bool contains_non_param_symbol(SavedString some_name) const
+	//{
+	//	return (find_non_param_symbol(some_name) != nullptr);
+	//}
 
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)

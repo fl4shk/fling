@@ -110,7 +110,7 @@ public:		// functions
 	{
 		for (size_t i=0; i<Base::size(); ++i)
 		{
-			if (Base::at(i).ident() == some_name)
+			if (Base::at(i)->ident() == some_name)
 			{
 				return Base::at(i);
 			}
