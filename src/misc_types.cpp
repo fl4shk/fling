@@ -7,7 +7,7 @@
 
 namespace frost_hdl
 {
-SavedString construct_type_ident_from_dim(SavedString base_ident,
+SavedString construct_initial_type_ident_from_dim(SavedString base_ident,
 	Expression* some_dim_expr)
 {
 	return dup_str(sconcat(*base_ident, "[",

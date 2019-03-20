@@ -25,6 +25,11 @@ namespace frost_hdl
 //
 //}
 
+Expression::Expression(const SrcCodePos& s_src_code_pos)
+{
+	_src_code_pos = s_src_code_pos;
+}
+
 
 
 //OpStr Expression::op_str() const
@@ -302,13 +307,16 @@ SavedString ExprBaseUnOp::to_hdl_source() const
 	}
 }
 
-ExprBaseUnOp::ExprBaseUnOp(Expression* only_child)
+ExprBaseUnOp::ExprBaseUnOp(const SrcCodePos& s_src_code_pos,
+	Expression* only_child)
+	: Expression(s_src_code_pos)
 {
 	_set_children(only_child);
 }
 
-ExprBaseBinOp::ExprBaseBinOp(Expression* left_child,
-	Expression* right_child)
+ExprBaseBinOp::ExprBaseBinOp(const SrcCodePos& s_src_code_pos,
+	Expression* left_child, Expression* right_child)
+	: Expression(s_src_code_pos)
 {
 	_set_children(left_child, right_child);
 }
@@ -328,7 +336,9 @@ void ExprBinOpBitAsr::_evaluate()
 	_value.perf_asr(_left_child_value(), _right_child_value());
 }
 
-ExprConcat::ExprConcat(ChildrenList&& s_children)
+ExprConcat::ExprConcat(const SrcCodePos& s_src_code_pos,
+	ChildrenList&& s_children)
+	: Expression(s_src_code_pos)
 {
 	_children = std::move(s_children);
 
@@ -413,8 +423,9 @@ size_t ExprConcat::_starting_length() const
 	return ret;
 }
 
-ExprRepl::ExprRepl(Expression* s_width_child,
-	ChildrenList&& s_non_width_children)
+ExprRepl::ExprRepl(const SrcCodePos& s_src_code_pos,
+	Expression* s_width_child, ChildrenList&& s_non_width_children)
+	: Expression(s_src_code_pos)
 {
 	_children = std::move(s_non_width_children);
 	_children.push_back(s_width_child);
@@ -478,8 +489,10 @@ size_t ExprRepl::_starting_length()
 	return ret;
 }
 
-ExprTernary::ExprTernary(Expression* condition_child,
-	Expression* when_true_child, Expression* when_false_child)
+ExprTernary::ExprTernary(const SrcCodePos& s_src_code_pos,
+	Expression* condition_child, Expression* when_true_child,
+	Expression* when_false_child)
+	: Expression(s_src_code_pos)
 {
 	_set_children(condition_child, when_true_child, when_false_child);
 	//_value.set_size(_starting_length());
@@ -506,7 +519,9 @@ void ExprTernary::_evaluate()
 	}
 }
 
-ExprIdentName::ExprIdentName(Symbol* s_symbol)
+ExprIdentName::ExprIdentName(const SrcCodePos& s_src_code_pos,
+	Symbol* s_symbol)
+	: Expression(s_src_code_pos)
 {
 	_symbol = s_symbol;
 

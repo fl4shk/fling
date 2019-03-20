@@ -40,11 +40,15 @@ public:		// types
 	{
 		// Passes for the initial processing of Frost HDL source code
 
+		// List "package" names.
 		//FrostListPackages,
+
+		// Construct raw "package"s, such that their "parameter"s are not
+		// yet evaluated
 		//FrostConstructRawPackages,
 
-		////FrostListInterfaces,
-		////FrostConstructRawInterfaces,
+		//FrostListInterfaces,
+		//FrostConstructRawInterfaces,
 
 		// List "module"s, their "parameter"s, and their ports.
 		FrostListModules,

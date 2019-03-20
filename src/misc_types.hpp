@@ -15,9 +15,9 @@ class Expression;
 
 typedef OrderedIdentToPointerTable<Symbol> ListVars;
 
-// Used for temporary type identifiers before actual dimensions are
-// evaluated.
-SavedString construct_type_ident_from_dim(SavedString base_ident,
+// Used for temporary type identifiers before actual dimension expressions
+// are evaluated.
+SavedString construct_initial_type_ident_from_dim(SavedString base_ident,
 	Expression* some_dim_expr);
 
 class ReplaceSymsMap
@@ -77,7 +77,7 @@ private:		// variables
 
 public:		// functions
 	SrcCodePos();
-	SrcCodePos(antlr4::ParserRuleContext* s_ctx);
+	explicit SrcCodePos(antlr4::ParserRuleContext* s_ctx);
 
 	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);

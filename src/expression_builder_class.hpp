@@ -13,14 +13,16 @@ class ExpressionBuilder
 {
 public:		// static functions
 	template<typename NumType>
-	static inline Expression* make_expr_hc_num(const NumType& s_data,
+	static inline Expression* make_expr_hc_num
+		(const SrcCodePos& s_src_code_pos, const NumType& s_data,
 		size_t s_data_size, bool s_is_signed)
 	{
-		return save_expr(ExprHardCodedNum(ExprNum(BigNum(s_data),
-			s_data_size, s_is_signed)));
+		return save_expr(ExprHardCodedNum(s_src_code_pos,
+			ExprNum(BigNum(s_data), s_data_size, s_is_signed)));
 	}
 	template<typename NumType>
-	static inline Expression* make_expr_hc_num(const NumType& s_data)
+	static inline Expression* make_expr_hc_num
+		(const SrcCodePos& s_src_code_pos, const NumType& s_data)
 	{
 		static_assert(std::is_integral<NumType>(),
 			"NumType must be an integral type.");
@@ -29,12 +31,12 @@ public:		// static functions
 		{
 			if constexpr (std::is_same<NumType, bool>())
 			{
-				return make_expr_hc_num(s_data, 1,
+				return make_expr_hc_num(s_src_code_pos, s_data, 1,
 					std::is_signed<NumType>());
 			}
 			else
 			{
-				return make_expr_hc_num(s_data,
+				return make_expr_hc_num(s_src_code_pos, s_data,
 					(sizeof(NumType) * sizeof(u8)),
 					std::is_signed<NumType>());
 			}
@@ -44,16 +46,19 @@ public:		// static functions
 	}
 
 	template<typename ExprType>
-	static inline Expression* make_expr_unop(Expression* only_child)
+	static inline Expression* make_expr_unop
+		(const SrcCodePos& s_src_code_pos, Expression* only_child)
 	{
-		return save_expr(ExprType(only_child));
+		return save_expr(ExprType(s_src_code_pos, only_child));
 	}
 
 	template<typename ExprType>
-	static inline Expression* make_expr_binop(Expression* left_child,
+	static inline Expression* make_expr_binop
+		(const SrcCodePos& s_src_code_pos, Expression* left_child,
 		Expression* right_child)
 	{
-		return save_expr(ExprType(left_child, right_child));
+		return save_expr(ExprType(s_src_code_pos, left_child,
+			right_child));
 	}
 
 protected:		// static functions
@@ -74,20 +79,24 @@ public:		// static functions
 
 	// Require at least one child
 	template<typename FirstArgType, typename... RemArgTypes>
-	static inline Expression* make_expr_concat(FirstArgType&& first_child,
+	static inline Expression* make_expr_concat
+		(const SrcCodePos& s_src_code_pos, FirstArgType&& first_child,
 		RemArgTypes&&... rem_children)
 	{
 		Expression::ChildrenList s_children;
 
 		_inner_make_expr_concat(s_children, first_child, rem_children...);
 
-		return save_expr(ExprConcat(std::move(s_children)));
+		return save_expr(ExprConcat(s_src_code_pos,
+			std::move(s_children)));
 	}
 
 	static inline Expression* make_expr_concat
-		(Expression::ChildrenList&& s_children)
+		(const SrcCodePos& s_src_code_pos,
+		Expression::ChildrenList&& s_children)
 	{
-		return save_expr(ExprConcat(std::move(s_children)));
+		return save_expr(ExprConcat(s_src_code_pos,
+			std::move(s_children)));
 	}
 
 	static inline std::ostream& show_expr(std::ostream& os,

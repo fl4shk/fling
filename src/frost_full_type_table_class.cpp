@@ -5,22 +5,25 @@
 namespace frost_hdl
 {
 
-FrostFullType::FrostFullType(FrostLhsType* s_frost_lhs_type)
-	: FrostFullType(s_frost_lhs_type->ident(), s_frost_lhs_type,
-	ExpressionBuilder::make_expr_hc_num(static_cast<size_t>(1)))
+FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
+	FrostLhsType* s_frost_lhs_type)
+	: FrostFullType(s_src_code_pos, s_frost_lhs_type->ident(),
+	s_frost_lhs_type, ExpressionBuilder::make_expr_hc_num(s_src_code_pos,
+	static_cast<size_t>(1)))
 {
 }
-FrostFullType::FrostFullType(FrostLhsType* s_frost_lhs_type,
-	Expression* s_right_dim_expr)
-	: FrostFullType(construct_type_ident_from_dim
+FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
+	FrostLhsType* s_frost_lhs_type, Expression* s_right_dim_expr)
+	: FrostFullType(s_src_code_pos, construct_initial_type_ident_from_dim
 	(s_frost_lhs_type->ident(), s_right_dim_expr),
 	s_frost_lhs_type, s_right_dim_expr)
 {
 }
-FrostFullType::FrostFullType(SavedString s_ident,
-	FrostLhsType* s_frost_lhs_type, Expression* s_right_dim_expr)
-	: _ident(s_ident), _frost_lhs_type(s_frost_lhs_type),
-	_right_dim_expr(s_right_dim_expr)
+FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
+	SavedString s_ident, FrostLhsType* s_frost_lhs_type,
+	Expression* s_right_dim_expr)
+	: _src_code_pos(s_src_code_pos), _ident(s_ident),
+	_frost_lhs_type(s_frost_lhs_type), _right_dim_expr(s_right_dim_expr)
 {
 }
 

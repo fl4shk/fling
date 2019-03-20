@@ -69,9 +69,13 @@ protected:		// variables
 	bool _handles_children_eval = false;
 	ExprNum _value;
 
+	SrcCodePos _src_code_pos;
+
 
 public:		// functions
-	Expression() = default;
+	//Expression() = default;
+
+	Expression(const SrcCodePos& s_src_code_pos);
 
 
 	// Don't want copies of raw Expression's
@@ -144,6 +148,8 @@ public:		// functions
 	GEN_GETTER_AND_SETTER_BY_VAL(handles_children_eval)
 
 	GEN_GETTER_AND_SETTER_BY_VAL(symbol)
+
+	GEN_GETTER_BY_CON_REF(src_code_pos)
 
 
 protected:		// functions
@@ -237,7 +243,8 @@ public:		// types
 	};
 
 public:		// functions
-	ExprBaseUnOp(Expression* only_child);
+	ExprBaseUnOp(const SrcCodePos& s_src_code_pos,
+		Expression* only_child);
 
 	virtual SavedString to_hdl_source() const;
 
@@ -268,7 +275,8 @@ protected:		// functions
 class ExprBaseBinOp : public Expression
 {
 public:		// functions
-	ExprBaseBinOp(Expression* left_child, Expression* right_child);
+	ExprBaseBinOp(const SrcCodePos& s_src_code_pos, Expression* left_child,
+		Expression* right_child);
 
 	virtual SavedString to_hdl_source() const
 	{
@@ -307,8 +315,9 @@ protected:		// functions
 class ExprBaseArithLogBitUnOp : public ExprBaseUnOp
 {
 public:		// functions
-	ExprBaseArithLogBitUnOp(Expression* only_child)
-		: ExprBaseUnOp(only_child)
+	ExprBaseArithLogBitUnOp(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseUnOp(s_src_code_pos, only_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
 		// and not in one of the classes this one is derived from, at least
@@ -330,8 +339,9 @@ protected:		// functions
 class ExprBaseCastUnop : public ExprBaseUnOp
 {
 public:		// functions
-	ExprBaseCastUnop(Expression* only_child)
-		: ExprBaseUnOp(only_child)
+	ExprBaseCastUnop(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseUnOp(s_src_code_pos, only_child)
 	{
 		_value.set_size(_starting_length());
 	}
@@ -350,8 +360,9 @@ public:		// types
 	typedef BigNum (*CmpEvalFunc)(const BigNum& left, const BigNum& right);
 
 public:		// functions
-	ExprBaseLogCmpBinOp(Expression* left_child, Expression* right_child)
-		: ExprBaseBinOp(left_child, right_child)
+	ExprBaseLogCmpBinOp(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(s_src_code_pos, left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
 		// and not in one of the classes this one is derived from, at least
@@ -417,8 +428,9 @@ protected:		// functions
 class ExprBaseArithBinOp : public ExprBaseBinOp
 {
 public:		// functions
-	ExprBaseArithBinOp(Expression* left_child, Expression* right_child)
-		: ExprBaseBinOp(left_child, right_child)
+	ExprBaseArithBinOp(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(s_src_code_pos, left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
 		// and not in one of the classes this one is derived from, at least
@@ -444,9 +456,9 @@ protected:		// functions
 class ExprBaseBitNonShiftBinOp : public ExprBaseBinOp
 {
 public:		// functions
-	ExprBaseBitNonShiftBinOp(Expression* left_child,
-		Expression* right_child)
-		: ExprBaseBinOp(left_child, right_child)
+	ExprBaseBitNonShiftBinOp(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(s_src_code_pos, left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
 		// and not in one of the classes this one is derived from, at least
@@ -473,8 +485,9 @@ protected:		// functions
 class ExprBaseBitShiftBinOp : public ExprBaseBinOp
 {
 public:		// functions
-	ExprBaseBitShiftBinOp(Expression* left_child, Expression* right_child)
-		: ExprBaseBinOp(left_child, right_child)
+	ExprBaseBitShiftBinOp(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBinOp(s_src_code_pos, left_child, right_child)
 	{
 		// This *has* to be done in this class or later down the hierarchy,
 		// and not in one of the classes this one is derived from, at least
@@ -509,8 +522,8 @@ protected:		// functions
 class ExprUnOpPlus : public ExprBaseArithLogBitUnOp
 {
 public:		// functions
-	ExprUnOpPlus(Expression* only_child)
-		: ExprBaseArithLogBitUnOp(only_child)
+	ExprUnOpPlus(const SrcCodePos& s_src_code_pos, Expression* only_child)
+		: ExprBaseArithLogBitUnOp(s_src_code_pos, only_child)
 	{
 	}
 
@@ -532,7 +545,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprUnOpPlus(DUP_CHILD(_only_child())));
+		return SAFE_SAVE_EXPR(ExprUnOpPlus(src_code_pos(),
+			DUP_CHILD(_only_child())));
 	}
 };
 
@@ -540,8 +554,8 @@ protected:		// functions
 class ExprUnOpMinus : public ExprBaseArithLogBitUnOp
 {
 public:		// functions
-	ExprUnOpMinus(Expression* only_child)
-		: ExprBaseArithLogBitUnOp(only_child)
+	ExprUnOpMinus(const SrcCodePos& s_src_code_pos, Expression* only_child)
+		: ExprBaseArithLogBitUnOp(s_src_code_pos, only_child)
 	{
 	}
 
@@ -563,7 +577,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprUnOpMinus(DUP_CHILD(_only_child())));
+		return SAFE_SAVE_EXPR(ExprUnOpMinus(src_code_pos(),
+			DUP_CHILD(_only_child())));
 	}
 };
 
@@ -571,8 +586,9 @@ protected:		// functions
 class ExprUnOpLogNot : public ExprBaseArithLogBitUnOp
 {
 public:		// functions
-	ExprUnOpLogNot(Expression* only_child)
-		: ExprBaseArithLogBitUnOp(only_child)
+	ExprUnOpLogNot(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseArithLogBitUnOp(s_src_code_pos, only_child)
 	{
 	}
 
@@ -594,7 +610,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprUnOpLogNot(DUP_CHILD(_only_child())));
+		return SAFE_SAVE_EXPR(ExprUnOpLogNot(src_code_pos(),
+			DUP_CHILD(_only_child())));
 	}
 };
 
@@ -602,8 +619,9 @@ protected:		// functions
 class ExprUnOpBitNot : public ExprBaseArithLogBitUnOp
 {
 public:		// functions
-	ExprUnOpBitNot(Expression* only_child)
-		: ExprBaseArithLogBitUnOp(only_child)
+	ExprUnOpBitNot(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseArithLogBitUnOp(s_src_code_pos, only_child)
 	{
 	}
 
@@ -625,7 +643,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprUnOpBitNot(DUP_CHILD(_only_child())));
+		return SAFE_SAVE_EXPR(ExprUnOpBitNot(src_code_pos(),
+			DUP_CHILD(_only_child())));
 	}
 };
 
@@ -635,8 +654,9 @@ protected:		// functions
 class ExprUnOpCastUnsigned : public ExprBaseCastUnop
 {
 public:		// functions
-	ExprUnOpCastUnsigned(Expression* only_child)
-		: ExprBaseCastUnop(only_child)
+	ExprUnOpCastUnsigned(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseCastUnop(s_src_code_pos, only_child)
 	{
 		_value.set_is_signed(false);
 	}
@@ -661,16 +681,17 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprUnOpCastUnsigned
-			(DUP_CHILD(_only_child())));
+		return SAFE_SAVE_EXPR(ExprUnOpCastUnsigned(src_code_pos(),
+			DUP_CHILD(_only_child())));
 	}
 };
 // "$signed()
 class ExprUnOpCastSigned : public ExprBaseCastUnop
 {
 public:		// functions
-	ExprUnOpCastSigned(Expression* only_child)
-		: ExprBaseCastUnop(only_child)
+	ExprUnOpCastSigned(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseCastUnop(s_src_code_pos, only_child)
 	{
 		_value.set_is_signed(true);
 	}
@@ -693,8 +714,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprUnOpCastSigned
-			(DUP_CHILD(_only_child())));
+		return SAFE_SAVE_EXPR(ExprUnOpCastSigned(src_code_pos(),
+			DUP_CHILD(_only_child())));
 	}
 };
 
@@ -705,8 +726,9 @@ protected:		// functions
 class ExprBinOpLogAnd : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpLogAnd(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpLogAnd(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -729,8 +751,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpLogAnd(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpLogAnd(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -738,8 +760,9 @@ protected:		// functions
 class ExprBinOpLogOr : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpLogOr(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpLogOr(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -757,8 +780,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpLogOr(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpLogOr(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -766,8 +789,9 @@ protected:		// functions
 class ExprBinOpCmpEq : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpCmpEq(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpCmpEq(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -787,8 +811,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpEq(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpCmpEq(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -796,8 +820,9 @@ protected:		// functions
 class ExprBinOpCmpNe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpCmpNe(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpCmpNe(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -819,8 +844,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpNe(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpCmpNe(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -828,8 +853,9 @@ protected:		// functions
 class ExprBinOpCmpLt : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpCmpLt(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpCmpLt(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -853,8 +879,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpLt(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpCmpLt(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -862,8 +888,9 @@ protected:		// functions
 class ExprBinOpCmpGt : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpCmpGt(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpCmpGt(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -883,8 +910,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpGt(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpCmpGt(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -892,8 +919,9 @@ protected:		// functions
 class ExprBinOpCmpLe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpCmpLe(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpCmpLe(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -913,8 +941,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpLe(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpCmpLe(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -922,8 +950,9 @@ protected:		// functions
 class ExprBinOpCmpGe : public ExprBaseLogCmpBinOp
 {
 public:		// functions
-	ExprBinOpCmpGe(Expression* left_child, Expression* right_child)
-		: ExprBaseLogCmpBinOp(left_child, right_child)
+	ExprBinOpCmpGe(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseLogCmpBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -944,8 +973,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpGe(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpCmpGe(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -955,8 +984,9 @@ protected:		// functions
 class ExprBinOpPlus : public ExprBaseArithBinOp
 {
 public:		// functions
-	ExprBinOpPlus(Expression* left_child, Expression* right_child)
-		: ExprBaseArithBinOp(left_child, right_child)
+	ExprBinOpPlus(const SrcCodePos& s_src_code_pos, Expression* left_child,
+		Expression* right_child)
+		: ExprBaseArithBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -974,8 +1004,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpPlus(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpPlus(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -983,8 +1013,9 @@ protected:		// functions
 class ExprBinOpMinus : public ExprBaseArithBinOp
 {
 public:		// functions
-	ExprBinOpMinus(Expression* left_child, Expression* right_child)
-		: ExprBaseArithBinOp(left_child, right_child)
+	ExprBinOpMinus(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseArithBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1002,8 +1033,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpMinus(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpMinus(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1011,8 +1042,9 @@ protected:		// functions
 class ExprBinOpMul : public ExprBaseArithBinOp
 {
 public:		// functions
-	ExprBinOpMul(Expression* left_child, Expression* right_child)
-		: ExprBaseArithBinOp(left_child, right_child)
+	ExprBinOpMul(const SrcCodePos& s_src_code_pos, Expression* left_child,
+		Expression* right_child)
+		: ExprBaseArithBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1030,18 +1062,18 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpMul(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpMul(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
 // "/"
-// FUTURE:  add some way to detect division by zero.
 class ExprBinOpDiv : public ExprBaseArithBinOp
 {
 public:		// functions
-	ExprBinOpDiv(Expression* left_child, Expression* right_child)
-		: ExprBaseArithBinOp(left_child, right_child)
+	ExprBinOpDiv(const SrcCodePos& s_src_code_pos, Expression* left_child,
+		Expression* right_child)
+		: ExprBaseArithBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1059,18 +1091,18 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpDiv(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpDiv(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
 // "%"
-// FUTURE:  add some way to detect division by zero.
 class ExprBinOpMod : public ExprBaseArithBinOp
 {
 public:		// functions
-	ExprBinOpMod(Expression* left_child, Expression* right_child)
-		: ExprBaseArithBinOp(left_child, right_child)
+	ExprBinOpMod(const SrcCodePos& s_src_code_pos, Expression* left_child,
+		Expression* right_child)
+		: ExprBaseArithBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1088,8 +1120,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpMod(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpMod(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1099,8 +1131,9 @@ protected:		// functions
 class ExprBinOpBitAnd : public ExprBaseBitNonShiftBinOp
 {
 public:		// functions
-	ExprBinOpBitAnd(Expression* left_child, Expression* right_child)
-		: ExprBaseBitNonShiftBinOp(left_child, right_child)
+	ExprBinOpBitAnd(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBitNonShiftBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1120,8 +1153,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitAnd(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpBitAnd(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1129,8 +1162,9 @@ protected:		// functions
 class ExprBinOpBitOr : public ExprBaseBitNonShiftBinOp
 {
 public:		// functions
-	ExprBinOpBitOr(Expression* left_child, Expression* right_child)
-		: ExprBaseBitNonShiftBinOp(left_child, right_child)
+	ExprBinOpBitOr(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBitNonShiftBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1150,8 +1184,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitOr(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpBitOr(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1159,8 +1193,9 @@ protected:		// functions
 class ExprBinOpBitXor : public ExprBaseBitNonShiftBinOp
 {
 public:		// functions
-	ExprBinOpBitXor(Expression* left_child, Expression* right_child)
-		: ExprBaseBitNonShiftBinOp(left_child, right_child)
+	ExprBinOpBitXor(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBitNonShiftBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1180,8 +1215,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitXor(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpBitXor(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1191,8 +1226,9 @@ protected:		// functions
 class ExprBinOpBitLsl : public ExprBaseBitShiftBinOp
 {
 public:		// functions
-	ExprBinOpBitLsl(Expression* left_child, Expression* right_child)
-		: ExprBaseBitShiftBinOp(left_child, right_child)
+	ExprBinOpBitLsl(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBitShiftBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1206,8 +1242,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitLsl(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpBitLsl(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1215,8 +1251,9 @@ protected:		// functions
 class ExprBinOpBitLsr : public ExprBaseBitShiftBinOp
 {
 public:		// functions
-	ExprBinOpBitLsr(Expression* left_child, Expression* right_child)
-		: ExprBaseBitShiftBinOp(left_child, right_child)
+	ExprBinOpBitLsr(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBitShiftBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1230,8 +1267,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitLsr(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpBitLsr(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1239,8 +1276,9 @@ protected:		// functions
 class ExprBinOpBitAsr : public ExprBaseBitShiftBinOp
 {
 public:		// functions
-	ExprBinOpBitAsr(Expression* left_child, Expression* right_child)
-		: ExprBaseBitShiftBinOp(left_child, right_child)
+	ExprBinOpBitAsr(const SrcCodePos& s_src_code_pos,
+		Expression* left_child, Expression* right_child)
+		: ExprBaseBitShiftBinOp(s_src_code_pos, left_child, right_child)
 	{
 	}
 
@@ -1263,8 +1301,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitAsr(DUP_CHILD(_left_child()),
-			DUP_CHILD(_right_child())));
+		return SAFE_SAVE_EXPR(ExprBinOpBitAsr(src_code_pos(),
+			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
 	}
 };
 
@@ -1275,7 +1313,9 @@ protected:		// functions
 class ExprHardCodedNum : public Expression
 {
 public:		// functions
-	ExprHardCodedNum(const ExprNum& s_value)
+	ExprHardCodedNum(const SrcCodePos& s_src_code_pos,
+		const ExprNum& s_value)
+		: Expression(s_src_code_pos)
 	{
 		_set_value(s_value);
 	}
@@ -1311,7 +1351,7 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprHardCodedNum(value()));
+		return SAFE_SAVE_EXPR(ExprHardCodedNum(src_code_pos(), value()));
 	}
 };
 
@@ -1319,7 +1359,8 @@ protected:		// functions
 class ExprConcat : public Expression
 {
 public:		// functions
-	ExprConcat(ChildrenList&& s_children);
+	ExprConcat(const SrcCodePos& s_src_code_pos,
+		ChildrenList&& s_children);
 
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const
@@ -1341,7 +1382,8 @@ protected:		// functions
 			dupped_children.push_back(DUP_CHILD(iter));
 		}
 
-		return SAFE_SAVE_EXPR(ExprConcat(std::move(dupped_children)));
+		return SAFE_SAVE_EXPR(ExprConcat(src_code_pos(),
+			std::move(dupped_children)));
 	}
 };
 
@@ -1349,7 +1391,7 @@ protected:		// functions
 class ExprRepl : public Expression
 {
 public:		// functions
-	ExprRepl(Expression* s_width_child,
+	ExprRepl(const SrcCodePos& s_src_code_pos, Expression* s_width_child,
 		ChildrenList&& s_non_width_children);
 
 	//inline Expression* dup_with_changed_symbols
@@ -1392,7 +1434,8 @@ protected:		// functions
 				(DUP_CHILD(_children.at(i)));
 		}
 
-		return SAFE_SAVE_EXPR(ExprRepl(DUP_CHILD(_width_child()),
+		return SAFE_SAVE_EXPR(ExprRepl(src_code_pos(),
+			DUP_CHILD(_width_child()),
 			std::move(dupped_non_width_children)));
 	}
 };
@@ -1401,7 +1444,8 @@ protected:		// functions
 class ExprTernary : public Expression
 {
 public:		// functions
-	ExprTernary(Expression* condition_child, Expression* when_true_child,
+	ExprTernary(const SrcCodePos& s_src_code_pos,
+		Expression* condition_child, Expression* when_true_child,
 		Expression* when_false_child);
 
 
@@ -1449,8 +1493,8 @@ protected:		// functions
 	inline Expression* _inner_dup_with_changed_symbols
 		(const ReplaceSymsMap& replace_syms_map) const
 	{
-		return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
-			DUP_CHILD(_when_true_child()),
+		return SAFE_SAVE_EXPR(ExprTernary(src_code_pos(),
+			DUP_CHILD(_condition_child()), DUP_CHILD(_when_true_child()),
 			DUP_CHILD(_when_false_child())));
 	}
 };
@@ -1459,7 +1503,7 @@ protected:		// functions
 class ExprIdentName : public Expression
 {
 public:		// functions
-	ExprIdentName(Symbol* s_symbol);
+	ExprIdentName(const SrcCodePos& s_src_code_pos, Symbol* s_symbol);
 
 
 	virtual SavedString to_hdl_source() const;
@@ -1479,12 +1523,12 @@ protected:		// functions
 	{
 		if (replace_syms_map.contains(_symbol))
 		{
-			return SAFE_SAVE_EXPR(ExprIdentName(replace_syms_map.at
-				(_symbol)));
+			return SAFE_SAVE_EXPR(ExprIdentName(src_code_pos(),
+				replace_syms_map.at(_symbol)));
 		}
 		else
 		{
-			return SAFE_SAVE_EXPR(ExprIdentName(_symbol));
+			return SAFE_SAVE_EXPR(ExprIdentName(src_code_pos(), _symbol));
 		}
 	}
 };

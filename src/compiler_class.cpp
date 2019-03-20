@@ -149,7 +149,7 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 	{
 		//// Need some way to make the name unique!  Also, how do I handle
 		//// cases where I don't know the values of named constants yet?
-		s_ident += *construct_type_ident_from_dim(dup_str(s_ident),
+		s_ident += *construct_initial_type_ident_from_dim(dup_str(s_ident),
 			s_left_dim_expr);
 	}
 
@@ -381,12 +381,12 @@ VisitorRetType Compiler::visitExpr
 		if (tok == dup_str("&&"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpLogAnd>(left, right));
+				<ExprBinOpLogAnd>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("||"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpLogOr>(left, right));
+				<ExprBinOpLogOr>(SrcCodePos(ctx), left, right));
 		}
 		else
 		{
@@ -416,32 +416,32 @@ VisitorRetType Compiler::visitExprLogical
 		if (tok == dup_str("=="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpEq>(left, right));
+				<ExprBinOpCmpEq>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("!"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpNe>(left, right));
+				<ExprBinOpCmpNe>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("<"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpLt>(left, right));
+				<ExprBinOpCmpLt>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str(">"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpGt>(left, right));
+				<ExprBinOpCmpGt>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("<="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpLe>(left, right));
+				<ExprBinOpCmpLe>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str(">="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpGe>(left, right));
+				<ExprBinOpCmpGe>(SrcCodePos(ctx), left, right));
 		}
 		else
 		{
@@ -466,7 +466,7 @@ VisitorRetType Compiler::visitExprCompare
 		auto right = _stacks.pop_expr();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_binop
-			<ExprBinOpPlus>(left, right));
+			<ExprBinOpPlus>(SrcCodePos(ctx), left, right));
 	}
 	else if (ctx->TokMinus())
 	{
@@ -477,7 +477,7 @@ VisitorRetType Compiler::visitExprCompare
 		auto right = _stacks.pop_expr();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_binop
-			<ExprBinOpMinus>(left, right));
+			<ExprBinOpMinus>(SrcCodePos(ctx), left, right));
 	}
 	else
 	{
@@ -502,17 +502,17 @@ VisitorRetType Compiler::visitExprAddSub
 		if (tok == dup_str("*"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpMul>(left, right));
+				<ExprBinOpMul>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("/"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpDiv>(left, right));
+				<ExprBinOpDiv>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("%"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpMod>(left, right));
+				<ExprBinOpMod>(SrcCodePos(ctx), left, right));
 		}
 		else
 		{
@@ -533,32 +533,32 @@ VisitorRetType Compiler::visitExprAddSub
 		if (tok == dup_str("&"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitAnd>(left, right));
+				<ExprBinOpBitAnd>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("|"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitOr>(left, right));
+				<ExprBinOpBitOr>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("^"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitXor>(left, right));
+				<ExprBinOpBitXor>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str("<<"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitLsl>(left, right));
+				<ExprBinOpBitLsl>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str(">>"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitLsr>(left, right));
+				<ExprBinOpBitLsr>(SrcCodePos(ctx), left, right));
 		}
 		else if (tok == dup_str(">>>"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitAsr>(left, right));
+				<ExprBinOpBitAsr>(SrcCodePos(ctx), left, right));
 		}
 		else
 		{
@@ -608,7 +608,7 @@ VisitorRetType Compiler::visitExprPlusUnary
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpPlus>
-		(_stacks.pop_expr()));
+		(SrcCodePos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -617,7 +617,7 @@ VisitorRetType Compiler::visitExprMinusUnary
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpMinus>
-		(_stacks.pop_expr()));
+		(SrcCodePos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -626,7 +626,7 @@ VisitorRetType Compiler::visitExprLogNot
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpLogNot>
-		(_stacks.pop_expr()));
+		(SrcCodePos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -635,7 +635,7 @@ VisitorRetType Compiler::visitExprBitNot
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpBitNot>
-		(_stacks.pop_expr()));
+		(SrcCodePos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -644,7 +644,7 @@ VisitorRetType Compiler::visitExprCastUnsigned
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
-		<ExprUnOpCastUnsigned>(_stacks.pop_expr()));
+		<ExprUnOpCastUnsigned>(SrcCodePos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -653,7 +653,7 @@ VisitorRetType Compiler::visitExprCastSigned
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
-		<ExprUnOpCastSigned>(_stacks.pop_expr()));
+		<ExprUnOpCastSigned>(SrcCodePos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -668,8 +668,8 @@ VisitorRetType Compiler::visitNumExpr
 
 		const auto size = _default_hard_coded_num_size();
 
-		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
-			false);
+		return ExpressionBuilder::make_expr_hc_num(SrcCodePos(ctx), value,
+			size.get_ui(), false);
 	}
 	else if (ctx->sizedNumExpr())
 	{
@@ -677,8 +677,8 @@ VisitorRetType Compiler::visitNumExpr
 		const auto value = _stacks.pop_big_num();
 		const auto size = _stacks.pop_big_num();
 
-		return ExpressionBuilder::make_expr_hc_num(value, size.get_ui(),
-			false);
+		return ExpressionBuilder::make_expr_hc_num(SrcCodePos(ctx), value,
+			size.get_ui(), false);
 	}
 	else
 	{
@@ -757,18 +757,30 @@ VisitorRetType Compiler::visitIdentExpr
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident = _stacks.pop_str();
+
+		Symbol* s_symbol = nullptr;
+
+		Expression* to_push = nullptr;
+
 		switch (pass())
 		{
-		////case Pass::FrostListPackages:
 		//case Pass::FrostConstructRawPackages:
 		//	break;
 
 
 		//case Pass::FrostListModules:
 		case Pass::FrostConstructRawModules:
+			if (_frost_program().curr_frost_module->contains_symbol(ident))
+			{
+				//save_expr(ExprIdentName(_frost_program().curr_frost_module
+			}
+			break;
+
+		default:
 			break;
 		}
 	}
+
 	//else if(ctx->scopedIdentName())
 	//{
 	//	ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
@@ -839,7 +851,7 @@ void Compiler::_insert_module_port_var(antlr4::ParserRuleContext* ctx,
 	}
 
 	auto s_frost_full_type = save_frost_full_type(FrostFullType
-		(s_frost_lhs_type));
+		(SrcCodePos(ctx), s_frost_lhs_type));
 
 	symbol_table->insert_or_assign(save_symbol(Symbol(SrcCodePos(ctx),
 		s_ident, s_port_type, s_frost_full_type)));

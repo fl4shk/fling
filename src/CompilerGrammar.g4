@@ -165,6 +165,7 @@ numExpr:
 
 
 rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
+// Yes, this is done with the parser instead of the lexer.
 sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 
