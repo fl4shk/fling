@@ -78,17 +78,12 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	switch (pass())
 	{
 	//case Pass::FrostListPackages:
-	//case Pass::FrostExpandPackages:
+	//case Pass::FrostConstructRawPackages:
 	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
 	//	break;
 
-	//case Pass::FrostListInterfaces:
-	//case Pass::FrostExpandInterfaces:
-	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declInterface());
-	//	break;
-
 	case Pass::FrostListModules:
-	case Pass::FrostExpandModules:
+	case Pass::FrostConstructRawModules:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
@@ -343,7 +338,7 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		_frost_program().frost_module_table.insert_or_assign
 			(_frost_program().curr_frost_module);
 	}
-	else if (pass() == Pass::FrostExpandModules)
+	else if (pass() == Pass::FrostConstructRawModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident_name = _stacks.pop_str();
@@ -765,15 +760,12 @@ VisitorRetType Compiler::visitIdentExpr
 		switch (pass())
 		{
 		////case Pass::FrostListPackages:
-		//case Pass::FrostExpandPackages:
+		//case Pass::FrostConstructRawPackages:
 		//	break;
 
-		////case Pass::FrostListInterfaces:
-		//case Pass::FrostExpandInterfaces:
-		//	break;
 
 		//case Pass::FrostListModules:
-		case Pass::FrostExpandModules:
+		case Pass::FrostConstructRawModules:
 			break;
 		}
 	}
