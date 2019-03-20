@@ -27,26 +27,35 @@ FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 {
 }
 
-bool FrostFullType::operator == (const FrostFullType& other) const
+//bool FrostFullType::operator == (const FrostFullType& other) const
+//{
+//	// The addresses of two "FrostLhsType"s *must* be the same in all
+//	// cases for them to be the same researcher, even for built-in
+//	// "FrostLhsType"s.
+//	// 
+//	// This is stronger type checking than SystemVerilog has.
+//	if (_frost_lhs_type == other._frost_lhs_type)
+//	{
+//		if (_right_dim_expr == other._right_dim_expr)
+//		{
+//			return true;
+//		}
+//		else if (is_array() && other.is_array()
+//			&& (_right_dim_expr->value()
+//			== other._right_dim_expr->value()))
+//		{
+//			return true;
+//		}
+//		return false;
+//	}
+//	return false;
+//}
+
+
+bool FrostFullType::is_same_rhs_type(const FrostFullType& other) const
 {
-	// The addresses of two "FrostLhsType"s *must* be the same in all
-	// cases for them to be the same researcher, even for built-in
-	// "FrostLhsType"s.
-	if (_frost_lhs_type == other._frost_lhs_type)
-	{
-		if (_right_dim_expr == other._right_dim_expr)
-		{
-			return true;
-		}
-		else if (is_array() && other.is_array()
-			&& (_right_dim_expr->value()
-			== other._right_dim_expr->value()))
-		{
-			return true;
-		}
-		return false;
-	}
-	return false;
+	return ((is_array() == other.is_array())
+		&& (right_dim_expr()->value() == other.right_dim_expr()->value()));
 }
 
 size_t FrostFullType::right_dim() const

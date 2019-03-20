@@ -126,6 +126,11 @@ public:		// functions
 
 	//bool operator == (const FrostLhsType& other) const;
 
+	bool is_same_builtin_strict_signedness(const FrostLhsType& other)
+		const;
+	bool is_same_builtin_ignore_signedness(const FrostLhsType& other)
+		const;
+
 
 
 	inline bool can_be_parameterized() const

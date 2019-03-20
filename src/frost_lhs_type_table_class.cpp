@@ -83,6 +83,19 @@ FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
 	_left_dim_expr = nullptr;
 }
 
+bool FrostLhsType::is_same_builtin_strict_signedness
+	(const FrostLhsType& other) const
+{
+	return (is_same_builtin_ignore_signedness(other)
+		&& (is_signed() == other.is_signed()));
+}
+bool FrostLhsType::is_same_builtin_ignore_signedness
+	(const FrostLhsType& other) const
+{
+	return (is_builtin() && other.is_builtin()
+		&& (left_dim() == other.left_dim()));
+}
+
 //bool FrostLhsType::operator == (const FrostLhsType& other) const
 //{
 //	switch (component_type())

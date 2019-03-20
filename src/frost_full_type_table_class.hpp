@@ -35,7 +35,21 @@ public:		// functions
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFullType);
 	virtual ~FrostFullType() = default;
 
-	bool operator == (const FrostFullType& other) const;
+	//bool operator == (const FrostFullType& other) const;
+
+	inline bool is_same_builtin_strict_signedness
+		(const FrostFullType& other) const
+	{
+		return (frost_lhs_type()->is_same_builtin_ignore_signedness
+			(*other.frost_lhs_type()) && is_same_rhs_type(other));
+	}
+	inline bool is_same_builtin_ignore_signedness
+		(const FrostFullType& other) const
+	{
+		return (frost_lhs_type()->is_same_builtin_ignore_signedness
+			(*other.frost_lhs_type()) && is_same_rhs_type(other));
+	}
+	bool is_same_rhs_type(const FrostFullType& other) const;
 
 	inline bool is_array() const
 	{
