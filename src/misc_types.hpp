@@ -9,7 +9,6 @@
 
 namespace frost_hdl
 {
-
 class Symbol;
 class Expression;
 
@@ -19,6 +18,42 @@ typedef OrderedIdentToPointerTable<Symbol> ListVars;
 // are evaluated.
 SavedString construct_initial_type_ident_from_dim(SavedString base_ident,
 	Expression* some_dim_expr);
+
+// Used for error reporting during semantic analysis.
+// Many, many things use this.
+class SrcCodePos
+{
+private:		// variables
+	antlr4::ParserRuleContext* _ctx = nullptr;
+	size_t _src_line = 0, _src_pos_in_line = 0;
+
+public:		// functions
+	SrcCodePos();
+	explicit SrcCodePos(antlr4::ParserRuleContext* s_ctx);
+
+	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
+
+	virtual ~SrcCodePos();
+
+	inline void err(const std::string& msg) const
+	{
+		printerr("Error on line ", _src_line, ", position ",
+			_src_pos_in_line, ":  ", msg, "\n");
+		exit(1);
+	}
+	inline void warn(const std::string& msg) const
+	{
+		printerr("Warning on line ", _src_line, ", position ",
+			_src_pos_in_line, ":  ", msg, "\n");
+	}
+
+
+	GEN_GETTER_BY_VAL(ctx)
+	GEN_GETTER_BY_VAL(src_line)
+	GEN_GETTER_BY_VAL(src_pos_in_line)
+};
+
 
 class ReplaceSymsMap
 {
@@ -67,39 +102,6 @@ public:		// functions
 
 
 
-// Used for error reporting during semantic analysis.
-// Many, many things use this.
-class SrcCodePos
-{
-private:		// variables
-	antlr4::ParserRuleContext* _ctx = nullptr;
-	size_t _src_line = 0, _src_pos_in_line = 0;
-
-public:		// functions
-	SrcCodePos();
-	explicit SrcCodePos(antlr4::ParserRuleContext* s_ctx);
-
-	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
-
-	virtual ~SrcCodePos();
-
-	inline void err(const std::string& msg) const
-	{
-		printerr("Error on line ", _src_line, ", position ",
-			_src_pos_in_line, ":  ", msg, "\n");
-		exit(1);
-	}
-	inline void warn(const std::string& msg) const
-	{
-		printerr("Warning on line ", _src_line, ", position ",
-			_src_pos_in_line, ":  ", msg, "\n");
-	}
-
-
-	GEN_GETTER_BY_VAL(src_line)
-	GEN_GETTER_BY_VAL(src_pos_in_line)
-};
 
 } // namespace frost_hdl
 

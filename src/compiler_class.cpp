@@ -254,6 +254,7 @@ VisitorRetType Compiler::visitDeclPortVarList
 	for (auto iter : ctx->identName())
 	{
 		ANY_JUST_ACCEPT_BASIC(iter);
+		_stacks.push_src_code_pos(SrcCodePos(iter));
 	}
 
 
@@ -271,8 +272,8 @@ VisitorRetType Compiler::visitDeclPortInputVarList
 
 	for (size_t i=0; i<num_ident_names; ++i)
 	{
-		_insert_module_port_var(ctx, _stacks.pop_str(),
-			Symbol::PortType::Input, frost_lhs_type);
+		_insert_module_port_var(_stacks.pop_src_code_pos(),
+			_stacks.pop_str(), Symbol::PortType::Input, frost_lhs_type);
 	}
 
 	return nullptr;
@@ -288,8 +289,8 @@ VisitorRetType Compiler::visitDeclPortOutputVarList
 
 	for (size_t i=0; i<num_ident_names; ++i)
 	{
-		_insert_module_port_var(ctx, _stacks.pop_str(),
-			Symbol::PortType::Output, frost_lhs_type);
+		_insert_module_port_var(_stacks.pop_src_code_pos(),
+			_stacks.pop_str(), Symbol::PortType::Output, frost_lhs_type);
 	}
 
 	return nullptr;
@@ -305,8 +306,8 @@ VisitorRetType Compiler::visitDeclPortInoutVarList
 
 	for (size_t i=0; i<num_ident_names; ++i)
 	{
-		_insert_module_port_var(ctx, _stacks.pop_str(),
-			Symbol::PortType::Inout, frost_lhs_type);
+		_insert_module_port_var(_stacks.pop_src_code_pos(),
+			_stacks.pop_str(), Symbol::PortType::Inout, frost_lhs_type);
 	}
 
 	return nullptr;
@@ -816,7 +817,7 @@ VisitorRetType Compiler::visitScopedIdentName
 	return nullptr;
 }
 
-void Compiler::_insert_module_port_var(antlr4::ParserRuleContext* ctx,
+void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, Symbol::PortType s_port_type,
 	FrostLhsType* s_frost_lhs_type)
 {
@@ -824,7 +825,7 @@ void Compiler::_insert_module_port_var(antlr4::ParserRuleContext* ctx,
 
 	if (module->contains_symbol(s_ident))
 	{
-		_err(ctx, sconcat("Module \"", module->ident(), 
+		_err(s_src_code_pos, sconcat("Module \"", module->ident(), 
 			"\" already has a port variable with identifier \"", s_ident,
 			"\"."));
 	}
@@ -846,14 +847,14 @@ void Compiler::_insert_module_port_var(antlr4::ParserRuleContext* ctx,
 		break;
 
 	default:
-		_err(ctx, "Compiler::_insert_module_port_var():  Eek!");
+		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  Eek!");
 		break;
 	}
 
 	auto s_frost_full_type = save_frost_full_type(FrostFullType
-		(SrcCodePos(ctx), s_frost_lhs_type));
+		(s_src_code_pos, s_frost_lhs_type));
 
-	symbol_table->insert_or_assign(save_symbol(Symbol(SrcCodePos(ctx),
+	symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
 		s_ident, s_port_type, s_frost_full_type)));
 }
 

@@ -50,7 +50,9 @@ public:		// types
 		//FrostListInterfaces,
 		//FrostConstructRawInterfaces,
 
+
 		// List "module"s, their "parameter"s, and their ports.
+		// (FUTURE:  Add "interface" "modport" stuff here.)
 		FrostListModules,
 
 		// Construct raw modules (such that "parameter"s are not yet
@@ -69,6 +71,7 @@ private:		// variables
 		X(BigNum, const BigNum&, big_num) \
 		X(SmallNum, SmallNum, small_num) \
 		X(SavedString, SavedString, str) \
+		X(SrcCodePos, SrcCodePos, src_code_pos) \
 		X(Expression*, Expression*, expr) \
 		X(Symbol*, Symbol*, sym) \
 		X(FrostLhsType*, FrostLhsType*, lhs_type) \
@@ -145,6 +148,11 @@ private:		// functions
 		}
 		exit(1);
 	}
+	inline void _err(const SrcCodePos& src_code_pos,
+		const std::string& msg)
+	{
+		_err(src_code_pos.ctx(), msg);
+	}
 	inline void _err(const std::string& msg)
 	{
 		//printerr("Error in file \"", *_file_name, "\":  ", msg, "\n");
@@ -167,6 +175,11 @@ private:		// functions
 			printerr("Warning on line ", line, ", position ", pos_in_line, 
 				":  ", msg, "\n");
 		}
+	}
+	inline void _warn(const SrcCodePos& src_code_pos,
+		const std::string& msg)
+	{
+		_warn(src_code_pos.ctx(), msg);
 	}
 	inline void _warn(const std::string& msg)
 	{
@@ -286,7 +299,7 @@ private:		// visitor functions
 	VisitorRetType visitScopedIdentName
 		(Parser::ScopedIdentNameContext *ctx);
 private:		// functions
-	void _insert_module_port_var(antlr4::ParserRuleContext* ctx,
+	void _insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		SavedString s_ident, Symbol::PortType s_port_type,
 		FrostLhsType* s_frost_lhs_type);
 };
