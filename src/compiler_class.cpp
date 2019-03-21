@@ -38,9 +38,10 @@ namespace frost_hdl
 
 typedef Compiler::VisitorRetType VisitorRetType;
 
-Compiler::Compiler(Parser& parser)
+Compiler::Compiler(ListParsedSrcCode&& s_list_parsed_src_code)
+	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
-	_program_ctx = parser.program();
+	//_program_ctx = parser.program();
 }
 Compiler::~Compiler()
 {
@@ -50,7 +51,11 @@ int Compiler::run()
 {
 	while (pass() < Pass::Done)
 	{
-		visitProgram(_program_ctx);
+		//visitProgram(_program_ctx);
+		for (const auto& parsed_src_code : _list_parsed_src_code)
+		{
+			visitProgram(parsed_src_code->parser()->program());
+		}
 		set_pass(static_cast<Pass>(static_cast<PassUint>(pass())
 			+ static_cast<PassUint>(1)));
 	}
@@ -859,7 +864,7 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 			->src_code_pos().convert_to_errwarn_string();
 		if (module->parameter_vars().contains(s_ident))
 		{
-			_err(s_src_code_pos, sconcat("Module \"", module->ident(),
+			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
 				"\" already has a parameter with identifier \"", *s_ident,
 				"\" on ", errwarn_string, "."));
 		}

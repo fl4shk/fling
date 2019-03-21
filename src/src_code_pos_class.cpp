@@ -24,8 +24,7 @@ SrcCodePos::~SrcCodePos()
 
 std::string SrcCodePos::convert_to_errwarn_string() const
 {
-	return sconcat("line ", _src_line, ", position ",
-		_src_pos_in_line);
+	return sconcat("line ", _src_line, ", position ", _src_pos_in_line);
 }
 
 } // namespace frost_hdl

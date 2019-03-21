@@ -4,13 +4,8 @@
 // src/compiler_class.hpp
 
 #include "misc_includes.hpp"
-#include <ANTLRErrorListener.h>
-#include "gen_src/CompilerGrammarLexer.h"
-#include "gen_src/CompilerGrammarParser.h"
-#include "gen_src/CompilerGrammarVisitor.h"
+#include "parsed_src_code_class.hpp"
 
-
-//#include "frost_module_table_class.hpp"
 #include "frost_program_class.hpp"
 
 namespace frost_hdl
@@ -19,10 +14,14 @@ namespace frost_hdl
 class Compiler : public CompilerGrammarVisitor
 {
 public:		// types
+	typedef CompilerGrammarParser Parser;
+
+	typedef std::vector<std::unique_ptr<ParsedSrcCode>> ListParsedSrcCode;
+
+
 	typedef antlr4::ParserRuleContext ParserRuleContext;
 
 	typedef antlrcpp::Any VisitorRetType;
-	typedef CompilerGrammarParser Parser;
 
 	// Please excuse me calling something with "max" in its name "Small".
 	// In comparison to "BigNum"s, these actually *are* small.
@@ -112,7 +111,10 @@ private:		// variables
 
 
 
-	Parser::ProgramContext* _program_ctx = nullptr;
+	//Parser::ProgramContext* _program_ctx = nullptr;
+
+
+	ListParsedSrcCode _list_parsed_src_code;
 
 	Pass _pass = static_cast<Pass>(0);
 
@@ -123,7 +125,7 @@ private:		// variables
 
 
 public:		// functions
-	Compiler(Parser& parser);
+	Compiler(ListParsedSrcCode&& s_list_parsed_src_code);
 	virtual ~Compiler();
 	int run();
 
@@ -141,7 +143,7 @@ private:		// functions
 			auto tok = ctx->getStart();
 			const size_t line = tok->getLine();
 			const size_t pos_in_line = tok->getCharPositionInLine();
-			//printerr("Error in file \"", *_file_name, "\", on line ",
+			//printerr("Error in file \"", *_filename, "\", on line ",
 			//	line, ", position ", pos_in_line, ":  ", msg, "\n");
 			printerr("Error on line ", line, ", position ", pos_in_line, 
 				":  ", msg, "\n");
@@ -155,7 +157,7 @@ private:		// functions
 	}
 	inline void _err(const std::string& msg)
 	{
-		//printerr("Error in file \"", *_file_name, "\":  ", msg, "\n");
+		//printerr("Error in file \"", *_filename, "\":  ", msg, "\n");
 		printerr("Error:  ", msg, "\n");
 		exit(1);
 	}
@@ -170,7 +172,7 @@ private:		// functions
 			auto tok = ctx->getStart();
 			const size_t line = tok->getLine();
 			const size_t pos_in_line = tok->getCharPositionInLine();
-			//printerr("Error in file \"", *_file_name, "\", on line ",
+			//printerr("Error in file \"", *_filename, "\", on line ",
 			//	line, ", position ", pos_in_line, ":  ", msg, "\n");
 			printerr("Warning on line ", line, ", position ", pos_in_line, 
 				":  ", msg, "\n");
