@@ -673,8 +673,8 @@ VisitorRetType Compiler::visitNumExpr
 
 		const auto size = _default_hard_coded_num_size();
 
-		return ExpressionBuilder::make_expr_hc_num(SrcCodePos(ctx), value,
-			size.get_ui(), false);
+		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
+			(SrcCodePos(ctx), value, size.get_ui(), false));
 	}
 	else if (ctx->sizedNumExpr())
 	{
@@ -682,8 +682,8 @@ VisitorRetType Compiler::visitNumExpr
 		const auto value = _stacks.pop_big_num();
 		const auto size = _stacks.pop_big_num();
 
-		return ExpressionBuilder::make_expr_hc_num(SrcCodePos(ctx), value,
-			size.get_ui(), false);
+		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
+			(SrcCodePos(ctx), value, size.get_ui(), false));
 	}
 	else
 	{
@@ -804,6 +804,14 @@ VisitorRetType Compiler::visitIdentExpr
 
 	//	// What package does this identifier come from?
 	//	auto scope_ident = _stacks.pop_str();
+
+	//	auto package = _frost_program().curr_frost_package;
+
+	//	switch (pass())
+	//	{
+	//	default:
+	//		break;
+	//	}
 	//}
 	else
 	{
@@ -830,21 +838,40 @@ VisitorRetType Compiler::visitScopedIdentName
 	return nullptr;
 }
 
+
 void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, Symbol::PortType s_port_type,
 	FrostLhsType* s_frost_lhs_type)
 {
+	// Call this ONLY if (pass() == Compiler::Pass::FrostListModules)
+	if (pass() != Compiler::Pass::FrostListModules)
+	{
+		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  "
+			"pass() Eek!");
+	}
+
+	// I am lazy.
 	auto module = _frost_program().curr_frost_module;
 
 	if (module->contains_symbol(s_ident))
 	{
 		auto&& errwarn_string = module->find_symbol(s_ident)
 			->src_code_pos().convert_to_errwarn_string();
-		_err(s_src_code_pos, sconcat("Module \"", *module->ident(), 
-			"\" already has a port variable with identifier \"", *s_ident,
-			"\" on ", errwarn_string, "."));
+		if (module->parameter_vars().contains(s_ident))
+		{
+			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
+				"\" already has a parameter with identifier \"", *s_ident,
+				"\" on ", errwarn_string, "."));
+		}
+		else // if (not a parameter)
+		{
+			_err(s_src_code_pos, sconcat("Module \"", *module->ident(), 
+				"\" already has a port variable with identifier \"",
+				*s_ident, "\" on ", errwarn_string, "."));
+		}
 	}
 
+	// Again, I am lazy.
 	SymbolTable* symbol_table = nullptr;
 
 	switch (s_port_type)
@@ -862,7 +889,8 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		break;
 
 	default:
-		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  Eek!");
+		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  "
+			"PortType Eek!");
 		break;
 	}
 

@@ -24,7 +24,7 @@ lhsTypeName:
 
 lhsBuiltinTypeName:
 	TokKwLogic ((TokKwUnsigned | TokKwSigned)?)
-		((TokLBracket expr TokRBracket)?)
+		(('[' expr ']')?)
 	;
 
 // custom type name from the current scope, be it a module or a package.
@@ -42,10 +42,12 @@ lhsScopedCstmTypeName:
 
 // Array dimensions go here
 declNoLhsTypeVar:
-	identName ((TokLBracket expr TokRBracket)?)
+	identName (('[' expr ']')?)
 	;
 
-// List of local variables
+// List of local variables.
+// (FUTURE:  The current scope's type will be important once custom types
+// are added in.)
 declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
@@ -68,8 +70,11 @@ declPortInoutVarList:
 	;
 
 
+//declParameterVar:
+//	identName ((TokAssign expr)?)
+//	;
 //declParameterVarList:
-//	declParameterVar ((TokComma declParameterVar)*)
+//	declParameterVar ((',' declParameterVar)*)
 //	;
 
 
@@ -80,17 +85,17 @@ declModule:
 		//((TokKwParameter TokLParen declParameterVarList TokRParen)?)
 
 		// ports
-		TokLParen
+		'('
 			// FUTURE:  allow "interface" "modport"s here
 			((declPortInputVarList | declPortOutputVarList
 				| declPortInoutVarList)
 				((',' (declPortInputVarList | declPortOutputVarList
 				| declPortInoutVarList))*))
-		TokRParen
+		')'
 
-	TokLBrace
+	'{'
 		moduleInsides
-	TokRBrace
+	'}'
 	;
 
 
@@ -98,8 +103,8 @@ declModule:
 
 moduleInsides:
 	(
-		declVarList TokSemicolon
-		| moduleStmtAssign TokSemicolon
+		declVarList ';'
+		| moduleStmtAssign ';'
 		//| moduleStmtInitial
 		//| moduleStmtAlwaysComb
 		//| moduleStmtAlwaysSeq
@@ -139,7 +144,7 @@ exprMulDivModEtc:
 	exprUnary
 	| numExpr
 	| identExpr
-	| TokLParen expr TokRParen
+	| '(' expr ')'
 	;
 
 exprUnary:
@@ -157,9 +162,9 @@ exprPlusUnary: TokPlus expr ;
 exprMinusUnary: TokMinus expr ;
 exprLogNot: TokExclamPoint expr ;
 exprBitNot: TokBitInvert expr ;
-exprCastUnsigned: TokKwDollarUnsigned TokLParen expr TokRParen ;
-exprCastSigned: TokKwDollarSigned TokLParen expr TokRParen ;
-//exprClog2: TokKwDollarClog2 TokLParen expr TokRParen ;
+exprCastUnsigned: TokKwDollarUnsigned '(' expr ')' ;
+exprCastSigned: TokKwDollarSigned '(' expr ')' ;
+//exprClog2: TokKwDollarClog2 '(' expr ')' ;
 
 
 numExpr:
@@ -177,7 +182,10 @@ rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
 //
 // 0x3        ' 9
 //
-// Also, signed hard-coded numbers are *not* properly handled here.
+// Also, signed hard-coded numbers are *not* properly handled here, so you
+// are forced to do "$signed(...)" instead of "...'s...".  The lexer would
+// have to be more heavily involved here if signed, hard-coded numbers were
+// to be allowed with Verilog-style syntax.
 sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 
@@ -199,7 +207,7 @@ scopedIdentName: identName TokScope identName;
 // catch more (all?) syntax errors.
 // So that means no raw '...' stuff in the parser rules.
 LexWhitespace: (' ' | '\t' | '\n' ) -> skip ;
-LexLineComment: ('//' | ';') (~ '\n')* -> skip ;
+LexLineComment: '//' (~ '\n')* -> skip ;
 
 // Expressions
 TokOpLogical: ('&&' | '||') ;
