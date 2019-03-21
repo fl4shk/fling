@@ -54,6 +54,8 @@ int Compiler::run()
 		//visitProgram(_program_ctx);
 		for (const auto& parsed_src_code : _list_parsed_src_code)
 		{
+			//_curr_parsed_src_code = &parsed_src_code;
+			_curr_filename = parsed_src_code->filename();
 			visitProgram(parsed_src_code->parser()->program());
 		}
 		set_pass(static_cast<Pass>(static_cast<PassUint>(pass())

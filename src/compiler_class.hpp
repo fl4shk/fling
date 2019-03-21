@@ -114,6 +114,8 @@ private:		// variables
 	//Parser::ProgramContext* _program_ctx = nullptr;
 
 
+	//ParsedSrcCode* _curr_parsed_src_code;
+	SavedString _curr_filename;
 	ListParsedSrcCode _list_parsed_src_code;
 
 	Pass _pass = static_cast<Pass>(0);
