@@ -115,7 +115,7 @@ private:		// variables
 
 
 	//ParsedSrcCode* _curr_parsed_src_code;
-	SavedString _curr_filename;
+	SavedString _curr_filename = nullptr;
 	ListParsedSrcCode _list_parsed_src_code;
 
 	Pass _pass = static_cast<Pass>(0);
@@ -142,20 +142,22 @@ private:		// functions
 		}
 		else
 		{
-			auto tok = ctx->getStart();
-			const size_t line = tok->getLine();
-			const size_t pos_in_line = tok->getCharPositionInLine();
-			//printerr("Error in file \"", *_filename, "\", on line ",
-			//	line, ", position ", pos_in_line, ":  ", msg, "\n");
-			printerr("Error on line ", line, ", position ", pos_in_line, 
-				":  ", msg, "\n");
+			//auto tok = ctx->getStart();
+			//const size_t line = tok->getLine();
+			//const size_t pos_in_line = tok->getCharPositionInLine();
+			////printerr("Error in file \"", *_filename, "\", on line ",
+			////	line, ", position ", pos_in_line, ":  ", msg, "\n");
+			//printerr("Error on line ", line, ", position ", pos_in_line, 
+			//	":  ", msg, "\n");
+			_err(_make_src_code_pos(ctx), msg);
 		}
 		exit(1);
 	}
 	inline void _err(const SrcCodePos& src_code_pos,
 		const std::string& msg)
 	{
-		_err(src_code_pos.ctx(), msg);
+		//_err(src_code_pos.ctx(), msg);
+		src_code_pos.err(msg);
 	}
 	inline void _err(const std::string& msg)
 	{
@@ -167,23 +169,25 @@ private:		// functions
 	{
 		if (ctx == nullptr)
 		{
-			printerr("Error:  ", msg, "\n");
+			printerr("Warning:  ", msg, "\n");
 		}
 		else
 		{
-			auto tok = ctx->getStart();
-			const size_t line = tok->getLine();
-			const size_t pos_in_line = tok->getCharPositionInLine();
-			//printerr("Error in file \"", *_filename, "\", on line ",
-			//	line, ", position ", pos_in_line, ":  ", msg, "\n");
-			printerr("Warning on line ", line, ", position ", pos_in_line, 
-				":  ", msg, "\n");
+			//auto tok = ctx->getStart();
+			//const size_t line = tok->getLine();
+			//const size_t pos_in_line = tok->getCharPositionInLine();
+			////printerr("Error in file \"", *_filename, "\", on line ",
+			////	line, ", position ", pos_in_line, ":  ", msg, "\n");
+			//printerr("Warning on line ", line, ", position ", pos_in_line, 
+			//	":  ", msg, "\n");
+			_warn(_make_src_code_pos(ctx), msg);
 		}
 	}
 	inline void _warn(const SrcCodePos& src_code_pos,
 		const std::string& msg)
 	{
-		_warn(src_code_pos.ctx(), msg);
+		//_warn(src_code_pos.ctx(), msg);
+		src_code_pos.warn(msg);
 	}
 	inline void _warn(const std::string& msg)
 	{

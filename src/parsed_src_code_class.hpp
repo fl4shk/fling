@@ -27,7 +27,7 @@ private:		// variables
 public:		// functions
 	ParsedSrcCode();
 
-	ParsedSrcCode(SavedString s_filename);
+	ParsedSrcCode(const std::string& s_filename);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ParsedSrcCode);
 	virtual ~ParsedSrcCode();

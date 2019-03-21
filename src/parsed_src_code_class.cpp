@@ -8,7 +8,7 @@ ParsedSrcCode::ParsedSrcCode()
 {
 }
 
-ParsedSrcCode::ParsedSrcCode(SavedString s_filename)
+ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 {
 	//antlr4::ANTLRInputStream input(from_stdin);
 	//CompilerGrammarLexer lexer(&input);
@@ -21,7 +21,7 @@ ParsedSrcCode::ParsedSrcCode(SavedString s_filename)
 	//	compiler_error_listener(new frost_hdl::CompilerErrorListener());
 	//parser.addErrorListener(compiler_error_listener.get());
 
-	_filename = s_filename;
+	_filename = dup_str(s_filename);
 
 	std::ifstream fstm(*filename());
 

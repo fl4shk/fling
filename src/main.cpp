@@ -24,15 +24,21 @@ int main(int argc, char** argv)
 
 	////frost_hdl::test_implemented_expressions(std::cout);
 
-	auto usage = [&]() -> void
-	{
-		printerr("Usage:  ", argv[0], " <source_files>\n");
-		exit(1);
-	};
-
+	// We need at least *one* source file.
 	if (argc < 2)
 	{
-		usage();
+		printerr("Usage:  ", argv[0], " <source_files>\n");
 	}
+
+	frost_hdl::Compiler::ListParsedSrcCode s_list_parsed_src_code;
+
+	for (int i=0; i<argc; ++i)
+	{
+		s_list_parsed_src_code.push_back(std::unique_ptr<frost_hdl
+			::ParsedSrcCode>(new frost_hdl::ParsedSrcCode(argv[i])));
+	}
+
+	frost_hdl::Compiler visitor(std::move(s_list_parsed_src_code));
+	return visitor.run();
 
 }
