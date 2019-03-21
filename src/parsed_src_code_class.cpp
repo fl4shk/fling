@@ -1,4 +1,5 @@
 #include "parsed_src_code_class.hpp"
+#include <fstream>
 
 namespace frost_hdl
 {
@@ -22,7 +23,10 @@ ParsedSrcCode::ParsedSrcCode(SavedString s_filename)
 
 	_filename = s_filename;
 
-	_input_stream.reset(new antlr4::ANTLRInputStream(*filename()));
+	std::ifstream fstm(*filename());
+
+	_input_stream.reset(new antlr4::ANTLRInputStream(get_istream_as_str
+		(fstm)));
 	_lexer.reset(new CompilerGrammarLexer(&(*_input_stream)));
 	_tokens.reset(new antlr4::CommonTokenStream(&(*_lexer)));
 	_tokens->fill();

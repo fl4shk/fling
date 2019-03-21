@@ -24,4 +24,15 @@ int main(int argc, char** argv)
 
 	////frost_hdl::test_implemented_expressions(std::cout);
 
+	auto usage = [&]() -> void
+	{
+		printerr("Usage:  ", argv[0], " <source_files>\n");
+		exit(1);
+	};
+
+	if (argc < 2)
+	{
+		usage();
+	}
+
 }
