@@ -60,6 +60,7 @@ int Compiler::run()
 		}
 		set_pass(static_cast<Pass>(static_cast<PassUint>(pass())
 			+ static_cast<PassUint>(1)));
+		set_subpass(0);
 	}
 
 	return 0;
@@ -163,9 +164,9 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 
 	// "ctx->TokKwUnsigned()" is only for those who want to be pedantic.
 
-	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType(SrcCodePos(ctx),
-		dup_str(s_ident), (ctx->TokKwSigned() != nullptr),
-		s_left_dim_expr)));
+	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType
+		(_make_src_code_pos(ctx), dup_str(s_ident),
+		(ctx->TokKwSigned() != nullptr), s_left_dim_expr)));
 	return nullptr;
 }
 
@@ -261,7 +262,7 @@ VisitorRetType Compiler::visitDeclPortVarList
 	for (auto iter : ctx->identName())
 	{
 		ANY_JUST_ACCEPT_BASIC(iter);
-		_stacks.push_src_code_pos(SrcCodePos(iter));
+		_stacks.push_src_code_pos(_make_src_code_pos(iter));
 	}
 
 
@@ -336,7 +337,7 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		}
 
 		_frost_program().curr_frost_module = save_frost_module(FrostModule
-			(SrcCodePos(ctx), ident_name));
+			(_make_src_code_pos(ctx), ident_name));
 
 		// Process ports of this module
 		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInputVarList())
@@ -392,12 +393,12 @@ VisitorRetType Compiler::visitExpr
 		if (tok == dup_str("&&"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpLogAnd>(SrcCodePos(ctx), left, right));
+				<ExprBinOpLogAnd>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("||"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpLogOr>(SrcCodePos(ctx), left, right));
+				<ExprBinOpLogOr>(_make_src_code_pos(ctx), left, right));
 		}
 		else
 		{
@@ -427,32 +428,32 @@ VisitorRetType Compiler::visitExprLogical
 		if (tok == dup_str("=="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpEq>(SrcCodePos(ctx), left, right));
+				<ExprBinOpCmpEq>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("!="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpNe>(SrcCodePos(ctx), left, right));
+				<ExprBinOpCmpNe>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("<"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpLt>(SrcCodePos(ctx), left, right));
+				<ExprBinOpCmpLt>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str(">"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpGt>(SrcCodePos(ctx), left, right));
+				<ExprBinOpCmpGt>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("<="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpLe>(SrcCodePos(ctx), left, right));
+				<ExprBinOpCmpLe>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str(">="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpCmpGe>(SrcCodePos(ctx), left, right));
+				<ExprBinOpCmpGe>(_make_src_code_pos(ctx), left, right));
 		}
 		else
 		{
@@ -477,7 +478,7 @@ VisitorRetType Compiler::visitExprCompare
 		auto right = _stacks.pop_expr();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_binop
-			<ExprBinOpPlus>(SrcCodePos(ctx), left, right));
+			<ExprBinOpPlus>(_make_src_code_pos(ctx), left, right));
 	}
 	else if (ctx->TokMinus())
 	{
@@ -488,7 +489,7 @@ VisitorRetType Compiler::visitExprCompare
 		auto right = _stacks.pop_expr();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_binop
-			<ExprBinOpMinus>(SrcCodePos(ctx), left, right));
+			<ExprBinOpMinus>(_make_src_code_pos(ctx), left, right));
 	}
 	else
 	{
@@ -513,17 +514,17 @@ VisitorRetType Compiler::visitExprAddSub
 		if (tok == dup_str("*"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpMul>(SrcCodePos(ctx), left, right));
+				<ExprBinOpMul>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("/"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpDiv>(SrcCodePos(ctx), left, right));
+				<ExprBinOpDiv>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("%"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpMod>(SrcCodePos(ctx), left, right));
+				<ExprBinOpMod>(_make_src_code_pos(ctx), left, right));
 		}
 		else
 		{
@@ -544,32 +545,32 @@ VisitorRetType Compiler::visitExprAddSub
 		if (tok == dup_str("&"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitAnd>(SrcCodePos(ctx), left, right));
+				<ExprBinOpBitAnd>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("|"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitOr>(SrcCodePos(ctx), left, right));
+				<ExprBinOpBitOr>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("^"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitXor>(SrcCodePos(ctx), left, right));
+				<ExprBinOpBitXor>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str("<<"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitLsl>(SrcCodePos(ctx), left, right));
+				<ExprBinOpBitLsl>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str(">>"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitLsr>(SrcCodePos(ctx), left, right));
+				<ExprBinOpBitLsr>(_make_src_code_pos(ctx), left, right));
 		}
 		else if (tok == dup_str(">>>"))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
-				<ExprBinOpBitAsr>(SrcCodePos(ctx), left, right));
+				<ExprBinOpBitAsr>(_make_src_code_pos(ctx), left, right));
 		}
 		else
 		{
@@ -619,7 +620,7 @@ VisitorRetType Compiler::visitExprPlusUnary
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpPlus>
-		(SrcCodePos(ctx), _stacks.pop_expr()));
+		(_make_src_code_pos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -628,7 +629,7 @@ VisitorRetType Compiler::visitExprMinusUnary
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpMinus>
-		(SrcCodePos(ctx), _stacks.pop_expr()));
+		(_make_src_code_pos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -637,7 +638,7 @@ VisitorRetType Compiler::visitExprLogNot
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpLogNot>
-		(SrcCodePos(ctx), _stacks.pop_expr()));
+		(_make_src_code_pos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -646,7 +647,7 @@ VisitorRetType Compiler::visitExprBitNot
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop<ExprUnOpBitNot>
-		(SrcCodePos(ctx), _stacks.pop_expr()));
+		(_make_src_code_pos(ctx), _stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -655,7 +656,8 @@ VisitorRetType Compiler::visitExprCastUnsigned
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
-		<ExprUnOpCastUnsigned>(SrcCodePos(ctx), _stacks.pop_expr()));
+		<ExprUnOpCastUnsigned>(_make_src_code_pos(ctx),
+		_stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -664,7 +666,8 @@ VisitorRetType Compiler::visitExprCastSigned
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
-		<ExprUnOpCastSigned>(SrcCodePos(ctx), _stacks.pop_expr()));
+		<ExprUnOpCastSigned>(_make_src_code_pos(ctx),
+		_stacks.pop_expr()));
 
 	return nullptr;
 }
@@ -681,7 +684,7 @@ VisitorRetType Compiler::visitNumExpr
 		const auto size = _default_hard_coded_num_size();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
-			(SrcCodePos(ctx), value, size.get_ui(), false));
+			(_make_src_code_pos(ctx), value, size.get_ui(), false));
 	}
 	else if (ctx->sizedNumExpr())
 	{
@@ -690,7 +693,7 @@ VisitorRetType Compiler::visitNumExpr
 		const auto size = _stacks.pop_big_num();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
-			(SrcCodePos(ctx), value, size.get_ui(), false));
+			(_make_src_code_pos(ctx), value, size.get_ui(), false));
 	}
 	else
 	{
@@ -787,7 +790,8 @@ VisitorRetType Compiler::visitIdentExpr
 		case Pass::FrostConstructRawModules:
 			if (module->contains_symbol(ident))
 			{
-				_stacks.push_expr(save_expr(ExprIdentName(SrcCodePos(ctx),
+				_stacks.push_expr(save_expr(ExprIdentName
+					(_make_src_code_pos(ctx),
 					module->find_symbol(ident))));
 			}
 			else

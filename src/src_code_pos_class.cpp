@@ -10,8 +10,9 @@ SrcCodePos::SrcCodePos()
 	: _ctx(nullptr)
 {
 }
-SrcCodePos::SrcCodePos(antlr4::ParserRuleContext* s_ctx)
-	: _ctx(s_ctx)
+SrcCodePos::SrcCodePos(SavedString s_filename,
+	antlr4::ParserRuleContext* s_ctx)
+	: _filename(s_filename), _ctx(s_ctx)
 {
 	auto tok = _ctx->getStart();
 	_src_line = tok->getLine();
@@ -24,7 +25,8 @@ SrcCodePos::~SrcCodePos()
 
 std::string SrcCodePos::convert_to_errwarn_string() const
 {
-	return sconcat("line ", _src_line, ", position ", _src_pos_in_line);
+	return sconcat("file ", *_filename, ", on line ", _src_line,
+		", position ", _src_pos_in_line);
 }
 
 } // namespace frost_hdl

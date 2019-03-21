@@ -195,7 +195,13 @@ private:		// functions
 		return BigNum(32);
 	}
 
+	inline SrcCodePos _make_src_code_pos(ParserRuleContext* ctx) const
+	{
+		return SrcCodePos(_curr_filename, ctx);
+	}
+
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
+	GEN_GETTER_AND_SETTER_BY_VAL(subpass)
 
 private:		// visitor functions
 	// Basically just "module" and "package" declarations.  There are no
