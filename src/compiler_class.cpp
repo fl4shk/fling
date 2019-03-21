@@ -342,7 +342,10 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 	else if (pass() == Pass::FrostConstructRawModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		auto ident_name = _stacks.pop_str();
+		_frost_program().curr_frost_module
+			= _frost_program().frost_module_table.at(_stacks.pop_str());
+
+		ANY_JUST_ACCEPT_BASIC(ctx->moduleInsides());
 	}
 	else
 	{
@@ -659,6 +662,7 @@ VisitorRetType Compiler::visitExprCastSigned
 	return nullptr;
 }
 
+// I'm pretty sure this works.
 VisitorRetType Compiler::visitNumExpr
 	(Parser::NumExprContext *ctx)
 {
@@ -763,13 +767,16 @@ VisitorRetType Compiler::visitIdentExpr
 		auto module = _frost_program().curr_frost_module;
 
 
+		// Here we check to see whether or not the symbol actually exists
+		// in the current scope.
 		switch (pass())
 		{
 		//case Pass::FrostConstructRawPackages:
 		//	break;
 
+		//case Pass::FrostConstructRawInterfaces:
+		//	break;
 
-		//case Pass::FrostListModules:
 		case Pass::FrostConstructRawModules:
 			if (module->contains_symbol(ident))
 			{

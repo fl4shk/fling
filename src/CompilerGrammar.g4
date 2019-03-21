@@ -166,8 +166,16 @@ numExpr:
 	;
 
 
+// I have no interest in octal numbers, at least for now.
 rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
+
 // Yes, this is done with the parser instead of the lexer.
+//
+// That is actually a bit strange, as it allows you to do things like
+//
+// 0x3        ' 9
+//
+// Also, signed hard-coded numbers are *not* properly handled here.
 sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 

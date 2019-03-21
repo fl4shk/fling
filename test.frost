@@ -1,5 +1,5 @@
 // Egg
-module Egg(input A a)
+module Egg(input logic a)
 {
 }
 
