@@ -25,6 +25,25 @@ ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 
 	std::ifstream fstm(*filename());
 
+	//std::string&& raw_file_as_string = get_istream_as_str(fstm);
+	//std::string file_as_string;
+
+	//if (raw_file_as_string.at(raw_file_as_string.size() - 1) == EOF)
+	//{
+	//	for (size_t i=0; i<raw_file_as_string.size() - 1; ++i)
+	//	{
+	//		file_as_string += raw_file_as_string.at(i);
+	//	}
+	//}
+	//else
+	//{
+	//	for (auto iter : raw_file_as_string)
+	//	{
+	//		file_as_string += iter;
+	//	}
+	//}
+
+
 	_input_stream.reset(new antlr4::ANTLRInputStream(get_istream_as_str
 		(fstm)));
 	_lexer.reset(new CompilerGrammarLexer(&(*_input_stream)));

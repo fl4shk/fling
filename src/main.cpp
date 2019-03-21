@@ -28,11 +28,14 @@ int main(int argc, char** argv)
 	if (argc < 2)
 	{
 		printerr("Usage:  ", argv[0], " <source_files>\n");
+		exit(1);
 	}
 
 	frost_hdl::Compiler::ListParsedSrcCode s_list_parsed_src_code;
 
-	for (int i=0; i<argc; ++i)
+	//printout("argc:  ", argc, "\n");
+
+	for (int i=1; i<argc; ++i)
 	{
 		s_list_parsed_src_code.push_back(std::unique_ptr<frost_hdl
 			::ParsedSrcCode>(new frost_hdl::ParsedSrcCode(argv[i])));
