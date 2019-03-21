@@ -859,7 +859,7 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 			->src_code_pos().convert_to_errwarn_string();
 		if (module->parameter_vars().contains(s_ident))
 		{
-			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
+			_err(s_src_code_pos, sconcat("Module \"", module->ident(),
 				"\" already has a parameter with identifier \"", *s_ident,
 				"\" on ", errwarn_string, "."));
 		}
