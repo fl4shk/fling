@@ -279,6 +279,8 @@ private:		// visitor functions
 		(Parser::ExprCastUnsignedContext *ctx);
 	VisitorRetType visitExprCastSigned
 		(Parser::ExprCastSignedContext *ctx);
+	//VisitorRetType visitExprClog2
+	//	(Parser::ExprClog2Context *ctx);
 
 	VisitorRetType visitNumExpr
 		(Parser::NumExprContext *ctx);

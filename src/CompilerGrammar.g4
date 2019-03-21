@@ -147,6 +147,7 @@ exprUnary:
 	| exprBitNot
 	| exprCastUnsigned
 	| exprCastSigned
+	//| exprClog2
 	;
 
 
@@ -156,6 +157,7 @@ exprLogNot: TokExclamPoint expr ;
 exprBitNot: TokBitInvert expr ;
 exprCastUnsigned: TokKwDollarUnsigned TokLParen expr TokRParen ;
 exprCastSigned: TokKwDollarSigned TokLParen expr TokRParen ;
+//exprClog2: TokKwDollarClog2 TokLParen expr TokRParen ;
 
 
 numExpr:
@@ -252,6 +254,7 @@ TokKwUnsigned: 'unsigned' ;
 TokKwSigned: 'signed' ;
 
 
+// I am unsure if these will be used
 TokKwPublic: 'public' ;
 TokKwProtected: 'protected' ;
 TokKwPrivate: 'private' ;
@@ -267,11 +270,13 @@ TokKwPackage: 'package' ;
 
 TokKwDollarConcat: '$concat' ;
 TokKwDollarRepl: '$repl' ;
+
 TokKwDollarUnsigned: '$unsigned' ;
 TokKwDollarSigned: '$signed' ;
 TokKwDollarIsUnsigned: '$is_unsigned' ;
 TokKwDollarIsSigned: '$is_signed' ;
 TokKwDollarSizeof: '$sizeof' ;
+TokKwDollarClog2: '$clog2' ;
 
 
 

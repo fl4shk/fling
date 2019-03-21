@@ -419,7 +419,7 @@ VisitorRetType Compiler::visitExprLogical
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
 				<ExprBinOpCmpEq>(SrcCodePos(ctx), left, right));
 		}
-		else if (tok == dup_str("!"))
+		else if (tok == dup_str("!="))
 		{
 			_stacks.push_expr(ExpressionBuilder::make_expr_binop
 				<ExprBinOpCmpNe>(SrcCodePos(ctx), left, right));
@@ -689,6 +689,7 @@ VisitorRetType Compiler::visitNumExpr
 	return nullptr;
 }
 
+// This needs tested!
 VisitorRetType Compiler::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 {
@@ -759,9 +760,8 @@ VisitorRetType Compiler::visitIdentExpr
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident = _stacks.pop_str();
 
-		Symbol* s_symbol = nullptr;
+		auto module = _frost_program().curr_frost_module;
 
-		Expression* to_push = nullptr;
 
 		switch (pass())
 		{
@@ -771,9 +771,15 @@ VisitorRetType Compiler::visitIdentExpr
 
 		//case Pass::FrostListModules:
 		case Pass::FrostConstructRawModules:
-			if (_frost_program().curr_frost_module->contains_symbol(ident))
+			if (module->contains_symbol(ident))
 			{
-				//save_expr(ExprIdentName(_frost_program().curr_frost_module
+				_stacks.push_expr(save_expr(ExprIdentName(SrcCodePos(ctx),
+					module->find_symbol(ident))));
+			}
+			else
+			{
+				_err(ctx, sconcat("Module \"", *module->ident(), "\" does",
+					" not contain a symbol called \"", *ident, "\"."));
 			}
 			break;
 
