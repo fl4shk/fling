@@ -8,7 +8,8 @@
 #include "ident_table_classes.hpp"
 //#include "expression_classes.hpp"
 //#include "frost_full_type_table_class.hpp"
-#include "misc_types.hpp"
+//#include "misc_types.hpp"
+#include "src_code_pos_class.hpp"
 #include "frost_statement_table_class.hpp"
 
 

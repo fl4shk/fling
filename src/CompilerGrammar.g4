@@ -83,7 +83,9 @@ declModule:
 		TokLParen
 			// FUTURE:  allow "interface" "modport"s here
 			((declPortInputVarList | declPortOutputVarList
-				| declPortInoutVarList)*)
+				| declPortInoutVarList)
+				((',' (declPortInputVarList | declPortOutputVarList
+				| declPortInoutVarList))*))
 		TokRParen
 
 	TokLBrace

@@ -838,9 +838,11 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 
 	if (module->contains_symbol(s_ident))
 	{
-		_err(s_src_code_pos, sconcat("Module \"", module->ident(), 
-			"\" already has a port variable with identifier \"", s_ident,
-			"\"."));
+		auto&& errwarn_string = module->find_symbol(s_ident)
+			->src_code_pos().convert_to_errwarn_string();
+		_err(s_src_code_pos, sconcat("Module \"", *module->ident(), 
+			"\" already has a port variable with identifier \"", *s_ident,
+			"\" on ", errwarn_string, "."));
 	}
 
 	SymbolTable* symbol_table = nullptr;
