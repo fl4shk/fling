@@ -9,7 +9,8 @@ program:
 		declModule
 		//| declInterface
 		//| declPackage
-	)+
+	)*
+	EOF
 	;
 
 
