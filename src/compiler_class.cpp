@@ -61,7 +61,7 @@ int Compiler::run()
 		}
 
 		// ...This is a HORRIBLE solution to a problem I don't know the
-		// cause of.
+		// actual cause of.
 		for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
 		{
 			*_list_parsed_src_code.at(i) = ParsedSrcCode
@@ -160,7 +160,7 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 
 		if (!s_left_dim_expr->is_constant())
 		{
-			_err(ctx, "Vectors must have constant dimensions.");
+			_err(ctx->expr(), "Vectors must have constant dimensions.");
 		}
 	}
 
@@ -219,7 +219,7 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 
 		if (!s_right_dim_expr->is_constant())
 		{
-			_err(ctx, "Arrays must have constant dimensions.");
+			_err(ctx->expr(), "Arrays must have constant dimensions.");
 		}
 
 		_stacks.push_small_num(static_cast<SmallNum>
@@ -417,6 +417,13 @@ VisitorRetType Compiler::visitModuleInsides
 VisitorRetType Compiler::visitModuleStmtAssign
 	(Parser::ModuleStmtAssignContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->identExpr());
+	auto ident_expr = _stacks.pop_expr();
+
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	auto rhs_expr = _stacks.pop_expr();
+
+
 	return nullptr;
 }
 
@@ -584,7 +591,7 @@ VisitorRetType Compiler::visitExprAddSub
 		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
 		auto right = _stacks.pop_expr();
 
-		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpMulDivMod());
+		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpBitwise());
 
 		if (tok == dup_str("&"))
 		{
