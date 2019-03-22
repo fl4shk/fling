@@ -56,7 +56,16 @@ int Compiler::run()
 		{
 			//_curr_parsed_src_code = &parsed_src_code;
 			_curr_filename = parsed_src_code->filename();
+			//printout("*_curr_filename:  ", *_curr_filename, "\n");
 			visitProgram(parsed_src_code->parser()->program());
+		}
+
+		// ...This is a HORRIBLE solution to a problem I don't know the
+		// cause of.
+		for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
+		{
+			*_list_parsed_src_code.at(i) = ParsedSrcCode
+				(*_list_parsed_src_code.at(i)->filename());
 		}
 		set_pass(static_cast<Pass>(static_cast<PassUint>(pass())
 			+ static_cast<PassUint>(1)));
@@ -83,6 +92,7 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	//{
 	//}
 
+
 	switch (pass())
 	{
 	//case Pass::FrostListPackages:
@@ -91,11 +101,19 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	//	break;
 
 	case Pass::FrostListModules:
-	case Pass::FrostConstructRawModules:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
-	case Pass::Done:
+	case Pass::FrostConstructRawModules:
+		//ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
+		for (auto subprogram : ctx->declModule())
+		{
+			subprogram->accept(this);
+		}
+		break;
+
+	//case Pass::Done:
+	default:
 		_err(ctx, "Compiler::visitProgram():  Eek!");
 		break;
 	}
@@ -192,7 +210,7 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 
-	// [ expr ]
+	// array
 	if (ctx->expr())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -207,7 +225,7 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 		_stacks.push_small_num(static_cast<SmallNum>
 			(ScalarOrArray::Array));
 	}
-	// no [ expr ]
+	// scalar
 	else
 	{
 		_stacks.push_small_num(static_cast<SmallNum>
@@ -221,31 +239,53 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 VisitorRetType Compiler::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
-	//ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
-	//auto frost_lhs_type = _stacks.pop_lhs_type();
+	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
+	auto s_frost_lhs_type = _stacks.pop_lhs_type();
 
-	//for (auto iter : ctx->declNoLhsTypeVar())
-	//{
-	//	ANY_JUST_ACCEPT_BASIC(iter);
+	for (auto iter : ctx->declNoLhsTypeVar())
+	{
+		const SrcCodePos s_src_code_pos(_make_src_code_pos(iter));
+		auto module = _frost_program().curr_frost_module;
 
-	//	auto ident = _stacks.pop_str();
+		ANY_JUST_ACCEPT_BASIC(iter);
+		auto s_ident = _stacks.pop_str();
 
-	//	const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
-	//		(_stacks.pop_small_num());
+		if (module->contains_symbol(s_ident))
+		{
+			auto&& errwarn_string = module->find_symbol(s_ident)
+				->src_code_pos().convert_to_errwarn_string();
+			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
+				"\" already contains a symbol with identifier \"",
+				*s_ident, "\" in ", errwarn_string, "."));
+		}
 
-	//	switch (scalar_or_array)
-	//	{
-	//	case ScalarOrArray::Scalar:
-	//		break;
+		const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
+			(_stacks.pop_small_num());
 
-	//	case ScalarOrArray::Array:
-	//		break;
+		Expression* s_right_dim_expr = nullptr;
 
-	//	default:
-	//		_err(ctx, "Compiler::visitDeclVarList():  Eek!");
-	//		break;
-	//	}
-	//}
+		switch (scalar_or_array)
+		{
+		case ScalarOrArray::Scalar:
+			break;
+
+		case ScalarOrArray::Array:
+			s_right_dim_expr = _stacks.pop_expr();
+			break;
+
+		default:
+			_err(ctx, "Compiler::visitDeclVarList():  Eek!");
+			break;
+		}
+
+
+		auto s_frost_full_type = save_frost_full_type(FrostFullType
+			(s_src_code_pos, s_frost_lhs_type, s_right_dim_expr));
+
+		module->local_symbol_table().insert_or_assign(save_symbol(Symbol
+			(s_src_code_pos, s_ident, Symbol::PortType::NonPort,
+			s_frost_full_type)));
+	}
 
 	return nullptr;
 }
@@ -333,7 +373,7 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 		if (_frost_program().frost_module_table.contains(ident_name))
 		{
 			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
-				"\""));
+				"\"."));
 		}
 
 		_frost_program().curr_frost_module = save_frost_module(FrostModule
@@ -367,6 +407,10 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 VisitorRetType Compiler::visitModuleInsides
 	(Parser::ModuleInsidesContext *ctx)
 {
+	ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
+
+	ANY_JUST_ACCEPT_LOOPED(stmt_assign_iter, ctx->moduleStmtAssign())
+
 	return nullptr;
 }
 
@@ -872,13 +916,13 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		{
 			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
 				"\" already has a parameter with identifier \"", *s_ident,
-				"\" on ", errwarn_string, "."));
+				"\" in ", errwarn_string, "."));
 		}
 		else // if (not a parameter)
 		{
-			_err(s_src_code_pos, sconcat("Module \"", *module->ident(), 
+			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
 				"\" already has a port variable with identifier \"",
-				*s_ident, "\" on ", errwarn_string, "."));
+				*s_ident, "\" in ", errwarn_string, "."));
 		}
 	}
 
@@ -905,6 +949,7 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		break;
 	}
 
+	// Ports can't be arrays.
 	auto s_frost_full_type = save_frost_full_type(FrostFullType
 		(s_src_code_pos, s_frost_lhs_type));
 

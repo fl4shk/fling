@@ -1,10 +1,7 @@
-// Egg
-module Egg(input logic a,
-	inout logic [2] b)
+module FullAdder(input logic i_a, i_b, i_carry,
+	output logic o_sum, o_carry)
 {
-	logic b [1] ;
-}
-
-module Egg2(input logic egg)
-{
+	logic i_a;
+	assign o_sum = (i_a ^ i_b) ^ i_carry;
+	assign o_carry = (i_a & i_b) | ((i_a ^ i_b) & i_carry);
 }

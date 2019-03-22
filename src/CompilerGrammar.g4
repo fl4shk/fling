@@ -91,7 +91,7 @@ declModule:
 			((declPortInputVarList | declPortOutputVarList
 				| declPortInoutVarList)
 				((',' (declPortInputVarList | declPortOutputVarList
-				| declPortInoutVarList))*))
+				| declPortInoutVarList))*))?
 		')'
 
 	'{'

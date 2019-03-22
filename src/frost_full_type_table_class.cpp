@@ -5,11 +5,11 @@
 namespace frost_hdl
 {
 
+// Scalar constructor, "_ident" taken from "_frost_lhs_type"
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 	FrostLhsType* s_frost_lhs_type)
 	: FrostFullType(s_src_code_pos, s_frost_lhs_type->ident(),
-	s_frost_lhs_type, ExpressionBuilder::make_expr_hc_num(s_src_code_pos,
-	static_cast<size_t>(1)))
+	s_frost_lhs_type, nullptr)
 {
 }
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,

@@ -16,11 +16,11 @@ namespace frost_hdl
 class FrostProgram
 {
 public:		// variables
-	// Built-in "FrostLhsType"s
-	FrostLhsTypeTable frost_lhs_type_table;
+	//// Built-in "FrostLhsType"s
+	//FrostLhsTypeTable frost_lhs_type_table;
 
-	// Built-in "FrostFullType"s
-	FrostFullTypeTable frost_full_type_table;
+	//// Built-in "FrostFullType"s
+	//FrostFullTypeTable frost_full_type_table;
 
 	// "FrostModule"s are always global anyway
 	FrostModuleTable frost_module_table;

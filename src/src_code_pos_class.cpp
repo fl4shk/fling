@@ -25,8 +25,8 @@ SrcCodePos::~SrcCodePos()
 
 std::string SrcCodePos::convert_to_errwarn_string() const
 {
-	return sconcat("file ", *_filename, ", on line ", _src_line,
-		", position ", _src_pos_in_line);
+	return sconcat("file \"", *_filename, "\" (at ", _src_line,
+		":", _src_pos_in_line, ")");
 }
 
 } // namespace frost_hdl
