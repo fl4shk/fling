@@ -45,9 +45,9 @@ public:		// types
 	{
 		None,
 
+		NonSliced,
+		Sliced,
 		Concat,
-		IdentSliced,
-		IdentNonSliced,
 	};
 
 	//enum class Category
@@ -1510,7 +1510,7 @@ public:		// functions
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const
 	{
-		return LhsCategory::IdentNonSliced;
+		return LhsCategory::NonSliced;
 	}
 
 	bool is_constant() const;

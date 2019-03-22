@@ -33,6 +33,14 @@ public:		// types
 		Array
 	};
 
+	//enum class IdentExprType : SmallNum
+	//{
+	//	IdentName,
+	//	ScopedIdentName,
+	//	IdentConcatExpr,
+	//	IdentSliced
+	//};
+
 	typedef uintmax_t PassUint;
 
 	enum class Pass : PassUint
@@ -260,8 +268,8 @@ private:		// visitor functions
 	VisitorRetType visitModuleInsides
 		(Parser::ModuleInsidesContext *ctx);
 
-	VisitorRetType visitModuleStmtAssign
-		(Parser::ModuleStmtAssignContext *ctx);
+	VisitorRetType visitModuleStmtContAssign
+		(Parser::ModuleStmtContAssignContext *ctx);
 
 	// Expression parsing
 	VisitorRetType visitExpr

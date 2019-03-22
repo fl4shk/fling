@@ -105,14 +105,14 @@ declModule:
 moduleInsides:
 	(
 		declVarList ';'
-		| moduleStmtAssign ';'
+		| moduleStmtContAssign ';'
 		//| moduleStmtInitial
 		//| moduleStmtAlwaysComb
 		//| moduleStmtAlwaysSeq
 	)*
 	;
 
-moduleStmtAssign:
+moduleStmtContAssign:
 	TokKwAssign identExpr TokAssign expr
 	;
 
@@ -179,7 +179,9 @@ rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
 
 // Yes, this is done with the parser instead of the lexer.
 //
-// That is actually a bit strange, as it allows you to do things like
+// That is very strange, Bobbeh.
+//
+// It allows you to do things like
 //
 // 0x3        ' 9
 //
@@ -191,6 +193,7 @@ sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 
 
+// Forcibly
 identExpr:
 	identName
 	//| scopedIdentName

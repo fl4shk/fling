@@ -409,19 +409,48 @@ VisitorRetType Compiler::visitModuleInsides
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
 
-	ANY_JUST_ACCEPT_LOOPED(stmt_assign_iter, ctx->moduleStmtAssign())
+	ANY_JUST_ACCEPT_LOOPED(stmt_assign_iter, ctx->moduleStmtContAssign())
 
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitModuleStmtAssign
-	(Parser::ModuleStmtAssignContext *ctx)
+VisitorRetType Compiler::visitModuleStmtContAssign
+	(Parser::ModuleStmtContAssignContext *ctx)
 {
+	auto module = _frost_program().curr_frost_module;
+
 	ANY_JUST_ACCEPT_BASIC(ctx->identExpr());
-	auto ident_expr = _stacks.pop_expr();
+	auto lhs_expr = _stacks.pop_expr();
 
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	auto rhs_expr = _stacks.pop_expr();
+
+	typedef Expression::LhsCategory ExprLhsCategory;
+
+	switch (lhs_expr->lhs_category())
+	{
+	case ExprLhsCategory::None:
+		_err(ctx, "Compiler::visitModuleStmtContAssign():  lhs None Eek!");
+		break;
+
+	case ExprLhsCategory::NonSliced:
+		break;
+
+	case ExprLhsCategory::Sliced:
+		_err(ctx, "Complier::visitModuleStmtContAssign():  "
+			"Sliced not implemented Eek!");
+		break;
+
+	case ExprLhsCategory::Concat:
+		_err(ctx, "Complier::visitModuleStmtContAssign():  "
+			"Concat not implemented Eek!");
+		break;
+
+	default:
+		_err(ctx, "Compiler::visitModuleStmtContAssign():  lhs default "
+			"Eek!");
+		break;
+	}
 
 
 	return nullptr;
