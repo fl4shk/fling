@@ -7,7 +7,7 @@ namespace frost_hdl
 {
 
 SrcCodePos::SrcCodePos()
-	: _ctx(nullptr)
+	: _filename(nullptr), _ctx(nullptr)
 {
 }
 SrcCodePos::SrcCodePos(SavedString s_filename,

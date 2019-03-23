@@ -82,6 +82,26 @@ FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
 	_component_data = std::move(s_component_data);
 	_left_dim_expr = nullptr;
 }
+SavedString FrostLhsType::construct_initial_builtin_type_ident
+	(bool s_is_signed, Expression* s_left_dim_expr)
+{
+	std::string s_ident = "logic ";
+
+	if (s_is_signed)
+	{
+		s_ident += "signed ";
+	}
+
+	if (s_left_dim_expr != nullptr)
+	{
+		// Need some way to make the name unique!  Also, how do I handle
+		// cases where I don't know the values of named constants yet?
+		s_ident += *construct_initial_type_ident_from_expr
+			(dup_str(s_ident), s_left_dim_expr);
+	}
+
+	return dup_str(s_ident);
+}
 
 bool FrostLhsType::is_same_builtin_strict_signedness
 	(const FrostLhsType& other) const

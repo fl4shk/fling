@@ -4,11 +4,11 @@
 
 namespace frost_hdl
 {
-SavedString construct_initial_type_ident_from_dim(SavedString base_ident,
-	Expression* some_dim_expr)
+SavedString construct_initial_type_ident_from_expr(SavedString base_ident,
+	Expression* expr)
 {
 	return dup_str(sconcat(*base_ident, "[",
-		reinterpret_cast<uintptr_t>(some_dim_expr),
+		reinterpret_cast<uintptr_t>(expr),
 		"]"));
 }
 

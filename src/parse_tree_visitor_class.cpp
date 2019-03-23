@@ -161,26 +161,14 @@ VisitorRetType ParseTreeVisitor::visitLhsBuiltinTypeName
 		}
 	}
 
-	std::string s_ident = "logic";
-
-	if (ctx->TokKwSigned() != nullptr)
-	{
-		s_ident += " signed";
-	}
-
-	if (s_left_dim_expr != nullptr)
-	{
-		//// Need some way to make the name unique!  Also, how do I handle
-		//// cases where I don't know the values of named constants yet?
-		s_ident += *construct_initial_type_ident_from_dim(dup_str(s_ident),
-			s_left_dim_expr);
-	}
+	auto s_ident = FrostLhsType::construct_initial_builtin_type_ident
+		((ctx->TokKwSigned() != nullptr), s_left_dim_expr);
 
 
 	// "ctx->TokKwUnsigned()" is only for those who want to be pedantic.
 
 	_stacks.push_lhs_type(save_frost_lhs_type(FrostLhsType
-		(_make_src_code_pos(ctx), dup_str(s_ident),
+		(_make_src_code_pos(ctx), s_ident,
 		(ctx->TokKwSigned() != nullptr), s_left_dim_expr)));
 	return nullptr;
 }
@@ -242,7 +230,7 @@ VisitorRetType ParseTreeVisitor::visitDeclVarList
 	for (auto iter : ctx->declNoLhsTypeVar())
 	{
 		const SrcCodePos s_src_code_pos(_make_src_code_pos(iter));
-		auto module = _frost_program().curr_frost_module;
+		auto module = _frost_program.curr_frost_module;
 
 		ANY_JUST_ACCEPT_BASIC(iter);
 		auto s_ident = _stacks.pop_str();
@@ -292,19 +280,33 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 	auto s_ident = _stacks.pop_str();
 
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	auto s_expr = _stacks.pop_expr();
+
+	const SrcCodePos s_src_code_pos(_make_src_code_pos(ctx));
+
+	auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
+		(_make_src_code_pos(ctx->expr()), s_expr->value().size());
+
+
+	// This forcibly makes "localparam"s be vectors.
+	auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
+		(s_src_code_pos, FrostLhsType::construct_initial_builtin_type_ident
+		(s_expr->value().is_signed(), s_left_dim_expr),
+		s_expr->value().is_signed(), s_left_dim_expr));
+
+	//auto s_frost_full_type = 
+
 
 	if (pass() == Pass::ConstructRawPackages)
 	{
-		auto package = _frost_program().curr_frost_package;
+		auto package = _frost_program.curr_frost_package;
 
 		if (package->symbol_table().contains(s_ident))
 		{
 			auto&& errwarn_string = package->symbol_table().at(s_ident)
 				->src_code_pos().convert_to_errwarn_string();
-			//_err(ctx, sconcat("Duplicate localparam called \"", *s_ident,
-			//	"\" in package \"", *package->ident(), "\", defined at ",
-			//	errwarn_string));
-			package->in_scope_err(_make_src_code_pos(ctx), sconcat
+			package->in_scope_err(s_src_code_pos, sconcat
 				("This package already has a localparam called \"", 
 				*s_ident,  "\", defined at ",
 				errwarn_string, "."));
@@ -315,22 +317,23 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 	//}
 	else if (pass() == Pass::ConstructRawModules)
 	{
-		auto module = _frost_program().curr_frost_module;
+		auto module = _frost_program.curr_frost_module;
 
 		if (module->contains_symbol(s_ident))
 		{
 			auto&& errwarn_string = module->find_symbol(s_ident)
 				->src_code_pos().convert_to_errwarn_string();
-			//module->find_symbol(s_ident)->src_code_pos().in_scope_err
-			//	(module, "test");
-			module->in_scope_err(_make_src_code_pos(ctx), sconcat("This ",
+			module->in_scope_err(s_src_code_pos, sconcat("This ",
 				"module already has a symbol called \"", *s_ident, 
 				"\", defined at ", errwarn_string, "."));
 		}
+
+		//module->
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  pass() "
+			"Eek!");
 	}
 	return nullptr;
 }
@@ -350,8 +353,8 @@ VisitorRetType ParseTreeVisitor::visitDeclPackage
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
 
-		auto& frost_package_table = _frost_program().frost_package_table;
-		auto& curr_frost_package = _frost_program().curr_frost_package;
+		auto& frost_package_table = _frost_program.frost_package_table;
+		auto& curr_frost_package = _frost_program.curr_frost_package;
 
 		if (frost_package_table.contains(s_ident))
 		{
@@ -369,8 +372,8 @@ VisitorRetType ParseTreeVisitor::visitDeclPackage
 	else if (pass() == Pass::ConstructRawPackages)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		_frost_program().curr_frost_package
-			= _frost_program().frost_package_table.at(_stacks.pop_str());
+		_frost_program.curr_frost_package
+			= _frost_program.frost_package_table.at(_stacks.pop_str());
 
 		ANY_JUST_ACCEPT_BASIC(ctx->insidePackage());
 	}
@@ -461,8 +464,8 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
 
-		auto& frost_module_table = _frost_program().frost_module_table;
-		auto& curr_frost_module = _frost_program().curr_frost_module;
+		auto& frost_module_table = _frost_program.frost_module_table;
+		auto& curr_frost_module = _frost_program.curr_frost_module;
 
 		if (frost_module_table.contains(s_ident))
 		{
@@ -485,8 +488,8 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 	else if (pass() == Pass::ConstructRawModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		_frost_program().curr_frost_module
-			= _frost_program().frost_module_table.at(_stacks.pop_str());
+		_frost_program.curr_frost_module
+			= _frost_program.frost_module_table.at(_stacks.pop_str());
 
 		ANY_JUST_ACCEPT_BASIC(ctx->insideModule());
 	}
@@ -521,7 +524,7 @@ VisitorRetType ParseTreeVisitor::visitInsideModule
 VisitorRetType ParseTreeVisitor::visitModuleStmtContAssign
 	(Parser::ModuleStmtContAssignContext *ctx)
 {
-	auto module = _frost_program().curr_frost_module;
+	auto module = _frost_program.curr_frost_module;
 
 	ANY_JUST_ACCEPT_BASIC(ctx->identExpr());
 	auto s_lhs_expr = _stacks.pop_expr();
@@ -938,7 +941,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident = _stacks.pop_str();
 
-		auto module = _frost_program().curr_frost_module;
+		auto module = _frost_program.curr_frost_module;
 
 
 		// Here we check to see whether or not the symbol actually exists
@@ -987,7 +990,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		////// What package does this identifier come from?
 		////auto scope_ident = _stacks.pop_str();
 
-		////auto package = _frost_program().curr_frost_package;
+		////auto package = _frost_program.curr_frost_package;
 
 
 		//switch (pass())
@@ -1042,7 +1045,7 @@ void ParseTreeVisitor::_insert_module_port_var
 	}
 
 	// I am lazy.
-	auto module = _frost_program().curr_frost_module;
+	auto module = _frost_program.curr_frost_module;
 
 	if (module->contains_symbol(s_ident))
 	{

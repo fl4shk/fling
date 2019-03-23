@@ -127,10 +127,15 @@ public:		// functions
 
 	//bool operator == (const FrostLhsType& other) const;
 
+	static SavedString construct_initial_builtin_type_ident
+		(bool s_is_signed, Expression* s_left_dim_expr);
+
+
 	bool is_same_builtin_strict_signedness(const FrostLhsType& other)
 		const;
 	bool is_same_builtin_ignore_signedness(const FrostLhsType& other)
 		const;
+
 
 
 

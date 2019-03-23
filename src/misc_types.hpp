@@ -15,8 +15,8 @@ typedef OrderedIdentToPointerTable<Symbol> ListVars;
 
 // Used for temporary type identifiers before actual dimension expressions
 // are evaluated.
-SavedString construct_initial_type_ident_from_dim(SavedString base_ident,
-	Expression* some_dim_expr);
+SavedString construct_initial_type_ident_from_expr(SavedString base_ident,
+	Expression* expr);
 
 
 
