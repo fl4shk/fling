@@ -8,12 +8,13 @@
 #include "symbol_table_class.hpp"
 #include "frost_function_table_class.hpp"
 #include "frost_full_type_table_class.hpp"
+#include "in_scope_errwarn_base_class.hpp"
 
 namespace frost_hdl
 {
 
 // Class representing a module from HDL land (not a C++20 module).
-class FrostModule
+class FrostModule : public InScopeErrWarnBase<SrcCodePos>
 {
 private:		// variables
 	SrcCodePos _src_code_pos;
@@ -52,6 +53,11 @@ public:		// functions
 	//	return (find_non_param_symbol(some_name) != nullptr);
 	//}
 
+
+	std::string scope_type_str() const
+	{
+		return std::string("module");
+	}
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)

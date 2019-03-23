@@ -6,10 +6,9 @@ grammar CompilerGrammar;
 // are no other things at global scope.
 program:
 	(
-		//declPackage
+		declPackage
 		//| declInterface
-		//|
-		declModule
+		| declModule
 	)*
 	EOF
 	;
@@ -216,7 +215,7 @@ sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 // Forcibly
 identExpr:
 	identName
-	//| scopedIdentName
+	| scopedIdentName
 	////| identConcatExpr
 	////| identSliced
 	;

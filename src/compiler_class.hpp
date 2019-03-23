@@ -43,16 +43,18 @@ public:		// types
 
 	typedef uintmax_t PassUint;
 
+	// Passes where we run the parser (initial semantic analysis is done in
+	// these)
 	enum class ParsePass : PassUint
 	{
 		// Passes for the initial processing of Frost HDL source code
 
 		// List "package" names.
-		//FrostListPackages,
+		FrostListPackages,
 
 		// Construct raw "package"s, such that their "parameter"s are not
 		// yet evaluated
-		//FrostConstructRawPackages,
+		FrostConstructRawPackages,
 
 		//FrostListInterfaces,
 		//FrostConstructRawInterfaces,

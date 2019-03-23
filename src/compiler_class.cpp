@@ -97,21 +97,14 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 
 	switch (parse_pass())
 	{
-	//case ParsePass::FrostListPackages:
-	//case ParsePass::FrostConstructRawPackages:
-	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
-	//	break;
-
-	case ParsePass::FrostListModules:
-		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
+	case ParsePass::FrostListPackages:
+	case ParsePass::FrostConstructRawPackages:
+		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
 		break;
 
+	case ParsePass::FrostListModules:
 	case ParsePass::FrostConstructRawModules:
-		//ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
-		for (auto subprogram : ctx->declModule())
-		{
-			subprogram->accept(this);
-		}
+		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
 	//case ParsePass::Done:
@@ -258,7 +251,7 @@ VisitorRetType Compiler::visitDeclVarList
 				->src_code_pos().convert_to_errwarn_string();
 			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
 				"\" already contains a symbol with identifier \"",
-				*s_ident, "\" in ", errwarn_string, "."));
+				*s_ident, "\" at ", errwarn_string, "."));
 		}
 
 		const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
@@ -294,17 +287,71 @@ VisitorRetType Compiler::visitDeclVarList
 VisitorRetType Compiler::visitDeclNoKwLocalparam
 	(Parser::DeclNoKwLocalparamContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->identName());
+	auto s_ident = _stacks.pop_str();
+
+
+	if (parse_pass() == ParsePass::FrostConstructRawPackages)
+	{
+		auto package = _frost_program().curr_frost_package;
+
+		if (package->symbol_table().contains(s_ident))
+		{
+			auto&& errwarn_string = package->symbol_table().at(s_ident)
+				->src_code_pos().convert_to_errwarn_string();
+			//_err(ctx, sconcat("Duplicate localparam called \"", *s_ident,
+			//	"\" in package \"", *package->ident(), "\", defined at ",
+			//	errwarn_string));
+			package->in_scope_err(sconcat("This package already has a ",
+				"localparam called \"", *s_ident,  "\", defined at ",
+				errwarn_string, "."));
+		}
+	}
+	//else if (parse_pass() == ParsePass::FrostConstructRawInterfaces)
+	//{
+	//}
+	else if (parse_pass() == ParsePass::FrostConstructRawModules)
+	{
+		auto module = _frost_program().curr_frost_module;
+
+		if (module->contains_symbol(s_ident))
+		{
+			auto&& errwarn_string = module->find_symbol(s_ident)
+				->src_code_pos().convert_to_errwarn_string();
+			//module->find_symbol(s_ident)->src_code_pos().in_scope_err
+			//	(module, "test");
+			module->in_scope_err(sconcat("This module already has a ",
+				"symbol called \"", *s_ident, "\", defined at ",
+				errwarn_string, "."));
+		}
+	}
+	else
+	{
+		_err(ctx, "Compiler::visitDeclNoKwLocalparam():  Eek!");
+	}
 	return nullptr;
 }
 VisitorRetType Compiler::visitDeclLocalparamList
 	(Parser::DeclLocalparamListContext *ctx)
 {
+	ANY_JUST_ACCEPT_LOOPED(decl_no_kw_localparam_iter,
+		ctx->declNoKwLocalparam())
 	return nullptr;
 }
 // "package" stuff
 VisitorRetType Compiler::visitDeclPackage
 	(Parser::DeclPackageContext *ctx)
 {
+	if (parse_pass() == ParsePass::FrostListPackages)
+	{
+	}
+	else if (parse_pass() == ParsePass::FrostConstructRawPackages)
+	{
+	}
+	else
+	{
+		_err(ctx, "Compiler::visitDeclPackage():  Eek!");
+	}
 	return nullptr;
 }
 VisitorRetType Compiler::visitInsidePackage
@@ -377,16 +424,16 @@ VisitorRetType Compiler::visitDeclModule
 	if (parse_pass() == ParsePass::FrostListModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		auto ident_name = _stacks.pop_str();
+		auto s_ident = _stacks.pop_str();
 
-		if (_frost_program().frost_module_table.contains(ident_name))
+		if (_frost_program().frost_module_table.contains(s_ident))
 		{
-			_err(ctx, sconcat("Duplicate module called \"", *ident_name,
+			_err(ctx, sconcat("Duplicate module called \"", *s_ident,
 				"\"."));
 		}
 
 		_frost_program().curr_frost_module = save_frost_module(FrostModule
-			(_make_src_code_pos(ctx), ident_name));
+			(_make_src_code_pos(ctx), s_ident));
 
 		// Process ports of this module
 		ANY_JUST_ACCEPT_LOOPED(port_list,
@@ -450,12 +497,12 @@ VisitorRetType Compiler::visitModuleStmtContAssign
 		break;
 
 	case ExprLhsCategory::Sliced:
-		_err(ctx, "Complier::visitModuleStmtContAssign():  "
+		_err(ctx, "Compiler::visitModuleStmtContAssign():  "
 			"Sliced not implemented Eek!");
 		break;
 
 	case ExprLhsCategory::Concat:
-		_err(ctx, "Complier::visitModuleStmtContAssign():  "
+		_err(ctx, "Compiler::visitModuleStmtContAssign():  "
 			"Concat not implemented Eek!");
 		break;
 
@@ -899,27 +946,27 @@ VisitorRetType Compiler::visitIdentExpr
 		}
 	}
 
-	//else if(ctx->scopedIdentName())
-	//{
-	//	ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
-	//
-	//	const SmallNum num_scopes = _stacks.pop_small_num();
+	else if(ctx->scopedIdentName())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
+	
+		const SmallNum num_scopes = _stacks.pop_small_num();
 
-	//	//// The identifier of whatever is inside the package.
-	//	//auto inner_ident = _stacks.pop_str();
+		//// The identifier of whatever is inside the package.
+		//auto inner_ident = _stacks.pop_str();
 
-	//	//// What package does this identifier come from?
-	//	//auto scope_ident = _stacks.pop_str();
+		//// What package does this identifier come from?
+		//auto scope_ident = _stacks.pop_str();
 
-	//	//auto package = _frost_program().curr_frost_package;
+		//auto package = _frost_program().curr_frost_package;
 
 
-	//	switch (parse_pass())
-	//	{
-	//	default:
-	//		break;
-	//	}
-	//}
+		switch (parse_pass())
+		{
+		default:
+			break;
+		}
+	}
 	else
 	{
 		_err(ctx, "Compiler::visitIdentExpr():  Eek!");
@@ -972,18 +1019,21 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	{
 		auto&& errwarn_string = module->find_symbol(s_ident)
 			->src_code_pos().convert_to_errwarn_string();
-		if (module->parameter_vars().contains(s_ident))
-		{
-			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
-				"\" already has a parameter with identifier \"", *s_ident,
-				"\" in ", errwarn_string, "."));
-		}
-		else // if (not a parameter)
-		{
-			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
-				"\" already has a port variable with identifier \"",
-				*s_ident, "\" in ", errwarn_string, "."));
-		}
+		//if (module->parameter_vars().contains(s_ident))
+		//{
+		//	//_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
+		//	//	"\" already has a parameter with identifier \"", *s_ident,
+		//	//	"\", defined at ", errwarn_string, "."));
+		//}
+		//else // if (not a parameter)
+		//{
+		//	//_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
+		//	//	"\" already has a port variable with identifier \"",
+		//	//	*s_ident, "\", defined at ", errwarn_string, "."));
+		//}
+		module->in_scope_err(sconcat("This module already has a symbol ",
+			"called \"", *s_ident, "\", defined at ", errwarn_string,
+			"."));
 	}
 
 	// Again, I am lazy.

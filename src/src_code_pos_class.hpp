@@ -10,6 +10,10 @@
 namespace frost_hdl
 {
 
+class FrostPackage;
+class FrostInterface;
+class FrostModule;
+
 // Used for error reporting during semantic analysis.
 // Many, many things use this.
 class SrcCodePos
@@ -33,15 +37,16 @@ public:		// functions
 
 	inline void err(const std::string& msg) const
 	{
-		printerr("Error in ", convert_to_errwarn_string(), ":  ", msg,
+		printerr("Error at ", convert_to_errwarn_string(), ":  ", msg,
 			"\n");
 		exit(1);
 	}
 	inline void warn(const std::string& msg) const
 	{
-		printerr("Warning In ", convert_to_errwarn_string(), ":  ", msg,
+		printerr("Warning at ", convert_to_errwarn_string(), ":  ", msg,
 			"\n");
 	}
+
 
 
 	GEN_GETTER_BY_VAL(filename)
