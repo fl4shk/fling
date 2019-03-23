@@ -38,7 +38,8 @@ namespace frost_hdl
 
 typedef ParseTreeVisitor::VisitorRetType VisitorRetType;
 
-ParseTreeVisitor::ParseTreeVisitor(ListParsedSrcCode&& s_list_parsed_src_code)
+ParseTreeVisitor::ParseTreeVisitor
+	(ListParsedSrcCode&& s_list_parsed_src_code)
 	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
 	//_program_ctx = parser.program();
@@ -80,7 +81,8 @@ int ParseTreeVisitor::run()
 
 // Basically just "module" and "package" declarations.  There are no other
 // things at global scope.
-VisitorRetType ParseTreeVisitor::visitProgram(Parser::ProgramContext *ctx)
+VisitorRetType ParseTreeVisitor::visitProgram
+	(Parser::ProgramContext *ctx)
 {
 
 	//if (_in_frost_package_pass())
@@ -437,7 +439,8 @@ VisitorRetType ParseTreeVisitor::visitDeclPortDirectionalVarList
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclPortDirectionalVarList():  Eek!");
+		_err(ctx, "ParseTreeVisitor"
+			"::visitDeclPortDirectionalVarList():  Eek!");
 	}
 
 	for (size_t i=0; i<num_ident_names; ++i)
@@ -693,7 +696,8 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  TokOpMulDivMod() "
+			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  "
+				"TokOpMulDivMod() "
 				"Eek!");
 		}
 	}
@@ -739,8 +743,8 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  TokOpBitwise() "
-				"Eek!");
+			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  "
+				"TokOpBitwise() Eek!");
 		}
 	}
 	else
@@ -971,8 +975,8 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 
 	else if(ctx->scopedIdentName())
 	{
-		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  scopedIdentName() not "
-			"implemented Eek!");
+		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+			"scopedIdentName() not implemented Eek!");
 		//ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
 	
 		//const SmallNum num_scopes = _stacks.pop_small_num();
@@ -1025,16 +1029,16 @@ VisitorRetType ParseTreeVisitor::visitScopedIdentName
 }
 
 
-void ParseTreeVisitor::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
-	SavedString s_ident, Symbol::PortType s_port_type,
-	FrostLhsType* s_frost_lhs_type)
+void ParseTreeVisitor::_insert_module_port_var
+	(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
 {
 	// Call this ONLY if (pass() == ParseTreeVisitor::Pass
 	// ::FrostListModules)
 	if (pass() != ParseTreeVisitor::Pass::ListModules)
 	{
-		_err(s_src_code_pos, "ParseTreeVisitor::_insert_module_port_var():  "
-			"pass() Eek!");
+		_err(s_src_code_pos, "ParseTreeVisitor"
+			"::_insert_module_port_var():  pass() Eek!");
 	}
 
 	// I am lazy.
@@ -1067,8 +1071,8 @@ void ParseTreeVisitor::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		break;
 
 	default:
-		_err(s_src_code_pos, "ParseTreeVisitor::_insert_module_port_var():  "
-			"PortType Eek!");
+		_err(s_src_code_pos, "ParseTreeVisitor"
+			"::_insert_module_port_var():  PortType Eek!");
 		break;
 	}
 
