@@ -248,6 +248,17 @@ private:		// visitor functions
 	VisitorRetType visitDeclVarList
 		(Parser::DeclVarListContext *ctx);
 
+	VisitorRetType visitDeclNoKwLocalparam
+		(Parser::DeclNoKwLocalparamContext *ctx);
+	VisitorRetType visitDeclLocalparamList
+		(Parser::DeclLocalparamListContext *ctx);
+
+	// "package" stuff
+	VisitorRetType visitDeclPackage
+		(Parser::DeclPackageContext *ctx);
+	VisitorRetType visitInsidePackage
+		(Parser::InsidePackageContext *ctx);
+
 	// For now, port vars can't be arrays.
 	VisitorRetType visitDeclPortVarList
 		(Parser::DeclPortVarListContext *ctx);

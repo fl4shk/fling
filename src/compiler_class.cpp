@@ -291,6 +291,27 @@ VisitorRetType Compiler::visitDeclVarList
 
 	return nullptr;
 }
+VisitorRetType Compiler::visitDeclNoKwLocalparam
+	(Parser::DeclNoKwLocalparamContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType Compiler::visitDeclLocalparamList
+	(Parser::DeclLocalparamListContext *ctx)
+{
+	return nullptr;
+}
+// "package" stuff
+VisitorRetType Compiler::visitDeclPackage
+	(Parser::DeclPackageContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType Compiler::visitInsidePackage
+	(Parser::InsidePackageContext *ctx)
+{
+	return nullptr;
+}
 
 // For now, port vars can't be arrays.  Perhaps things will actually stay
 // that way (such that arrays on ports *must* be in "splitvar" "struct"s)
@@ -394,6 +415,8 @@ VisitorRetType Compiler::visitDeclModule
 VisitorRetType Compiler::visitInsideModule
 	(Parser::InsideModuleContext *ctx)
 {
+	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
+		ctx->declLocalparamList())
 	ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
 
 	ANY_JUST_ACCEPT_LOOPED(stmt_assign_iter, ctx->moduleStmtContAssign())

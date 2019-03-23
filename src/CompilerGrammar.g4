@@ -54,15 +54,31 @@ declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
 
+declNoKwLocalparam:
+	identName TokAssign expr
+	;
 
-//// "package" stuff
-//declPackage:
-//	TokKwPackage identName
-//
-//	'{'
-//		insidePackage
-//	'}'
-//	;
+declLocalparamList:
+	TokKwLocalparam declNoKwLocalparam ((',' declNoKwLocalparam)*)
+	;
+
+// "package" stuff
+declPackage:
+	TokKwPackage identName
+	'{'
+		insidePackage
+	'}'
+	;
+
+insidePackage:
+	(
+		declLocalparamList ';'
+		//| declStruct ';'
+		////| declClass ';'
+		//| declEnum ';'
+		//| declTypedef ';'
+	)*
+	;
 
 
 // For now, port vars can't be arrays.  Perhaps things will actually stay
@@ -88,7 +104,7 @@ declPortDirectionalVarList:
 declModule:
 	TokKwModule identName
 		// FUTURE:  parameters
-		//((TokKwParameter TokLParen declParameterVarList TokRParen)?)
+		//((TokKwParameter '(' declParameterVarList ')')?)
 
 		// ports
 		'('
@@ -107,7 +123,8 @@ declModule:
 
 insideModule:
 	(
-		declVarList ';'
+		declLocalparamList ';'
+		| declVarList ';'
 		| moduleStmtContAssign ';'
 		//| moduleStmtInitial
 		//| moduleStmtAlwaysComb
