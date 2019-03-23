@@ -43,7 +43,7 @@ public:		// types
 
 	typedef uintmax_t PassUint;
 
-	enum class Pass : PassUint
+	enum class ParsePass : PassUint
 	{
 		// Passes for the initial processing of Frost HDL source code
 
@@ -126,7 +126,7 @@ private:		// variables
 	SavedString _curr_filename = nullptr;
 	ListParsedSrcCode _list_parsed_src_code;
 
-	Pass _pass = static_cast<Pass>(0);
+	ParsePass _parse_pass = static_cast<ParsePass>(0);
 
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
@@ -212,7 +212,7 @@ private:		// functions
 		return SrcCodePos(_curr_filename, ctx);
 	}
 
-	GEN_GETTER_AND_SETTER_BY_VAL(pass)
+	GEN_GETTER_AND_SETTER_BY_VAL(parse_pass)
 	GEN_GETTER_AND_SETTER_BY_VAL(subpass)
 
 private:		// visitor functions
@@ -252,21 +252,16 @@ private:		// visitor functions
 	VisitorRetType visitDeclPortVarList
 		(Parser::DeclPortVarListContext *ctx);
 
-	VisitorRetType visitDeclPortInputVarList
-		(Parser::DeclPortInputVarListContext *ctx);
-
-	VisitorRetType visitDeclPortOutputVarList
-		(Parser::DeclPortOutputVarListContext *ctx);
-	VisitorRetType visitDeclPortInoutVarList
-		(Parser::DeclPortInoutVarListContext *ctx);
+	VisitorRetType visitDeclPortDirectionalVarList
+		(Parser::DeclPortDirectionalVarListContext *ctx);
 
 
 	// "module" stuff
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
 
-	VisitorRetType visitModuleInsides
-		(Parser::ModuleInsidesContext *ctx);
+	VisitorRetType visitInsideModule
+		(Parser::InsideModuleContext *ctx);
 
 	VisitorRetType visitModuleStmtContAssign
 		(Parser::ModuleStmtContAssignContext *ctx);

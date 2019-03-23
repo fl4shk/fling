@@ -88,7 +88,7 @@ protected:		// functions
 class FrostStmtContAssign : public FrostStatement
 {
 public:		// functions
-	FrostStmtContAssign(Expression* s_ident_expr, Expression* s_rhs);
+	FrostStmtContAssign(Expression* s_lhs_expr, Expression* s_rhs_expr);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtContAssign);
 
@@ -100,8 +100,8 @@ public:		// functions
 	}
 
 
-	GEN_EXPR_GETTER(ident_expr, 0)
-	GEN_EXPR_GETTER(rhs, 1)
+	GEN_EXPR_GETTER(lhs_expr, 0)
+	GEN_EXPR_GETTER(rhs_expr, 1)
 };
 
 //// Base class for "initial", "always_comb", and "always_seq".
@@ -181,15 +181,15 @@ public:		// functions
 class FrostStmtBehavAssign : public FrostStatement
 {
 public:		// functions
-	FrostStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
+	FrostStmtBehavAssign(Expression* s_lhs_expr, Expression* s_rhs_expr);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavAssign);
 
 	virtual ~FrostStmtBehavAssign() = default;
 
 	//virtual DstHdlStatement* to_dst_hdl_statement() const;
 
-	GEN_EXPR_GETTER(ident_expr, 0)
-	GEN_EXPR_GETTER(rhs, 1)
+	GEN_EXPR_GETTER(lhs_expr, 0)
+	GEN_EXPR_GETTER(rhs_expr, 1)
 };
 
 // "if" statement by itself.

@@ -13,10 +13,10 @@ namespace frost_hdl
 //}
 
 // Continuous assignment ("assign")
-FrostStmtContAssign::FrostStmtContAssign(Expression* s_ident_expr,
-	Expression* s_rhs)
+FrostStmtContAssign::FrostStmtContAssign(Expression* s_lhs_expr,
+	Expression* s_rhs_expr)
 {
-	_set_exprs(s_ident_expr, s_rhs);
+	_set_exprs(s_lhs_expr, s_rhs_expr);
 }
 //SavedString FrostStmtContAssign::to_hdl_source(TableNode* top)
 //	const
@@ -92,10 +92,10 @@ FrostStmtBehavBlockAlwaysSeq::FrostStmtBehavBlockAlwaysSeq
 // Behavioral assignment operator.  Can become either a blocking or a
 // non-blocking assignment depending on whether it was in an "initial",
 // "always_comb", or "always_seq" block.
-FrostStmtBehavAssign::FrostStmtBehavAssign(Expression* s_ident_expr,
-	Expression* s_rhs)
+FrostStmtBehavAssign::FrostStmtBehavAssign(Expression* s_lhs_expr,
+	Expression* s_rhs_expr)
 {
-	_set_exprs(s_ident_expr, s_rhs);
+	_set_exprs(s_lhs_expr, s_rhs_expr);
 }
 
 //SavedString FrostStmtBehavAssign::to_hdl_source(TableNode* top)

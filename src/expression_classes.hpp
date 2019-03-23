@@ -114,11 +114,11 @@ public:		// functions
 		return (num_children() == 0);
 	}
 
-	// Unfortunately, replacing the references to "Symbol"s has come down
-	// to this.  Each most-derived "Expression" class will now have to
-	// implement this.  It's a pain.
-	Expression* dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const;
+	//// Unfortunately, replacing the references to "Symbol"s has come down
+	//// to this.  Each most-derived "Expression" class will now have to
+	//// implement this.  It's a pain.
+	//Expression* dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const;
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const;
 
@@ -171,8 +171,8 @@ protected:		// functions
 	virtual size_t _starting_length() const;
 
 	virtual bool _is_always_constant() const;
-	virtual Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const;
+	//virtual Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const;
 
 
 
@@ -543,12 +543,12 @@ protected:		// functions
 		return FrostSourceType::UnOp;
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprUnOpPlus(src_code_pos(),
-			DUP_CHILD(_only_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprUnOpPlus(src_code_pos(),
+	//		DUP_CHILD(_only_child())));
+	//}
 };
 
 // Unary "-"
@@ -575,12 +575,12 @@ protected:		// functions
 		return FrostSourceType::UnOp;
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprUnOpMinus(src_code_pos(),
-			DUP_CHILD(_only_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprUnOpMinus(src_code_pos(),
+	//		DUP_CHILD(_only_child())));
+	//}
 };
 
 // "!"
@@ -608,12 +608,12 @@ protected:		// functions
 		return FrostSourceType::UnOp;
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprUnOpLogNot(src_code_pos(),
-			DUP_CHILD(_only_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprUnOpLogNot(src_code_pos(),
+	//		DUP_CHILD(_only_child())));
+	//}
 };
 
 // "~"
@@ -641,12 +641,12 @@ protected:		// functions
 		return FrostSourceType::UnOp;
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprUnOpBitNot(src_code_pos(),
-			DUP_CHILD(_only_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprUnOpBitNot(src_code_pos(),
+	//		DUP_CHILD(_only_child())));
+	//}
 };
 
 // "Expression" classes derived from "ExprBaseCastUnop"
@@ -679,12 +679,12 @@ protected:		// functions
 		_set_value(_only_child_value());
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprUnOpCastUnsigned(src_code_pos(),
-			DUP_CHILD(_only_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprUnOpCastUnsigned(src_code_pos(),
+	//		DUP_CHILD(_only_child())));
+	//}
 };
 // "$signed()
 class ExprUnOpCastSigned : public ExprBaseCastUnop
@@ -712,12 +712,12 @@ protected:		// functions
 		_set_value(_only_child_value());
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprUnOpCastSigned(src_code_pos(),
-			DUP_CHILD(_only_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprUnOpCastSigned(src_code_pos(),
+	//		DUP_CHILD(_only_child())));
+	//}
 };
 
 
@@ -749,12 +749,12 @@ protected:		// functions
 			&& static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpLogAnd(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpLogAnd(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "||"
@@ -778,12 +778,12 @@ protected:		// functions
 			|| static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpLogOr(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpLogOr(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "=="
@@ -809,12 +809,12 @@ protected:		// functions
 			});
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpEq(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpCmpEq(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "!="
@@ -842,12 +842,12 @@ protected:		// functions
 			});
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpNe(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpCmpNe(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "<"
@@ -877,12 +877,12 @@ protected:		// functions
 			});
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpLt(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpCmpLt(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // ">"
@@ -908,12 +908,12 @@ protected:		// functions
 			});
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpGt(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpCmpGt(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "<="
@@ -939,12 +939,12 @@ protected:		// functions
 			});
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpLe(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpCmpLe(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // ">="
@@ -971,12 +971,12 @@ protected:		// functions
 			});
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpCmpGe(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpCmpGe(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "Expression" classes derived from "ExprBaseArithBinOp"
@@ -1002,12 +1002,12 @@ protected:		// functions
 			+ static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpPlus(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpPlus(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // Binop "-"
@@ -1031,12 +1031,12 @@ protected:		// functions
 			- static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpMinus(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpMinus(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "*"
@@ -1060,12 +1060,12 @@ protected:		// functions
 			* static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpMul(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpMul(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "/"
@@ -1089,12 +1089,12 @@ protected:		// functions
 			/ static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpDiv(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpDiv(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "%"
@@ -1118,12 +1118,12 @@ protected:		// functions
 			% static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpMod(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpMod(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "Expression" classes derived from "ExprBaseBitNonShiftBinOp"
@@ -1151,12 +1151,12 @@ protected:		// functions
 			& static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitAnd(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpBitAnd(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "|"
@@ -1182,12 +1182,12 @@ protected:		// functions
 			| static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitOr(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpBitOr(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "^"
@@ -1213,12 +1213,12 @@ protected:		// functions
 			^ static_cast<BigNum>(_right_child_value()));
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitXor(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpBitXor(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // "Expression" classes derived from "ExprBaseBitShiftBinOp"
@@ -1240,12 +1240,12 @@ protected:		// functions
 	}
 	void _evaluate();
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitLsl(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpBitLsl(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // ">>"
@@ -1265,12 +1265,12 @@ protected:		// functions
 	}
 	void _evaluate();
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitLsr(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpBitLsr(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 // ">>>"
@@ -1299,12 +1299,12 @@ public:		// functions
 protected:		// functions
 	void _evaluate();
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprBinOpBitAsr(src_code_pos(),
-			DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprBinOpBitAsr(src_code_pos(),
+	//		DUP_CHILD(_left_child()), DUP_CHILD(_right_child())));
+	//}
 };
 
 
@@ -1349,11 +1349,11 @@ protected:		// functions
 		return true;
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprHardCodedNum(src_code_pos(), value()));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprHardCodedNum(src_code_pos(), value()));
+	//}
 };
 
 // "$concat(...)"
@@ -1373,19 +1373,19 @@ public:		// functions
 protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		ChildrenList dupped_children;
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	ChildrenList dupped_children;
 
-		for (auto iter : dupped_children)
-		{
-			dupped_children.push_back(DUP_CHILD(iter));
-		}
+	//	for (auto iter : dupped_children)
+	//	{
+	//		dupped_children.push_back(DUP_CHILD(iter));
+	//	}
 
-		return SAFE_SAVE_EXPR(ExprConcat(src_code_pos(),
-			std::move(dupped_children)));
-	}
+	//	return SAFE_SAVE_EXPR(ExprConcat(src_code_pos(),
+	//		std::move(dupped_children)));
+	//}
 };
 
 // "$repl(...)"
@@ -1421,24 +1421,24 @@ protected:		// functions
 	void _evaluate();
 	size_t _starting_length();
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		//return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
-		//	DUP_CHILD(_when_true_child()),
-		//	DUP_CHILD(_when_false_child())));
-		ChildrenList dupped_non_width_children;
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	//return SAFE_SAVE_EXPR(ExprTernary(DUP_CHILD(_condition_child()),
+	//	//	DUP_CHILD(_when_true_child()),
+	//	//	DUP_CHILD(_when_false_child())));
+	//	ChildrenList dupped_non_width_children;
 
-		for (size_t i=0; i<_width_child_index(); ++i)
-		{
-			dupped_non_width_children.push_back
-				(DUP_CHILD(_children.at(i)));
-		}
+	//	for (size_t i=0; i<_width_child_index(); ++i)
+	//	{
+	//		dupped_non_width_children.push_back
+	//			(DUP_CHILD(_children.at(i)));
+	//	}
 
-		return SAFE_SAVE_EXPR(ExprRepl(src_code_pos(),
-			DUP_CHILD(_width_child()),
-			std::move(dupped_non_width_children)));
-	}
+	//	return SAFE_SAVE_EXPR(ExprRepl(src_code_pos(),
+	//		DUP_CHILD(_width_child()),
+	//		std::move(dupped_non_width_children)));
+	//}
 };
 
 // "condition ? when_true : when_false"
@@ -1491,13 +1491,13 @@ protected:		// functions
 			_when_false_child()->value().size());
 	}
 
-	inline Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		return SAFE_SAVE_EXPR(ExprTernary(src_code_pos(),
-			DUP_CHILD(_condition_child()), DUP_CHILD(_when_true_child()),
-			DUP_CHILD(_when_false_child())));
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	return SAFE_SAVE_EXPR(ExprTernary(src_code_pos(),
+	//		DUP_CHILD(_condition_child()), DUP_CHILD(_when_true_child()),
+	//		DUP_CHILD(_when_false_child())));
+	//}
 };
 
 // Non-sliced reference to an identifier of some sort.
@@ -1519,19 +1519,19 @@ protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
 
-	virtual Expression* _inner_dup_with_changed_symbols
-		(const ReplaceSymsMap& replace_syms_map) const
-	{
-		if (replace_syms_map.contains(_symbol))
-		{
-			return SAFE_SAVE_EXPR(ExprIdentName(src_code_pos(),
-				replace_syms_map.at(_symbol)));
-		}
-		else
-		{
-			return SAFE_SAVE_EXPR(ExprIdentName(src_code_pos(), _symbol));
-		}
-	}
+	//inline Expression* _inner_dup_with_changed_symbols
+	//	(const ReplaceSymsMap& replace_syms_map) const
+	//{
+	//	if (replace_syms_map.contains(_symbol))
+	//	{
+	//		return SAFE_SAVE_EXPR(ExprIdentName(src_code_pos(),
+	//			replace_syms_map.at(_symbol)));
+	//	}
+	//	else
+	//	{
+	//		return SAFE_SAVE_EXPR(ExprIdentName(src_code_pos(), _symbol));
+	//	}
+	//}
 };
 
 #undef TO_HDL_SOURCE

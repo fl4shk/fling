@@ -28,6 +28,9 @@ namespace frost_hdl
 Expression::Expression(const SrcCodePos& s_src_code_pos)
 {
 	_src_code_pos = s_src_code_pos;
+	set_symbol(nullptr);
+	set_is_self_determined(false);
+	set_handles_children_eval(false);
 }
 
 
@@ -70,11 +73,11 @@ bool Expression::references_symbol(Symbol* to_check) const
 	return false;
 }
 
-Expression* Expression::dup_with_changed_symbols
-	(const ReplaceSymsMap& replace_syms_map) const
-{
-	return _inner_dup_with_changed_symbols(replace_syms_map);
-}
+//Expression* Expression::dup_with_changed_symbols
+//	(const ReplaceSymsMap& replace_syms_map) const
+//{
+//	return _inner_dup_with_changed_symbols(replace_syms_map);
+//}
 
 SavedString Expression::to_hdl_source() const
 {
@@ -116,14 +119,14 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
-Expression* Expression::_inner_dup_with_changed_symbols
-	(const ReplaceSymsMap& replace_syms_map) const
-{
-	printerr("Expression::_inner_dup_with_changed_symbols():  Eek!");
-	exit(1);
-
-	return nullptr;
-}
+//Expression* Expression::_inner_dup_with_changed_symbols
+//	(const ReplaceSymsMap& replace_syms_map) const
+//{
+//	printerr("Expression::_inner_dup_with_changed_symbols():  Eek!");
+//	exit(1);
+//
+//	return nullptr;
+//}
 
 void Expression::_full_evaluate(bool is_real_top)
 {

@@ -51,12 +51,12 @@ bool Symbol::has_default_value() const
 	return true;
 }
 
-bool Symbol::becomes_wire() const
-{
-	return ((_init_block_context != nullptr)
-		&& (_driver_block_context != nullptr)
-		&& (_driver_block_context->table.front()->driver_type()
-		== FrostStatement::DriverType::ContAssign));
-}
+//bool Symbol::becomes_wire() const
+//{
+//	return ((_init_block_context != nullptr)
+//		&& (_driver_block_context != nullptr)
+//		&& (_driver_block_context->table.front()->driver_type()
+//		== FrostStatement::DriverType::ContAssign));
+//}
 
 } // namespace frost_hdl

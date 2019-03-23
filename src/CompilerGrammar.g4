@@ -6,9 +6,10 @@ grammar CompilerGrammar;
 // are no other things at global scope.
 program:
 	(
-		declModule
+		//declPackage
 		//| declInterface
-		//| declPackage
+		//|
+		declModule
 	)*
 	EOF
 	;
@@ -53,23 +54,27 @@ declVarList:
 	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
 	;
 
+
+//// "package" stuff
+//declPackage:
+//	TokKwPackage identName
+//
+//	'{'
+//		insidePackage
+//	'}'
+//	;
+
+
 // For now, port vars can't be arrays.  Perhaps things will actually stay
 // that way (such that arrays on ports *must* be in "splitvar" "struct"s)
 declPortVarList:
 	lhsTypeName identName ((',' identName)*)
 	;
 
-declPortInputVarList:
-	TokKwInput declPortVarList
-	;
 
-declPortOutputVarList:
-	TokKwOutput declPortVarList
+declPortDirectionalVarList:
+	(TokKwInput | TokKwOutput | TokKwInout) declPortVarList
 	;
-declPortInoutVarList:
-	TokKwInout declPortVarList
-	;
-
 
 //declParameterVar:
 //	identName ((TokAssign expr)?)
@@ -88,21 +93,19 @@ declModule:
 		// ports
 		'('
 			// FUTURE:  allow "interface" "modport"s here
-			((declPortInputVarList | declPortOutputVarList
-				| declPortInoutVarList)
-				((',' (declPortInputVarList | declPortOutputVarList
-				| declPortInoutVarList))*))?
+			(declPortDirectionalVarList
+				((',' declPortDirectionalVarList)*))?
 		')'
 
 	'{'
-		moduleInsides
+		insideModule
 	'}'
 	;
 
 
 
 
-moduleInsides:
+insideModule:
 	(
 		declVarList ';'
 		| moduleStmtContAssign ';'
@@ -210,7 +213,7 @@ scopedIdentName: identName TokScope identName;
 // ALL tokens get a lexer rule of some sort because it forces ANTLR to
 // catch more (all?) syntax errors.
 // So that means no raw '...' stuff in the parser rules.
-LexWhitespace: (' ' | '\t' | '\n' ) -> skip ;
+LexWhitespace: (' ' | '\t' | '\n') -> skip ;
 LexLineComment: '//' (~ '\n')* -> skip ;
 
 // Expressions

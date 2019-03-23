@@ -49,7 +49,7 @@ Compiler::~Compiler()
 
 int Compiler::run()
 {
-	while (pass() < Pass::Done)
+	while (parse_pass() < ParsePass::Done)
 	{
 		//visitProgram(_program_ctx);
 		for (const auto& parsed_src_code : _list_parsed_src_code)
@@ -62,13 +62,15 @@ int Compiler::run()
 
 		// ...This is a HORRIBLE solution to a problem I don't know the
 		// actual cause of.
-		for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
+		//for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
+		for (auto& parsed_src_code : _list_parsed_src_code)
 		{
-			*_list_parsed_src_code.at(i) = ParsedSrcCode
-				(*_list_parsed_src_code.at(i)->filename());
+			//*_list_parsed_src_code.at(i) = ParsedSrcCode
+			//	(*_list_parsed_src_code.at(i)->filename());
+			*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
 		}
-		set_pass(static_cast<Pass>(static_cast<PassUint>(pass())
-			+ static_cast<PassUint>(1)));
+		set_parse_pass(static_cast<ParsePass>(static_cast<PassUint>
+			(parse_pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
 	}
 
@@ -93,18 +95,18 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	//}
 
 
-	switch (pass())
+	switch (parse_pass())
 	{
-	//case Pass::FrostListPackages:
-	//case Pass::FrostConstructRawPackages:
+	//case ParsePass::FrostListPackages:
+	//case ParsePass::FrostConstructRawPackages:
 	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
 	//	break;
 
-	case Pass::FrostListModules:
+	case ParsePass::FrostListModules:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
-	case Pass::FrostConstructRawModules:
+	case ParsePass::FrostConstructRawModules:
 		//ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		for (auto subprogram : ctx->declModule())
 		{
@@ -112,7 +114,7 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 		}
 		break;
 
-	//case Pass::Done:
+	//case ParsePass::Done:
 	default:
 		_err(ctx, "Compiler::visitProgram():  Eek!");
 		break;
@@ -141,7 +143,7 @@ VisitorRetType Compiler::visitLhsTypeName
 VisitorRetType Compiler::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 {
-	// only call this when pass() == Pass::FrostListModules
+	// only call this when parse_pass() == ParsePass::FrostListModules
 
 	Expression* s_left_dim_expr = nullptr;
 	if (ctx->expr())
@@ -309,8 +311,9 @@ VisitorRetType Compiler::visitDeclPortVarList
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitDeclPortInputVarList
-	(Parser::DeclPortInputVarListContext *ctx)
+
+VisitorRetType Compiler::visitDeclPortDirectionalVarList
+	(Parser::DeclPortDirectionalVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
 
@@ -318,54 +321,39 @@ VisitorRetType Compiler::visitDeclPortInputVarList
 
 	const size_t num_ident_names = _stacks.pop_small_num();
 
-	for (size_t i=0; i<num_ident_names; ++i)
+	Symbol::PortType s_port_type;
+
+	if (ctx->TokKwInput())
 	{
-		_insert_module_port_var(_stacks.pop_src_code_pos(),
-			_stacks.pop_str(), Symbol::PortType::Input, frost_lhs_type);
+		s_port_type = Symbol::PortType::Input;
 	}
-
-	return nullptr;
-}
-VisitorRetType Compiler::visitDeclPortOutputVarList
-	(Parser::DeclPortOutputVarListContext *ctx)
-{
-	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
-
-	auto frost_lhs_type = _stacks.pop_lhs_type();
-
-	const size_t num_ident_names = _stacks.pop_small_num();
-
-	for (size_t i=0; i<num_ident_names; ++i)
+	else if (ctx->TokKwOutput())
 	{
-		_insert_module_port_var(_stacks.pop_src_code_pos(),
-			_stacks.pop_str(), Symbol::PortType::Output, frost_lhs_type);
+		s_port_type = Symbol::PortType::Output;
 	}
-
-	return nullptr;
-}
-VisitorRetType Compiler::visitDeclPortInoutVarList
-	(Parser::DeclPortInoutVarListContext *ctx)
-{
-	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
-
-	auto frost_lhs_type = _stacks.pop_lhs_type();
-
-	const size_t num_ident_names = _stacks.pop_small_num();
+	else if (ctx->TokKwInout())
+	{
+		s_port_type = Symbol::PortType::Inout;
+	}
+	else
+	{
+		_err(ctx, "Compiler::visitDeclPortDirectionalVarList():  Eek!");
+	}
 
 	for (size_t i=0; i<num_ident_names; ++i)
 	{
 		_insert_module_port_var(_stacks.pop_src_code_pos(),
-			_stacks.pop_str(), Symbol::PortType::Inout, frost_lhs_type);
+			_stacks.pop_str(), s_port_type, frost_lhs_type);
 	}
 
 	return nullptr;
 }
-
 
 // "module" stuff
-VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
+VisitorRetType Compiler::visitDeclModule
+	(Parser::DeclModuleContext *ctx)
 {
-	if (pass() == Pass::FrostListModules)
+	if (parse_pass() == ParsePass::FrostListModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident_name = _stacks.pop_str();
@@ -380,20 +368,19 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 			(_make_src_code_pos(ctx), ident_name));
 
 		// Process ports of this module
-		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInputVarList())
-		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortOutputVarList())
-		ANY_JUST_ACCEPT_LOOPED(port_list, ctx->declPortInoutVarList())
+		ANY_JUST_ACCEPT_LOOPED(port_list,
+			ctx->declPortDirectionalVarList())
 
 		_frost_program().frost_module_table.insert_or_assign
 			(_frost_program().curr_frost_module);
 	}
-	else if (pass() == Pass::FrostConstructRawModules)
+	else if (parse_pass() == ParsePass::FrostConstructRawModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program().curr_frost_module
 			= _frost_program().frost_module_table.at(_stacks.pop_str());
 
-		ANY_JUST_ACCEPT_BASIC(ctx->moduleInsides());
+		ANY_JUST_ACCEPT_BASIC(ctx->insideModule());
 	}
 	else
 	{
@@ -404,8 +391,8 @@ VisitorRetType Compiler::visitDeclModule(Parser::DeclModuleContext *ctx)
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitModuleInsides
-	(Parser::ModuleInsidesContext *ctx)
+VisitorRetType Compiler::visitInsideModule
+	(Parser::InsideModuleContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
 
@@ -420,14 +407,17 @@ VisitorRetType Compiler::visitModuleStmtContAssign
 	auto module = _frost_program().curr_frost_module;
 
 	ANY_JUST_ACCEPT_BASIC(ctx->identExpr());
-	auto lhs_expr = _stacks.pop_expr();
+	auto s_lhs_expr = _stacks.pop_expr();
 
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	auto rhs_expr = _stacks.pop_expr();
+	auto s_rhs_expr = _stacks.pop_expr();
 
 	typedef Expression::LhsCategory ExprLhsCategory;
 
-	switch (lhs_expr->lhs_category())
+	auto s_frost_statement = save_frost_statement(FrostStmtContAssign
+		(s_lhs_expr, s_rhs_expr));
+
+	switch (s_lhs_expr->lhs_category())
 	{
 	case ExprLhsCategory::None:
 		_err(ctx, "Compiler::visitModuleStmtContAssign():  lhs None Eek!");
@@ -859,15 +849,15 @@ VisitorRetType Compiler::visitIdentExpr
 
 		// Here we check to see whether or not the symbol actually exists
 		// in the current scope.
-		switch (pass())
+		switch (parse_pass())
 		{
-		//case Pass::FrostConstructRawPackages:
+		//case ParsePass::FrostConstructRawPackages:
 		//	break;
 
-		//case Pass::FrostConstructRawInterfaces:
+		//case ParsePass::FrostConstructRawInterfaces:
 		//	break;
 
-		case Pass::FrostConstructRawModules:
+		case ParsePass::FrostConstructRawModules:
 			if (module->contains_symbol(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -898,7 +888,7 @@ VisitorRetType Compiler::visitIdentExpr
 
 	//	auto package = _frost_program().curr_frost_package;
 
-	//	switch (pass())
+	//	switch (parse_pass())
 	//	{
 	//	default:
 	//		break;
@@ -934,11 +924,12 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, Symbol::PortType s_port_type,
 	FrostLhsType* s_frost_lhs_type)
 {
-	// Call this ONLY if (pass() == Compiler::Pass::FrostListModules)
-	if (pass() != Compiler::Pass::FrostListModules)
+	// Call this ONLY if (parse_pass() == Compiler::ParsePass
+	// ::FrostListModules)
+	if (parse_pass() != Compiler::ParsePass::FrostListModules)
 	{
 		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  "
-			"pass() Eek!");
+			"parse_pass() Eek!");
 	}
 
 	// I am lazy.

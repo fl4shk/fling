@@ -11,6 +11,7 @@
 //#include "misc_types.hpp"
 #include "src_code_pos_class.hpp"
 #include "frost_statement_table_class.hpp"
+#include "symbol_driver_block_context_class.hpp"
 
 
 namespace frost_hdl
@@ -68,14 +69,16 @@ private:		// variables
 	ListVars _parameter_vars;
 
 
-	// "_init_block_context" is part of what determines whether or not this
-	// "Symbol" becomes a wire in the generated HDL.
-	FrostStatementTable::Node* _init_block_context = nullptr;
+	//// "_init_block_context" is part of what determines whether or not this
+	//// "Symbol" becomes a wire in the generated HDL.
+	////FrostStatementTable::Node* _init_block_context = nullptr;
+	//SymbolDriverBlockContext* _init_block_context = nullptr;
 
-	// Where is this symbol driven?  The allowed options are
-	// "FrostStmtContAssign", "FrostStmtBehavBlockAlwaysComb", and
-	// "FrostStmtBehavBlockAlwaysSeq".
-	FrostStatementTable::Node* _driver_block_context = nullptr;
+	//// Where is this symbol driven?  The allowed options are
+	//// "FrostStmtContAssign", "FrostStmtBehavBlockAlwaysComb", and
+	//// "FrostStmtBehavBlockAlwaysSeq".
+	////FrostStatementTable::Node* _driver_block_context = nullptr;
+	//SymbolDriverBlockContext* _driver_block_context = nullptr;
 
 
 public:		// functions
@@ -106,11 +109,11 @@ public:		// functions
 	//	return (_frost_full_type != nullptr);
 	//}
 
-	bool becomes_wire() const;
-	inline bool becomes_reg() const
-	{
-		return (!becomes_wire());
-	}
+	//bool becomes_wire() const;
+	//inline bool becomes_reg() const
+	//{
+	//	return (!becomes_wire());
+	//}
 
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
@@ -124,8 +127,8 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(parameter_vars)
 	GEN_SETTER_BY_RVAL_REF(parameter_vars)
 
-	GEN_GETTER_AND_SETTER_BY_VAL(init_block_context)
-	GEN_GETTER_AND_SETTER_BY_VAL(driver_block_context)
+	//GEN_GETTER_AND_SETTER_BY_VAL(init_block_context)
+	//GEN_GETTER_AND_SETTER_BY_VAL(driver_block_context)
 
 };
 

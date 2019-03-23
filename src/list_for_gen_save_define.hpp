@@ -9,6 +9,7 @@
 	X(frost_lhs_type, FrostLhsType, ActualFrostLhsType) \
 	X(frost_full_type, FrostFullType, ActualFrostFullType) \
 	X(frost_function, FrostFunction, ActualFrostFunction) \
+	X(frost_statement, FrostStatement, ActualFrostStatement) \
 	X(frost_module, FrostModule, ActualFrostModule) \
 	X(frost_package, FrostPackage, ActualFrostPackage) \
 
