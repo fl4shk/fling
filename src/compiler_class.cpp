@@ -344,9 +344,32 @@ VisitorRetType Compiler::visitDeclPackage
 {
 	if (parse_pass() == ParsePass::FrostListPackages)
 	{
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		auto s_ident = _stacks.pop_str();
+
+		auto& frost_package_table = _frost_program().frost_package_table;
+		auto& curr_frost_package = _frost_program().curr_frost_package;
+
+		if (frost_package_table.contains(s_ident))
+		{
+			_err(ctx, sconcat("Duplicate package called \"", *s_ident,
+				"\", previously declared at ", frost_package_table.at
+				(s_ident)->src_code_pos().convert_to_errwarn_string(),
+				"."));
+		}
+
+		curr_frost_package = save_frost_package(FrostPackage
+			(_make_src_code_pos(ctx), s_ident));
+
+		frost_package_table.insert_or_assign(curr_frost_package);
 	}
 	else if (parse_pass() == ParsePass::FrostConstructRawPackages)
 	{
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		_frost_program().curr_frost_package
+			= _frost_program().frost_package_table.at(_stacks.pop_str());
+
+		ANY_JUST_ACCEPT_BASIC(ctx->insidePackage());
 	}
 	else
 	{
@@ -426,21 +449,26 @@ VisitorRetType Compiler::visitDeclModule
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
 
-		if (_frost_program().frost_module_table.contains(s_ident))
+		auto& frost_module_table = _frost_program().frost_module_table;
+		auto& curr_frost_module = _frost_program().curr_frost_module;
+
+		if (frost_module_table.contains(s_ident))
 		{
 			_err(ctx, sconcat("Duplicate module called \"", *s_ident,
-				"\"."));
+				"\", previously declared at ", frost_module_table.at
+				(s_ident)->src_code_pos().convert_to_errwarn_string(),
+				"."));
 		}
 
-		_frost_program().curr_frost_module = save_frost_module(FrostModule
+
+		curr_frost_module = save_frost_module(FrostModule
 			(_make_src_code_pos(ctx), s_ident));
 
 		// Process ports of this module
 		ANY_JUST_ACCEPT_LOOPED(port_list,
 			ctx->declPortDirectionalVarList())
 
-		_frost_program().frost_module_table.insert_or_assign
-			(_frost_program().curr_frost_module);
+		frost_module_table.insert_or_assign(curr_frost_module);
 	}
 	else if (parse_pass() == ParsePass::FrostConstructRawModules)
 	{
