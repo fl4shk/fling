@@ -28,7 +28,7 @@ private:		// variables
 
 	FrostFunctionTable _frost_function_table;
 
-	FrostStatementTable _statement_table;
+	FrostStatementTable _frost_statement_table;
 
 	//FrostPackageImportTable _frost_package_import_table;
 
@@ -62,6 +62,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 
+	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_vars)
 	GEN_GETTERS_BY_CON_REF_AND_REF(input_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(output_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(inout_symbol_table)
@@ -72,8 +73,7 @@ public:		// functions
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_lhs_type_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_vars)
-	GEN_GETTERS_BY_CON_REF_AND_REF(statement_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
 };
 
 // Nested "module"s are not permitted, and they are always at global scope.

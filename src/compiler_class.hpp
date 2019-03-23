@@ -24,7 +24,7 @@ public:		// types
 	typedef antlrcpp::Any VisitorRetType;
 
 	// Please excuse me calling something with "max" in its name "Small".
-	// In comparison to "BigNum"s, these actually *are* small.
+	// In comparison to "BigNum"s, these actually *can be* small.
 	typedef uintmax_t SmallNum;
 
 	enum class ScalarOrArray : SmallNum
@@ -33,40 +33,31 @@ public:		// types
 		Array
 	};
 
-	//enum class IdentExprType : SmallNum
-	//{
-	//	IdentName,
-	//	ScopedIdentName,
-	//	IdentConcatExpr,
-	//	IdentSliced
-	//};
-
 	typedef uintmax_t PassUint;
 
-	// Passes where we run the parser (initial semantic analysis is done in
-	// these)
+	// Passes where we walk the parse tree.  Some semantic analysis is done
+	// here, so long as said semantic analysis does not need to actually
+	// evaluate constant expressions.
 	enum class ParsePass : PassUint
 	{
-		// Passes for the initial processing of Frost HDL source code
-
 		// List "package" names.
-		FrostListPackages,
+		ListPackages,
 
-		// Construct raw "package"s, such that their "parameter"s are not
+		// Construct raw "package"s, such that their "param"s are not
 		// yet evaluated
-		FrostConstructRawPackages,
+		ConstructRawPackages,
 
-		//FrostListInterfaces,
-		//FrostConstructRawInterfaces,
+		//ListInterfaces,
+		//ConstructRawInterfaces,
 
 
-		// List "module"s, their "parameter"s, and their ports.
+		// List "module"s, their "param"s, and their ports.
 		// (FUTURE:  Add "interface" "modport" stuff here.)
-		FrostListModules,
+		ListModules,
 
-		// Construct raw modules (such that "parameter"s are not yet
+		// Construct raw modules (such that "param"s are not yet
 		// evaluated)
-		FrostConstructRawModules,
+		ConstructRawModules,
 
 
 		Done,
@@ -85,6 +76,8 @@ private:		// variables
 		X(Symbol*, Symbol*, sym) \
 		X(FrostLhsType*, FrostLhsType*, lhs_type) \
 		X(FrostFullType*, FrostFullType*, full_type) \
+		X(FrostStatementTable::Node*, FrostStatementTable::Node*, \
+			statement_table_node) \
 
 	class Stacks
 	{

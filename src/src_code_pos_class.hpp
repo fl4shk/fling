@@ -10,10 +10,6 @@
 namespace frost_hdl
 {
 
-class FrostPackage;
-class FrostInterface;
-class FrostModule;
-
 // Used for error reporting during semantic analysis.
 // Many, many things use this.
 class SrcCodePos

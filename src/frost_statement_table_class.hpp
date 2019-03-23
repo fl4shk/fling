@@ -214,6 +214,8 @@ public:		// functions
 	virtual ~FrostStatementTable() = default;
 };
 
+//typedef FrostStatementTable::Node FrostStatementNode;
+
 #undef GEN_EXPR_GETTER
 
 } // namespace frost_hdl

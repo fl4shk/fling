@@ -97,13 +97,13 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 
 	switch (parse_pass())
 	{
-	case ParsePass::FrostListPackages:
-	case ParsePass::FrostConstructRawPackages:
+	case ParsePass::ListPackages:
+	case ParsePass::ConstructRawPackages:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
 		break;
 
-	case ParsePass::FrostListModules:
-	case ParsePass::FrostConstructRawModules:
+	case ParsePass::ListModules:
+	case ParsePass::ConstructRawModules:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
@@ -136,7 +136,7 @@ VisitorRetType Compiler::visitLhsTypeName
 VisitorRetType Compiler::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 {
-	// only call this when parse_pass() == ParsePass::FrostListModules
+	// only call this when parse_pass() == ParsePass::ListModules
 
 	Expression* s_left_dim_expr = nullptr;
 	if (ctx->expr())
@@ -291,7 +291,7 @@ VisitorRetType Compiler::visitDeclNoKwLocalparam
 	auto s_ident = _stacks.pop_str();
 
 
-	if (parse_pass() == ParsePass::FrostConstructRawPackages)
+	if (parse_pass() == ParsePass::ConstructRawPackages)
 	{
 		auto package = _frost_program().curr_frost_package;
 
@@ -307,10 +307,10 @@ VisitorRetType Compiler::visitDeclNoKwLocalparam
 				errwarn_string, "."));
 		}
 	}
-	//else if (parse_pass() == ParsePass::FrostConstructRawInterfaces)
+	//else if (parse_pass() == ParsePass::ConstructRawInterfaces)
 	//{
 	//}
-	else if (parse_pass() == ParsePass::FrostConstructRawModules)
+	else if (parse_pass() == ParsePass::ConstructRawModules)
 	{
 		auto module = _frost_program().curr_frost_module;
 
@@ -342,7 +342,7 @@ VisitorRetType Compiler::visitDeclLocalparamList
 VisitorRetType Compiler::visitDeclPackage
 	(Parser::DeclPackageContext *ctx)
 {
-	if (parse_pass() == ParsePass::FrostListPackages)
+	if (parse_pass() == ParsePass::ListPackages)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
@@ -363,7 +363,7 @@ VisitorRetType Compiler::visitDeclPackage
 
 		frost_package_table.insert_or_assign(curr_frost_package);
 	}
-	else if (parse_pass() == ParsePass::FrostConstructRawPackages)
+	else if (parse_pass() == ParsePass::ConstructRawPackages)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program().curr_frost_package
@@ -380,6 +380,14 @@ VisitorRetType Compiler::visitDeclPackage
 VisitorRetType Compiler::visitInsidePackage
 	(Parser::InsidePackageContext *ctx)
 {
+	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
+		ctx->declLocalparamList())
+
+	//ANY_JUST_ACCEPT_BASIC(ctx->declStruct())
+	////ANY_JUST_ACCEPT_BASIC(ctx->declClass())
+	//ANY_JUST_ACCEPT_BASIC(ctx->declEnum())
+	//ANY_JUST_ACCEPT_BASIC(ctx->declFunction())
+	//ANY_JUST_ACCEPT_BASIC(ctx->declTypedef())
 	return nullptr;
 }
 
@@ -444,7 +452,7 @@ VisitorRetType Compiler::visitDeclPortDirectionalVarList
 VisitorRetType Compiler::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
 {
-	if (parse_pass() == ParsePass::FrostListModules)
+	if (parse_pass() == ParsePass::ListModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
@@ -470,7 +478,7 @@ VisitorRetType Compiler::visitDeclModule
 
 		frost_module_table.insert_or_assign(curr_frost_module);
 	}
-	else if (parse_pass() == ParsePass::FrostConstructRawModules)
+	else if (parse_pass() == ParsePass::ConstructRawModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program().curr_frost_module
@@ -494,7 +502,14 @@ VisitorRetType Compiler::visitInsideModule
 		ctx->declLocalparamList())
 	ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
 
-	ANY_JUST_ACCEPT_LOOPED(stmt_assign_iter, ctx->moduleStmtContAssign())
+	ANY_JUST_ACCEPT_LOOPED(module_stmt_cont_assign_iter,
+		ctx->moduleStmtContAssign())
+	//ANY_JUST_ACCEPT_LOOPED(module_stmt_initial_iter,
+	//	ctx->moduleStmtInitial())
+	//ANY_JUST_ACCEPT_LOOPED(module_stmt_always_comb_iter,
+	//	ctx->moduleStmtAlwaysComb())
+	//ANY_JUST_ACCEPT_LOOPED(module_stmt_always_seq_iter,
+	//	ctx->moduleStmtAlwaysSeq())
 
 	return nullptr;
 }
@@ -510,35 +525,17 @@ VisitorRetType Compiler::visitModuleStmtContAssign
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	auto s_rhs_expr = _stacks.pop_expr();
 
-	typedef Expression::LhsCategory ExprLhsCategory;
 
-	auto s_frost_statement = save_frost_statement(FrostStmtContAssign
-		(s_lhs_expr, s_rhs_expr));
+	//typedef Expression::LhsCategory ExprLhsCategory;
 
-	switch (s_lhs_expr->lhs_category())
-	{
-	case ExprLhsCategory::None:
-		_err(ctx, "Compiler::visitModuleStmtContAssign():  lhs None Eek!");
-		break;
+	//auto s_frost_statement = save_frost_statement(FrostStmtContAssign
+	//	(s_lhs_expr, s_rhs_expr));
 
-	case ExprLhsCategory::NonSliced:
-		break;
 
-	case ExprLhsCategory::Sliced:
-		_err(ctx, "Compiler::visitModuleStmtContAssign():  "
-			"Sliced not implemented Eek!");
-		break;
+	auto& frost_statement_table = module->frost_statement_table();
 
-	case ExprLhsCategory::Concat:
-		_err(ctx, "Compiler::visitModuleStmtContAssign():  "
-			"Concat not implemented Eek!");
-		break;
-
-	default:
-		_err(ctx, "Compiler::visitModuleStmtContAssign():  lhs default "
-			"Eek!");
-		break;
-	}
+	frost_statement_table.insert(frost_statement_table.next_top_node(),
+		FrostStmtContAssign(s_lhs_expr, s_rhs_expr));
 
 
 	return nullptr;
@@ -949,13 +946,13 @@ VisitorRetType Compiler::visitIdentExpr
 		// in the current scope.
 		switch (parse_pass())
 		{
-		//case ParsePass::FrostConstructRawPackages:
+		//case ParsePass::ConstructRawPackages:
 		//	break;
 
-		//case ParsePass::FrostConstructRawInterfaces:
+		//case ParsePass::ConstructRawInterfaces:
 		//	break;
 
-		case ParsePass::FrostConstructRawModules:
+		case ParsePass::ConstructRawModules:
 			if (module->contains_symbol(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -964,8 +961,10 @@ VisitorRetType Compiler::visitIdentExpr
 			}
 			else
 			{
-				_err(ctx, sconcat("Module \"", *module->ident(), "\" does",
-					" not contain a symbol called \"", *ident, "\"."));
+				//_err(ctx, sconcat("Module \"", *module->ident(), "\" does",
+				//	" not contain a symbol called \"", *ident, "\"."));
+				module->in_scope_err(sconcat("This module does not ",
+					"contain a symbol called \"", *ident, "\"."));
 			}
 			break;
 
@@ -974,27 +973,27 @@ VisitorRetType Compiler::visitIdentExpr
 		}
 	}
 
-	else if(ctx->scopedIdentName())
-	{
-		ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
-	
-		const SmallNum num_scopes = _stacks.pop_small_num();
+	//else if(ctx->scopedIdentName())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
+	//
+	//	const SmallNum num_scopes = _stacks.pop_small_num();
 
-		//// The identifier of whatever is inside the package.
-		//auto inner_ident = _stacks.pop_str();
+	//	//// The identifier of whatever is inside the package.
+	//	//auto inner_ident = _stacks.pop_str();
 
-		//// What package does this identifier come from?
-		//auto scope_ident = _stacks.pop_str();
+	//	//// What package does this identifier come from?
+	//	//auto scope_ident = _stacks.pop_str();
 
-		//auto package = _frost_program().curr_frost_package;
+	//	//auto package = _frost_program().curr_frost_package;
 
 
-		switch (parse_pass())
-		{
-		default:
-			break;
-		}
-	}
+	//	switch (parse_pass())
+	//	{
+	//	default:
+	//		break;
+	//	}
+	//}
 	else
 	{
 		_err(ctx, "Compiler::visitIdentExpr():  Eek!");
@@ -1034,7 +1033,7 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 {
 	// Call this ONLY if (parse_pass() == Compiler::ParsePass
 	// ::FrostListModules)
-	if (parse_pass() != Compiler::ParsePass::FrostListModules)
+	if (parse_pass() != Compiler::ParsePass::ListModules)
 	{
 		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  "
 			"parse_pass() Eek!");
@@ -1047,18 +1046,6 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	{
 		auto&& errwarn_string = module->find_symbol(s_ident)
 			->src_code_pos().convert_to_errwarn_string();
-		//if (module->parameter_vars().contains(s_ident))
-		//{
-		//	//_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
-		//	//	"\" already has a parameter with identifier \"", *s_ident,
-		//	//	"\", defined at ", errwarn_string, "."));
-		//}
-		//else // if (not a parameter)
-		//{
-		//	//_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
-		//	//	"\" already has a port variable with identifier \"",
-		//	//	*s_ident, "\", defined at ", errwarn_string, "."));
-		//}
 		module->in_scope_err(sconcat("This module already has a symbol ",
 			"called \"", *s_ident, "\", defined at ", errwarn_string,
 			"."));

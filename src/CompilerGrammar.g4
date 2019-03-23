@@ -75,6 +75,7 @@ insidePackage:
 		//| declStruct ';'
 		////| declClass ';'
 		//| declEnum ';'
+		//| declFunction ';'
 		//| declTypedef ';'
 	)*
 	;
@@ -91,11 +92,11 @@ declPortDirectionalVarList:
 	(TokKwInput | TokKwOutput | TokKwInout) declPortVarList
 	;
 
-//declParameterVar:
+//declParamVar:
 //	identName ((TokAssign expr)?)
 //	;
-//declParameterVarList:
-//	declParameterVar ((',' declParameterVar)*)
+//declParamVarList:
+//	declParamVar ((',' declParamVar)*)
 //	;
 
 
@@ -103,7 +104,7 @@ declPortDirectionalVarList:
 declModule:
 	TokKwModule identName
 		// FUTURE:  parameters
-		//((TokKwParameter '(' declParameterVarList ')')?)
+		//((TokKwParam '(' declParamVarList ')')?)
 
 		// ports
 		'('
@@ -275,7 +276,7 @@ TokNumber: '#' ;
 
 // Keywords
 TokKwModule: 'module' ;
-TokKwParameter: 'parameter' ;
+TokKwParam: 'param' ;
 TokKwLocalparam: 'localparam' ;
 
 TokKwInterface: 'interface' ;

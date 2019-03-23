@@ -312,11 +312,23 @@ public:		// functions
 
 	virtual ~ScopedUnnamedTable() = default;
 
-	//template<typename MaybeDerivedType>
-	//inline Type* insert(Node* some_curr_node, MaybeDerivedType&& to_insert)
-	//{
-	//	some_curr_node->tab
-	//}
+	inline Node* next_top_node()
+	{
+		auto& ret = Base::_tree.children.front();
+		Base::mkscope(ret);
+		return ret;
+	}
+
+	template<typename MaybeDerivedType>
+	inline void insert(Node* some_curr_node,
+		MaybeDerivedType&& to_insert)
+	{
+		//some_curr_node->tab
+		Base::_data_pool.push_back(new MaybeDerivedType
+			(std::move(to_insert)));
+		some_curr_node->table.push_back(Base::_data_pool.back());
+	}
+
 };
 
 
