@@ -289,15 +289,22 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		(_make_src_code_pos(ctx->expr()), s_expr->value().size());
 
 
-	// This forcibly makes "localparam"s be vectors.
+	// This forcibly makes "localparam"s be vectors, but that's not such a
+	// big deal (given that "localparam"s are always built-in types), is
+	// it?
 	auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
 		(s_src_code_pos, FrostLhsType::construct_initial_builtin_type_ident
 		(s_expr->value().is_signed(), s_left_dim_expr),
 		s_expr->value().is_signed(), s_left_dim_expr));
 
-	//auto s_frost_full_type = 
+	// "localparam"s are never arrays.
+	auto s_frost_full_type = save_frost_full_type(FrostFullType
+		(s_src_code_pos, s_frost_lhs_type));
+
+	SymbolTable* symbol_table = nullptr;
 
 
+	// Error checking
 	if (pass() == Pass::ConstructRawPackages)
 	{
 		auto package = _frost_program.curr_frost_package;
@@ -311,6 +318,8 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				*s_ident,  "\", defined at ",
 				errwarn_string, "."));
 		}
+
+		symbol_table = &package->symbol_table();
 	}
 	//else if (pass() == Pass::ConstructRawInterfaces)
 	//{
@@ -328,13 +337,17 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"\", defined at ", errwarn_string, "."));
 		}
 
-		//module->
+		symbol_table = &module->local_symbol_table();
 	}
 	else
 	{
 		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  pass() "
 			"Eek!");
 	}
+
+	symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
+		s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
+
 	return nullptr;
 }
 VisitorRetType ParseTreeVisitor::visitDeclLocalparamList
@@ -941,6 +954,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident = _stacks.pop_str();
 
+		auto package = _frost_program.curr_frost_package;
 		auto module = _frost_program.curr_frost_module;
 
 
@@ -948,8 +962,20 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		// in the current scope.
 		switch (pass())
 		{
-		//case Pass::ConstructRawPackages:
-		//	break;
+		case Pass::ConstructRawPackages:
+			if (package->symbol_table().contains(ident))
+			{
+				_stacks.push_expr(save_expr(ExprIdentName
+					(_make_src_code_pos(ctx),
+					package->symbol_table().at(ident))));
+			}
+			else
+			{
+				package->in_scope_err(_make_src_code_pos(ctx), sconcat
+					("This package does nto contain a symbol called \"",
+					*ident, "\"."));
+			}
+			break;
 
 		//case Pass::ConstructRawInterfaces:
 		//	break;

@@ -1,11 +1,14 @@
 package PkgAlu
 {
 	localparam EGG = 0x3'0x3;
+
+	localparam GERM = EGG;
 }
 
 module FullAdder(input logic i_a, i_b, i_carry,
 	output logic o_sum, o_carry)
 {
-	assign o_sum = (i_a ^ i_b) ^ i_carry;
+	assign o_sum = (i_a ^ i_b) ^ i_carry + EDGE2;
 	assign o_carry = (i_a & i_b) | ((i_a ^ i_b) & i_carry);
+	localparam EDGE = 9;
 }
