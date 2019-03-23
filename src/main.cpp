@@ -1,4 +1,4 @@
-#include "compiler_class.hpp"
+#include "parse_tree_visitor_class.hpp"
 #include "expr_num_class.hpp"
 #include "expression_classes.hpp"
 #include "testing.hpp"
@@ -9,17 +9,17 @@ int main(int argc, char** argv)
 	//std::string from_stdin(get_stdin_as_str());
 
 	//antlr4::ANTLRInputStream input(from_stdin);
-	//CompilerGrammarLexer lexer(&input);
+	//FrostHdlGrammarLexer lexer(&input);
 	//antlr4::CommonTokenStream tokens(&lexer);
 	//tokens.fill();
 
-	//CompilerGrammarParser parser(&tokens);
+	//FrostHdlGrammarParser parser(&tokens);
 	//parser.removeErrorListeners();
-	//std::unique_ptr<frost_hdl::CompilerErrorListener>
-	//	compiler_error_listener(new frost_hdl::CompilerErrorListener());
-	//parser.addErrorListener(compiler_error_listener.get());
+	//std::unique_ptr<frost_hdl::ParseTreeVisitorErrorListener>
+	//	parse_tree_visitor_error_listener(new frost_hdl::ParseTreeVisitorErrorListener());
+	//parser.addErrorListener(parse_tree_visitor_error_listener.get());
 
-	//frost_hdl::Compiler visitor(parsers);
+	//frost_hdl::ParseTreeVisitor visitor(parsers);
 	//return visitor.run();
 
 	////frost_hdl::test_implemented_expressions(std::cout);
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 
-	frost_hdl::Compiler::ListParsedSrcCode s_list_parsed_src_code;
+	frost_hdl::ParseTreeVisitor::ListParsedSrcCode s_list_parsed_src_code;
 
 	//printout("argc:  ", argc, "\n");
 
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 			::ParsedSrcCode>(new frost_hdl::ParsedSrcCode(argv[i])));
 	}
 
-	frost_hdl::Compiler visitor(std::move(s_list_parsed_src_code));
+	frost_hdl::ParseTreeVisitor visitor(std::move(s_list_parsed_src_code));
 	return visitor.run();
 
 }

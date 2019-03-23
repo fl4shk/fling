@@ -1,7 +1,7 @@
 #include "src_code_pos_class.hpp"
-#include "gen_src/CompilerGrammarLexer.h"
-#include "gen_src/CompilerGrammarParser.h"
-#include "gen_src/CompilerGrammarVisitor.h"
+#include "gen_src/FrostHdlGrammarLexer.h"
+#include "gen_src/FrostHdlGrammarParser.h"
+#include "gen_src/FrostHdlGrammarVisitor.h"
 
 namespace frost_hdl
 {

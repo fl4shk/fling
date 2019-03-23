@@ -1,4 +1,4 @@
-grammar CompilerGrammar;
+grammar FrostHdlGrammar;
 
 // Parser rules
 

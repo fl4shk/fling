@@ -1,4 +1,4 @@
-#include "compiler_class.hpp"
+#include "parse_tree_visitor_class.hpp"
 #include "general_allocator_class.hpp"
 #include "expression_builder_class.hpp"
 
@@ -36,20 +36,20 @@
 namespace frost_hdl
 {
 
-typedef Compiler::VisitorRetType VisitorRetType;
+typedef ParseTreeVisitor::VisitorRetType VisitorRetType;
 
-Compiler::Compiler(ListParsedSrcCode&& s_list_parsed_src_code)
+ParseTreeVisitor::ParseTreeVisitor(ListParsedSrcCode&& s_list_parsed_src_code)
 	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
 	//_program_ctx = parser.program();
 }
-Compiler::~Compiler()
+ParseTreeVisitor::~ParseTreeVisitor()
 {
 }
 
-int Compiler::run()
+int ParseTreeVisitor::run()
 {
-	while (parse_pass() < ParsePass::Done)
+	while (pass() < Pass::Done)
 	{
 		//visitProgram(_program_ctx);
 		for (const auto& parsed_src_code : _list_parsed_src_code)
@@ -69,8 +69,8 @@ int Compiler::run()
 			//	(*_list_parsed_src_code.at(i)->filename());
 			*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
 		}
-		set_parse_pass(static_cast<ParsePass>(static_cast<PassUint>
-			(parse_pass()) + static_cast<PassUint>(1)));
+		set_pass(static_cast<Pass>(static_cast<PassUint>
+			(pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
 	}
 
@@ -80,7 +80,7 @@ int Compiler::run()
 
 // Basically just "module" and "package" declarations.  There are no other
 // things at global scope.
-VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
+VisitorRetType ParseTreeVisitor::visitProgram(Parser::ProgramContext *ctx)
 {
 
 	//if (_in_frost_package_pass())
@@ -95,21 +95,21 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 	//}
 
 
-	switch (parse_pass())
+	switch (pass())
 	{
-	case ParsePass::ListPackages:
-	case ParsePass::ConstructRawPackages:
+	case Pass::ListPackages:
+	case Pass::ConstructRawPackages:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
 		break;
 
-	case ParsePass::ListModules:
-	case ParsePass::ConstructRawModules:
+	case Pass::ListModules:
+	case Pass::ConstructRawModules:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
-	//case ParsePass::Done:
+	//case Pass::Done:
 	default:
-		_err(ctx, "Compiler::visitProgram():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitProgram():  Eek!");
 		break;
 	}
 
@@ -120,7 +120,7 @@ VisitorRetType Compiler::visitProgram(Parser::ProgramContext *ctx)
 
 
 // Variable declaration stuff
-VisitorRetType Compiler::visitLhsTypeName
+VisitorRetType ParseTreeVisitor::visitLhsTypeName
 	(Parser::LhsTypeNameContext *ctx)
 {
 	ANY_ACCEPT_IF_BASIC(ctx->lhsBuiltinTypeName())
@@ -128,15 +128,15 @@ VisitorRetType Compiler::visitLhsTypeName
 	//else ANY_ACCEPT_IF_BASIC(ctx->lhsScopedCstmTypeName())
 	else
 	{
-		_err(ctx, "Compiler::visitLhsTypeName():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitLhsTypeName():  Eek!");
 	}
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitLhsBuiltinTypeName
+VisitorRetType ParseTreeVisitor::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 {
-	// only call this when parse_pass() == ParsePass::ListModules
+	// only call this when pass() == Pass::ListModules
 
 	Expression* s_left_dim_expr = nullptr;
 	if (ctx->expr())
@@ -185,7 +185,7 @@ VisitorRetType Compiler::visitLhsBuiltinTypeName
 
 // custom type name from the current scope, be it a module or a package.
 // (FUTURE)
-VisitorRetType Compiler::visitLhsUnscopedCstmTypeName
+VisitorRetType ParseTreeVisitor::visitLhsUnscopedCstmTypeName
 	(Parser::LhsUnscopedCstmTypeNameContext *ctx)
 {
 	return nullptr;
@@ -193,14 +193,14 @@ VisitorRetType Compiler::visitLhsUnscopedCstmTypeName
 
 // custom type name from a package.
 // (FUTURE)
-VisitorRetType Compiler::visitLhsScopedCstmTypeName
+VisitorRetType ParseTreeVisitor::visitLhsScopedCstmTypeName
 	(Parser::LhsScopedCstmTypeNameContext *ctx)
 {
 	return nullptr;
 }
 
 // Array dimensions go here
-VisitorRetType Compiler::visitDeclNoLhsTypeVar
+VisitorRetType ParseTreeVisitor::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
@@ -231,7 +231,7 @@ VisitorRetType Compiler::visitDeclNoLhsTypeVar
 }
 
 // List of local variables
-VisitorRetType Compiler::visitDeclVarList
+VisitorRetType ParseTreeVisitor::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
@@ -269,7 +269,7 @@ VisitorRetType Compiler::visitDeclVarList
 			break;
 
 		default:
-			_err(ctx, "Compiler::visitDeclVarList():  Eek!");
+			_err(ctx, "ParseTreeVisitor::visitDeclVarList():  Eek!");
 			break;
 		}
 
@@ -284,14 +284,14 @@ VisitorRetType Compiler::visitDeclVarList
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitDeclNoKwLocalparam
+VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 	(Parser::DeclNoKwLocalparamContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 	auto s_ident = _stacks.pop_str();
 
 
-	if (parse_pass() == ParsePass::ConstructRawPackages)
+	if (pass() == Pass::ConstructRawPackages)
 	{
 		auto package = _frost_program().curr_frost_package;
 
@@ -302,15 +302,16 @@ VisitorRetType Compiler::visitDeclNoKwLocalparam
 			//_err(ctx, sconcat("Duplicate localparam called \"", *s_ident,
 			//	"\" in package \"", *package->ident(), "\", defined at ",
 			//	errwarn_string));
-			package->in_scope_err(sconcat("This package already has a ",
-				"localparam called \"", *s_ident,  "\", defined at ",
+			package->in_scope_err(_make_src_code_pos(ctx), sconcat
+				("This package already has a localparam called \"", 
+				*s_ident,  "\", defined at ",
 				errwarn_string, "."));
 		}
 	}
-	//else if (parse_pass() == ParsePass::ConstructRawInterfaces)
+	//else if (pass() == Pass::ConstructRawInterfaces)
 	//{
 	//}
-	else if (parse_pass() == ParsePass::ConstructRawModules)
+	else if (pass() == Pass::ConstructRawModules)
 	{
 		auto module = _frost_program().curr_frost_module;
 
@@ -320,18 +321,18 @@ VisitorRetType Compiler::visitDeclNoKwLocalparam
 				->src_code_pos().convert_to_errwarn_string();
 			//module->find_symbol(s_ident)->src_code_pos().in_scope_err
 			//	(module, "test");
-			module->in_scope_err(sconcat("This module already has a ",
-				"symbol called \"", *s_ident, "\", defined at ",
-				errwarn_string, "."));
+			module->in_scope_err(_make_src_code_pos(ctx), sconcat("This ",
+				"module already has a symbol called \"", *s_ident, 
+				"\", defined at ", errwarn_string, "."));
 		}
 	}
 	else
 	{
-		_err(ctx, "Compiler::visitDeclNoKwLocalparam():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  Eek!");
 	}
 	return nullptr;
 }
-VisitorRetType Compiler::visitDeclLocalparamList
+VisitorRetType ParseTreeVisitor::visitDeclLocalparamList
 	(Parser::DeclLocalparamListContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_no_kw_localparam_iter,
@@ -339,10 +340,10 @@ VisitorRetType Compiler::visitDeclLocalparamList
 	return nullptr;
 }
 // "package" stuff
-VisitorRetType Compiler::visitDeclPackage
+VisitorRetType ParseTreeVisitor::visitDeclPackage
 	(Parser::DeclPackageContext *ctx)
 {
-	if (parse_pass() == ParsePass::ListPackages)
+	if (pass() == Pass::ListPackages)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
@@ -363,7 +364,7 @@ VisitorRetType Compiler::visitDeclPackage
 
 		frost_package_table.insert_or_assign(curr_frost_package);
 	}
-	else if (parse_pass() == ParsePass::ConstructRawPackages)
+	else if (pass() == Pass::ConstructRawPackages)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program().curr_frost_package
@@ -373,11 +374,11 @@ VisitorRetType Compiler::visitDeclPackage
 	}
 	else
 	{
-		_err(ctx, "Compiler::visitDeclPackage():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclPackage():  Eek!");
 	}
 	return nullptr;
 }
-VisitorRetType Compiler::visitInsidePackage
+VisitorRetType ParseTreeVisitor::visitInsidePackage
 	(Parser::InsidePackageContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
@@ -393,7 +394,7 @@ VisitorRetType Compiler::visitInsidePackage
 
 // For now, port vars can't be arrays.  Perhaps things will actually stay
 // that way (such that arrays on ports *must* be in "splitvar" "struct"s)
-VisitorRetType Compiler::visitDeclPortVarList
+VisitorRetType ParseTreeVisitor::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
@@ -411,7 +412,7 @@ VisitorRetType Compiler::visitDeclPortVarList
 }
 
 
-VisitorRetType Compiler::visitDeclPortDirectionalVarList
+VisitorRetType ParseTreeVisitor::visitDeclPortDirectionalVarList
 	(Parser::DeclPortDirectionalVarListContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->declPortVarList());
@@ -436,7 +437,7 @@ VisitorRetType Compiler::visitDeclPortDirectionalVarList
 	}
 	else
 	{
-		_err(ctx, "Compiler::visitDeclPortDirectionalVarList():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclPortDirectionalVarList():  Eek!");
 	}
 
 	for (size_t i=0; i<num_ident_names; ++i)
@@ -449,10 +450,10 @@ VisitorRetType Compiler::visitDeclPortDirectionalVarList
 }
 
 // "module" stuff
-VisitorRetType Compiler::visitDeclModule
+VisitorRetType ParseTreeVisitor::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
 {
-	if (parse_pass() == ParsePass::ListModules)
+	if (pass() == Pass::ListModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
@@ -478,7 +479,7 @@ VisitorRetType Compiler::visitDeclModule
 
 		frost_module_table.insert_or_assign(curr_frost_module);
 	}
-	else if (parse_pass() == ParsePass::ConstructRawModules)
+	else if (pass() == Pass::ConstructRawModules)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program().curr_frost_module
@@ -488,14 +489,14 @@ VisitorRetType Compiler::visitDeclModule
 	}
 	else
 	{
-		_err(ctx, "Compiler::visitDeclModule():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclModule():  Eek!");
 	}
 
 
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitInsideModule
+VisitorRetType ParseTreeVisitor::visitInsideModule
 	(Parser::InsideModuleContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
@@ -514,7 +515,7 @@ VisitorRetType Compiler::visitInsideModule
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitModuleStmtContAssign
+VisitorRetType ParseTreeVisitor::visitModuleStmtContAssign
 	(Parser::ModuleStmtContAssignContext *ctx)
 {
 	auto module = _frost_program().curr_frost_module;
@@ -531,18 +532,17 @@ VisitorRetType Compiler::visitModuleStmtContAssign
 	//auto s_frost_statement = save_frost_statement(FrostStmtContAssign
 	//	(s_lhs_expr, s_rhs_expr));
 
-
-	auto& frost_statement_table = module->frost_statement_table();
-
-	frost_statement_table.insert(frost_statement_table.next_top_node(),
-		FrostStmtContAssign(s_lhs_expr, s_rhs_expr));
+	// For continuous assignments in particular, there's no need to use
+	// "_stacks" to keep track of the statement scoping top node.
+	module->frost_statement_table().insert(module->frost_statement_table()
+		.next_top_node(), FrostStmtContAssign(s_lhs_expr, s_rhs_expr));
 
 
 	return nullptr;
 }
 
 // Expression parsing
-VisitorRetType Compiler::visitExpr
+VisitorRetType ParseTreeVisitor::visitExpr
 	(Parser::ExprContext *ctx)
 {
 	if (ctx->TokOpLogical())
@@ -567,7 +567,7 @@ VisitorRetType Compiler::visitExpr
 		}
 		else
 		{
-			_err(ctx, "Compiler::visitExpr():  Eek!");
+			_err(ctx, "ParseTreeVisitor::visitExpr():  Eek!");
 		}
 	}
 	else
@@ -577,7 +577,7 @@ VisitorRetType Compiler::visitExpr
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitExprLogical
+VisitorRetType ParseTreeVisitor::visitExprLogical
 	(Parser::ExprLogicalContext *ctx)
 {
 	if (ctx->TokOpCompare())
@@ -622,7 +622,7 @@ VisitorRetType Compiler::visitExprLogical
 		}
 		else
 		{
-			_err(ctx, "Compiler::visitExprLogical():  Eek!");
+			_err(ctx, "ParseTreeVisitor::visitExprLogical():  Eek!");
 		}
 	}
 	else
@@ -631,7 +631,7 @@ VisitorRetType Compiler::visitExprLogical
 	}
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprCompare
+VisitorRetType ParseTreeVisitor::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 {
 	if (ctx->TokPlus())
@@ -663,7 +663,7 @@ VisitorRetType Compiler::visitExprCompare
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitExprAddSub
+VisitorRetType ParseTreeVisitor::visitExprAddSub
 	(Parser::ExprAddSubContext *ctx)
 {
 	if (ctx->TokOpMulDivMod())
@@ -693,7 +693,7 @@ VisitorRetType Compiler::visitExprAddSub
 		}
 		else
 		{
-			_err(ctx, "Compiler::visitExprAddSub():  TokOpMulDivMod() "
+			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  TokOpMulDivMod() "
 				"Eek!");
 		}
 	}
@@ -739,7 +739,7 @@ VisitorRetType Compiler::visitExprAddSub
 		}
 		else
 		{
-			_err(ctx, "Compiler::visitExprAddSub():  TokOpBitwise() "
+			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  TokOpBitwise() "
 				"Eek!");
 		}
 	}
@@ -749,7 +749,7 @@ VisitorRetType Compiler::visitExprAddSub
 	}
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprMulDivModEtc
+VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 {
 	ANY_ACCEPT_IF_BASIC(ctx->exprUnary())
@@ -758,12 +758,12 @@ VisitorRetType Compiler::visitExprMulDivModEtc
 	else ANY_ACCEPT_IF_BASIC(ctx->expr())
 	else
 	{
-		_err(ctx, "Compiler::visitExprMulDivModEtc():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitExprMulDivModEtc():  Eek!");
 	}
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitExprUnary
+VisitorRetType ParseTreeVisitor::visitExprUnary
 	(Parser::ExprUnaryContext *ctx)
 {
 	ANY_ACCEPT_IF_BASIC(ctx->exprPlusUnary())
@@ -774,13 +774,13 @@ VisitorRetType Compiler::visitExprUnary
 	else ANY_ACCEPT_IF_BASIC(ctx->exprCastSigned())
 	else
 	{
-		_err(ctx, "Compiler::visitExprUnary():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitExprUnary():  Eek!");
 	}
 	return nullptr;
 }
 
 
-VisitorRetType Compiler::visitExprPlusUnary
+VisitorRetType ParseTreeVisitor::visitExprPlusUnary
 	(Parser::ExprPlusUnaryContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -789,7 +789,7 @@ VisitorRetType Compiler::visitExprPlusUnary
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprMinusUnary
+VisitorRetType ParseTreeVisitor::visitExprMinusUnary
 	(Parser::ExprMinusUnaryContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -798,7 +798,7 @@ VisitorRetType Compiler::visitExprMinusUnary
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprLogNot
+VisitorRetType ParseTreeVisitor::visitExprLogNot
 	(Parser::ExprLogNotContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -807,7 +807,7 @@ VisitorRetType Compiler::visitExprLogNot
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprBitNot
+VisitorRetType ParseTreeVisitor::visitExprBitNot
 	(Parser::ExprBitNotContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -816,7 +816,7 @@ VisitorRetType Compiler::visitExprBitNot
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprCastUnsigned
+VisitorRetType ParseTreeVisitor::visitExprCastUnsigned
 	(Parser::ExprCastUnsignedContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -826,7 +826,7 @@ VisitorRetType Compiler::visitExprCastUnsigned
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitExprCastSigned
+VisitorRetType ParseTreeVisitor::visitExprCastSigned
 	(Parser::ExprCastSignedContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
@@ -838,7 +838,7 @@ VisitorRetType Compiler::visitExprCastSigned
 }
 
 // I'm pretty sure this works.
-VisitorRetType Compiler::visitNumExpr
+VisitorRetType ParseTreeVisitor::visitNumExpr
 	(Parser::NumExprContext *ctx)
 {
 	if (ctx->rawNumExpr())
@@ -862,20 +862,19 @@ VisitorRetType Compiler::visitNumExpr
 	}
 	else
 	{
-		_err(ctx, "Compiler::visitNumExpr():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitNumExpr():  Eek!");
 	}
 
 	return nullptr;
 }
 
-// This needs tested!
-VisitorRetType Compiler::visitRawNumExpr
+// I'm pretty sure this works.
+VisitorRetType ParseTreeVisitor::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 {
+	BigNum to_push(0);
 	if (ctx->TokDecNum())
 	{
-		BigNum to_push(0);
-
 		for (auto c : ctx->TokDecNum()->toString())
 		{
 			to_push = (to_push * 10) + (c - '0');
@@ -885,21 +884,19 @@ VisitorRetType Compiler::visitRawNumExpr
 	}
 	else if (ctx->TokHexNum())
 	{
-		BigNum to_push(0);
-
 		for (auto c : ctx->TokHexNum()->toString())
 		{
 			if ((c >= 'A') && (c <= 'F'))
 			{
-				to_push = (to_push * 16) + (c - 'A' + 0xA);
+				to_push = (to_push * 0x10) + (c - 'A' + 0xA);
 			}
 			else if ((c >= 'a') && (c <= 'f'))
 			{
-				to_push = (to_push * 16) + (c - 'a' + 0xa);
+				to_push = (to_push * 0x10) + (c - 'a' + 0xa);
 			}
 			else // if ((c >= '0') && (c <= '9'))
 			{
-				to_push = (to_push * 16) + (c - '0' + 0x0);
+				to_push = (to_push * 0x10) + (c - '0' + 0x0);
 			}
 		}
 
@@ -907,23 +904,21 @@ VisitorRetType Compiler::visitRawNumExpr
 	}
 	else if (ctx->TokBinNum())
 	{
-		BigNum to_push(0);
-
 		for (auto c : ctx->TokBinNum()->toString())
 		{
-			to_push = (to_push * 2) + (c - '0');
+			to_push = (to_push * 0b10) + (c - '0');
 		}
 
 		_stacks.push_big_num(to_push);
 	}
 	else
 	{
-		_err(ctx, "Compiler::visitRawNumExpr():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitRawNumExpr():  Eek!");
 	}
 
 	return nullptr;
 }
-VisitorRetType Compiler::visitSizedNumExpr
+VisitorRetType ParseTreeVisitor::visitSizedNumExpr
 	(Parser::SizedNumExprContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(raw_num_expr, ctx->rawNumExpr())
@@ -931,7 +926,7 @@ VisitorRetType Compiler::visitSizedNumExpr
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitIdentExpr
+VisitorRetType ParseTreeVisitor::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 {
 	if (ctx->identName())
@@ -944,15 +939,15 @@ VisitorRetType Compiler::visitIdentExpr
 
 		// Here we check to see whether or not the symbol actually exists
 		// in the current scope.
-		switch (parse_pass())
+		switch (pass())
 		{
-		//case ParsePass::ConstructRawPackages:
+		//case Pass::ConstructRawPackages:
 		//	break;
 
-		//case ParsePass::ConstructRawInterfaces:
+		//case Pass::ConstructRawInterfaces:
 		//	break;
 
-		case ParsePass::ConstructRawModules:
+		case Pass::ConstructRawModules:
 			if (module->contains_symbol(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -963,8 +958,9 @@ VisitorRetType Compiler::visitIdentExpr
 			{
 				//_err(ctx, sconcat("Module \"", *module->ident(), "\" does",
 				//	" not contain a symbol called \"", *ident, "\"."));
-				module->in_scope_err(sconcat("This module does not ",
-					"contain a symbol called \"", *ident, "\"."));
+				module->in_scope_err(_make_src_code_pos(ctx), sconcat
+					("This module does not contain a symbol called \"",
+					*ident, "\"."));
 			}
 			break;
 
@@ -973,37 +969,39 @@ VisitorRetType Compiler::visitIdentExpr
 		}
 	}
 
-	//else if(ctx->scopedIdentName())
-	//{
-	//	ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
-	//
-	//	const SmallNum num_scopes = _stacks.pop_small_num();
+	else if(ctx->scopedIdentName())
+	{
+		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  scopedIdentName() not "
+			"implemented Eek!");
+		//ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
+	
+		//const SmallNum num_scopes = _stacks.pop_small_num();
 
-	//	//// The identifier of whatever is inside the package.
-	//	//auto inner_ident = _stacks.pop_str();
+		////// The identifier of whatever is inside the package.
+		////auto inner_ident = _stacks.pop_str();
 
-	//	//// What package does this identifier come from?
-	//	//auto scope_ident = _stacks.pop_str();
+		////// What package does this identifier come from?
+		////auto scope_ident = _stacks.pop_str();
 
-	//	//auto package = _frost_program().curr_frost_package;
+		////auto package = _frost_program().curr_frost_package;
 
 
-	//	switch (parse_pass())
-	//	{
-	//	default:
-	//		break;
-	//	}
-	//}
+		//switch (pass())
+		//{
+		//default:
+		//	break;
+		//}
+	}
 	else
 	{
-		_err(ctx, "Compiler::visitIdentExpr():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  Eek!");
 	}
 
 	return nullptr;
 }
 
 
-VisitorRetType Compiler::visitIdentName
+VisitorRetType ParseTreeVisitor::visitIdentName
 	(Parser::IdentNameContext *ctx)
 {
 	_stacks.push_str(TOK_TO_DUPPED_STR(ctx->TokIdent()));
@@ -1012,7 +1010,7 @@ VisitorRetType Compiler::visitIdentName
 	return nullptr;
 }
 
-VisitorRetType Compiler::visitScopedIdentName
+VisitorRetType ParseTreeVisitor::visitScopedIdentName
 	(Parser::ScopedIdentNameContext *ctx)
 {
 	SmallNum num_scopes = 0;
@@ -1027,16 +1025,16 @@ VisitorRetType Compiler::visitScopedIdentName
 }
 
 
-void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
+void ParseTreeVisitor::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, Symbol::PortType s_port_type,
 	FrostLhsType* s_frost_lhs_type)
 {
-	// Call this ONLY if (parse_pass() == Compiler::ParsePass
+	// Call this ONLY if (pass() == ParseTreeVisitor::Pass
 	// ::FrostListModules)
-	if (parse_pass() != Compiler::ParsePass::ListModules)
+	if (pass() != ParseTreeVisitor::Pass::ListModules)
 	{
-		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  "
-			"parse_pass() Eek!");
+		_err(s_src_code_pos, "ParseTreeVisitor::_insert_module_port_var():  "
+			"pass() Eek!");
 	}
 
 	// I am lazy.
@@ -1046,9 +1044,9 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 	{
 		auto&& errwarn_string = module->find_symbol(s_ident)
 			->src_code_pos().convert_to_errwarn_string();
-		module->in_scope_err(sconcat("This module already has a symbol ",
-			"called \"", *s_ident, "\", defined at ", errwarn_string,
-			"."));
+		module->in_scope_err(s_src_code_pos, sconcat("This module ",
+			"already has a symbol called \"", *s_ident, "\", defined at ",
+			errwarn_string, "."));
 	}
 
 	// Again, I am lazy.
@@ -1069,7 +1067,7 @@ void Compiler::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		break;
 
 	default:
-		_err(s_src_code_pos, "Compiler::_insert_module_port_var():  "
+		_err(s_src_code_pos, "ParseTreeVisitor::_insert_module_port_var():  "
 			"PortType Eek!");
 		break;
 	}

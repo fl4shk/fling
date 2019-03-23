@@ -11,15 +11,15 @@ ParsedSrcCode::ParsedSrcCode()
 ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 {
 	//antlr4::ANTLRInputStream input(from_stdin);
-	//CompilerGrammarLexer lexer(&input);
+	//FrostHdlGrammarLexer lexer(&input);
 	//antlr4::CommonTokenStream tokens(&lexer);
 	//tokens.fill();
 
-	//CompilerGrammarParser parser(&tokens);
+	//FrostHdlGrammarParser parser(&tokens);
 	//parser.removeErrorListeners();
-	//std::unique_ptr<frost_hdl::CompilerErrorListener>
-	//	compiler_error_listener(new frost_hdl::CompilerErrorListener());
-	//parser.addErrorListener(compiler_error_listener.get());
+	//std::unique_ptr<frost_hdl::ParseTreeVisitorErrorListener>
+	//	parse_tree_visitor_error_listener(new frost_hdl::ParseTreeVisitorErrorListener());
+	//parser.addErrorListener(parse_tree_visitor_error_listener.get());
 
 	_filename = dup_str(s_filename);
 
@@ -46,14 +46,14 @@ ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 
 	_input_stream.reset(new antlr4::ANTLRInputStream(get_istream_as_str
 		(fstm)));
-	_lexer.reset(new CompilerGrammarLexer(&(*_input_stream)));
+	_lexer.reset(new FrostHdlGrammarLexer(&(*_input_stream)));
 	_tokens.reset(new antlr4::CommonTokenStream(&(*_lexer)));
 	_tokens->fill();
 
-	_parser.reset(new CompilerGrammarParser(&(*_tokens)));
+	_parser.reset(new FrostHdlGrammarParser(&(*_tokens)));
 	_parser->removeErrorListeners();
-	_compiler_error_listener.reset(new CompilerErrorListener());
-	_parser->addErrorListener(_compiler_error_listener.get());
+	_parse_tree_visitor_error_listener.reset(new ParseTreeVisitorErrorListener());
+	_parser->addErrorListener(_parse_tree_visitor_error_listener.get());
 }
 
 ParsedSrcCode::~ParsedSrcCode()

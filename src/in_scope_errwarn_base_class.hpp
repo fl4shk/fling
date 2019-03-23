@@ -20,19 +20,21 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(InScopeErrWarnBase);
 	virtual ~InScopeErrWarnBase() = default; 
 
-	inline void in_scope_err(const std::string& msg) const
+	inline void in_scope_err(const ActualSrcCodePos& some_src_code_pos,
+		const std::string& msg) const
 	{
-		src_code_pos().err(sconcat("In ", scope_type_str(), " \"",
+		some_src_code_pos.err(sconcat("In ", scope_type_str(), " \"",
 			*ident(), "\":  ", msg));
 	}
-	inline void in_scope_warn(const std::string& msg) const
+	inline void in_scope_warn(const ActualSrcCodePos& some_src_code_pos,
+		const std::string& msg) const
 	{
-		src_code_pos().warn(sconcat("In ", scope_type_str(), " \"",
+		some_src_code_pos.warn(sconcat("In ", scope_type_str(), " \"",
 			*ident(), "\":  ", msg));
 	}
 
 	virtual std::string scope_type_str() const = 0;
-	virtual const ActualSrcCodePos& src_code_pos() const = 0;
+	//virtual const ActualSrcCodePos& src_code_pos() const = 0;
 	virtual SavedString ident() const = 0;
 
 };

@@ -24,7 +24,7 @@ FrostLhsType::ComponentData::ComponentData(CompositeType s_composite_type,
 		_type = ComponentType::Splitvar;
 		break;
 	default:
-		printerr("Internal Compiler Error:  FrostLhsType::ComponentData",
+		printerr("Internal ParseTreeVisitor Error:  FrostLhsType::ComponentData",
 			"::ComponentData():  Eek!\n");
 		exit(1);
 

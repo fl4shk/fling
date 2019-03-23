@@ -189,7 +189,7 @@ namespace frost_hdl
 //};
 //
 //
-//// Scoping information is stored here.  The parse tree visitor ("Compiler")
+//// Scoping information is stored here.  The parse tree visitor ("ParseTreeVisitor")
 //// builds this and operates on it.
 //class FrostScopeTable : public ScopedIdentTable<FrostScope>
 //{

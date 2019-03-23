@@ -187,7 +187,7 @@ public:		// functions
 
 
 // "FrostLhsTypeTable" isn't scoped scoped types are part of other
-// "...Table" classes, and also part of "Compiler" for global scope.
+// "...Table" classes, and also part of "ParseTreeVisitor" for global scope.
 class FrostLhsTypeTable : public IdentToPointerTable<FrostLhsType>
 {
 public:		// functions

@@ -1,7 +1,7 @@
-#ifndef src_compiler_class_hpp
-#define src_compiler_class_hpp
+#ifndef src_parse_tree_visitor_class_hpp
+#define src_parse_tree_visitor_class_hpp
 
-// src/compiler_class.hpp
+// src/parse_tree_visitor_class.hpp
 
 #include "misc_includes.hpp"
 #include "parsed_src_code_class.hpp"
@@ -11,10 +11,10 @@
 namespace frost_hdl
 {
 
-class Compiler : public CompilerGrammarVisitor
+class ParseTreeVisitor : public FrostHdlGrammarVisitor
 {
 public:		// types
-	typedef CompilerGrammarParser Parser;
+	typedef FrostHdlGrammarParser Parser;
 
 	typedef std::vector<std::unique_ptr<ParsedSrcCode>> ListParsedSrcCode;
 
@@ -38,7 +38,7 @@ public:		// types
 	// Passes where we walk the parse tree.  Some semantic analysis is done
 	// here, so long as said semantic analysis does not need to actually
 	// evaluate constant expressions.
-	enum class ParsePass : PassUint
+	enum class Pass : PassUint
 	{
 		// List "package" names.
 		ListPackages,
@@ -121,7 +121,7 @@ private:		// variables
 	SavedString _curr_filename = nullptr;
 	ListParsedSrcCode _list_parsed_src_code;
 
-	ParsePass _parse_pass = static_cast<ParsePass>(0);
+	Pass _pass = static_cast<Pass>(0);
 
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
@@ -130,8 +130,8 @@ private:		// variables
 
 
 public:		// functions
-	Compiler(ListParsedSrcCode&& s_list_parsed_src_code);
-	virtual ~Compiler();
+	ParseTreeVisitor(ListParsedSrcCode&& s_list_parsed_src_code);
+	virtual ~ParseTreeVisitor();
 	int run();
 
 
@@ -207,7 +207,7 @@ private:		// functions
 		return SrcCodePos(_curr_filename, ctx);
 	}
 
-	GEN_GETTER_AND_SETTER_BY_VAL(parse_pass)
+	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 	GEN_GETTER_AND_SETTER_BY_VAL(subpass)
 
 private:		// visitor functions
@@ -331,4 +331,4 @@ private:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src_compiler_class_hpp
+#endif		// src_parse_tree_visitor_class_hpp
