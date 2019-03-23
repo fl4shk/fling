@@ -206,7 +206,8 @@ identExpr:
 
 
 identName: TokIdent ;
-scopedIdentName: identName TokScope identName;
+scopedIdentName: identName TokScope identName
+	((TokScope identName)?);
 
 
 // Lexer rules

@@ -879,14 +879,17 @@ VisitorRetType Compiler::visitIdentExpr
 	//else if(ctx->scopedIdentName())
 	//{
 	//	ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
+	//
+	//	const SmallNum num_scopes = _stacks.pop_small_num();
 
-	//	// The identifier of whatever is inside the package.
-	//	auto inner_ident = _stacks.pop_str();
+	//	//// The identifier of whatever is inside the package.
+	//	//auto inner_ident = _stacks.pop_str();
 
-	//	// What package does this identifier come from?
-	//	auto scope_ident = _stacks.pop_str();
+	//	//// What package does this identifier come from?
+	//	//auto scope_ident = _stacks.pop_str();
 
-	//	auto package = _frost_program().curr_frost_package;
+	//	//auto package = _frost_program().curr_frost_package;
+
 
 	//	switch (parse_pass())
 	//	{
@@ -915,7 +918,14 @@ VisitorRetType Compiler::visitIdentName
 VisitorRetType Compiler::visitScopedIdentName
 	(Parser::ScopedIdentNameContext *ctx)
 {
-	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName())
+	SmallNum num_scopes = 0;
+	for (auto iter : ctx->identName())
+	{
+		ANY_JUST_ACCEPT_BASIC(iter);
+		++num_scopes;
+	}
+
+	_stacks.push_small_num(num_scopes);
 	return nullptr;
 }
 
