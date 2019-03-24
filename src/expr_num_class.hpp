@@ -26,6 +26,9 @@ public:		// functions
 	explicit ExprNum(const BigNum& s_data, size_t s_data_size,
 		bool s_is_signed);
 
+	// this calls "copy_from_bignum_with_smallest_size()"
+	explicit ExprNum(const BigNum& s_data, bool s_is_signed);
+
 	// size/signedness changing constructors
 	ExprNum(const ExprNum& src, size_t s_data_size);
 	ExprNum(const ExprNum& src, size_t s_data_size, bool s_is_signed);
@@ -57,6 +60,9 @@ public:		// functions
 	{
 		copy_from_bignum(n_data, size(), is_signed());
 	}
+
+	void copy_from_bignum_with_smallest_size(const BigNum& n_data,
+		bool n_is_signed);
 
 	BigNum convert_to_bignum() const;
 

@@ -41,23 +41,31 @@ public:		// types
 	enum class Pass : PassUint
 	{
 		// List "package" names.
-		ListPackages,
+		ListPackageIdentifiers,
+
+		// Add named things to the symbol tables and type tables and stuff
+		ListPackageInnerDecl,
 
 		// Construct raw "package"s, such that their "param"s are not
 		// yet evaluated
-		ConstructRawPackages,
+		FinishRawPackageConstruct,
 
-		//ListInterfaces,
-		//ConstructRawInterfaces,
+		//ListInterfaceIdentifiers,
+		//// Add named things to the symbol tables and type tables and stuff
+		//ListInterfaceInnerDecl,
+		//FinishRawInterfaceConstruct,
 
 
 		// List "module"s, their "param"s, and their ports.
 		// (FUTURE:  Add "interface" "modport" stuff here.)
-		ListModules,
+		ListModuleIdentifiers,
+
+		// Add named things to the symbol tables and type tables and stuff
+		ListModuleInnerDecl,
 
 		// Construct raw modules (such that "param"s are not yet
 		// evaluated)
-		ConstructRawModules,
+		FinishRawModuleConstruct,
 
 
 		Done,
@@ -198,10 +206,10 @@ private:		// functions
 		printerr("Warning:  ", msg, "\n");
 	}
 
-	static inline const BigNum _default_hard_coded_num_size()
-	{
-		return BigNum(32);
-	}
+	//static inline const BigNum _default_hard_coded_num_size()
+	//{
+	//	return BigNum(32);
+	//}
 
 	inline SrcCodePos _make_src_code_pos(ParserRuleContext* ctx) const
 	{
@@ -272,6 +280,8 @@ private:		// visitor functions
 
 	VisitorRetType visitModuleStmtContAssign
 		(Parser::ModuleStmtContAssignContext *ctx);
+	//VisitorRetType visitModuleStmtBehavBlock
+	//	(Parser::ModuleStmtBehavBlockContext *ctx);
 
 	// Expression parsing
 	VisitorRetType visitExpr

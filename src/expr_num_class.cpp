@@ -27,6 +27,12 @@ ExprNum::ExprNum(const BigNum& s_data, size_t s_data_size,
 	copy_from_bignum(s_data, s_data_size);
 }
 
+ExprNum::ExprNum(const BigNum& s_data, bool s_is_signed)
+{
+	copy_from_bignum_with_smallest_size(s_data, s_is_signed);
+}
+
+// size/signedness changing constructors
 ExprNum::ExprNum(const ExprNum& src, size_t s_data_size)
 {
 	*this = src;
@@ -55,6 +61,17 @@ void ExprNum::copy_from_bignum(const BigNum& n_data, size_t n_data_size)
 	}
 
 	set_data(temp_data);
+}
+
+void ExprNum::copy_from_bignum_with_smallest_size(const BigNum& n_data,
+	bool n_is_signed)
+{
+	set_is_signed(n_is_signed);
+
+	// I wish I'd known about this earlier, haha.
+	const auto n_data_as_binary_str = n_data.get_str(2);
+
+	copy_from_bignum(n_data, n_data_as_binary_str.size());
 }
 
 BigNum ExprNum::convert_to_bignum() const

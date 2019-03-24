@@ -99,13 +99,21 @@ VisitorRetType ParseTreeVisitor::visitProgram
 
 	switch (pass())
 	{
-	case Pass::ListPackages:
-	case Pass::ConstructRawPackages:
+	case Pass::ListPackageIdentifiers:
+	case Pass::ListPackageInnerDecl:
+	case Pass::FinishRawPackageConstruct:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
 		break;
 
-	case Pass::ListModules:
-	case Pass::ConstructRawModules:
+	//case Pass::ListInterfaceIdentifiers:
+	//case Pass::ListInterfaceInnerDecl:
+	//case Pass::FinishRawInterfaceConstruct:
+	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declInterface());
+	//	break;
+
+	case Pass::ListModuleIdentifiers:
+	case Pass::ListModuleInnerDecl:
+	case Pass::FinishRawModuleConstruct:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
 		break;
 
@@ -138,7 +146,7 @@ VisitorRetType ParseTreeVisitor::visitLhsTypeName
 VisitorRetType ParseTreeVisitor::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 {
-	// only call this when pass() == Pass::ListModules
+	// only call this when pass() == Pass::ListModuleIdentifiers
 
 	Expression* s_left_dim_expr = nullptr;
 	if (ctx->expr())
@@ -281,72 +289,143 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 	auto s_ident = _stacks.pop_str();
 
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	auto s_expr = _stacks.pop_expr();
+	auto s_value = _stacks.pop_expr();
 
 	const SrcCodePos s_src_code_pos(_make_src_code_pos(ctx));
 
-	auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
-		(_make_src_code_pos(ctx->expr()), s_expr->value().size());
-
-
-	// This forcibly makes "localparam"s be vectors, but that's not such a
-	// big deal (given that "localparam"s are always built-in types), is
-	// it?
-	auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
-		(s_src_code_pos, FrostLhsType::construct_initial_builtin_type_ident
-		(s_expr->value().is_signed(), s_left_dim_expr),
-		s_expr->value().is_signed(), s_left_dim_expr));
-
-	// "localparam"s are never arrays.
-	auto s_frost_full_type = save_frost_full_type(FrostFullType
-		(s_src_code_pos, s_frost_lhs_type));
-
-	SymbolTable* symbol_table = nullptr;
-
-
-	// Error checking
-	if (pass() == Pass::ConstructRawPackages)
+	if ((pass() == Pass::ListPackageInnerDecl)
+		// || (pass() == Pass::ListInterfaceInnerDecl)
+		|| (pass() == Pass::ListModuleInnerDecl))
 	{
-		auto package = _frost_program.curr_frost_package;
+		auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
+			(_make_src_code_pos(ctx->expr()), s_value->value().size());
 
-		if (package->symbol_table().contains(s_ident))
+		// This forcibly makes "localparam"s be vectors, but that's not
+		// such a big deal (given that "localparam"s are always built-in
+		// types), is it?
+		auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
+			(s_src_code_pos, FrostLhsType
+			::construct_initial_builtin_type_ident
+			(s_value->value().is_signed(), s_left_dim_expr),
+			s_value->value().is_signed(), s_left_dim_expr));
+
+		// "localparam"s are never arrays.
+		auto s_frost_full_type = save_frost_full_type(FrostFullType
+			(s_src_code_pos, s_frost_lhs_type));
+
+		SymbolTable* symbol_table = nullptr;
+
+
+		// Error checking
+		if (pass() == Pass::ListPackageInnerDecl)
 		{
-			auto&& errwarn_string = package->symbol_table().at(s_ident)
-				->src_code_pos().convert_to_errwarn_string();
-			package->in_scope_err(s_src_code_pos, sconcat
-				("This package already has a localparam called \"", 
-				*s_ident,  "\", defined at ",
-				errwarn_string, "."));
+			auto package = _frost_program.curr_frost_package;
+
+			if (package->symbol_table().contains(s_ident))
+			{
+				auto&& errwarn_string = package->symbol_table().at(s_ident)
+					->src_code_pos().convert_to_errwarn_string();
+				package->in_scope_err(s_src_code_pos, sconcat
+					("This package already has a localparam called \"", 
+					*s_ident,  "\", defined at ",
+					errwarn_string, "."));
+			}
+
+			symbol_table = &package->symbol_table();
+		}
+		//else if (pass() == Pass::ListInterfaceInnerDecl)
+		//{
+		//}
+		else if (pass() == Pass::ListModuleInnerDecl)
+		{
+			auto module = _frost_program.curr_frost_module;
+
+			if (module->contains_symbol(s_ident))
+			{
+				auto&& errwarn_string = module->find_symbol(s_ident)
+					->src_code_pos().convert_to_errwarn_string();
+				module->in_scope_err(s_src_code_pos, sconcat("This ",
+					"module already has a symbol called \"", *s_ident, 
+					"\", defined at ", errwarn_string, "."));
+			}
+
+			symbol_table = &module->local_symbol_table();
+		}
+		else
+		{
+			_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+				"InnerDecl pass() Eek!");
 		}
 
-		symbol_table = &package->symbol_table();
+		symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
+			s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
 	}
-	//else if (pass() == Pass::ConstructRawInterfaces)
-	//{
-	//}
-	else if (pass() == Pass::ConstructRawModules)
+	else if ((pass() == Pass::FinishRawPackageConstruct)
+		//|| (pass() == Pass::FinishRawInterfaceConstruct)
+		|| (pass() == Pass::FinishRawModuleConstruct))
 	{
+		Symbol* existing_symbol = nullptr;
+
+		auto package = _frost_program.curr_frost_package;
+		//auto interface = _frost_program.curr_frost_interface;
 		auto module = _frost_program.curr_frost_module;
 
-		if (module->contains_symbol(s_ident))
+		if (pass() == Pass::FinishRawPackageConstruct)
 		{
-			auto&& errwarn_string = module->find_symbol(s_ident)
-				->src_code_pos().convert_to_errwarn_string();
-			module->in_scope_err(s_src_code_pos, sconcat("This ",
-				"module already has a symbol called \"", *s_ident, 
-				"\", defined at ", errwarn_string, "."));
+			existing_symbol = package->symbol_table().at(s_ident);
+		}
+		//else if (pass() == Pass::FinishRawInterfaceConstruct)
+		//{
+		//	existing_symbol = interface->symbol_table().at(s_ident);
+		//}
+		else if (pass() == Pass::FinishRawModuleConstruct)
+		{
+			existing_symbol = module->local_symbol_table().at(s_ident);
+		}
+		else
+		{
+			_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+				"FinishRaw...Construct pass() Eek!");
 		}
 
-		symbol_table = &module->local_symbol_table();
+		// The error messages should make what this does clear...
+		if (s_value->references_symbol(existing_symbol))
+		{
+			if (pass() == Pass::FinishRawPackageConstruct)
+			{
+				package->in_scope_err(existing_symbol->src_code_pos(),
+					sconcat("localparam with identifier \"",
+					*s_ident, "\" is defined in terms of itself."));
+			}
+			//else if (pass() == Pass::FinishRawInterfaceConstruct)
+			//{
+			//	interface->in_scope_err(existing_symbol->src_code_pos(),
+			//		sconcat("localparam with identifier \"",
+			//		*s_ident, "\" is defined in terms of itself."));
+			//}
+			else if (pass() == Pass::FinishRawModuleConstruct)
+			{
+				module->in_scope_err(existing_symbol->src_code_pos(),
+					sconcat("localparam with identifier \"",
+					*s_ident, "\" is defined in terms of itself."));
+			}
+			else
+			{
+				_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+					"references_symbol() pass() Eek!");
+			}
+		}
+
+		// Actually insert the value
+		*existing_symbol = Symbol(existing_symbol->src_code_pos(),
+			existing_symbol->ident(), existing_symbol->port_type(),
+			existing_symbol->frost_full_type(), s_value);
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  pass() "
-			"Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+			"invalid pass() Eek!");
 	}
-
-	symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
-		s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
 
 	return nullptr;
 }
@@ -361,7 +440,7 @@ VisitorRetType ParseTreeVisitor::visitDeclLocalparamList
 VisitorRetType ParseTreeVisitor::visitDeclPackage
 	(Parser::DeclPackageContext *ctx)
 {
-	if (pass() == Pass::ListPackages)
+	if (pass() == Pass::ListPackageIdentifiers)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
@@ -382,7 +461,8 @@ VisitorRetType ParseTreeVisitor::visitDeclPackage
 
 		frost_package_table.insert_or_assign(curr_frost_package);
 	}
-	else if (pass() == Pass::ConstructRawPackages)
+	else if ((pass() == Pass::ListPackageInnerDecl)
+		|| (pass() == Pass::FinishRawPackageConstruct))
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program.curr_frost_package
@@ -407,6 +487,7 @@ VisitorRetType ParseTreeVisitor::visitInsidePackage
 	//ANY_JUST_ACCEPT_BASIC(ctx->declEnum())
 	//ANY_JUST_ACCEPT_BASIC(ctx->declFunction())
 	//ANY_JUST_ACCEPT_BASIC(ctx->declTypedef())
+
 	return nullptr;
 }
 
@@ -472,7 +553,7 @@ VisitorRetType ParseTreeVisitor::visitDeclPortDirectionalVarList
 VisitorRetType ParseTreeVisitor::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
 {
-	if (pass() == Pass::ListModules)
+	if (pass() == Pass::ListModuleIdentifiers)
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto s_ident = _stacks.pop_str();
@@ -498,7 +579,8 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 
 		frost_module_table.insert_or_assign(curr_frost_module);
 	}
-	else if (pass() == Pass::ConstructRawModules)
+	else if ((pass() == Pass::ListModuleInnerDecl)
+		|| (pass() == Pass::FinishRawModuleConstruct))
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		_frost_program.curr_frost_module
@@ -520,16 +602,21 @@ VisitorRetType ParseTreeVisitor::visitInsideModule
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
 		ctx->declLocalparamList())
-	ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
 
-	ANY_JUST_ACCEPT_LOOPED(module_stmt_cont_assign_iter,
-		ctx->moduleStmtContAssign())
-	//ANY_JUST_ACCEPT_LOOPED(module_stmt_initial_iter,
-	//	ctx->moduleStmtInitial())
-	//ANY_JUST_ACCEPT_LOOPED(module_stmt_always_comb_iter,
-	//	ctx->moduleStmtAlwaysComb())
-	//ANY_JUST_ACCEPT_LOOPED(module_stmt_always_seq_iter,
-	//	ctx->moduleStmtAlwaysSeq())
+	if (pass() == Pass::ListModuleInnerDecl)
+	{
+		ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
+	}
+
+	// Only process these other things AFTER we know about declared
+	// variables and stuff.
+	else if (pass() == Pass::FinishRawModuleConstruct)
+	{
+		ANY_JUST_ACCEPT_LOOPED(module_stmt_cont_assign_iter,
+			ctx->moduleStmtContAssign())
+		//ANY_JUST_ACCEPT_LOOPED(module_stmt_initial_iter,
+		//	ctx->moduleStmtBehavBlock())
+	}
 
 	return nullptr;
 }
@@ -559,6 +646,11 @@ VisitorRetType ParseTreeVisitor::visitModuleStmtContAssign
 
 	return nullptr;
 }
+//VisitorRetType visitModuleStmtBehavBlock
+//	(Parser::ModuleStmtBehavBlockContext *ctx)
+//{
+//	return nullptr;
+//}
 
 // Expression parsing
 VisitorRetType ParseTreeVisitor::visitExpr
@@ -864,12 +956,10 @@ VisitorRetType ParseTreeVisitor::visitNumExpr
 	if (ctx->rawNumExpr())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
-		const auto value = _stacks.pop_big_num();
-
-		const auto size = _default_hard_coded_num_size();
+		const auto s_data = _stacks.pop_big_num();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
-			(_make_src_code_pos(ctx), value, size.get_ui(), false));
+			(_make_src_code_pos(ctx), ExprNum(s_data, false)));
 	}
 	else if (ctx->sizedNumExpr())
 	{
@@ -962,7 +1052,8 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		// in the current scope.
 		switch (pass())
 		{
-		case Pass::ConstructRawPackages:
+		case Pass::ListPackageInnerDecl:
+		case Pass::FinishRawPackageConstruct:
 			if (package->symbol_table().contains(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -972,15 +1063,16 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			else
 			{
 				package->in_scope_err(_make_src_code_pos(ctx), sconcat
-					("This package does nto contain a symbol called \"",
-					*ident, "\"."));
+					("Unknown symbol called \"", *ident, "\" at this ",
+					"point."));
 			}
 			break;
 
-		//case Pass::ConstructRawInterfaces:
+		//case Pass::FinishRawInterfaceConstruct:
 		//	break;
 
-		case Pass::ConstructRawModules:
+		case Pass::ListModuleInnerDecl:
+		case Pass::FinishRawModuleConstruct:
 			if (module->contains_symbol(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -989,40 +1081,64 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			}
 			else
 			{
-				//_err(ctx, sconcat("Module \"", *module->ident(), "\" does",
-				//	" not contain a symbol called \"", *ident, "\"."));
 				module->in_scope_err(_make_src_code_pos(ctx), sconcat
-					("This module does not contain a symbol called \"",
-					*ident, "\"."));
+					("Unknown symbol called \"", *ident, "\" at this ",
+					"point."));
 			}
 			break;
 
 		default:
+			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  identName() "
+				"pass() Eek!");
 			break;
 		}
 	}
 
-	else if(ctx->scopedIdentName())
+	else if (ctx->scopedIdentName())
 	{
 		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
 			"scopedIdentName() not implemented Eek!");
 		//ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
 	
-		//const SmallNum num_scopes = _stacks.pop_small_num();
+		//const auto num_scopes = _stacks.pop_small_num();
 
-		////// The identifier of whatever is inside the package.
-		////auto inner_ident = _stacks.pop_str();
-
-		////// What package does this identifier come from?
-		////auto scope_ident = _stacks.pop_str();
-
-		////auto package = _frost_program.curr_frost_package;
-
-
-		//switch (pass())
+		//if (num_scopes == 2)
 		//{
-		//default:
-		//	break;
+		//	auto most_inner_ident = _stacks.pop_str();
+		//	auto which_scope = _stacks.pop_str();
+
+		//	switch (pass())
+		//	{
+		//	case Pass::FinishRawPackageConstruct:
+		//		break;
+
+		//	//case Pass::FinishRawInterfaceConstruct:
+		//	//	break;
+
+		//	case Pass::FinishRawModuleConstruct:
+		//		break;
+
+		//	default:
+		//		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+		//			"scopedIdentName() pass() Eek!");
+		//		break;
+		//	}
+
+		//	// local enums come before packages
+		//	auto module = _frost_program.curr_frost_module;
+		//	auto& frost_package_table = _frost_program.frost_package_table;
+
+		//	if (!frost_package_table.contains(which_scope))
+		//	{
+		//	}
+		//}
+		//else if (num_scopes == 3)
+		//{
+		//}
+		//else
+		//{
+		//	_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+		//		"scopedIdentName() num_scopes Eek!");
 		//}
 	}
 	else
@@ -1063,7 +1179,7 @@ void ParseTreeVisitor::_insert_module_port_var
 	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
 {
 	// Call this ONLY if (pass() == Pass::FrostListModules)
-	if (pass() != Pass::ListModules)
+	if (pass() != Pass::ListModuleIdentifiers)
 	{
 		_err(s_src_code_pos, "ParseTreeVisitor"
 			"::_insert_module_port_var():  pass() Eek!");

@@ -1,12 +1,3 @@
-package PkgAlu
-{
-	//localparam EGG = 0x3'0x3;
-
-	//localparam GERM = EGG;
-	localparam
-	localparam OP_ADD = 
-}
-
 module FullAdder(input logic i_a, i_b, i_carry,
 	output logic o_sum, o_carry)
 {

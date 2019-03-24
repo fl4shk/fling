@@ -30,7 +30,7 @@ class Expression;
 class Symbol
 {
 public:		// types
-	typedef std::vector<Expression*> ValueExprs;
+	//typedef std::vector<Expression*> ValueExprs;
 
 	//typedef std::vector<Symbol*> OrderedIdentToPointerTable<Symbol>;
 
@@ -59,11 +59,12 @@ private:		// variables
 	FrostFullType* _frost_full_type = nullptr;
 
 
-	// Compile-time values are stored here for both scalars and arrays.
-	// For parameters, store a "nullptr" in *any* of the elements of this
-	// "ValueExprs" to indicate that this parameter *does not* have a
-	// default value.
-	ValueExprs _value_exprs;
+	//// Compile-time values are stored here for both scalars and arrays.
+	//// For parameters, store a "nullptr" in *any* of the elements of this
+	//// "ValueExprs" to indicate that this parameter *does not* have a
+	//// default value.
+	//ValueExprs _value_exprs;
+	Expression* _value = nullptr;
 
 	// Actual parameter values for this "Symbol"'s "FrostFullType"
 	ListVars _parameter_vars;
@@ -84,14 +85,18 @@ private:		// variables
 public:		// functions
 	Symbol() = default;
 
+	// For when we don't know the "Symbol"'s type yet.
+	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		PortType s_port_type);
+
 	// Non-constant scalar or array constructor
 	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 		PortType s_port_type, FrostFullType* s_frost_full_type);
 
-	// Constant scalar or array constructor
+	// Constant scalar constructor
 	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 		PortType s_port_type, FrostFullType* s_frost_full_type,
-		ValueExprs&& s_value_exprs);
+		Expression* s_value);
 
 
 	// We really don't want copies of "Symbol"s.
@@ -101,13 +106,6 @@ public:		// functions
 	// Used to determine if a "parameter" has a default value.
 	bool has_default_value() const;
 
-
-	//// Defined symbols *always* have a type, so we don't need to store
-	//// anything extra to figure out the type of a symbol.
-	//inline bool actually_exists() const
-	//{
-	//	return (_frost_full_type != nullptr);
-	//}
 
 	//bool becomes_wire() const;
 	//inline bool becomes_reg() const
@@ -122,7 +120,7 @@ public:		// functions
 	GEN_GETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(frost_full_type)
 
-	GEN_GETTER_BY_CON_REF(value_exprs)
+	GEN_GETTER_BY_CON_REF(value)
 
 	GEN_GETTER_BY_CON_REF(parameter_vars)
 	GEN_SETTER_BY_RVAL_REF(parameter_vars)

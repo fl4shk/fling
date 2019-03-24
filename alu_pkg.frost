@@ -1,0 +1,9 @@
+package PkgAlu
+{
+	localparam WIDTH__OP = 2;
+
+	localparam OP_ADC = 0x0;
+	localparam OP_SBC = 0x1;
+	localparam OP_AND = 0x2;
+	localparam OP_XOR = 0x3;
+}

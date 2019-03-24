@@ -126,9 +126,7 @@ insideModule:
 		declLocalparamList ';'
 		| declVarList ';'
 		| moduleStmtContAssign ';'
-		//| moduleStmtInitial
-		//| moduleStmtAlwaysComb
-		//| moduleStmtAlwaysSeq
+		//| moduleStmtBehavBlock
 	)*
 	;
 
