@@ -1062,9 +1062,8 @@ void ParseTreeVisitor::_insert_module_port_var
 	(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
 {
-	// Call this ONLY if (pass() == ParseTreeVisitor::Pass
-	// ::FrostListModules)
-	if (pass() != ParseTreeVisitor::Pass::ListModules)
+	// Call this ONLY if (pass() == Pass::FrostListModules)
+	if (pass() != Pass::ListModules)
 	{
 		_err(s_src_code_pos, "ParseTreeVisitor"
 			"::_insert_module_port_var():  pass() Eek!");
