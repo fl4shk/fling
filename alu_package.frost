@@ -1,6 +1,9 @@
 package PkgEgg
 {
 	localparam EGG = PkgAlu::WIDTH__DIO + 9;
+
+	localparam EGG2 = PkgAlu::OP_ADC + 5;
+	localparam EGG3 = EGG2 + 9;
 }
 
 package PkgAlu

@@ -61,6 +61,10 @@ int ParseTreeVisitor::run()
 			visitProgram(parsed_src_code->parser()->program());
 		}
 
+		printout("ParseTreeVisitor::run():  ",
+			static_cast<PassUint>(pass()), " ",
+			_needs_another_subpass, " ", subpass(), "\n");
+
 		if (_needs_another_subpass)
 		{
 			_needs_another_subpass = false;
@@ -1100,9 +1104,18 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			auto package = _frost_program.curr_frost_package;
 			if (package->symbol_table().contains(ident))
 			{
-				_stacks.push_expr(save_expr(ExprIdentName
-					(_make_src_code_pos(ctx),
-					package->symbol_table().at(ident))));
+				auto symbol = package->symbol_table().at(ident);
+
+				if (!symbol->is_incomplete())
+				{
+					_stacks.push_expr(save_expr(ExprIdentName
+						(_make_src_code_pos(ctx), symbol)));
+				}
+				else // if (symbol->is_incomplete())
+				{
+					_stacks.push_expr(save_expr(ExprSubpassIdentName
+						(_make_src_code_pos(ctx), symbol)));
+				}
 			}
 			else
 			{
@@ -1121,9 +1134,18 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			auto module = _frost_program.curr_frost_module;
 			if (module->contains_symbol(ident))
 			{
-				_stacks.push_expr(save_expr(ExprIdentName
-					(_make_src_code_pos(ctx),
-					module->find_symbol(ident))));
+				auto symbol = module->find_symbol(ident);
+
+				if (!symbol->is_incomplete())
+				{
+					_stacks.push_expr(save_expr(ExprIdentName
+						(_make_src_code_pos(ctx), symbol)));
+				}
+				else // if (symbol->is_incomplete())
+				{
+					_stacks.push_expr(save_expr(ExprSubpassIdentName
+						(_make_src_code_pos(ctx), symbol)));
+				}
 			}
 			else
 			{
@@ -1192,7 +1214,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			auto symbol = package->symbol_table().at(most_inner_ident);
 
 
-			if (symbol->frost_full_type() == nullptr)
+			if (symbol->is_incomplete())
 			{
 				//printout("test:  ", *symbol->ident(), "\n");
 				//in_scope_thing->in_scope_warn(_make_src_code_pos(ctx),

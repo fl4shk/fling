@@ -84,8 +84,7 @@ bool Expression::references_symbol(Symbol* to_check) const
 
 bool Expression::defined_in_terms_of_any_incomplete_symbol() const
 {
-	if ((_symbol != nullptr)
-		&& (_symbol->frost_full_type() == nullptr))
+	if ((_symbol != nullptr) && (_symbol->is_incomplete()))
 	{
 		return true;
 	}

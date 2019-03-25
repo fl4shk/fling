@@ -113,6 +113,11 @@ public:		// functions
 	//	return (!becomes_wire());
 	//}
 
+	inline bool is_incomplete() const
+	{
+		return (_frost_full_type == nullptr);
+	}
+
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
