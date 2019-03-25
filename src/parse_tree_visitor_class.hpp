@@ -211,6 +211,22 @@ private:		// functions
 	//	return BigNum(32);
 	//}
 
+	inline bool in_package_pass() const
+	{
+		return ((pass() >= Pass::ListPackageIdentifiers)
+			&& (pass() <= Pass::FinishRawPackageConstruct));
+	}
+	//inline bool in_interface_pass() const
+	//{
+	//	return ((pass() >= Pass::ListInterfaceIdentifiers)
+	//		&& (pass() <= Pass::FinishRawInterfaceConstruct));
+	//}
+	inline bool in_module_pass() const
+	{
+		return ((pass() >= Pass::ListModuleIdentifiers)
+			&& (pass() <= Pass::FinishRawModuleConstruct));
+	}
+
 	inline SrcCodePos _make_src_code_pos(ParserRuleContext* ctx) const
 	{
 		return SrcCodePos(_curr_filename, ctx);

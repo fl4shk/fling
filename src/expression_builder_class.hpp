@@ -12,7 +12,7 @@ namespace frost_hdl
 class ExpressionBuilder
 {
 public:		// static functions
-	static inline Expression* make_expr_hc_num
+	static inline Expression* make_expr_hc_num_from_expr_num
 		(const SrcCodePos& s_src_code_pos, const ExprNum& to_copy)
 	{
 		return save_expr(ExprHardCodedNum(s_src_code_pos, to_copy));

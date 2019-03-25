@@ -97,30 +97,24 @@ VisitorRetType ParseTreeVisitor::visitProgram
 	//}
 
 
-	switch (pass())
+	if (in_package_pass())
 	{
-	case Pass::ListPackageIdentifiers:
-	case Pass::ListPackageInnerDecl:
-	case Pass::FinishRawPackageConstruct:
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
-		break;
-
-	//case Pass::ListInterfaceIdentifiers:
-	//case Pass::ListInterfaceInnerDecl:
-	//case Pass::FinishRawInterfaceConstruct:
+	}
+	//else if (in_interface_pass())
+	//{
 	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declInterface());
-	//	break;
+	//}
 
-	case Pass::ListModuleIdentifiers:
-	case Pass::ListModuleInnerDecl:
-	case Pass::FinishRawModuleConstruct:
+	else if (in_module_pass())
+	{
 		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
-		break;
+	}
 
-	//case Pass::Done:
-	default:
+	// else if (pass() == Pass::Done)
+	else
+	{
 		_err(ctx, "ParseTreeVisitor::visitProgram():  Eek!");
-		break;
 	}
 
 	return nullptr;
@@ -317,7 +311,7 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 
 
 		// Error checking
-		if (pass() == Pass::ListPackageInnerDecl)
+		if (in_package_pass())
 		{
 			auto package = _frost_program.curr_frost_package;
 
@@ -333,10 +327,10 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 
 			symbol_table = &package->symbol_table();
 		}
-		//else if (pass() == Pass::ListInterfaceInnerDecl)
+		//else if (in_interface_pass())
 		//{
 		//}
-		else if (pass() == Pass::ListModuleInnerDecl)
+		else if (in_module_pass())
 		{
 			auto module = _frost_program.curr_frost_module;
 
@@ -370,15 +364,15 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		//auto interface = _frost_program.curr_frost_interface;
 		auto module = _frost_program.curr_frost_module;
 
-		if (pass() == Pass::FinishRawPackageConstruct)
+		if (in_package_pass())
 		{
 			existing_symbol = package->symbol_table().at(s_ident);
 		}
-		//else if (pass() == Pass::FinishRawInterfaceConstruct)
+		//else if (in_interface_pass())
 		//{
 		//	existing_symbol = interface->symbol_table().at(s_ident);
 		//}
-		else if (pass() == Pass::FinishRawModuleConstruct)
+		else if (in_module_pass())
 		{
 			existing_symbol = module->local_symbol_table().at(s_ident);
 		}
@@ -391,19 +385,19 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		// The error messages should make what this does clear...
 		if (s_value->references_symbol(existing_symbol))
 		{
-			if (pass() == Pass::FinishRawPackageConstruct)
+			if (in_package_pass())
 			{
 				package->in_scope_err(existing_symbol->src_code_pos(),
 					sconcat("localparam with identifier \"",
 					*s_ident, "\" is defined in terms of itself."));
 			}
-			//else if (pass() == Pass::FinishRawInterfaceConstruct)
+			//else if (in_interface_pass())
 			//{
 			//	interface->in_scope_err(existing_symbol->src_code_pos(),
 			//		sconcat("localparam with identifier \"",
 			//		*s_ident, "\" is defined in terms of itself."));
 			//}
-			else if (pass() == Pass::FinishRawModuleConstruct)
+			else if (in_module_pass())
 			{
 				module->in_scope_err(existing_symbol->src_code_pos(),
 					sconcat("localparam with identifier \"",
@@ -498,6 +492,7 @@ VisitorRetType ParseTreeVisitor::visitDeclPortVarList
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
 
+	// How many port variables are in this particular list?
 	_stacks.push_small_num(ctx->identName().size());
 
 	for (auto iter : ctx->identName())
@@ -536,8 +531,8 @@ VisitorRetType ParseTreeVisitor::visitDeclPortDirectionalVarList
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor"
-			"::visitDeclPortDirectionalVarList():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitDeclPortDirectionalVarList():  "
+			"Eek!");
 	}
 
 	for (size_t i=0; i<num_ident_names; ++i)
@@ -958,7 +953,7 @@ VisitorRetType ParseTreeVisitor::visitNumExpr
 		ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
 		const auto s_data = _stacks.pop_big_num();
 
-		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
+		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num_from_expr_num
 			(_make_src_code_pos(ctx), ExprNum(s_data, false)));
 	}
 	else if (ctx->sizedNumExpr())
@@ -1044,16 +1039,14 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident = _stacks.pop_str();
 
-		auto package = _frost_program.curr_frost_package;
-		auto module = _frost_program.curr_frost_module;
 
 
 		// Here we check to see whether or not the symbol actually exists
 		// in the current scope.
-		switch (pass())
+
+		if (in_package_pass())
 		{
-		case Pass::ListPackageInnerDecl:
-		case Pass::FinishRawPackageConstruct:
+			auto package = _frost_program.curr_frost_package;
 			if (package->symbol_table().contains(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -1066,13 +1059,15 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 					("Unknown symbol called \"", *ident, "\" at this ",
 					"point."));
 			}
-			break;
+		}
 
-		//case Pass::FinishRawInterfaceConstruct:
-		//	break;
+		//else if (in_interface_pass())
+		//{
+		//}
 
-		case Pass::ListModuleInnerDecl:
-		case Pass::FinishRawModuleConstruct:
+		else if (in_module_pass())
+		{
+			auto module = _frost_program.curr_frost_module;
 			if (module->contains_symbol(ident))
 			{
 				_stacks.push_expr(save_expr(ExprIdentName
@@ -1085,61 +1080,83 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 					("Unknown symbol called \"", *ident, "\" at this ",
 					"point."));
 			}
-			break;
-
-		default:
+		}
+		else
+		{
 			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  identName() "
 				"pass() Eek!");
-			break;
 		}
 	}
 
 	else if (ctx->scopedIdentName())
 	{
-		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
-			"scopedIdentName() not implemented Eek!");
-		//ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
+		//_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+		//	"scopedIdentName() not implemented Eek!");
+		ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
 	
-		//const auto num_scopes = _stacks.pop_small_num();
+		const auto num_scopes = _stacks.pop_small_num();
 
-		//if (num_scopes == 2)
-		//{
-		//	auto most_inner_ident = _stacks.pop_str();
-		//	auto which_scope = _stacks.pop_str();
+		if (num_scopes == 2)
+		{
+			auto most_inner_ident = _stacks.pop_str();
+			auto which_scope = _stacks.pop_str();
 
-		//	switch (pass())
-		//	{
-		//	case Pass::FinishRawPackageConstruct:
-		//		break;
+			// Local enums come before packages because local symbols
+			// override global ones.  Perhaps a warning should be spat out
+			// if a local symbol overrides a global one?
+			auto& frost_package_table = _frost_program.frost_package_table;
 
-		//	//case Pass::FinishRawInterfaceConstruct:
-		//	//	break;
+			InScopeErrWarnBase<SrcCodePos>* in_scope_thing = nullptr;
 
-		//	case Pass::FinishRawModuleConstruct:
-		//		break;
+			if (in_package_pass())
+			{
+				in_scope_thing = _frost_program.curr_frost_package;
+			}
+			//else if (in_interface_pass())
+			//{
+			//	in_scope_thing = _frost_program.curr_frost_interface;
+			//}
+			else if (in_module_pass())
+			{
+				in_scope_thing = _frost_program.curr_frost_module;
+			}
 
-		//	default:
-		//		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
-		//			"scopedIdentName() pass() Eek!");
-		//		break;
-		//	}
+			if (!frost_package_table.contains(which_scope))
+			{
+				in_scope_thing->in_scope_err(_make_src_code_pos(ctx),
+					sconcat("Unknown package called \"", *which_scope,
+					"\"."));
+			}
 
-		//	// local enums come before packages
-		//	auto module = _frost_program.curr_frost_module;
-		//	auto& frost_package_table = _frost_program.frost_package_table;
+			auto package = frost_package_table.at(which_scope);
 
-		//	if (!frost_package_table.contains(which_scope))
-		//	{
-		//	}
-		//}
-		//else if (num_scopes == 3)
-		//{
-		//}
-		//else
-		//{
-		//	_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
-		//		"scopedIdentName() num_scopes Eek!");
-		//}
+			if (!package->symbol_table().contains(most_inner_ident))
+			{
+				in_scope_thing->in_scope_err(_make_src_code_pos(ctx),
+					sconcat("Package \"", *package->ident(), "\" does ",
+					"not contain a symbol called \"", *most_inner_ident,
+					"\"."));
+			}
+
+			_stacks.push_expr(save_expr(ExprIdentName
+				(_make_src_code_pos(ctx),
+				package->symbol_table().at(most_inner_ident))));
+		}
+		else if (num_scopes == 3)
+		{
+			// This is a reference to a particular value of an enum that is
+			// inside of a package.
+			// Since enums aren't fully implemented yet, this is being
+			// skipped for now.
+			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+				"scopedIdentName() (num_scopes == 3) not implemented "
+				"Eek!");
+		}
+		else
+		{
+			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+				"scopedIdentName() num_scopes Eek!");
+		}
 	}
 	else
 	{
