@@ -67,11 +67,12 @@ int ParseTreeVisitor::run()
 
 			set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
 
-			printout("next subpass:  ", subpass(), "\n");
+			//printout("next subpass:  ", subpass(), "\n");
 
 			if (subpass() >= MAX_SUBPASS)
 			{
-				_err(nullptr, "Too many subpasses");
+				_err(nullptr, sconcat("Too many subpasses (", 
+					MAX_SUBPASS, " or more)"));
 			}
 
 			reparse();
@@ -354,6 +355,19 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"InnerDecl pass() Eek!");
 		}
 
+		//auto s_left_dim_expr = ExpressionBuilder
+		//	::make_expr_hc_num_from_expr_num(_make_src_code_pos
+		//	(ctx->expr()), ExprNum(BigNum(0), 1, false));
+
+		//auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
+		//	(s_src_code_pos, FrostLhsType
+		//	::construct_initial_builtin_type_ident(false, s_left_dim_expr),
+		//	false, s_left_dim_expr));
+
+		//// "localparam"s are never arrays.
+		//auto s_frost_full_type = save_frost_full_type(FrostFullType
+		//	(s_src_code_pos, s_frost_lhs_type));
+
 		//symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
 		//	s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
 		symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
@@ -419,14 +433,18 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 			}
 		}
 
-		if (!_needs_another_subpass)
-		{
-			//_warn(ctx, "!_needs_another_subpass");
-			auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
-				(_make_src_code_pos(ctx->expr()), s_value->value().size());
 
-			// This forcibly makes "localparam"s be vectors, but that's not
-			// such a big deal (given that "localparam"s are always
+		//if (!_needs_another_subpass)
+		//if ((!_needs_another_subpass)
+		//	&& (existing_symbol->frost_full_type() == nullptr))
+		if (!s_value->defined_in_terms_of_any_incomplete_symbol())
+		{
+			auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
+				(_make_src_code_pos(ctx->expr()),
+				s_value->value().size());
+
+			// This forcibly makes "localparam"s be vectors, but that's
+			// not such a big deal (given that "localparam"s are always
 			// built-in types), is it?
 			auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
 				(s_src_code_pos, FrostLhsType
@@ -438,19 +456,14 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 			auto s_frost_full_type = save_frost_full_type(FrostFullType
 				(s_src_code_pos, s_frost_lhs_type));
 
-
-
 			// Actually insert the value
 			*existing_symbol = Symbol(existing_symbol->src_code_pos(),
 				existing_symbol->ident(), existing_symbol->port_type(),
 				s_frost_full_type, s_value);
 		}
-		else // if (_needs_another_subpass)
+		else
 		{
-			//_warn(ctx, "_needs_another_subpass");
-			*existing_symbol = Symbol(existing_symbol->src_code_pos(),
-				existing_symbol->ident(), existing_symbol->port_type(),
-				nullptr, s_value);
+			_needs_another_subpass = true;
 		}
 	}
 	else
@@ -1184,7 +1197,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 				//printout("test:  ", *symbol->ident(), "\n");
 				//in_scope_thing->in_scope_warn(_make_src_code_pos(ctx),
 				//	sconcat("test:  ", *symbol->ident()));
-				_needs_another_subpass = true;
+				//_needs_another_subpass = true;
 				_stacks.push_expr(save_expr(ExprSubpassIdentName
 					(_make_src_code_pos(ctx), symbol)));
 			}
@@ -1193,6 +1206,19 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 				_stacks.push_expr(save_expr(ExprIdentName
 					(_make_src_code_pos(ctx), symbol)));
 			}
+
+			//if (symbol->frost_full_type()->frost_lhs_type()
+			//	->left_dim_expr()->value() == ExprNum(BigNum(0), 1, false))
+			//{
+			//	//_needs_another_subpass = true;
+			//	_stacks.push_expr(save_expr(ExprSubpassIdentName
+			//		(_make_src_code_pos(ctx), symbol)));
+			//}
+			//else
+			//{
+			//	_stacks.push_expr(save_expr(ExprIdentName
+			//		(_make_src_code_pos(ctx), symbol)));
+			//}
 		}
 		else if (num_scopes == 3)
 		{

@@ -96,6 +96,8 @@ public:		// functions
 	// "parameter" in terms of itself.
 	bool references_symbol(Symbol* to_check) const;
 
+	bool defined_in_terms_of_any_incomplete_symbol() const;
+
 
 
 	inline bool is_valid_lhs() const

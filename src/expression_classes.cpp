@@ -82,6 +82,25 @@ bool Expression::references_symbol(Symbol* to_check) const
 	return false;
 }
 
+bool Expression::defined_in_terms_of_any_incomplete_symbol() const
+{
+	if ((_symbol != nullptr)
+		&& (_symbol->frost_full_type() == nullptr))
+	{
+		return true;
+	}
+
+	for (auto iter : _children)
+	{
+		if (iter->defined_in_terms_of_any_incomplete_symbol())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //Expression* Expression::dup_with_changed_symbols
 //	(const ReplaceSymsMap& replace_syms_map) const
 //{
