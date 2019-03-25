@@ -84,9 +84,23 @@ bool Expression::references_symbol(Symbol* to_check) const
 
 bool Expression::defined_in_terms_of_any_incomplete_symbol() const
 {
-	if ((_symbol != nullptr) && (_symbol->is_incomplete()))
+	if (_symbol != nullptr)
 	{
-		return true;
+		//if (_symbol->is_incomplete())
+		//{
+		//	printout("incomplete sym debug:  ", *_symbol->ident(), "\n");
+		//}
+		//else // if (!_symbol->is_incomplete())
+		//{
+		//	_symbol->value()->full_evaluate_if_constant();
+		//	printout("!incomplete sym debug:  ", *_symbol->ident(), " ",
+		//		_symbol->value()->value().convert_to_bignum(), "\n");
+		//}
+
+		if (_symbol->is_incomplete())
+		{
+			return true;
+		}
 	}
 
 	for (auto iter : _children)
@@ -585,6 +599,7 @@ void ExprIdentName::_evaluate()
 	//}
 
 	//_value = symbol()->value_exprs().front()->value();
+	symbol()->value()->full_evaluate_if_constant();
 	_value = symbol()->value()->value();
 }
 

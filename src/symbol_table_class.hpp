@@ -122,7 +122,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(port_type)
-	GEN_GETTER_BY_VAL(is_constant)
+	GEN_GETTER_AND_SETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(frost_full_type)
 
 	GEN_GETTER_BY_CON_REF(value)

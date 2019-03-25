@@ -50,6 +50,7 @@ ParseTreeVisitor::~ParseTreeVisitor()
 
 int ParseTreeVisitor::run()
 {
+	bool last_subpass = false;
 	while (pass() < Pass::Done)
 	{
 		//visitProgram(_program_ctx);
@@ -61,12 +62,13 @@ int ParseTreeVisitor::run()
 			visitProgram(parsed_src_code->parser()->program());
 		}
 
-		printout("ParseTreeVisitor::run():  ",
-			static_cast<PassUint>(pass()), " ",
-			_needs_another_subpass, " ", subpass(), "\n");
+		//printout("ParseTreeVisitor::run():  ",
+		//	static_cast<PassUint>(pass()), " ",
+		//	_needs_another_subpass, " ", subpass(), "\n");
 
 		if (_needs_another_subpass)
 		{
+			last_subpass = false;
 			_needs_another_subpass = false;
 
 			set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
@@ -84,10 +86,33 @@ int ParseTreeVisitor::run()
 			continue;
 		}
 
+		if (!last_subpass)
+		{
+			last_subpass = true;
+			continue;
+		}
+
 		reparse();
 		set_pass(static_cast<Pass>(static_cast<PassUint>
 			(pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
+	}
+
+	for (const auto& package_iter
+		: _frost_program.frost_package_table.table())
+	{
+		printout("package \"", *package_iter.first, "\":\n");
+		for (const auto& symbol_iter
+			: package_iter.second->symbol_table().table())
+		{
+			const auto& symbol = symbol_iter.second;
+
+			symbol->value()->full_evaluate_if_constant();
+
+			printout(*symbol->ident(), " ",
+				symbol->value()->value().convert_to_bignum(), " ",
+				symbol->value()->is_constant(), "\n");
+		}
 	}
 
 	return 0;
