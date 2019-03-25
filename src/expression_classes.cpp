@@ -54,7 +54,16 @@ void Expression::inner_full_evaluate()
 }
 bool Expression::references_symbol(Symbol* to_check) const
 {
+	//printout("Expression::references_symbol():  ", *to_check->ident(),
+	//	"\n");
 	if (_symbol == to_check)
+	{
+		return true;
+	}
+
+	if ((_symbol != nullptr)
+		&& (_symbol->value() != nullptr)
+		&& _symbol->value()->references_symbol(to_check))
 	{
 		return true;
 	}
@@ -571,6 +580,19 @@ size_t ExprIdentName::_starting_length() const
 	////}
 	//return symbol()->frost_lhs_type()->left_dim();
 	return symbol()->frost_full_type()->frost_lhs_type()->left_dim();
+}
+
+ExprSubpassIdentName::ExprSubpassIdentName
+	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol)
+	: Expression(s_src_code_pos)
+{
+	_symbol = s_symbol;
+
+	_value.set_size(1);
+}
+bool ExprSubpassIdentName::is_constant() const
+{
+	return symbol()->is_constant();
 }
 
 #undef TO_HDL_SOURCE

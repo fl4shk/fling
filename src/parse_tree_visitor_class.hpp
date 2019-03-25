@@ -134,6 +134,13 @@ private:		// variables
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
 
+	static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024)
+		* static_cast<PassUint>(1024);
+	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024);
+	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(3);
+
+	bool _needs_another_subpass = false;
+
 	//MoveOnlyPrevCurrPair<FrostProgram> _frost_program;
 	FrostProgram _frost_program;
 
@@ -231,6 +238,8 @@ private:		// functions
 	{
 		return SrcCodePos(_curr_filename, ctx);
 	}
+
+	void reparse();
 
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 	GEN_GETTER_AND_SETTER_BY_VAL(subpass)

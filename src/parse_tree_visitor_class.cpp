@@ -61,15 +61,25 @@ int ParseTreeVisitor::run()
 			visitProgram(parsed_src_code->parser()->program());
 		}
 
-		// ...This is a HORRIBLE solution to a problem I don't know the
-		// actual cause of.
-		//for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
-		for (auto& parsed_src_code : _list_parsed_src_code)
+		if (_needs_another_subpass)
 		{
-			//*_list_parsed_src_code.at(i) = ParsedSrcCode
-			//	(*_list_parsed_src_code.at(i)->filename());
-			*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
+			_needs_another_subpass = false;
+
+			set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
+
+			printout("next subpass:  ", subpass(), "\n");
+
+			if (subpass() >= MAX_SUBPASS)
+			{
+				_err(nullptr, "Too many subpasses");
+			}
+
+			reparse();
+
+			continue;
 		}
+
+		reparse();
 		set_pass(static_cast<Pass>(static_cast<PassUint>
 			(pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
@@ -78,6 +88,18 @@ int ParseTreeVisitor::run()
 	return 0;
 }
 
+void ParseTreeVisitor::reparse()
+{
+	// ...This is a HORRIBLE solution to a problem I don't know the
+	// actual cause of.
+	//for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
+	for (auto& parsed_src_code : _list_parsed_src_code)
+	{
+		//*_list_parsed_src_code.at(i) = ParsedSrcCode
+		//	(*_list_parsed_src_code.at(i)->filename());
+		*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
+	}
+}
 
 // Basically just "module" and "package" declarations.  There are no other
 // things at global scope.
@@ -282,8 +304,6 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 	auto s_ident = _stacks.pop_str();
 
-	ANY_JUST_ACCEPT_BASIC(ctx->expr());
-	auto s_value = _stacks.pop_expr();
 
 	const SrcCodePos s_src_code_pos(_make_src_code_pos(ctx));
 
@@ -291,24 +311,7 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		// || (pass() == Pass::ListInterfaceInnerDecl)
 		|| (pass() == Pass::ListModuleInnerDecl))
 	{
-		auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
-			(_make_src_code_pos(ctx->expr()), s_value->value().size());
-
-		// This forcibly makes "localparam"s be vectors, but that's not
-		// such a big deal (given that "localparam"s are always built-in
-		// types), is it?
-		auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
-			(s_src_code_pos, FrostLhsType
-			::construct_initial_builtin_type_ident
-			(s_value->value().is_signed(), s_left_dim_expr),
-			s_value->value().is_signed(), s_left_dim_expr));
-
-		// "localparam"s are never arrays.
-		auto s_frost_full_type = save_frost_full_type(FrostFullType
-			(s_src_code_pos, s_frost_lhs_type));
-
 		SymbolTable* symbol_table = nullptr;
-
 
 		// Error checking
 		if (in_package_pass())
@@ -351,13 +354,18 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"InnerDecl pass() Eek!");
 		}
 
+		//symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
+		//	s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
 		symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
-			s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
+			s_ident, Symbol::PortType::NonPort)));
 	}
 	else if ((pass() == Pass::FinishRawPackageConstruct)
 		//|| (pass() == Pass::FinishRawInterfaceConstruct)
 		|| (pass() == Pass::FinishRawModuleConstruct))
 	{
+		ANY_JUST_ACCEPT_BASIC(ctx->expr());
+		auto s_value = _stacks.pop_expr();
+
 		Symbol* existing_symbol = nullptr;
 
 		auto package = _frost_program.curr_frost_package;
@@ -405,15 +413,45 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 			}
 			else
 			{
-				_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+				_err(ctx, "ParseTreeVisitor"
+					"::visitDeclNoKwLocalparam():  "
 					"references_symbol() pass() Eek!");
 			}
 		}
 
-		// Actually insert the value
-		*existing_symbol = Symbol(existing_symbol->src_code_pos(),
-			existing_symbol->ident(), existing_symbol->port_type(),
-			existing_symbol->frost_full_type(), s_value);
+		if (!_needs_another_subpass)
+		{
+			//_warn(ctx, "!_needs_another_subpass");
+			auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
+				(_make_src_code_pos(ctx->expr()), s_value->value().size());
+
+			// This forcibly makes "localparam"s be vectors, but that's not
+			// such a big deal (given that "localparam"s are always
+			// built-in types), is it?
+			auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
+				(s_src_code_pos, FrostLhsType
+				::construct_initial_builtin_type_ident
+				(s_value->value().is_signed(), s_left_dim_expr),
+				s_value->value().is_signed(), s_left_dim_expr));
+
+			// "localparam"s are never arrays.
+			auto s_frost_full_type = save_frost_full_type(FrostFullType
+				(s_src_code_pos, s_frost_lhs_type));
+
+
+
+			// Actually insert the value
+			*existing_symbol = Symbol(existing_symbol->src_code_pos(),
+				existing_symbol->ident(), existing_symbol->port_type(),
+				s_frost_full_type, s_value);
+		}
+		else // if (_needs_another_subpass)
+		{
+			//_warn(ctx, "_needs_another_subpass");
+			*existing_symbol = Symbol(existing_symbol->src_code_pos(),
+				existing_symbol->ident(), existing_symbol->port_type(),
+				nullptr, s_value);
+		}
 	}
 	else
 	{
@@ -1138,9 +1176,23 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 					"\"."));
 			}
 
-			_stacks.push_expr(save_expr(ExprIdentName
-				(_make_src_code_pos(ctx),
-				package->symbol_table().at(most_inner_ident))));
+			auto symbol = package->symbol_table().at(most_inner_ident);
+
+
+			if (symbol->frost_full_type() == nullptr)
+			{
+				//printout("test:  ", *symbol->ident(), "\n");
+				//in_scope_thing->in_scope_warn(_make_src_code_pos(ctx),
+				//	sconcat("test:  ", *symbol->ident()));
+				_needs_another_subpass = true;
+				_stacks.push_expr(save_expr(ExprSubpassIdentName
+					(_make_src_code_pos(ctx), symbol)));
+			}
+			else // if (symbol->frost_full_type() != nullptr)
+			{
+				_stacks.push_expr(save_expr(ExprIdentName
+					(_make_src_code_pos(ctx), symbol)));
+			}
 		}
 		else if (num_scopes == 3)
 		{

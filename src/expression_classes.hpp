@@ -1534,6 +1534,24 @@ protected:		// functions
 	//}
 };
 
+// Used by "ParseTreeVisitor" when constant "Symbol"s are defined in terms
+// of other, potentially unknown "Symbol"s.
+//
+// Please do not touch the "_value" of one of these!
+class ExprSubpassIdentName : public Expression
+{
+public:		// functions
+	ExprSubpassIdentName(const SrcCodePos& s_src_code_pos,
+		Symbol* s_symbol);
+
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::NonSliced;
+	}
+
+	bool is_constant() const;
+};
+
 #undef TO_HDL_SOURCE
 #undef DUP_CHILD
 #undef SAFE_SAVE_EXPR
