@@ -9,9 +9,24 @@
 namespace frost_hdl
 {
 class Symbol;
+class FrostLhsType;
+class FrostFullType;
+class FrostFunction;
+class FrostPackage;
+//class FrostInterface;
+class FrostModule;
+
 class Expression;
 
-typedef OrderedIdentToPointerTable<Symbol> ListVars;
+//typedef OrderedIdentToPointerTable<Symbol> SymbolTable;
+//typedef IdentToPointerTable<Symbol> SymbolTable;
+typedef IdentToPointerTable<Symbol> SymbolTable;
+typedef IdentToPointerTable<FrostLhsType> FrostLhsTypeTable;
+typedef IdentToPointerTable<FrostFullType> FrostFullTypeTable;
+typedef IdentToPointerTable<FrostFunction> FrostFunctionTable;
+typedef IdentToPointerTable<FrostPackage> FrostPackageTable;
+//typedef IdentToPointerTable<FrostInterface> FrostInterfaceTable;
+typedef IdentToPointerTable<FrostModule> FrostModuleTable;
 
 // Used for temporary type identifiers before actual dimension expressions
 // are evaluated.

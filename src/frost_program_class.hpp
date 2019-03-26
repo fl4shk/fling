@@ -4,8 +4,8 @@
 // src/frost_program_class.hpp
 
 #include "misc_includes.hpp"
-#include "frost_module_table_class.hpp"
-#include "frost_package_table_class.hpp"
+#include "frost_module_class.hpp"
+#include "frost_package_class.hpp"
 
 namespace frost_hdl
 {

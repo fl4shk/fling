@@ -1,4 +1,4 @@
-#include "frost_function_table_class.hpp"
+#include "frost_function_class.hpp"
 
 namespace frost_hdl
 {

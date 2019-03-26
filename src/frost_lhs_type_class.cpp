@@ -1,14 +1,14 @@
-#include "frost_lhs_type_table_class.hpp"
+#include "frost_lhs_type_class.hpp"
 #include "expression_classes.hpp"
-#include "symbol_table_class.hpp"
-#include "frost_function_table_class.hpp"
+#include "symbol_class.hpp"
+#include "frost_function_class.hpp"
 
 namespace frost_hdl
 {
 
 // Construct data for a composite "FrostLhsType"
 FrostLhsType::ComponentData::ComponentData(CompositeType s_composite_type,
-	ListVars&& s_parameter_vars, CompositeVars&& s_composite_vars,
+	SymbolTable&& s_parameter_symbol_table, CompositeVars&& s_composite_vars,
 	CompositeFuncs&& s_funcs)
 {
 	//_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
@@ -24,15 +24,16 @@ FrostLhsType::ComponentData::ComponentData(CompositeType s_composite_type,
 		_type = ComponentType::Splitvar;
 		break;
 	default:
-		printerr("Internal ParseTreeVisitor Error:  FrostLhsType::ComponentData",
-			"::ComponentData():  Eek!\n");
+		printerr("Internal ParseTreeVisitor Error:  FrostLhsType",
+			"::ComponentData::ComponentData():  Eek!\n");
 		exit(1);
 
 		// Useless "break"; only here for consistency.
 		break;
 	}
 
-	_parameter_vars = std::move(s_parameter_vars);
+	_parameter_symbol_table = std::move(s_parameter_symbol_table);
+	_can_be_parameterized = true;
 	_composite_vars = std::move(s_composite_vars);
 	_funcs = std::move(s_funcs);
 

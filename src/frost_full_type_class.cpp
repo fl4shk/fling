@@ -1,4 +1,4 @@
-#include "frost_full_type_table_class.hpp"
+#include "frost_full_type_class.hpp"
 #include "expression_classes.hpp"
 #include "expression_builder_class.hpp"
 

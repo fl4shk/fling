@@ -8,7 +8,7 @@
 #include "src_code_pos_class.hpp"
 #include "expr_num_class.hpp"
 //#include "general_allocator_class.hpp"
-//#include "symbol_table_class.hpp"
+//#include "symbol_class.hpp"
 
 namespace frost_hdl
 {

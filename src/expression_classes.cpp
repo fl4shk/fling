@@ -1,7 +1,7 @@
 #include "expression_classes.hpp"
-#include "symbol_table_class.hpp"
-#include "frost_lhs_type_table_class.hpp"
-#include "frost_full_type_table_class.hpp"
+#include "symbol_class.hpp"
+#include "frost_lhs_type_class.hpp"
+#include "frost_full_type_class.hpp"
 
 namespace frost_hdl
 {

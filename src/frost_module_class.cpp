@@ -1,4 +1,4 @@
-#include "frost_module_table_class.hpp"
+#include "frost_module_class.hpp"
 
 namespace frost_hdl
 {
@@ -17,9 +17,13 @@ FrostModule::~FrostModule()
 
 Symbol* FrostModule::find_symbol(SavedString some_name) const
 {
-	if (parameter_vars().contains(some_name))
+	//if (parameter_symbol_table().contains(some_name))
+	//{
+	//	return parameter_symbol_table().find(some_name);
+	//}
+	if (parameter_symbol_table().contains(some_name))
 	{
-		return parameter_vars().find(some_name);
+		return parameter_symbol_table().at(some_name);
 	}
 	if (input_symbol_table().contains(some_name))
 	{

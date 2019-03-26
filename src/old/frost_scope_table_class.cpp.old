@@ -32,7 +32,7 @@ namespace frost_hdl
 //{
 //	return nullptr;
 //}
-//ListVars* FrostScope::parameter_vars()
+//SymbolTable* FrostScope::parameter_symbol_table()
 //{
 //	return nullptr;
 //}
@@ -58,12 +58,12 @@ namespace frost_hdl
 //FrostDeclModule::FrostDeclModule(SymbolTable&& s_symbol_table,
 //	FrostLhsTypeTable&& s_frost_lhs_type_table,
 //	FrostFunctionTable&& s_frost_function_table,
-//	ListVars&& s_parameter_vars,
+//	SymbolTable&& s_parameter_symbol_table,
 //	FrostStatementTable&& s_statement_table)
 //	: _symbol_table(std::move(s_symbol_table)),
 //	_frost_lhs_type_table(std::move(s_frost_lhs_type_table)),
 //	_frost_function_table(std::move(s_frost_function_table)),
-//	_parameter_vars(std::move(s_parameter_vars)),
+//	_parameter_symbol_table(std::move(s_parameter_symbol_table)),
 //	_statement_table(std::move(s_statement_table))
 //{
 //}
@@ -89,11 +89,11 @@ namespace frost_hdl
 //FrostDeclPackage::FrostDeclPackage(SymbolTable&& s_symbol_table,
 //	FrostLhsTypeTable&& s_frost_lhs_type_table,
 //	FrostFunctionTable&& s_frost_function_table,
-//	ListVars&& s_parameter_vars)
+//	SymbolTable&& s_parameter_symbol_table)
 //	: _symbol_table(std::move(s_symbol_table)),
 //	_frost_lhs_type_table(std::move(s_frost_lhs_type_table)),
 //	_frost_function_table(std::move(s_frost_function_table)),
-//	_parameter_vars(std::move(s_parameter_vars))
+//	_parameter_symbol_table(std::move(s_parameter_symbol_table))
 //{
 //}
 //

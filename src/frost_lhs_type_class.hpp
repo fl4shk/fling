@@ -1,7 +1,7 @@
-#ifndef src_frost_lhs_type_table_class_hpp
-#define src_frost_lhs_type_table_class_hpp
+#ifndef src_frost_lhs_type_class_hpp
+#define src_frost_lhs_type_class_hpp
 
-// src/frost_lhs_type_table_class.hpp
+// src/frost_lhs_type_class.hpp
 
 #include "misc_includes.hpp"
 #include "misc_types.hpp"
@@ -26,7 +26,7 @@ public:		// types
 
 	//typedef std::vector<Symbol*> OrderedPointerList<Symbol>;
 	//typedef std::vector<Symbol*> CompositeVars;
-	//typedef OrderedIdentToPointerTable<Symbol> ListVars;
+	//typedef OrderedIdentToPointerTable<Symbol> SymbolTable;
 	typedef OrderedIdentToPointerTable<Symbol> CompositeVars;
 	typedef CompositeVars EnumVals;
 	typedef OrderedIdentToPointerTable<FrostFunction> CompositeFuncs;
@@ -56,7 +56,8 @@ public:		// types
 	{
 	private:		// variables
 		ComponentType _type = ComponentType::None;
-		ListVars _parameter_vars;
+		SymbolTable _parameter_symbol_table;
+		bool _can_be_parameterized = false;
 
 		// Both enum values and composite variables are stored here.
 		CompositeVars _composite_vars;
@@ -69,7 +70,7 @@ public:		// types
 
 		// Construct data for a composite "FrostLhsType"
 		ComponentData(CompositeType s_composite_type,
-			ListVars&& s_parameter_vars, CompositeVars&& s_composite_vars,
+			SymbolTable&& s_parameter_symbol_table, CompositeVars&& s_composite_vars,
 			CompositeFuncs&& s_funcs);
 
 
@@ -91,7 +92,8 @@ public:		// types
 
 		GEN_GETTER_BY_CON_REF(type)
 
-		GEN_GETTER_BY_CON_REF(parameter_vars)
+		GEN_GETTER_BY_CON_REF(parameter_symbol_table)
+		GEN_GETTER_BY_VAL(can_be_parameterized)
 
 
 		GEN_GETTER_BY_CON_REF(composite_vars)
@@ -141,7 +143,8 @@ public:		// functions
 
 	inline bool can_be_parameterized() const
 	{
-		return (component_data().parameter_vars().size() > 0);
+		//return (component_data().parameter_symbol_table().size() > 0);
+		return (component_data().can_be_parameterized());
 	}
 
 	inline ComponentType component_type() const
@@ -191,17 +194,17 @@ public:		// functions
 };
 
 
-// "FrostLhsTypeTable" isn't scoped scoped types are part of other
-// "...Table" classes, and also part of "ParseTreeVisitor" for global scope.
-class FrostLhsTypeTable : public IdentToPointerTable<FrostLhsType>
-{
-public:		// functions
-	FrostLhsTypeTable() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostLhsTypeTable);
-	virtual ~FrostLhsTypeTable() = default;
-};
+//// "FrostLhsTypeTable" isn't scoped scoped types are part of other
+//// "...Table" classes, and also part of "ParseTreeVisitor" for global scope.
+//class FrostLhsTypeTable : public IdentToPointerTable<FrostLhsType>
+//{
+//public:		// functions
+//	FrostLhsTypeTable() = default;
+//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostLhsTypeTable);
+//	virtual ~FrostLhsTypeTable() = default;
+//};
 
 
 } // namespace frost_hdl
 
-#endif		// src_frost_lhs_type_table_class_hpp
+#endif		// src_frost_lhs_type_class_hpp

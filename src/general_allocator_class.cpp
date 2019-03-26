@@ -1,12 +1,12 @@
 #include "general_allocator_class.hpp"
 #include "expr_num_class.hpp"
 #include "expression_classes.hpp"
-#include "symbol_table_class.hpp"
-#include "frost_lhs_type_table_class.hpp"
-#include "frost_full_type_table_class.hpp"
-#include "frost_function_table_class.hpp"
-#include "frost_module_table_class.hpp"
-#include "frost_package_table_class.hpp"
+#include "symbol_class.hpp"
+#include "frost_lhs_type_class.hpp"
+#include "frost_full_type_class.hpp"
+#include "frost_function_class.hpp"
+#include "frost_module_class.hpp"
+#include "frost_package_class.hpp"
 #include "list_for_gen_save_define.hpp"
 
 namespace frost_hdl

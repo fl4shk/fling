@@ -1,4 +1,4 @@
-#include "frost_package_table_class.hpp"
+#include "frost_package_class.hpp"
 
 namespace frost_hdl
 {

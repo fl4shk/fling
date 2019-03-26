@@ -1,7 +1,7 @@
-#ifndef src_frost_function_table_class_hpp
-#define src_frost_function_table_class_hpp
+#ifndef src_frost_function_class_hpp
+#define src_frost_function_class_hpp
 
-// src/frost_function_table_class.hpp
+// src/frost_function_class.hpp
 
 #include "misc_includes.hpp"
 #include "misc_types.hpp"
@@ -71,17 +71,17 @@ public:		// functions
 	GEN_GETTER_BY_VAL(is_constexpr)
 };
 
-// "FrostFunctionTable" isn't scoped because scoping information is
-// stored in the "FrostScopeTable" class.
-class FrostFunctionTable : public IdentToPointerTable<FrostFunction>
-{
-public:		// functions
-	FrostFunctionTable() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFunctionTable);
-	virtual ~FrostFunctionTable() = default;
-};
+//// "FrostFunctionTable" isn't scoped because scoping information is
+//// stored in the "FrostScopeTable" class.
+//class FrostFunctionTable : public IdentToPointerTable<FrostFunction>
+//{
+//public:		// functions
+//	FrostFunctionTable() = default;
+//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFunctionTable);
+//	virtual ~FrostFunctionTable() = default;
+//};
 
 } // namespace frost_hdl
 
 
-#endif		// src_frost_function_table_class_hpp
+#endif		// src_frost_function_class_hpp

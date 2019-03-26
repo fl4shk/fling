@@ -7,8 +7,8 @@
 #include "misc_types.hpp"
 #include "src_code_pos_class.hpp"
 #include "scoped_table_classes.hpp"
-//#include "symbol_table_class.hpp"
-#include "frost_lhs_type_table_class.hpp"
+//#include "symbol_class.hpp"
+#include "frost_lhs_type_class.hpp"
 #include "expression_classes.hpp"
 #include "misc_utility_funcs.hpp"
 

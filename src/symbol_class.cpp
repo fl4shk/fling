@@ -1,4 +1,4 @@
-#include "symbol_table_class.hpp"
+#include "symbol_class.hpp"
 //#include "expression_classes.hpp"
 #include "general_allocator_class.hpp"
 #include "expression_builder_class.hpp"

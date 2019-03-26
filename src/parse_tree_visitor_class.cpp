@@ -50,7 +50,6 @@ ParseTreeVisitor::~ParseTreeVisitor()
 
 int ParseTreeVisitor::run()
 {
-	bool last_subpass = false;
 	while (pass() < Pass::Done)
 	{
 		//visitProgram(_program_ctx);
@@ -68,7 +67,6 @@ int ParseTreeVisitor::run()
 
 		if (_needs_another_subpass)
 		{
-			last_subpass = false;
 			_needs_another_subpass = false;
 
 			set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
@@ -83,12 +81,6 @@ int ParseTreeVisitor::run()
 
 			reparse();
 
-			continue;
-		}
-
-		if (!last_subpass)
-		{
-			last_subpass = true;
 			continue;
 		}
 
@@ -151,16 +143,16 @@ VisitorRetType ParseTreeVisitor::visitProgram
 
 	if (in_package_pass())
 	{
-		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declPackage());
+		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declPackage());
 	}
 	//else if (in_interface_pass())
 	//{
-	//	ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declInterface());
+	//	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declInterface());
 	//}
 
 	else if (in_module_pass())
 	{
-		ANY_JUST_ACCEPT_LOOPED(subprogram, ctx->declModule());
+		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declModule());
 	}
 
 	// else if (pass() == Pass::Done)
@@ -293,9 +285,12 @@ VisitorRetType ParseTreeVisitor::visitDeclVarList
 		{
 			auto&& errwarn_string = module->find_symbol(s_ident)
 				->src_code_pos().convert_to_errwarn_string();
-			_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
-				"\" already contains a symbol with identifier \"",
-				*s_ident, "\" at ", errwarn_string, "."));
+			//_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
+			//	"\" already contains a symbol with identifier \"",
+			//	*s_ident, "\" at ", errwarn_string, "."));
+			module->in_scope_err(_make_src_code_pos(iter), sconcat("This ",
+				"module already contains a symbol called \"", *s_ident, 
+				"\", deifned at ", errwarn_string, "."));
 		}
 
 		const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
@@ -362,6 +357,20 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		}
 		//else if (in_interface_pass())
 		//{
+		//	auto interface = _frost_program.curr_frost_interface;
+
+		//	if (interface->symbol_table().contains(s_ident))
+		//	{
+		//		auto&& errwarn_string = interface->symbol_table()
+		//			.at(s_ident)->src_code_pos()
+		//			.convert_to_errwarn_string();
+		//		interface->in_scope_err(s_src_code_pos, sconcat
+		//			("This interface already has a localparam called \"", 
+		//			*s_ident,  "\", defined at ",
+		//			errwarn_string, "."));
+		//	}
+
+		//	symbol_table = &interface->symbol_table();
 		//}
 		else if (in_module_pass())
 		{
@@ -384,21 +393,6 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"InnerDecl pass() Eek!");
 		}
 
-		//auto s_left_dim_expr = ExpressionBuilder
-		//	::make_expr_hc_num_from_expr_num(_make_src_code_pos
-		//	(ctx->expr()), ExprNum(BigNum(0), 1, false));
-
-		//auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
-		//	(s_src_code_pos, FrostLhsType
-		//	::construct_initial_builtin_type_ident(false, s_left_dim_expr),
-		//	false, s_left_dim_expr));
-
-		//// "localparam"s are never arrays.
-		//auto s_frost_full_type = save_frost_full_type(FrostFullType
-		//	(s_src_code_pos, s_frost_lhs_type));
-
-		//symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
-		//	s_ident, Symbol::PortType::NonPort, s_frost_full_type)));
 		symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
 			s_ident, Symbol::PortType::NonPort)));
 	}
@@ -463,9 +457,6 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		}
 
 
-		//if (!_needs_another_subpass)
-		//if ((!_needs_another_subpass)
-		//	&& (existing_symbol->frost_full_type() == nullptr))
 		if (!s_value->defined_in_terms_of_any_incomplete_symbol())
 		{
 			auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
@@ -624,6 +615,47 @@ VisitorRetType ParseTreeVisitor::visitDeclPortDirectionalVarList
 	return nullptr;
 }
 
+// "parameter" stuff
+VisitorRetType ParseTreeVisitor::visitDeclParameterVar
+	(Parser::DeclParameterVarContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->identName());
+	auto s_ident = _stacks.pop_str();
+
+	auto module = _frost_program.curr_frost_module;
+
+	if (module->contains_symbol(s_ident))
+	{
+		auto&& errwarn_string = module->find_symbol(s_ident)
+			->src_code_pos().convert_to_errwarn_string();
+		module->in_scope_err(_make_src_code_pos(ctx), sconcat("This ",
+			"module already has a parameter called \"", *s_ident, "\", ",
+			"defined at ", errwarn_string, "."));
+	}
+
+	Expression* s_value = nullptr;
+
+	if (ctx->expr())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->expr());
+		s_value = _stacks.pop_expr();
+	}
+
+	// Don't even bother with trying to figure out the "FrostFullType" yet.
+	// That will be done during un-"parameter"ization. 
+	module->parameter_symbol_table().insert_or_assign(save_symbol(Symbol
+		(_make_src_code_pos(ctx), s_ident, Symbol::PortType::NonPort,
+		nullptr, s_value)));
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitDeclParameterVarList
+	(Parser::DeclParameterVarListContext *ctx)
+{
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declParameterVar());
+	return nullptr;
+}
+
 // "module" stuff
 VisitorRetType ParseTreeVisitor::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
@@ -648,8 +680,11 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 		curr_frost_module = save_frost_module(FrostModule
 			(_make_src_code_pos(ctx), s_ident));
 
+		// Process "parameter"s of this module.
+		ANY_ACCEPT_IF_BASIC(ctx->declParameterVarList())
+
 		// Process ports of this module
-		ANY_JUST_ACCEPT_LOOPED(port_list,
+		ANY_JUST_ACCEPT_LOOPED(port_list_iter,
 			ctx->declPortDirectionalVarList())
 
 		frost_module_table.insert_or_assign(curr_frost_module);

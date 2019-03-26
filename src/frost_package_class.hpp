@@ -1,12 +1,12 @@
-#ifndef src_frost_package_table_class_hpp
-#define src_frost_package_table_class_hpp
+#ifndef src_frost_package_class_hpp
+#define src_frost_package_class_hpp
 
-// src/frost_package_table_class.hpp
+// src/frost_package_class.hpp
 
 #include "misc_includes.hpp"
-#include "symbol_table_class.hpp"
-#include "frost_function_table_class.hpp"
-#include "frost_full_type_table_class.hpp"
+#include "symbol_class.hpp"
+#include "frost_function_class.hpp"
+#include "frost_full_type_class.hpp"
 
 #include "in_scope_errwarn_base_class.hpp"
 
@@ -45,16 +45,16 @@ public:		// functions
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
 };
 
-// "FrostPackage"s can't be nested.
-class FrostPackageTable : public IdentToPointerTable<FrostPackage>
-{
-public:		// functions
-	FrostPackageTable() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostPackageTable);
-	virtual ~FrostPackageTable() = default;
-};
+//// "FrostPackage"s can't be nested.
+//class FrostPackageTable : public IdentToPointerTable<FrostPackage>
+//{
+//public:		// functions
+//	FrostPackageTable() = default;
+//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostPackageTable);
+//	virtual ~FrostPackageTable() = default;
+//};
 
 } // namespace frost_hdl
 
 
-#endif		// src_frost_package_table_class_hpp
+#endif		// src_frost_package_class_hpp

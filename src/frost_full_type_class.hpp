@@ -1,10 +1,10 @@
-#ifndef src_frost_full_type_table_class_hpp
-#define src_frost_full_type_table_class_hpp
+#ifndef src_frost_full_type_class_hpp
+#define src_frost_full_type_class_hpp
 
-// src/frost_full_type_table_class.hpp
+// src/frost_full_type_class.hpp
 
 #include "misc_includes.hpp"
-#include "frost_lhs_type_table_class.hpp"
+#include "frost_lhs_type_class.hpp"
 
 
 namespace frost_hdl
@@ -70,15 +70,15 @@ public:		// functions
 	GEN_GETTER_BY_VAL(right_dim_expr)
 };
 
-class FrostFullTypeTable : public IdentToPointerTable<FrostFullType>
-{
-public:		// functions
-	FrostFullTypeTable() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFullTypeTable);
-	virtual ~FrostFullTypeTable() = default;
-};
+//class FrostFullTypeTable : public IdentToPointerTable<FrostFullType>
+//{
+//public:		// functions
+//	FrostFullTypeTable() = default;
+//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostFullTypeTable);
+//	virtual ~FrostFullTypeTable() = default;
+//};
 
 } // namespace frost_hdl
 
 
-#endif		// src_frost_full_type_table_class_hpp
+#endif		// src_frost_full_type_class_hpp

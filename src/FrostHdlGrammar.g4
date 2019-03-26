@@ -92,19 +92,19 @@ declPortDirectionalVarList:
 	(TokKwInput | TokKwOutput | TokKwInout) declPortVarList
 	;
 
-//declParamVar:
-//	identName ((TokAssign expr)?)
-//	;
-//declParamVarList:
-//	declParamVar ((',' declParamVar)*)
-//	;
+// "parameter" stuff
+declParameterVar:
+	identName ((TokAssign expr)?)
+	;
+declParameterVarList:
+	declParameterVar ((',' declParameterVar)*)
+	;
 
 
 // "module" stuff
 declModule:
 	TokKwModule identName
-		// FUTURE:  parameters
-		//((TokKwParam '(' declParamVarList ')')?)
+		((TokKwParameter '(' declParameterVarList ')')?)
 
 		// ports
 		'('
@@ -127,6 +127,7 @@ insideModule:
 		| declVarList ';'
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
+		//| moduleStmtInstantiateModule ';'
 	)*
 	;
 
@@ -274,7 +275,7 @@ TokNumber: '#' ;
 
 // Keywords
 TokKwModule: 'module' ;
-TokKwParam: 'param' ;
+TokKwParameter: 'parameter' ;
 TokKwLocalparam: 'localparam' ;
 
 TokKwInterface: 'interface' ;

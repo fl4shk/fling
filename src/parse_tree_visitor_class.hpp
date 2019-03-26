@@ -134,9 +134,9 @@ private:		// variables
 	// For when a pass needs multiple sub-passes.
 	PassUint _subpass = 0;
 
-	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024)
-	//	* static_cast<PassUint>(1024);
-	static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024);
+	static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024)
+		* static_cast<PassUint>(1024);
+	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024);
 	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(8);
 
 	bool _needs_another_subpass = false;
@@ -295,6 +295,11 @@ private:		// visitor functions
 	VisitorRetType visitDeclPortDirectionalVarList
 		(Parser::DeclPortDirectionalVarListContext *ctx);
 
+	// "parameter" stuff
+	VisitorRetType visitDeclParameterVar
+		(Parser::DeclParameterVarContext *ctx);
+	VisitorRetType visitDeclParameterVarList
+		(Parser::DeclParameterVarListContext *ctx);
 
 	// "module" stuff
 	VisitorRetType visitDeclModule

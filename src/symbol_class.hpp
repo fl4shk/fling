@@ -1,13 +1,13 @@
-#ifndef src_symbol_table_class_hpp
-#define src_symbol_table_class_hpp
+#ifndef src_symbol_class_hpp
+#define src_symbol_class_hpp
 
-// src/symbol_table_class.hpp
+// src/symbol_class.hpp
 
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
 //#include "expression_classes.hpp"
-//#include "frost_full_type_table_class.hpp"
+//#include "frost_full_type_class.hpp"
 //#include "misc_types.hpp"
 #include "src_code_pos_class.hpp"
 #include "frost_statement_table_class.hpp"
@@ -67,7 +67,7 @@ private:		// variables
 	Expression* _value = nullptr;
 
 	// Actual parameter values for this "Symbol"'s "FrostFullType"
-	ListVars _parameter_vars;
+	SymbolTable _parameter_symbol_table;
 
 
 	//// "_init_block_context" is part of what determines whether or not this
@@ -98,6 +98,10 @@ public:		// functions
 		PortType s_port_type, FrostFullType* s_frost_full_type,
 		Expression* s_value);
 
+	//// "parameter" constructor
+	//Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+	//	FrostFullType* s_frost_full_type, Expression* s_value);
+
 
 	// We really don't want copies of "Symbol"s.
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Symbol);
@@ -122,29 +126,29 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(port_type)
-	GEN_GETTER_AND_SETTER_BY_VAL(is_constant)
+	GEN_GETTER_BY_VAL(is_constant)
 	GEN_GETTER_BY_VAL(frost_full_type)
 
 	GEN_GETTER_BY_CON_REF(value)
 
-	GEN_GETTER_BY_CON_REF(parameter_vars)
-	GEN_SETTER_BY_RVAL_REF(parameter_vars)
+	GEN_GETTER_BY_CON_REF(parameter_symbol_table)
+	GEN_SETTER_BY_RVAL_REF(parameter_symbol_table)
 
 	//GEN_GETTER_AND_SETTER_BY_VAL(init_block_context)
 	//GEN_GETTER_AND_SETTER_BY_VAL(driver_block_context)
 
 };
 
-// "SymbolTable" isn't scoped because scoping information is stored in the
-// "FrostScopeTable" class.
-class SymbolTable : public IdentToPointerTable<Symbol>
-{
-public:		// functions
-	SymbolTable() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SymbolTable);
-	virtual ~SymbolTable() = default;
-};
+//// "SymbolTable" isn't scoped because scoping information is stored in the
+//// "FrostScopeTable" class.
+//class SymbolTable : public IdentToPointerTable<Symbol>
+//{
+//public:		// functions
+//	SymbolTable() = default;
+//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SymbolTable);
+//	virtual ~SymbolTable() = default;
+//};
 
 } // namespace frost_hdl
 
-#endif		// src_symbol_table_class_hpp
+#endif		// src_symbol_class_hpp

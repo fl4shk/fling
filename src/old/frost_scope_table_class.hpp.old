@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "frost_statement_table_class.hpp"
-#include "frost_function_table_class.hpp"
+#include "frost_function_class.hpp"
 
 namespace frost_hdl
 {
@@ -40,7 +40,7 @@ namespace frost_hdl
 //
 //	// Relevant for "FrostDeclModule".
 //	// Might be relevant for "FrostDeclPackage", too.
-//	virtual ListVars* parameter_vars();
+//	virtual SymbolTable* parameter_symbol_table();
 //
 //	// Relevant for "FrostDeclModule".
 //	virtual FrostStatementTable* statement_table();
@@ -60,7 +60,7 @@ namespace frost_hdl
 //	SymbolTable _symbol_table;
 //	FrostLhsTypeTable _frost_lhs_type_table;
 //	FrostFunctionTable _frost_function_table;
-//	ListVars _parameter_vars;
+//	SymbolTable _parameter_symbol_table;
 //	FrostStatementTable _statement_table;
 //
 //public:		// functions
@@ -69,7 +69,7 @@ namespace frost_hdl
 //	FrostDeclModule(SymbolTable&& s_symbol_table,
 //		FrostLhsTypeTable&& s_frost_lhs_type_table,
 //		FrostFunctionTable&& s_frost_function_table,
-//		ListVars&& s_parameter_vars,
+//		SymbolTable&& s_parameter_symbol_table,
 //		FrostStatementTable&& s_statement_table);
 //
 //	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclModule, delete, default)
@@ -79,7 +79,7 @@ namespace frost_hdl
 //	virtual GEN_GETTER_AS_POINTER(symbol_table)
 //	virtual GEN_GETTER_AS_POINTER(frost_lhs_type_table)
 //	virtual GEN_GETTER_AS_POINTER(frost_function_table)
-//	virtual GEN_GETTER_AS_POINTER(parameter_vars)
+//	virtual GEN_GETTER_AS_POINTER(parameter_symbol_table)
 //	virtual GEN_GETTER_AS_POINTER(statement_table)
 //};
 //
@@ -151,7 +151,7 @@ namespace frost_hdl
 //	SymbolTable _symbol_table;
 //	FrostLhsTypeTable _frost_lhs_type_table;
 //	FrostFunctionTable _frost_function_table;
-//	ListVars _parameter_vars;
+//	SymbolTable _parameter_symbol_table;
 //
 //public:		// functions
 //	FrostDeclPackage();
@@ -159,7 +159,7 @@ namespace frost_hdl
 //	FrostDeclPackage(SymbolTable&& s_symbol_table,
 //		FrostLhsTypeTable&& s_frost_lhs_type_table,
 //		FrostFunctionTable&& s_frost_function_table,
-//		ListVars&& s_parameter_vars);
+//		SymbolTable&& s_parameter_symbol_table);
 //
 //	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostDeclPackage, delete, default)
 //	virtual ~FrostDeclPackage() = default;
@@ -167,7 +167,7 @@ namespace frost_hdl
 //	virtual GEN_GETTER_AS_POINTER(symbol_table)
 //	virtual GEN_GETTER_AS_POINTER(frost_lhs_type_table)
 //	virtual GEN_GETTER_AS_POINTER(frost_function_table)
-//	virtual GEN_GETTER_AS_POINTER(parameter_vars)
+//	virtual GEN_GETTER_AS_POINTER(parameter_symbol_table)
 //};
 //
 //// This class exists to provide temporary information about scope for

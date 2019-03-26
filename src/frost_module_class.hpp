@@ -1,13 +1,13 @@
-#ifndef src_frost_module_table_class_hpp
-#define src_frost_module_table_class_hpp
+#ifndef src_frost_module_class_hpp
+#define src_frost_module_class_hpp
 
-// src/frost_module_table_class.hpp
+// src/frost_module_class.hpp
 
 #include "misc_includes.hpp"
 //#include "frost_statement_table_class.hpp"
-#include "symbol_table_class.hpp"
-#include "frost_function_table_class.hpp"
-#include "frost_full_type_table_class.hpp"
+#include "symbol_class.hpp"
+#include "frost_function_class.hpp"
+#include "frost_full_type_class.hpp"
 #include "in_scope_errwarn_base_class.hpp"
 
 namespace frost_hdl
@@ -19,9 +19,8 @@ class FrostModule : public InScopeErrWarnBase<SrcCodePos>
 private:		// variables
 	SrcCodePos _src_code_pos;
 	SavedString _ident = nullptr;
-	ListVars _parameter_vars;
-	SymbolTable _input_symbol_table, _output_symbol_table,
-		_inout_symbol_table, _local_symbol_table;
+	SymbolTable _parameter_symbol_table, _input_symbol_table,
+		_output_symbol_table, _inout_symbol_table, _local_symbol_table;
 
 	FrostLhsTypeTable _frost_lhs_type_table;
 	FrostFullTypeTable _frost_full_type_table;
@@ -62,7 +61,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 
-	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_vars)
+	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(input_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(output_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(inout_symbol_table)
@@ -76,15 +75,15 @@ public:		// functions
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
 };
 
-// Nested "module"s are not permitted, and they are always at global scope.
-class FrostModuleTable : public IdentToPointerTable<FrostModule>
-{
-public:		// functions
-	FrostModuleTable() = default;
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModuleTable);
-	virtual ~FrostModuleTable() = default;
-};
+//// Nested "module"s are not permitted, and they are always at global scope.
+//class FrostModuleTable : public IdentToPointerTable<FrostModule>
+//{
+//public:		// functions
+//	FrostModuleTable() = default;
+//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModuleTable);
+//	virtual ~FrostModuleTable() = default;
+//};
 
 } // namespace frost_hdl
 
-#endif		// src_frost_module_table_class_hpp
+#endif		// src_frost_module_class_hpp
