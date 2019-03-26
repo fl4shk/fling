@@ -29,6 +29,9 @@ private:		// variables
 
 	FrostStatementTable _frost_statement_table;
 
+	// Other "module"s that this one contains instantiations of.
+	FrostModuleTable _frost_module_table;
+
 	//FrostPackageImportTable _frost_package_import_table;
 
 public:		// functions
@@ -73,6 +76,7 @@ public:		// functions
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(frost_module_table)
 };
 
 //// Nested "module"s are not permitted, and they are always at global scope.
