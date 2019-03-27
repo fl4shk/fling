@@ -81,7 +81,7 @@ int ParseTreeVisitor::run()
 		//	continue;
 		//}
 
-		//reparse();
+		reparse();
 		set_pass(static_cast<Pass>(static_cast<PassUint>
 			(pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
@@ -1381,6 +1381,7 @@ void ParseTreeVisitor::_insert_module_port_var
 	(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
 {
+	printout("_insert_module_port_var()\n");
 	// Call this ONLY if (pass() == Pass::FrostListModules)
 	if (pass() != Pass::ListModuleIdentifiers)
 	{
