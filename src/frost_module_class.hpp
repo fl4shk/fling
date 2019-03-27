@@ -4,7 +4,7 @@
 // src/frost_module_class.hpp
 
 #include "misc_includes.hpp"
-//#include "frost_statement_table_class.hpp"
+//#include "frost_statement_class.hpp"
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 #include "frost_full_type_class.hpp"
@@ -14,6 +14,7 @@ namespace frost_hdl
 {
 
 // Class representing a module from HDL land (not a C++20 module).
+// Nested "module"s are not permitted, and they are always at global scope.
 class FrostModule : public InScopeErrWarnBase<SrcCodePos>
 {
 private:		// variables
@@ -29,8 +30,10 @@ private:		// variables
 
 	FrostStatementTable _frost_statement_table;
 
-	// Other "module"s that this one contains instantiations of.
-	FrostModuleTable _frost_module_table;
+	// Used by the "ParseTreeVisitor" purely to determine whether or not
+	// this "module" is defined in terms of itself.
+	std::set<FrostModule*> _contained_module_instance_types;
+
 
 	//FrostPackageImportTable _frost_package_import_table;
 
@@ -76,17 +79,9 @@ public:		// functions
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(frost_module_table)
+	GEN_GETTERS_BY_CON_REF_AND_REF(contained_module_instance_types)
 };
 
-//// Nested "module"s are not permitted, and they are always at global scope.
-//class FrostModuleTable : public IdentToPointerTable<FrostModule>
-//{
-//public:		// functions
-//	FrostModuleTable() = default;
-//	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostModuleTable);
-//	virtual ~FrostModuleTable() = default;
-//};
 
 } // namespace frost_hdl
 

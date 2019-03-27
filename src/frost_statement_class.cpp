@@ -1,4 +1,4 @@
-#include "frost_statement_table_class.hpp"
+#include "frost_statement_class.hpp"
 
 #include <sstream>
 

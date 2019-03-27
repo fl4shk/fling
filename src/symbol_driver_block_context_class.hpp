@@ -4,7 +4,7 @@
 // src/symbol_driver_block_context_class.hpp
 
 #include "misc_includes.hpp"
-#include "frost_statement_table_class.hpp"
+#include "frost_statement_class.hpp"
 
 namespace frost_hdl
 {

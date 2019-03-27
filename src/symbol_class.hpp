@@ -9,8 +9,11 @@
 //#include "expression_classes.hpp"
 //#include "frost_full_type_class.hpp"
 //#include "misc_types.hpp"
+
+#include "table_types.hpp"
+
 #include "src_code_pos_class.hpp"
-#include "frost_statement_table_class.hpp"
+#include "frost_statement_class.hpp"
 #include "symbol_driver_block_context_class.hpp"
 
 

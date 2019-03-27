@@ -1,7 +1,7 @@
-#ifndef src_frost_statement_table_class_hpp
-#define src_frost_statement_table_class_hpp
+#ifndef src_frost_statement_class_hpp
+#define src_frost_statement_class_hpp
 
-// src/frost_statement_table_class.hpp
+// src/frost_statement_class.hpp
 
 #include "misc_includes.hpp"
 #include "misc_types.hpp"
@@ -246,4 +246,4 @@ public:		// functions
 } // namespace frost_hdl
 
 
-#endif		// src_frost_statement_table_class_hpp
+#endif		// src_frost_statement_class_hpp

@@ -140,24 +140,24 @@ moduleStmtContAssign:
 // Expression parsing
 expr:
 	exprLogical
-	| expr TokOpLogical exprLogical
+	| exprLogical TokOpLogical expr 
 	;
 
 exprLogical:
 	exprCompare
-	| exprLogical TokOpCompare exprCompare
+	| exprCompare TokOpCompare exprLogical 
 	;
 
 exprCompare:
 	exprAddSub
-	| exprCompare TokPlus exprAddSub
-	| exprCompare TokMinus exprAddSub
+	| exprAddSub TokPlus exprCompare
+	| exprAddSub TokMinus exprCompare
 	;
 
 exprAddSub:
 	exprMulDivModEtc
-	| exprAddSub TokOpMulDivMod exprMulDivModEtc
-	| exprAddSub TokOpBitwise exprMulDivModEtc
+	| exprMulDivModEtc TokOpMulDivMod exprAddSub
+	| exprMulDivModEtc TokOpBitwise exprAddSub
 	;
 
 exprMulDivModEtc:

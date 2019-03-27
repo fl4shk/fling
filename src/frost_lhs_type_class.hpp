@@ -4,7 +4,8 @@
 // src/frost_lhs_type_class.hpp
 
 #include "misc_includes.hpp"
-#include "misc_types.hpp"
+//#include "misc_types.hpp"
+#include "table_types.hpp"
 #include "src_code_pos_class.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"

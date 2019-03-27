@@ -27,6 +27,7 @@ ExprNum::ExprNum(const BigNum& s_data, size_t s_data_size,
 	copy_from_bignum(s_data, s_data_size);
 }
 
+// this calls "copy_from_bignum_with_smallest_size()"
 ExprNum::ExprNum(const BigNum& s_data, bool s_is_signed)
 {
 	copy_from_bignum_with_smallest_size(s_data, s_is_signed);
@@ -71,7 +72,14 @@ void ExprNum::copy_from_bignum_with_smallest_size(const BigNum& n_data,
 	// I wish I'd known about this earlier, haha.
 	const auto n_data_as_binary_str = n_data.get_str(2);
 
-	copy_from_bignum(n_data, n_data_as_binary_str.size());
+	if (n_data < BigNum(0))
+	{
+		copy_from_bignum(n_data, n_data_as_binary_str.size() - 1);
+	}
+	else // if (n_data > BigNum(0))
+	{
+		copy_from_bignum(n_data, n_data_as_binary_str.size());
+	}
 }
 
 BigNum ExprNum::convert_to_bignum() const

@@ -7,7 +7,7 @@
 #include "misc_types.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
-#include "frost_statement_table_class.hpp"
+#include "frost_statement_class.hpp"
 
 namespace frost_hdl
 {

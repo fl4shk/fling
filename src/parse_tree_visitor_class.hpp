@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 #include "parsed_src_code_class.hpp"
 
+#include "table_types.hpp"
 #include "frost_program_class.hpp"
 
 namespace frost_hdl

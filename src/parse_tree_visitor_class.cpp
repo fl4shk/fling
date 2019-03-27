@@ -31,6 +31,9 @@
 		_stacks.push_str(TOK_TO_DUPPED_STR(arg)); \
 	}
 
+#define DEBUG_EXPR(func, context) \
+	printout("ParseTreeVisitor::", #func, "():  ", #context, ":  ", \
+		!!ctx->context(), "\n")
 
 
 namespace frost_hdl
@@ -61,17 +64,11 @@ int ParseTreeVisitor::run()
 			visitProgram(parsed_src_code->parser()->program());
 		}
 
-		//printout("ParseTreeVisitor::run():  ",
-		//	static_cast<PassUint>(pass()), " ",
-		//	_needs_another_subpass, " ", subpass(), "\n");
-
 		if (_needs_another_subpass)
 		{
 			_needs_another_subpass = false;
 
 			set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
-
-			//printout("next subpass:  ", subpass(), "\n");
 
 			if (subpass() >= MAX_SUBPASS)
 			{
@@ -103,7 +100,7 @@ int ParseTreeVisitor::run()
 
 			printout(*symbol->ident(), " ",
 				symbol->value()->value().convert_to_bignum(), " ",
-				symbol->value()->is_constant(), "\n");
+				symbol->value()->value().size(), "\n");
 		}
 	}
 
@@ -123,28 +120,16 @@ void ParseTreeVisitor::reparse()
 	}
 }
 
-// Basically just "module" and "package" declarations.  There are no other
-// things at global scope.
+// Basically just "module", "interface", and "package" declarations.
+// There are no other things permitted at global scope.
 VisitorRetType ParseTreeVisitor::visitProgram
 	(Parser::ProgramContext *ctx)
 {
-
-	//if (_in_frost_package_pass())
-	//{
-	//	//for (auto subprogram : ctx->declPackage())
-	//	//{
-	//	//	ANY_JUST_ACCEPT_BASIC(subprogram);
-	//	//}
-	//}
-	//else if (_in_frost_module_pass())
-	//{
-	//}
-
-
 	if (in_package_pass())
 	{
 		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declPackage());
 	}
+
 	//else if (in_interface_pass())
 	//{
 	//	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declInterface());
@@ -768,10 +753,10 @@ VisitorRetType ParseTreeVisitor::visitExpr
 {
 	if (ctx->TokOpLogical())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->expr());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
 		auto left = _stacks.pop_expr();
 
-		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
+		ANY_JUST_ACCEPT_BASIC(ctx->expr());
 		auto right = _stacks.pop_expr();
 
 		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpLogical());
@@ -803,10 +788,10 @@ VisitorRetType ParseTreeVisitor::visitExprLogical
 {
 	if (ctx->TokOpCompare())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
 		auto left = _stacks.pop_expr();
 
-		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
 		auto right = _stacks.pop_expr();
 
 		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpCompare());
@@ -855,12 +840,17 @@ VisitorRetType ParseTreeVisitor::visitExprLogical
 VisitorRetType ParseTreeVisitor::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 {
+	//DEBUG_EXPR(visitExprCompare, TokPlus);
+	//DEBUG_EXPR(visitExprCompare, TokMinus);
+	//printout("\n\n");
+
+
 	if (ctx->TokPlus())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
 		auto left = _stacks.pop_expr();
 
-		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
 		auto right = _stacks.pop_expr();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_binop
@@ -868,10 +858,10 @@ VisitorRetType ParseTreeVisitor::visitExprCompare
 	}
 	else if (ctx->TokMinus())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
 		auto left = _stacks.pop_expr();
 
-		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
 		auto right = _stacks.pop_expr();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_binop
@@ -889,10 +879,10 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 {
 	if (ctx->TokOpMulDivMod())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
 		auto left = _stacks.pop_expr();
 
-		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
 		auto right = _stacks.pop_expr();
 
 		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpMulDivMod());
@@ -921,10 +911,10 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 	}
 	else if (ctx->TokOpBitwise())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
 		auto left = _stacks.pop_expr();
 
-		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
+		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
 		auto right = _stacks.pop_expr();
 
 		auto tok = TOK_TO_DUPPED_STR(ctx->TokOpBitwise());
@@ -974,6 +964,12 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 {
+	//DEBUG_EXPR(visitExprMulDivModEtc, exprUnary);
+	//DEBUG_EXPR(visitExprMulDivModEtc, numExpr);
+	//DEBUG_EXPR(visitExprMulDivModEtc, identExpr);
+	//DEBUG_EXPR(visitExprMulDivModEtc, expr);
+	//printout("\n\n");
+
 	ANY_ACCEPT_IF_BASIC(ctx->exprUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->numExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->identExpr())
@@ -988,6 +984,14 @@ VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 VisitorRetType ParseTreeVisitor::visitExprUnary
 	(Parser::ExprUnaryContext *ctx)
 {
+	//DEBUG_EXPR(visitExprUnary, exprPlusUnary);;
+	//DEBUG_EXPR(visitExprUnary, exprMinusUnary);
+	//DEBUG_EXPR(visitExprUnary, exprLogNot);
+	//DEBUG_EXPR(visitExprUnary, exprBitNot);
+	//DEBUG_EXPR(visitExprUnary, exprCastUnsigned);
+	//DEBUG_EXPR(visitExprUnary, exprCastSigned);
+	//printout("\n\n");
+
 	ANY_ACCEPT_IF_BASIC(ctx->exprPlusUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprMinusUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprLogNot())
@@ -1104,8 +1108,15 @@ VisitorRetType ParseTreeVisitor::visitRawNumExpr
 	}
 	else if (ctx->TokHexNum())
 	{
-		for (auto c : ctx->TokHexNum()->toString())
+		const auto& as_string = ctx->TokHexNum()->toString();
+		for (size_t i=0; i<as_string.size(); ++i)
 		{
+			if (i < 2)
+			{
+				continue;
+			}
+
+			const auto c = as_string.at(i);
 			if ((c >= 'A') && (c <= 'F'))
 			{
 				to_push = (to_push * 0x10) + (c - 'A' + 0xA);
@@ -1124,8 +1135,15 @@ VisitorRetType ParseTreeVisitor::visitRawNumExpr
 	}
 	else if (ctx->TokBinNum())
 	{
-		for (auto c : ctx->TokBinNum()->toString())
+		const auto& as_string = ctx->TokBinNum()->toString();
+		for (size_t i=0; i<as_string.size(); ++i)
 		{
+			if (i < 2)
+			{
+				continue;
+			}
+
+			const auto c = as_string.at(i);
 			to_push = (to_push * 0b10) + (c - '0');
 		}
 
@@ -1153,7 +1171,6 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
 		auto ident = _stacks.pop_str();
-
 
 
 		// Here we check to see whether or not the symbol actually exists
@@ -1187,6 +1204,28 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 
 		//else if (in_interface_pass())
 		//{
+		//	auto interface = _frost_program.curr_frost_interface;
+		//	if (interface->symbol_table().contains(ident))
+		//	{
+		//		auto symbol = interface->symbol_table().at(ident);
+
+		//		if (!symbol->is_incomplete())
+		//		{
+		//			_stacks.push_expr(save_expr(ExprIdentName
+		//				(_make_src_code_pos(ctx), symbol)));
+		//		}
+		//		else // if (symbol->is_incomplete())
+		//		{
+		//			_stacks.push_expr(save_expr(ExprSubpassIdentName
+		//				(_make_src_code_pos(ctx), symbol)));
+		//		}
+		//	}
+		//	else
+		//	{
+		//		interface->in_scope_err(_make_src_code_pos(ctx), sconcat
+		//			("Unknown symbol called \"", *ident, "\" at this ",
+		//			"point."));
+		//	}
 		//}
 
 		else if (in_module_pass())
