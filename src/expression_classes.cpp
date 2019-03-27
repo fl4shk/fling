@@ -52,6 +52,15 @@ void Expression::inner_full_evaluate()
 	}
 	_evaluate();
 }
+void Expression::finish_init_value()
+{
+	for (auto child : _children)
+	{
+		child->finish_init_value();
+	}
+	_inner_finish_init_value();
+	_value.set_size(_starting_length());
+}
 bool Expression::references_symbol(Symbol* to_check) const
 {
 	//printout("Expression::references_symbol():  ", *to_check->ident(),
@@ -160,6 +169,10 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
+void Expression::_inner_finish_init_value()
+{
+}
+
 //Expression* Expression::_inner_dup_with_changed_symbols
 //	(const ReplaceSymsMap& replace_syms_map) const
 //{
@@ -169,14 +182,6 @@ bool Expression::_is_always_constant() const
 //	return nullptr;
 //}
 
-void Expression::_init_size()
-{
-	for (auto child : _children)
-	{
-		child->_init_size();
-	}
-	_value.set_size(_starting_length());
-}
 
 void Expression::_full_evaluate(bool is_real_top)
 {
@@ -193,7 +198,7 @@ void Expression::_full_evaluate(bool is_real_top)
 
 	if (is_real_top)
 	{
-		_init_size();
+		finish_init_value();
 	}
 
 
@@ -585,8 +590,8 @@ ExprIdentName::ExprIdentName(const SrcCodePos& s_src_code_pos,
 
 	//_value.set_size(symbol()->frost_lhs_type()->left_dim());
 	//_value.set_size(_starting_length());
-	_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
-		->is_signed());
+	//_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
+	//	->is_signed());
 }
 
 SavedString ExprIdentName::to_hdl_source() const
@@ -599,6 +604,12 @@ bool ExprIdentName::is_constant() const
 	// Why was this written this way?
 	//return (Expression::is_constant() || symbol()->is_constant());
 	return symbol()->is_constant();
+}
+void ExprIdentName::_inner_finish_init_value()
+{
+	//_value.set_size(_starting_length());
+	_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
+		->is_signed());
 }
 
 void ExprIdentName::_evaluate()

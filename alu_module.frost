@@ -14,7 +14,9 @@
 //	output logic o_carry)
 //{
 //}
-module Alu(input logic [WIDTH__DIO] i_a, i_b,
+module Alu
+	parameter(WIDTH__DIO)
+	(input logic [WIDTH__DIO] i_a, i_b,
 	input logic i_carry,
 	input logic [PkgAlu::WIDTH__OPCODE] i_opcode,
 	output logic [WIDTH__DIO] o_data,

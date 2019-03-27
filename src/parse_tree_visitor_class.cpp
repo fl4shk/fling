@@ -852,11 +852,6 @@ VisitorRetType ParseTreeVisitor::visitExprLogical
 VisitorRetType ParseTreeVisitor::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 {
-	//DEBUG_EXPR(visitExprCompare, TokPlus);
-	//DEBUG_EXPR(visitExprCompare, TokMinus);
-	//printout("\n\n");
-
-
 	if (ctx->TokPlus())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
@@ -976,12 +971,6 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 {
-	//DEBUG_EXPR(visitExprMulDivModEtc, exprUnary);
-	//DEBUG_EXPR(visitExprMulDivModEtc, numExpr);
-	//DEBUG_EXPR(visitExprMulDivModEtc, identExpr);
-	//DEBUG_EXPR(visitExprMulDivModEtc, expr);
-	//printout("\n\n");
-
 	ANY_ACCEPT_IF_BASIC(ctx->exprUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->numExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->identExpr())
@@ -996,14 +985,6 @@ VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 VisitorRetType ParseTreeVisitor::visitExprUnary
 	(Parser::ExprUnaryContext *ctx)
 {
-	//DEBUG_EXPR(visitExprUnary, exprPlusUnary);;
-	//DEBUG_EXPR(visitExprUnary, exprMinusUnary);
-	//DEBUG_EXPR(visitExprUnary, exprLogNot);
-	//DEBUG_EXPR(visitExprUnary, exprBitNot);
-	//DEBUG_EXPR(visitExprUnary, exprCastUnsigned);
-	//DEBUG_EXPR(visitExprUnary, exprCastSigned);
-	//printout("\n\n");
-
 	ANY_ACCEPT_IF_BASIC(ctx->exprPlusUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprMinusUnary())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprLogNot())
@@ -1381,7 +1362,6 @@ void ParseTreeVisitor::_insert_module_port_var
 	(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
 {
-	printout("_insert_module_port_var()\n");
 	// Call this ONLY if (pass() == Pass::FrostListModules)
 	if (pass() != Pass::ListModuleIdentifiers)
 	{

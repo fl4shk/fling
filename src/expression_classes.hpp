@@ -91,6 +91,7 @@ public:		// functions
 
 	// I didn't want this made public, but...
 	void inner_full_evaluate();
+	void finish_init_value();
 
 	// Recursively search the tree for a reference to a particular
 	// "Symbol".  This is (exclusively?) used to prevent defining a
@@ -163,6 +164,8 @@ protected:		// functions
 	}
 
 
+	virtual void _inner_finish_init_value();
+
 	// Don't call "_evaluate()" until after the size of the expression has
 	// been determined and the children have been modified.
 	virtual void _evaluate();
@@ -185,7 +188,6 @@ protected:		// functions
 	//}
 
 	// Stuff for evaluating constant expressions.
-	void _init_size();
 	void _full_evaluate(bool is_real_top);
 
 	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
@@ -1520,6 +1522,7 @@ public:		// functions
 	bool is_constant() const;
 
 protected:		// functions
+	void _inner_finish_init_value();
 	void _evaluate();
 	size_t _starting_length() const;
 
