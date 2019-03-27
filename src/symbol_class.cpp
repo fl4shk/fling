@@ -5,6 +5,17 @@
 
 namespace frost_hdl
 {
+// For when we don't know the expression for the value of a "parameter"
+// or "localparam" type yet.
+Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident)
+{
+	_src_code_pos = s_src_code_pos;
+	_ident = s_ident;
+	_port_type = PortType::NonPort;
+	_frost_full_type = nullptr;
+	_is_constant = true;
+	_value = nullptr;
+}
 
 // For when we don't know the "Symbol"'s type yet.
 Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
@@ -30,39 +41,33 @@ Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 	_value = nullptr;
 }
 
-// Constant scalar constructor
+//// Constant scalar constructor
+//Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+//	PortType s_port_type, FrostFullType* s_frost_full_type,
+//	Expression* s_value)
+//{
+//	_src_code_pos = s_src_code_pos;
+//	_ident = s_ident;
+//	_port_type = s_port_type;
+//	_is_constant = true;
+//	_frost_full_type = s_frost_full_type;
+//	_value = s_value;
+//}
+
+// "parameter" or "localparam" constructor
 Symbol::Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
-	PortType s_port_type, FrostFullType* s_frost_full_type,
 	Expression* s_value)
 {
 	_src_code_pos = s_src_code_pos;
 	_ident = s_ident;
-	_port_type = s_port_type;
+	_port_type = PortType::NonPort;
 	_is_constant = true;
-	_frost_full_type = s_frost_full_type;
+	_frost_full_type = nullptr;
 	_value = s_value;
-	//_value_exprs = std::move(s_value_exprs);
-	//_right_dim_expr = ExpressionBuilder::make_expr_hc_num
-	//	(_value_exprs.size());
 }
 
 bool Symbol::has_default_value() const
 {
-	//if (_value_exprs.size() == 0)
-	//{
-	//	return false;
-	//}
-
-	//for (const auto& iter : _value_exprs)
-	//{
-	//	if (iter == nullptr)
-	//	{
-	//		return false;
-	//	}
-	//}
-
-	//return true;
-
 	return (_value != nullptr);
 }
 

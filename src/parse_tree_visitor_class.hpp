@@ -140,7 +140,7 @@ private:		// variables
 	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024);
 	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(8);
 
-	bool _needs_another_subpass = false;
+	//bool _needs_another_subpass = false;
 
 	//MoveOnlyPrevCurrPair<FrostProgram> _frost_program;
 	FrostProgram _frost_program;

@@ -64,45 +64,45 @@ int ParseTreeVisitor::run()
 			visitProgram(parsed_src_code->parser()->program());
 		}
 
-		if (_needs_another_subpass)
-		{
-			_needs_another_subpass = false;
+		//if (_needs_another_subpass)
+		//{
+		//	_needs_another_subpass = false;
 
-			set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
+		//	set_subpass(subpass() + static_cast<decltype(_subpass)>(1));
 
-			if (subpass() >= MAX_SUBPASS)
-			{
-				_err(nullptr, sconcat("Too many subpasses (", 
-					MAX_SUBPASS, " or more)"));
-			}
+		//	if (subpass() >= MAX_SUBPASS)
+		//	{
+		//		_err(nullptr, sconcat("Too many subpasses (", 
+		//			MAX_SUBPASS, " or more)"));
+		//	}
 
-			reparse();
+		//	reparse();
 
-			continue;
-		}
+		//	continue;
+		//}
 
-		reparse();
+		//reparse();
 		set_pass(static_cast<Pass>(static_cast<PassUint>
 			(pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
 	}
 
-	for (const auto& package_iter
-		: _frost_program.frost_package_table.table())
-	{
-		printout("package \"", *package_iter.first, "\":\n");
-		for (const auto& symbol_iter
-			: package_iter.second->symbol_table().table())
-		{
-			const auto& symbol = symbol_iter.second;
+	//for (const auto& package_iter
+	//	: _frost_program.frost_package_table.table())
+	//{
+	//	printout("package \"", *package_iter.first, "\":\n");
+	//	for (const auto& symbol_iter
+	//		: package_iter.second->symbol_table().table())
+	//	{
+	//		const auto& symbol = symbol_iter.second;
 
-			symbol->value()->full_evaluate_if_constant();
+	//		symbol->value()->full_evaluate_if_constant();
 
-			printout(*symbol->ident(), " ",
-				symbol->value()->value().convert_to_bignum(), " ",
-				symbol->value()->value().size(), "\n");
-		}
-	}
+	//		printout(*symbol->ident(), " ",
+	//			symbol->value()->value().convert_to_bignum(), " ",
+	//			symbol->value()->value().size(), "\n");
+	//	}
+	//}
 
 	return 0;
 }
@@ -111,11 +111,8 @@ void ParseTreeVisitor::reparse()
 {
 	// ...This is a HORRIBLE solution to a problem I don't know the
 	// actual cause of.
-	//for (size_t i=0; i<_list_parsed_src_code.size(); ++i)
 	for (auto& parsed_src_code : _list_parsed_src_code)
 	{
-		//*_list_parsed_src_code.at(i) = ParsedSrcCode
-		//	(*_list_parsed_src_code.at(i)->filename());
 		*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
 	}
 }
@@ -378,8 +375,10 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"InnerDecl pass() Eek!");
 		}
 
+		//symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
+		//	s_ident, Symbol::PortType::NonPort)));
 		symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
-			s_ident, Symbol::PortType::NonPort)));
+			s_ident)));
 	}
 	else if ((pass() == Pass::FinishRawPackageConstruct)
 		//|| (pass() == Pass::FinishRawInterfaceConstruct)
@@ -412,64 +411,75 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"FinishRaw...Construct pass() Eek!");
 		}
 
-		// The error messages should make what this does clear...
-		if (s_value->references_symbol(existing_symbol))
+		InScopeErrWarnBase<SrcCodePos>* in_scope_thing = nullptr;
+
+		if (in_package_pass())
 		{
-			if (in_package_pass())
-			{
-				package->in_scope_err(existing_symbol->src_code_pos(),
-					sconcat("localparam with identifier \"",
-					*s_ident, "\" is defined in terms of itself."));
-			}
-			//else if (in_interface_pass())
-			//{
-			//	interface->in_scope_err(existing_symbol->src_code_pos(),
-			//		sconcat("localparam with identifier \"",
-			//		*s_ident, "\" is defined in terms of itself."));
-			//}
-			else if (in_module_pass())
-			{
-				module->in_scope_err(existing_symbol->src_code_pos(),
-					sconcat("localparam with identifier \"",
-					*s_ident, "\" is defined in terms of itself."));
-			}
-			else
-			{
-				_err(ctx, "ParseTreeVisitor"
-					"::visitDeclNoKwLocalparam():  "
-					"references_symbol() pass() Eek!");
-			}
+			in_scope_thing = package;
 		}
-
-
-		if (!s_value->defined_in_terms_of_any_incomplete_symbol())
+		//else if (in_interface_pass())
+		//{
+		//	in_scope_thing = interface;
+		//}
+		else if (in_module_pass())
 		{
-			auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
-				(_make_src_code_pos(ctx->expr()),
-				s_value->value().size());
-
-			// This forcibly makes "localparam"s be vectors, but that's
-			// not such a big deal (given that "localparam"s are always
-			// built-in types), is it?
-			auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
-				(s_src_code_pos, FrostLhsType
-				::construct_initial_builtin_type_ident
-				(s_value->value().is_signed(), s_left_dim_expr),
-				s_value->value().is_signed(), s_left_dim_expr));
-
-			// "localparam"s are never arrays.
-			auto s_frost_full_type = save_frost_full_type(FrostFullType
-				(s_src_code_pos, s_frost_lhs_type));
-
-			// Actually insert the value
-			*existing_symbol = Symbol(existing_symbol->src_code_pos(),
-				existing_symbol->ident(), existing_symbol->port_type(),
-				s_frost_full_type, s_value);
+			in_scope_thing = module;
 		}
 		else
 		{
-			_needs_another_subpass = true;
+			_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+				"pass() Eek!");
 		}
+
+
+		// The error messages should make what this does clear...
+		if (s_value->references_symbol(existing_symbol))
+		{
+			in_scope_thing->in_scope_err(existing_symbol->src_code_pos(),
+				sconcat("localparam with identifier \"", *s_ident, "\" ",
+				"is defined in terms of itself."));
+		}
+
+		if (!s_value->is_constant())
+		{
+			in_scope_thing->in_scope_err(existing_symbol->src_code_pos(),
+				sconcat("localparam with identifier \"", *s_ident, "\" ",
+				"is not constant."));
+		}
+
+		// Actually insert the value
+		*existing_symbol = Symbol(existing_symbol->src_code_pos(),
+			existing_symbol->ident(), s_value);
+
+
+		//if (!s_value->defined_in_terms_of_any_incomplete_symbol())
+		//{
+		//	auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
+		//		(_make_src_code_pos(ctx->expr()),
+		//		s_value->value().size());
+
+		//	// This forcibly makes "localparam"s be vectors, but that's
+		//	// not such a big deal (given that "localparam"s are always
+		//	// built-in types), is it?
+		//	auto s_frost_lhs_type = save_frost_lhs_type(FrostLhsType
+		//		(s_src_code_pos, FrostLhsType
+		//		::construct_initial_builtin_type_ident
+		//		(s_value->value().is_signed(), s_left_dim_expr),
+		//		s_value->value().is_signed(), s_left_dim_expr));
+
+		//	// "localparam"s are never arrays.
+		//	auto s_frost_full_type = save_frost_full_type(FrostFullType
+		//		(s_src_code_pos, s_frost_lhs_type));
+
+		//	// Actually insert the value
+		//	*existing_symbol = Symbol(existing_symbol->src_code_pos(),
+		//		existing_symbol->ident(), existing_symbol->port_type(),
+		//		s_frost_full_type, s_value);
+		//}
+		//else
+		//{
+		//	_needs_another_subpass = true;
+		//}
 	}
 	else
 	{
@@ -628,9 +638,11 @@ VisitorRetType ParseTreeVisitor::visitDeclParameterVar
 
 	// Don't even bother with trying to figure out the "FrostFullType" yet.
 	// That will be done during un-"parameter"ization. 
+	//module->parameter_symbol_table().insert_or_assign(save_symbol(Symbol
+	//	(_make_src_code_pos(ctx), s_ident, Symbol::PortType::NonPort,
+	//	nullptr, s_value)));
 	module->parameter_symbol_table().insert_or_assign(save_symbol(Symbol
-		(_make_src_code_pos(ctx), s_ident, Symbol::PortType::NonPort,
-		nullptr, s_value)));
+		(_make_src_code_pos(ctx), s_ident, s_value)));
 
 	return nullptr;
 }
@@ -1181,18 +1193,9 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			auto package = _frost_program.curr_frost_package;
 			if (package->symbol_table().contains(ident))
 			{
-				auto symbol = package->symbol_table().at(ident);
-
-				if (!symbol->is_incomplete())
-				{
-					_stacks.push_expr(save_expr(ExprIdentName
-						(_make_src_code_pos(ctx), symbol)));
-				}
-				else // if (symbol->is_incomplete())
-				{
-					_stacks.push_expr(save_expr(ExprSubpassIdentName
-						(_make_src_code_pos(ctx), symbol)));
-				}
+				_stacks.push_expr(save_expr(ExprIdentName
+					(_make_src_code_pos(ctx),
+					package->symbol_table().at(ident))));
 			}
 			else
 			{
@@ -1207,18 +1210,9 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		//	auto interface = _frost_program.curr_frost_interface;
 		//	if (interface->symbol_table().contains(ident))
 		//	{
-		//		auto symbol = interface->symbol_table().at(ident);
-
-		//		if (!symbol->is_incomplete())
-		//		{
-		//			_stacks.push_expr(save_expr(ExprIdentName
-		//				(_make_src_code_pos(ctx), symbol)));
-		//		}
-		//		else // if (symbol->is_incomplete())
-		//		{
-		//			_stacks.push_expr(save_expr(ExprSubpassIdentName
-		//				(_make_src_code_pos(ctx), symbol)));
-		//		}
+		//		_stacks.push_expr(save_expr(ExprIdentName
+		//			(_make_src_code_pos(ctx),
+		//			interface->symbol_table().at(ident))));
 		//	}
 		//	else
 		//	{
@@ -1233,18 +1227,21 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			auto module = _frost_program.curr_frost_module;
 			if (module->contains_symbol(ident))
 			{
-				auto symbol = module->find_symbol(ident);
+				//auto symbol = module->find_symbol(ident);
 
-				if (!symbol->is_incomplete())
-				{
-					_stacks.push_expr(save_expr(ExprIdentName
-						(_make_src_code_pos(ctx), symbol)));
-				}
-				else // if (symbol->is_incomplete())
-				{
-					_stacks.push_expr(save_expr(ExprSubpassIdentName
-						(_make_src_code_pos(ctx), symbol)));
-				}
+				//if (!symbol->is_incomplete())
+				//{
+				//	_stacks.push_expr(save_expr(ExprIdentName
+				//		(_make_src_code_pos(ctx), symbol)));
+				//}
+				//else // if (symbol->is_incomplete())
+				//{
+				//	_stacks.push_expr(save_expr(ExprSubpassIdentName
+				//		(_make_src_code_pos(ctx), symbol)));
+				//}
+				_stacks.push_expr(save_expr(ExprIdentName
+					(_make_src_code_pos(ctx),
+					module->find_symbol(ident))));
 			}
 			else
 			{
@@ -1310,36 +1307,26 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 					"\"."));
 			}
 
-			auto symbol = package->symbol_table().at(most_inner_ident);
+			//auto symbol = package->symbol_table().at(most_inner_ident);
 
 
-			if (symbol->is_incomplete())
-			{
-				//printout("test:  ", *symbol->ident(), "\n");
-				//in_scope_thing->in_scope_warn(_make_src_code_pos(ctx),
-				//	sconcat("test:  ", *symbol->ident()));
-				//_needs_another_subpass = true;
-				_stacks.push_expr(save_expr(ExprSubpassIdentName
-					(_make_src_code_pos(ctx), symbol)));
-			}
-			else // if (symbol->frost_full_type() != nullptr)
-			{
-				_stacks.push_expr(save_expr(ExprIdentName
-					(_make_src_code_pos(ctx), symbol)));
-			}
-
-			//if (symbol->frost_full_type()->frost_lhs_type()
-			//	->left_dim_expr()->value() == ExprNum(BigNum(0), 1, false))
+			//if (symbol->is_incomplete())
 			//{
+			//	//printout("test:  ", *symbol->ident(), "\n");
+			//	//in_scope_thing->in_scope_warn(_make_src_code_pos(ctx),
+			//	//	sconcat("test:  ", *symbol->ident()));
 			//	//_needs_another_subpass = true;
 			//	_stacks.push_expr(save_expr(ExprSubpassIdentName
 			//		(_make_src_code_pos(ctx), symbol)));
 			//}
-			//else
+			//else // if (symbol->frost_full_type() != nullptr)
 			//{
 			//	_stacks.push_expr(save_expr(ExprIdentName
 			//		(_make_src_code_pos(ctx), symbol)));
 			//}
+			_stacks.push_expr(save_expr(ExprIdentName
+				(_make_src_code_pos(ctx), package->symbol_table()
+				.at(most_inner_ident))));
 		}
 		else if (num_scopes == 3)
 		{

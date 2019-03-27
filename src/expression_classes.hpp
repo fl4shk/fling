@@ -185,6 +185,7 @@ protected:		// functions
 	//}
 
 	// Stuff for evaluating constant expressions.
+	void _init_size();
 	void _full_evaluate(bool is_real_top);
 
 	void _get_first_layer_ptln_descs(DescendantsList& ret) const;
@@ -327,7 +328,7 @@ public:		// functions
 		// and not in one of the classes this one is derived from, at least
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
-		_value.set_size(_starting_length());
+		//_value.set_size(_starting_length());
 
 		_value.set_is_signed(_only_child_value().is_signed());
 	}
@@ -347,7 +348,7 @@ public:		// functions
 		Expression* only_child)
 		: ExprBaseUnOp(s_src_code_pos, only_child)
 	{
-		_value.set_size(_starting_length());
+		//_value.set_size(_starting_length());
 	}
 
 protected:		// functions
@@ -372,7 +373,7 @@ public:		// functions
 		// and not in one of the classes this one is derived from, at least
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
-		_value.set_size(_starting_length());
+		//_value.set_size(_starting_length());
 
 		// Comparisons, "&&", and "||" produce an *unsigned*, 1-bit value.
 		_value.set_is_signed(false);
@@ -440,7 +441,7 @@ public:		// functions
 		// and not in one of the classes this one is derived from, at least
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
-		_value.set_size(_starting_length());
+		//_value.set_size(_starting_length());
 
 		_value.set_is_signed(_left_child_value().is_signed()
 			&& _right_child_value().is_signed());
@@ -468,7 +469,7 @@ public:		// functions
 		// and not in one of the classes this one is derived from, at least
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
-		_value.set_size(_starting_length());
+		//_value.set_size(_starting_length());
 
 		// I'm not sure this is correct.
 		// NOTE:  POSSIBLE BUG HERE
@@ -497,7 +498,7 @@ public:		// functions
 		// and not in one of the classes this one is derived from, at least
 		// if done in the *constructor* of one of the classes this one is
 		// derived from.
-		_value.set_size(_starting_length());
+		//_value.set_size(_starting_length());
 
 		// Also, all bit shifts have the amount to shift by be
 		// self-determined.
@@ -1537,23 +1538,23 @@ protected:		// functions
 	//}
 };
 
-// Used by "ParseTreeVisitor" when constant "Symbol"s are defined in terms
-// of other, potentially unknown "Symbol"s.
+//// Used by "ParseTreeVisitor" when constant "Symbol"s are defined in terms
+//// of other, potentially unknown "Symbol"s.
+////
+//// Please do not touch the "_value" of one of these!
+//class ExprSubpassIdentName : public Expression
+//{
+//public:		// functions
+//	ExprSubpassIdentName(const SrcCodePos& s_src_code_pos,
+//		Symbol* s_symbol);
 //
-// Please do not touch the "_value" of one of these!
-class ExprSubpassIdentName : public Expression
-{
-public:		// functions
-	ExprSubpassIdentName(const SrcCodePos& s_src_code_pos,
-		Symbol* s_symbol);
-
-	virtual LhsCategory lhs_category() const
-	{
-		return LhsCategory::NonSliced;
-	}
-
-	bool is_constant() const;
-};
+//	virtual LhsCategory lhs_category() const
+//	{
+//		return LhsCategory::NonSliced;
+//	}
+//
+//	bool is_constant() const;
+//};
 
 #undef TO_HDL_SOURCE
 #undef DUP_CHILD

@@ -169,6 +169,15 @@ bool Expression::_is_always_constant() const
 //	return nullptr;
 //}
 
+void Expression::_init_size()
+{
+	for (auto child : _children)
+	{
+		child->_init_size();
+	}
+	_value.set_size(_starting_length());
+}
+
 void Expression::_full_evaluate(bool is_real_top)
 {
 	// The expression evaluation algorithm:
@@ -181,6 +190,11 @@ void Expression::_full_evaluate(bool is_real_top)
 	// Perform sign extension if and only if the operand type (after type
 	// coercion) is signed.
 	// * Finally, evaluate everything.
+
+	if (is_real_top)
+	{
+		_init_size();
+	}
 
 
 	// The descendants of an "Expression" already know their size and their
@@ -391,7 +405,7 @@ ExprConcat::ExprConcat(const SrcCodePos& s_src_code_pos,
 		child->set_is_self_determined(true);
 	}
 
-	_value.set_size(_starting_length());
+	//_value.set_size(_starting_length());
 	_value.set_is_signed(false);
 }
 
@@ -474,7 +488,7 @@ ExprRepl::ExprRepl(const SrcCodePos& s_src_code_pos,
 	_children = std::move(s_non_width_children);
 	_children.push_back(s_width_child);
 
-	_value.set_size(_starting_length());
+	//_value.set_size(_starting_length());
 	_value.set_is_signed(false);
 }
 
@@ -570,7 +584,7 @@ ExprIdentName::ExprIdentName(const SrcCodePos& s_src_code_pos,
 	_symbol = s_symbol;
 
 	//_value.set_size(symbol()->frost_lhs_type()->left_dim());
-	_value.set_size(_starting_length());
+	//_value.set_size(_starting_length());
 	_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
 		->is_signed());
 }
@@ -615,18 +629,18 @@ size_t ExprIdentName::_starting_length() const
 	return symbol()->frost_full_type()->frost_lhs_type()->left_dim();
 }
 
-ExprSubpassIdentName::ExprSubpassIdentName
-	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol)
-	: Expression(s_src_code_pos)
-{
-	_symbol = s_symbol;
-
-	_value.set_size(1);
-}
-bool ExprSubpassIdentName::is_constant() const
-{
-	return symbol()->is_constant();
-}
+//ExprSubpassIdentName::ExprSubpassIdentName
+//	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol)
+//	: Expression(s_src_code_pos)
+//{
+//	_symbol = s_symbol;
+//
+//	//_value.set_size(1);
+//}
+//bool ExprSubpassIdentName::is_constant() const
+//{
+//	return symbol()->is_constant();
+//}
 
 #undef TO_HDL_SOURCE
 

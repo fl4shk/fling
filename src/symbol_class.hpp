@@ -88,6 +88,10 @@ private:		// variables
 public:		// functions
 	Symbol() = default;
 
+	// For when we don't know the expression for the value of a "parameter"
+	// or "localparam" type yet.
+	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident);
+
 	// For when we don't know the "Symbol"'s type yet.
 	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 		PortType s_port_type);
@@ -96,14 +100,14 @@ public:		// functions
 	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 		PortType s_port_type, FrostFullType* s_frost_full_type);
 
-	// Constant scalar constructor
-	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
-		PortType s_port_type, FrostFullType* s_frost_full_type,
-		Expression* s_value);
-
-	//// "parameter" constructor
+	//// Constant scalar constructor
 	//Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
-	//	FrostFullType* s_frost_full_type, Expression* s_value);
+	//	PortType s_port_type, FrostFullType* s_frost_full_type,
+	//	Expression* s_value);
+
+	// "parameter" or "localparam" constructor
+	Symbol(const SrcCodePos& s_src_code_pos, SavedString s_ident,
+		Expression* s_value);
 
 
 	// We really don't want copies of "Symbol"s.
