@@ -398,6 +398,14 @@ void ExprBinOpBitAsr::_evaluate()
 {
 	_value.perf_asr(_left_child_value(), _right_child_value());
 }
+ExprIdentSizedHardCodedNum::ExprIdentSizedHardCodedNum
+	(const SrcCodePos& s_src_code_pos, Expression* s_size_expr,
+	const BigNum& s_temp_value)
+	: Expression(s_src_code_pos)
+{
+	_size_expr = s_size_expr;
+	_temp_value = s_temp_value;
+}
 
 ExprConcat::ExprConcat(const SrcCodePos& s_src_code_pos,
 	ChildrenList&& s_children)

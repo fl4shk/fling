@@ -1,6 +1,6 @@
 package PkgAlu
 {
-	//localparam WIDTH__OPCODE = 2;
+	localparam WIDTH__OPCODE = 2;
 
 	//localparam OP_ADC = $signed(0x0);
 	//localparam OP_SBC = $signed(0x1);

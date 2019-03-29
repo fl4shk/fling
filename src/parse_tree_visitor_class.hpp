@@ -219,17 +219,17 @@ private:		// functions
 	//	return BigNum(32);
 	//}
 
-	inline bool in_package_pass() const
+	inline bool _in_package_pass() const
 	{
 		return ((pass() >= Pass::ListPackageIdentifiers)
 			&& (pass() <= Pass::FinishRawPackageConstruct));
 	}
-	//inline bool in_interface_pass() const
+	//inline bool _in_interface_pass() const
 	//{
 	//	return ((pass() >= Pass::ListInterfaceIdentifiers)
 	//		&& (pass() <= Pass::FinishRawInterfaceConstruct));
 	//}
-	inline bool in_module_pass() const
+	inline bool _in_module_pass() const
 	{
 		return ((pass() >= Pass::ListModuleIdentifiers)
 			&& (pass() <= Pass::FinishRawModuleConstruct));
@@ -240,7 +240,9 @@ private:		// functions
 		return SrcCodePos(_curr_filename, ctx);
 	}
 
-	void reparse();
+	void _reparse();
+
+	InScopeErrWarnBase<SrcCodePos>* _in_scope_thing();
 
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 	GEN_GETTER_AND_SETTER_BY_VAL(subpass)
@@ -352,13 +354,17 @@ private:		// visitor functions
 
 	VisitorRetType visitRawNumExpr
 		(Parser::RawNumExprContext *ctx);
-	VisitorRetType visitSizedNumExpr
-		(Parser::SizedNumExprContext *ctx);
+	VisitorRetType visitRawSizedNumExpr
+		(Parser::RawSizedNumExprContext *ctx);
+	VisitorRetType visitIdentSizedNumExpr
+		(Parser::IdentSizedNumExprContext *ctx);
 
 
 
 	VisitorRetType visitIdentExpr
 		(Parser::IdentExprContext *ctx);
+	VisitorRetType visitPureIdentExpr
+		(Parser::PureIdentExprContext *ctx);
 
 
 	VisitorRetType visitIdentName

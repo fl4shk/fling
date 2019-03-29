@@ -189,7 +189,8 @@ exprCastSigned: TokKwDollarSigned '(' expr ')' ;
 
 numExpr:
 	rawNumExpr
-	| sizedNumExpr
+	| rawSizedNumExpr
+	| identSizedNumExpr
 	;
 
 
@@ -208,18 +209,23 @@ rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
 // are forced to do "$signed(...)" instead of "...'s...".  The lexer would
 // have to be more heavily involved here if signed, hard-coded numbers were
 // to be allowed with Verilog-style syntax.
-sizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
+rawSizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
+
+identSizedNumExpr: pureIdentExpr TokApostrophe rawNumExpr ;
 
 
 
 // Forcibly
 identExpr:
-	identName
-	| scopedIdentName
+	pureIdentExpr
 	////| identConcatExpr
 	////| identSliced
 	;
 
+pureIdentExpr:
+	identName
+	| scopedIdentName
+	;
 
 identName: TokIdent ;
 scopedIdentName: identName TokScope identName
@@ -249,7 +255,7 @@ TokBinNum: '0b' ([0-1]+) ;
 
 TokAssign: '=' ;
 //TokBlockingAssign: '=' ;
-//TokNonBlockingAssign: '<-' ;
+//TokNonBlockingAssign: '<=' ;
 
 // Punctuation, etc.
 TokPeriod: '.' ;

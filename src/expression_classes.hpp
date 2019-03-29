@@ -1362,6 +1362,35 @@ protected:		// functions
 	//}
 };
 
+// A hard-coded number that uses a "parameter" or "localparam" for the
+// width.
+class ExprIdentSizedHardCodedNum : public Expression
+{
+private:		// variables
+	// Don't want to store this as part of "_children".
+	Expression* _size_expr = nullptr;
+	BigNum _temp_value;
+
+public:		// functions
+	ExprIdentSizedHardCodedNum(const SrcCodePos& s_src_code_pos,
+		Expression* s_size_expr, const BigNum& s_temp_value);
+
+	virtual SavedString to_hdl_source() const
+	{
+		return dup_str(value().convert_to_verilog_literal());
+	}
+
+protected:		// functions
+	void _evaluate()
+	{
+	}
+
+	bool _children_affect_length() const
+	{
+		return false;
+	}
+};
+
 // "$concat(...)"
 class ExprConcat : public Expression
 {

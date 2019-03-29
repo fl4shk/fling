@@ -49,6 +49,13 @@ public:		// static functions
 		// Eek!
 		return nullptr;
 	}
+	static inline Expression* make_expr_ident_sized_hc_num
+		(const SrcCodePos& s_src_code_pos, Expression* s_size_expr,
+		const BigNum& s_temp_value)
+	{
+		return save_expr(ExprIdentSizedHardCodedNum(s_src_code_pos,
+			s_size_expr, s_temp_value));
+	}
 
 	template<typename ExprType>
 	static inline Expression* make_expr_unop

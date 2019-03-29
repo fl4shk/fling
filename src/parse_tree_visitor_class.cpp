@@ -76,12 +76,12 @@ int ParseTreeVisitor::run()
 		//			MAX_SUBPASS, " or more)"));
 		//	}
 
-		//	reparse();
+		//	_reparse();
 
 		//	continue;
 		//}
 
-		reparse();
+		_reparse();
 		set_pass(static_cast<Pass>(static_cast<PassUint>
 			(pass()) + static_cast<PassUint>(1)));
 		set_subpass(0);
@@ -107,7 +107,7 @@ int ParseTreeVisitor::run()
 	return 0;
 }
 
-void ParseTreeVisitor::reparse()
+void ParseTreeVisitor::_reparse()
 {
 	// ...This is a HORRIBLE solution to a problem I don't know the
 	// actual cause of.
@@ -116,23 +116,44 @@ void ParseTreeVisitor::reparse()
 		*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
 	}
 }
+InScopeErrWarnBase<SrcCodePos>* ParseTreeVisitor::_in_scope_thing()
+{
+	if (_in_package_pass())
+	{
+		return _frost_program.curr_frost_package;
+	}
+	//else if (_in_interface_pass())
+	//{
+	//	return _frost_program.curr_frost_interface;
+	//}
+	else if (_in_module_pass())
+	{
+		return _frost_program.curr_frost_module;
+	}
+	else
+	{
+		_err(nullptr, "ParseTreeVisitor::_in_scope_thing():  Eek!");
+	}
+
+	return nullptr;
+}
 
 // Basically just "module", "interface", and "package" declarations.
 // There are no other things permitted at global scope.
 VisitorRetType ParseTreeVisitor::visitProgram
 	(Parser::ProgramContext *ctx)
 {
-	if (in_package_pass())
+	if (_in_package_pass())
 	{
 		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declPackage());
 	}
 
-	//else if (in_interface_pass())
+	//else if (_in_interface_pass())
 	//{
 	//	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declInterface());
 	//}
 
-	else if (in_module_pass())
+	else if (_in_module_pass())
 	{
 		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declModule());
 	}
@@ -185,7 +206,8 @@ VisitorRetType ParseTreeVisitor::visitLhsBuiltinTypeName
 
 		if (!s_left_dim_expr->is_constant())
 		{
-			_err(ctx->expr(), "Vectors must have constant dimensions.");
+			_in_scope_thing()->in_scope_err(_make_src_code_pos
+				(ctx->expr()), "Vectors must have constant dimensions.");
 		}
 	}
 
@@ -232,7 +254,9 @@ VisitorRetType ParseTreeVisitor::visitDeclNoLhsTypeVar
 
 		if (!s_right_dim_expr->is_constant())
 		{
-			_err(ctx->expr(), "Arrays must have constant dimensions.");
+			//_err(ctx->expr(), "Arrays must have constant dimensions.");
+			_in_scope_thing()->in_scope_err(_make_src_code_pos
+				(ctx->expr()), "Arrays must have constant dimensions.");
 		}
 
 		_stacks.push_small_num(static_cast<SmallNum>
@@ -321,7 +345,7 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		SymbolTable* symbol_table = nullptr;
 
 		// Error checking
-		if (in_package_pass())
+		if (_in_package_pass())
 		{
 			auto package = _frost_program.curr_frost_package;
 
@@ -337,7 +361,7 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 
 			symbol_table = &package->symbol_table();
 		}
-		//else if (in_interface_pass())
+		//else if (_in_interface_pass())
 		//{
 		//	auto interface = _frost_program.curr_frost_interface;
 
@@ -354,7 +378,7 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 
 		//	symbol_table = &interface->symbol_table();
 		//}
-		else if (in_module_pass())
+		else if (_in_module_pass())
 		{
 			auto module = _frost_program.curr_frost_module;
 
@@ -393,15 +417,15 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		//auto interface = _frost_program.curr_frost_interface;
 		auto module = _frost_program.curr_frost_module;
 
-		if (in_package_pass())
+		if (_in_package_pass())
 		{
 			existing_symbol = package->symbol_table().at(s_ident);
 		}
-		//else if (in_interface_pass())
+		//else if (_in_interface_pass())
 		//{
 		//	existing_symbol = interface->symbol_table().at(s_ident);
 		//}
-		else if (in_module_pass())
+		else if (_in_module_pass())
 		{
 			existing_symbol = module->local_symbol_table().at(s_ident);
 		}
@@ -411,40 +435,20 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 				"FinishRaw...Construct pass() Eek!");
 		}
 
-		InScopeErrWarnBase<SrcCodePos>* in_scope_thing = nullptr;
-
-		if (in_package_pass())
-		{
-			in_scope_thing = package;
-		}
-		//else if (in_interface_pass())
-		//{
-		//	in_scope_thing = interface;
-		//}
-		else if (in_module_pass())
-		{
-			in_scope_thing = module;
-		}
-		else
-		{
-			_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
-				"pass() Eek!");
-		}
-
 
 		// The error messages should make what this does clear...
 		if (s_value->references_symbol(existing_symbol))
 		{
-			in_scope_thing->in_scope_err(existing_symbol->src_code_pos(),
-				sconcat("localparam with identifier \"", *s_ident, "\" ",
-				"is defined in terms of itself."));
+			_in_scope_thing()->in_scope_err(existing_symbol
+				->src_code_pos(), sconcat("localparam with identifier \"",
+				*s_ident, "\" is defined in terms of itself."));
 		}
 
 		if (!s_value->is_constant())
 		{
-			in_scope_thing->in_scope_err(existing_symbol->src_code_pos(),
-				sconcat("localparam with identifier \"", *s_ident, "\" ",
-				"is not constant."));
+			_in_scope_thing()->in_scope_err(existing_symbol
+				->src_code_pos(), sconcat("localparam with identifier \"",
+				*s_ident, "\" is not constant."));
 		}
 
 		// Actually insert the value
@@ -1068,14 +1072,27 @@ VisitorRetType ParseTreeVisitor::visitNumExpr
 		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num_from_expr_num
 			(_make_src_code_pos(ctx), ExprNum(s_data, false)));
 	}
-	else if (ctx->sizedNumExpr())
+	else if (ctx->rawSizedNumExpr())
 	{
-		ANY_JUST_ACCEPT_BASIC(ctx->sizedNumExpr());
+		ANY_JUST_ACCEPT_BASIC(ctx->rawSizedNumExpr());
 		const auto value = _stacks.pop_big_num();
 		const auto size = _stacks.pop_big_num();
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_hc_num
 			(_make_src_code_pos(ctx), value, size.get_ui(), false));
+	}
+	else if (ctx->identSizedNumExpr())
+	{
+		ANY_JUST_ACCEPT_BASIC(ctx->identSizedNumExpr());
+		const auto s_size_expr = _stacks.pop_expr();
+		const auto s_temp_value = _stacks.pop_big_num();
+
+		if (!s_size_expr->is_constant())
+		{
+		}
+
+		_stacks.push_expr(ExpressionBuilder::make_expr_ident_sized_hc_num
+			(_make_src_code_pos(ctx), s_size_expr, s_temp_value));
 	}
 	else
 	{
@@ -1104,6 +1121,7 @@ VisitorRetType ParseTreeVisitor::visitRawNumExpr
 		const auto& as_string = ctx->TokHexNum()->toString();
 		for (size_t i=0; i<as_string.size(); ++i)
 		{
+			// Skip the prefix of "0x"
 			if (i < 2)
 			{
 				continue;
@@ -1131,6 +1149,7 @@ VisitorRetType ParseTreeVisitor::visitRawNumExpr
 		const auto& as_string = ctx->TokBinNum()->toString();
 		for (size_t i=0; i<as_string.size(); ++i)
 		{
+			// Skip the prefix of "0b"
 			if (i < 2)
 			{
 				continue;
@@ -1149,16 +1168,46 @@ VisitorRetType ParseTreeVisitor::visitRawNumExpr
 
 	return nullptr;
 }
-VisitorRetType ParseTreeVisitor::visitSizedNumExpr
-	(Parser::SizedNumExprContext *ctx)
+VisitorRetType ParseTreeVisitor::visitRawSizedNumExpr
+	(Parser::RawSizedNumExprContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(raw_num_expr, ctx->rawNumExpr())
 
 	return nullptr;
 }
+VisitorRetType ParseTreeVisitor::visitIdentSizedNumExpr
+	(Parser::IdentSizedNumExprContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->pureIdentExpr());
+	ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
+	return nullptr;
+}
 
 VisitorRetType ParseTreeVisitor::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
+{
+	ANY_ACCEPT_IF_BASIC(ctx->pureIdentExpr())
+	//else if (ctx->identConcatExpr())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(ctx->identConcatExpr());
+
+
+	//}
+	//else if (ctx->identSliced())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(ctx->identSliced());
+
+
+	//}
+	else
+	{
+		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  Eek!");
+	}
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitPureIdentExpr
+	(Parser::PureIdentExprContext *ctx)
 {
 	if (ctx->identName())
 	{
@@ -1169,7 +1218,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		// Here we check to see whether or not the symbol actually exists
 		// in the current scope.
 
-		if (in_package_pass())
+		if (_in_package_pass())
 		{
 			auto package = _frost_program.curr_frost_package;
 			if (package->symbol_table().contains(ident))
@@ -1186,7 +1235,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			}
 		}
 
-		//else if (in_interface_pass())
+		//else if (_in_interface_pass())
 		//{
 		//	auto interface = _frost_program.curr_frost_interface;
 		//	if (interface->symbol_table().contains(ident))
@@ -1203,7 +1252,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		//	}
 		//}
 
-		else if (in_module_pass())
+		else if (_in_module_pass())
 		{
 			auto module = _frost_program.curr_frost_module;
 			if (module->contains_symbol(ident))
@@ -1233,14 +1282,14 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  identName() "
-				"pass() Eek!");
+			_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
+				"identName() pass() Eek!");
 		}
 	}
 
 	else if (ctx->scopedIdentName())
 	{
-		//_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+		//_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
 		//	"scopedIdentName() not implemented Eek!");
 		ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
 	
@@ -1256,24 +1305,24 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			// if a local symbol overrides a global one?
 			auto& frost_package_table = _frost_program.frost_package_table;
 
-			InScopeErrWarnBase<SrcCodePos>* in_scope_thing = nullptr;
+			//InScopeErrWarnBase<SrcCodePos>* in_scope_thing = nullptr;
 
-			if (in_package_pass())
-			{
-				in_scope_thing = _frost_program.curr_frost_package;
-			}
-			//else if (in_interface_pass())
+			//if (_in_package_pass())
 			//{
-			//	in_scope_thing = _frost_program.curr_frost_interface;
+			//	in_scope_thing = _frost_program.curr_frost_package;
 			//}
-			else if (in_module_pass())
-			{
-				in_scope_thing = _frost_program.curr_frost_module;
-			}
+			////else if (_in_interface_pass())
+			////{
+			////	in_scope_thing = _frost_program.curr_frost_interface;
+			////}
+			//else if (_in_module_pass())
+			//{
+			//	in_scope_thing = _frost_program.curr_frost_module;
+			//}
 
 			if (!frost_package_table.contains(which_scope))
 			{
-				in_scope_thing->in_scope_err(_make_src_code_pos(ctx),
+				_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
 					sconcat("Unknown package called \"", *which_scope,
 					"\"."));
 			}
@@ -1282,7 +1331,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 
 			if (!package->symbol_table().contains(most_inner_ident))
 			{
-				in_scope_thing->in_scope_err(_make_src_code_pos(ctx),
+				_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
 					sconcat("Package \"", *package->ident(), "\" does ",
 					"not contain a symbol called \"", *most_inner_ident,
 					"\"."));
@@ -1315,21 +1364,20 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 			// inside of a package.
 			// Since enums aren't fully implemented yet, this is being
 			// skipped for now.
-			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+			_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
 				"scopedIdentName() (num_scopes == 3) not implemented "
 				"Eek!");
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitIdentExpr():  "
+			_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
 				"scopedIdentName() num_scopes Eek!");
 		}
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  Eek!");
+		_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  Eek!");
 	}
-
 	return nullptr;
 }
 

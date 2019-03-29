@@ -72,9 +72,10 @@ template<typename Type, template<class> typename InnerTableType,
 class ScopedTableBase
 {
 public:		// typedefs and constants
-	// We want the largest signed integer type here (new change to old
-	// code for this, as before it was simply using the "int64_t" type.)
-	typedef intmax_t ScopeLevel;
+	//// We want the largest signed integer type here (new change to old
+	//// code for this, as before it was simply using the "int64_t" type.)
+	//typedef intmax_t ScopeLevel;
+	typedef BigNum ScopeLevel;
 
 	typedef ScopedTableNode<Type, InnerTableType, ContainerType> Node;
 
@@ -126,12 +127,12 @@ public:		// functions
 	{
 		++_scope_num;
 
-		if (scope_num() < static_cast<ScopeLevel>(0))
-		{
-			printerr("ScopedTableBase::mkscope():  ",
-				"Far, FAR too many scopes!\n");
-			exit(1);
-		}
+		//if (scope_num() < static_cast<ScopeLevel>(0))
+		//{
+		//	printerr("ScopedTableBase::mkscope():  ",
+		//		"Far, FAR too many scopes!\n");
+		//	exit(1);
+		//}
 
 		_node_pool.push_back(new Node(some_curr_node));
 
