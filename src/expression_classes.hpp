@@ -69,6 +69,7 @@ protected:		// variables
 	Symbol* _symbol = nullptr;
 	bool _is_self_determined = false;
 	bool _handles_children_eval = false;
+	bool _handles_value_set_size = false;
 	ExprNum _value;
 
 	SrcCodePos _src_code_pos;
@@ -1316,7 +1317,8 @@ protected:		// functions
 
 // "most derived" "Expression" classes that derive only from "Expression"
 
-// Hard-coded numbers (not named constants)
+// A hard-coded numbers (not a named constant) whose value is fully known
+// by the "ParseTreeVisitor".
 class ExprHardCodedNum : public Expression
 {
 public:		// functions
@@ -1362,8 +1364,9 @@ protected:		// functions
 	//}
 };
 
-// A hard-coded number that uses a "parameter" or "localparam" for the
-// width.
+// A hard-coded number that uses a "parameter" or "localparam" for its
+// width (and thus whose value is not fully known by the
+// "ParseTreeVisitor")
 class ExprIdentSizedHardCodedNum : public Expression
 {
 private:		// variables
@@ -1380,7 +1383,13 @@ public:		// functions
 		return dup_str(value().convert_to_verilog_literal());
 	}
 
+
 protected:		// functions
+	void _inner_finish_init_value();
+
+	// Even for this type of hard-coded number, we still don't need to have
+	// "_evaluate()" do anything because "_inner_finish_init_value()" does
+	// this for us.
 	void _evaluate()
 	{
 	}
@@ -1388,6 +1397,11 @@ protected:		// functions
 	bool _children_affect_length() const
 	{
 		return false;
+	}
+	size_t _starting_length() const;
+	bool _is_always_constant() const
+	{
+		return true;
 	}
 };
 

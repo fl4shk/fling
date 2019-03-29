@@ -436,7 +436,6 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 		}
 
 
-		// The error messages should make what this does clear...
 		if (s_value->references_symbol(existing_symbol))
 		{
 			_in_scope_thing()->in_scope_err(existing_symbol
@@ -1089,6 +1088,8 @@ VisitorRetType ParseTreeVisitor::visitNumExpr
 
 		if (!s_size_expr->is_constant())
 		{
+			_in_scope_thing()->in_scope_err(s_size_expr->src_code_pos(),
+				"Hard-coded constants must have constant widths.");
 		}
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_ident_sized_hc_num

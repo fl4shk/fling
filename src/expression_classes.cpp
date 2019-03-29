@@ -59,7 +59,11 @@ void Expression::finish_init_value()
 		child->finish_init_value();
 	}
 	_inner_finish_init_value();
-	_value.set_size(_starting_length());
+
+	if (!_handles_value_set_size)
+	{
+		_value.set_size(_starting_length());
+	}
 }
 bool Expression::references_symbol(Symbol* to_check) const
 {
@@ -405,6 +409,16 @@ ExprIdentSizedHardCodedNum::ExprIdentSizedHardCodedNum
 {
 	_size_expr = s_size_expr;
 	_temp_value = s_temp_value;
+	_handles_value_set_size = true;
+}
+void ExprIdentSizedHardCodedNum::_inner_finish_init_value()
+{
+	_set_value(ExprNum(_temp_value, _starting_length(), false));
+}
+size_t ExprIdentSizedHardCodedNum::_starting_length() const
+{
+	return static_cast<BigNum>(_size_expr->symbol()->value()->value())
+		.get_ui();
 }
 
 ExprConcat::ExprConcat(const SrcCodePos& s_src_code_pos,
