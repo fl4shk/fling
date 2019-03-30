@@ -22,8 +22,11 @@ module Alu
 	output logic [WIDTH__DIO] o_data,
 	output logic o_carry)
 {
-	logic [WIDTH__DIO] not_constant;
+	//logic [WIDTH__DIO] not_constant;
 
-	localparam NOT_CONSTANT = (3 + 3)'3;
+	//localparam NOT_CONSTANT = (3 + 3)'3;
+
+	localparam not_constant = 3;
+	localparam NOT_CONSTANT = $signed(not_constant'3);
 
 }
