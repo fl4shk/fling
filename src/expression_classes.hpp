@@ -246,7 +246,7 @@ public:		// types
 		// "!", "~", unary "-", etc.
 		UnOp,
 
-		// "$unsigned", "$signed", etc.
+		// "$unsgn", "$sgn", etc.
 		DollarFunction,
 	};
 
@@ -343,11 +343,12 @@ protected:		// functions
 	}
 };
 
-// "$unsigned()", "$signed()"
-class ExprBaseCastUnop : public ExprBaseUnOp
+// "$unsgn()", "$sgn()", "$clog2()"
+// These are dollar functions that take only one argument.
+class ExprBaseDollarFuncUnOp : public ExprBaseUnOp
 {
 public:		// functions
-	ExprBaseCastUnop(const SrcCodePos& s_src_code_pos,
+	ExprBaseDollarFuncUnOp(const SrcCodePos& s_src_code_pos,
 		Expression* only_child)
 		: ExprBaseUnOp(s_src_code_pos, only_child)
 	{
@@ -475,7 +476,7 @@ public:		// functions
 		//_value.set_size(_starting_length());
 
 		// I'm not sure this is correct.
-		// NOTE:  POSSIBLE BUG HERE
+		// FIXME:  POSSIBLE BUG HERE
 		_value.set_is_signed(_left_child_value().is_signed()
 			&& _right_child_value().is_signed());
 	}
@@ -656,29 +657,29 @@ protected:		// functions
 	//}
 };
 
-// "Expression" classes derived from "ExprBaseCastUnop"
+// "Expression" classes derived from "ExprBaseDollarFuncUnOp"
 
-// "$unsigned()
-class ExprUnOpCastUnsigned : public ExprBaseCastUnop
+// "$unsgn()
+class ExprUnOpCastUnsigned : public ExprBaseDollarFuncUnOp
 {
 public:		// functions
 	ExprUnOpCastUnsigned(const SrcCodePos& s_src_code_pos,
 		Expression* only_child)
-		: ExprBaseCastUnop(s_src_code_pos, only_child)
+		: ExprBaseDollarFuncUnOp(s_src_code_pos, only_child)
 	{
 		_value.set_is_signed(false);
 	}
 
 	//virtual SavedString to_hdl_source() const
 	//{
-	//	return dup_str("$unsigned(", TO_HDL_SOURCE(_only_child), ")");
+	//	return dup_str("$unsgn(", TO_HDL_SOURCE(_only_child), ")");
 	//}
 
 
 protected:		// functions
 	virtual SavedString _unop_str() const
 	{
-		return dup_str("$unsigned");
+		return dup_str("$unsgn");
 	}
 
 	void _evaluate()
@@ -693,26 +694,26 @@ protected:		// functions
 	//		DUP_CHILD(_only_child())));
 	//}
 };
-// "$signed()
-class ExprUnOpCastSigned : public ExprBaseCastUnop
+// "$sgn()
+class ExprUnOpCastSigned : public ExprBaseDollarFuncUnOp
 {
 public:		// functions
 	ExprUnOpCastSigned(const SrcCodePos& s_src_code_pos,
 		Expression* only_child)
-		: ExprBaseCastUnop(s_src_code_pos, only_child)
+		: ExprBaseDollarFuncUnOp(s_src_code_pos, only_child)
 	{
 		_value.set_is_signed(true);
 	}
 
 	//virtual SavedString to_hdl_source() const
 	//{
-	//	return dup_str("$signed(", TO_HDL_SOURCE(_only_child), ")");
+	//	return dup_str("$sgn(", TO_HDL_SOURCE(_only_child), ")");
 	//}
 
 protected:		// functions
 	virtual SavedString _unop_str() const
 	{
-		return dup_str("$signed");
+		return dup_str("$sgn");
 	}
 	void _evaluate()
 	{
@@ -725,6 +726,26 @@ protected:		// functions
 	//	return SAFE_SAVE_EXPR(ExprUnOpCastSigned(src_code_pos(),
 	//		DUP_CHILD(_only_child())));
 	//}
+};
+
+// "$clog2()"
+class ExprUnOpClog2 : public ExprBaseDollarFuncUnOp
+{
+public:		// functions
+	ExprUnOpClog2(const SrcCodePos& s_src_code_pos,
+		Expression* only_child)
+		: ExprBaseDollarFuncUnOp(s_src_code_pos, only_child)
+	{
+		_value.set_is_signed(false);
+	}
+
+protected:		// functions
+	virtual SavedString _unop_str() const
+	{
+		return dup_str("$clog2");
+	}
+
+	void _evaluate();
 };
 
 
@@ -1092,6 +1113,13 @@ protected:		// functions
 	}
 	void _evaluate()
 	{
+		if (static_cast<BigNum>(_right_child_value())
+			== static_cast<BigNum>(0))
+		{
+			src_code_pos().err("Division by zero.");
+		}
+
+		// FIXME:  BUG HERE
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			/ static_cast<BigNum>(_right_child_value()));
 	}
@@ -1112,6 +1140,7 @@ public:		// functions
 		Expression* right_child)
 		: ExprBaseArithBinOp(s_src_code_pos, left_child, right_child)
 	{
+		_value.set_is_signed(_left_child_value().is_signed());
 	}
 
 protected:		// functions
@@ -1121,6 +1150,13 @@ protected:		// functions
 	}
 	void _evaluate()
 	{
+		if (static_cast<BigNum>(_right_child_value())
+			== static_cast<BigNum>(0))
+		{
+			src_code_pos().err("Modulo by zero.");
+		}
+
+		// FIXME:  BUG HERE
 		_value.copy_from_bignum(static_cast<BigNum>(_left_child_value())
 			% static_cast<BigNum>(_right_child_value()));
 	}

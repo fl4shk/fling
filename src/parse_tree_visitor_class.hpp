@@ -343,8 +343,8 @@ private:		// visitor functions
 		(Parser::ExprCastUnsgnContext *ctx);
 	VisitorRetType visitExprCastSgn
 		(Parser::ExprCastSgnContext *ctx);
-	//VisitorRetType visitExprClog2
-	//	(Parser::ExprClog2Context *ctx);
+	VisitorRetType visitExprClog2
+		(Parser::ExprClog2Context *ctx);
 
 	VisitorRetType visitNumExpr
 		(Parser::NumExprContext *ctx);

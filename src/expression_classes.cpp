@@ -388,6 +388,20 @@ ExprBaseBinOp::ExprBaseBinOp(const SrcCodePos& s_src_code_pos,
 	_set_children(left_child, right_child);
 }
 
+void ExprUnOpClog2::_evaluate()
+{
+	const auto only_child_data_as_binary_str = _only_child_value()
+		.convert_to_unsigned_bignum().get_str(2);
+	//const BigNum n_value_data
+	//	= (only_child_data_as_binary_str.front() == '-')
+	//	? BigNum(only_child_data_as_binary_str.size() - 1)
+	//	: BigNum(only_child_data_as_binary_str.size());
+	const BigNum n_value_data
+		= BigNum(only_child_data_as_binary_str.size()) - BigNum(1);
+	_set_value(ExprNum((n_value_data - BigNum(1)), value().size(),
+		value().is_signed()));
+}
+
 void ExprBinOpBitLsl::_evaluate()
 {
 	_value.perf_lsl(_left_child_value(), _right_child_value());

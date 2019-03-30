@@ -167,7 +167,7 @@ exprMulDivModEtc:
 	| exprBitNot
 	| exprCastUnsgn
 	| exprCastSgn
-	//| exprClog2
+	| exprClog2
 	//| exprPow
 	| numExpr
 	| identExpr
@@ -182,7 +182,7 @@ exprLogNot: TokExclamPoint expr ;
 exprBitNot: TokBitInvert expr ;
 exprCastUnsgn: TokKwDollarUnsgn '(' expr ')' ;
 exprCastSgn: TokKwDollarSgn '(' expr ')' ;
-//exprClog2: TokKwDollarClog2 '(' expr ')' ;
+exprClog2: TokKwDollarClog2 '(' expr ')' ;
 //exprPow: TokKwDollarPow '(' expr ',' expr ')' ;
 
 

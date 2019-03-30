@@ -994,6 +994,7 @@ VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 	else ANY_ACCEPT_IF_BASIC(ctx->exprBitNot())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprCastUnsgn())
 	else ANY_ACCEPT_IF_BASIC(ctx->exprCastSgn())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprClog2())
 	else ANY_ACCEPT_IF_BASIC(ctx->numExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->identExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->expr())
@@ -1058,6 +1059,24 @@ VisitorRetType ParseTreeVisitor::visitExprCastSgn
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
 		<ExprUnOpCastSigned>(_make_src_code_pos(ctx),
 		_stacks.pop_expr()));
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitExprClog2
+	(Parser::ExprClog2Context *ctx)
+{
+	const auto arg_src_code_pos = _make_src_code_pos(ctx->expr());
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
+	auto expr = _stacks.pop_expr();
+
+	if (!expr->is_constant())
+	{
+		_in_scope_thing()->in_scope_err(arg_src_code_pos, sconcat("This ",
+			"value must be constant."));
+	}
+
+	_stacks.push_expr(ExpressionBuilder::make_expr_unop
+		<ExprUnOpClog2>(_make_src_code_pos(ctx), expr));
 
 	return nullptr;
 }
