@@ -24,6 +24,6 @@ module Alu
 {
 	logic [WIDTH__DIO] not_constant;
 
-	localparam NOT_CONSTANT = not_constant'3;
+	localparam NOT_CONSTANT = (3 + 3)'3;
 
 }

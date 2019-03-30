@@ -22,7 +22,8 @@ private:		// variables
 	std::unique_ptr<FrostHdlGrammarLexer> _lexer;
 	std::unique_ptr<antlr4::CommonTokenStream> _tokens;
 	std::unique_ptr<FrostHdlGrammarParser> _parser;
-	std::unique_ptr<ParseTreeVisitorErrorListener> _parse_tree_visitor_error_listener;
+	std::unique_ptr<ParseTreeVisitorErrorListener>
+		_parse_tree_visitor_error_listener;
 
 public:		// functions
 	ParsedSrcCode();

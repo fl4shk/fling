@@ -5,13 +5,18 @@
 
 #include "misc_includes.hpp"
 #include <ANTLRErrorListener.h>
+#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {
 
 class ParseTreeVisitorErrorListener : public antlr4::ANTLRErrorListener
 {
+private:		// variables
+	SavedString _filename = nullptr;
+
 public:		// functions
+	ParseTreeVisitorErrorListener(SavedString s_filename);
 	virtual ~ParseTreeVisitorErrorListener();
 
 	void syntaxError(antlr4::Recognizer *recognizer, 

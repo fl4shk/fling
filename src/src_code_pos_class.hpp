@@ -23,6 +23,8 @@ public:		// functions
 	SrcCodePos();
 	explicit SrcCodePos(SavedString s_filename,
 		antlr4::ParserRuleContext* s_ctx);
+	explicit SrcCodePos(SavedString s_filename, size_t s_src_line,
+		size_t s_src_pos_in_line);
 
 	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
@@ -31,6 +33,12 @@ public:		// functions
 
 	std::string convert_to_errwarn_string() const;
 
+	inline void syntax_error(const std::string& msg) const
+	{
+		printerr("Syntax error at ", convert_to_errwarn_string(), ":  ",
+			msg, "\n");
+		exit(1);
+	}
 	inline void err(const std::string& msg) const
 	{
 		printerr("Error at ", convert_to_errwarn_string(), ":  ", msg,

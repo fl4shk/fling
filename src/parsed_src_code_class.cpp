@@ -18,7 +18,8 @@ ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 	//FrostHdlGrammarParser parser(&tokens);
 	//parser.removeErrorListeners();
 	//std::unique_ptr<frost_hdl::ParseTreeVisitorErrorListener>
-	//	parse_tree_visitor_error_listener(new frost_hdl::ParseTreeVisitorErrorListener());
+	//	parse_tree_visitor_error_listener
+	//	(new frost_hdl::ParseTreeVisitorErrorListener());
 	//parser.addErrorListener(parse_tree_visitor_error_listener.get());
 
 	_filename = dup_str(s_filename);
@@ -52,7 +53,8 @@ ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 
 	_parser.reset(new FrostHdlGrammarParser(&(*_tokens)));
 	_parser->removeErrorListeners();
-	_parse_tree_visitor_error_listener.reset(new ParseTreeVisitorErrorListener());
+	_parse_tree_visitor_error_listener.reset
+		(new ParseTreeVisitorErrorListener(_filename));
 	_parser->addErrorListener(_parse_tree_visitor_error_listener.get());
 }
 

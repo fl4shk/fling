@@ -18,6 +18,12 @@ SrcCodePos::SrcCodePos(SavedString s_filename,
 	_src_line = tok->getLine();
 	_src_pos_in_line = tok->getCharPositionInLine();
 }
+SrcCodePos::SrcCodePos(SavedString s_filename, size_t s_src_line,
+	size_t s_src_pos_in_line)
+	: _filename(s_filename), _ctx(nullptr), _src_line(s_src_line),
+	_src_pos_in_line(s_src_pos_in_line)
+{
+}
 
 SrcCodePos::~SrcCodePos()
 {
