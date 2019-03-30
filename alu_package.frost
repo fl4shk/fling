@@ -2,19 +2,19 @@ package PkgAlu
 {
 	localparam WIDTH__OPCODE = 2;
 
-	//localparam OP_ADC = $signed(0x0);
-	//localparam OP_SBC = $signed(0x1);
-	//localparam OP_AND = $signed(0x2);
-	//localparam OP_XOR = $signed(0x3);
+	localparam OP_ADC = WIDTH__OPCODE'0x0;
+	localparam OP_SBC = WIDTH__OPCODE'0x1;
+	localparam OP_AND = WIDTH__OPCODE'0x2;
+	localparam OP_XOR = WIDTH__OPCODE'0x3;
 
-	localparam OP_0 = $signed(0x0);
-	localparam OP_MINUS_0 = $signed(-0x0);
-	localparam OP_1 = $signed(0x1);
-	localparam OP_MINUS_1 = $signed(-0x1);
-	localparam OP_2 = $signed(0x2);
-	localparam OP_MINUS_2 = $signed(-0x2);
-	localparam OP_3 = $signed(0x3);
-	localparam OP_MINUS_3 = $signed(-OP_3'0x3);
+	//localparam OP_0 = $sgn(0x0);
+	//localparam OP_MINUS_0 = $sgn(-0x0);
+	//localparam OP_1 = $sgn(0x1);
+	//localparam OP_MINUS_1 = $sgn(-0x1);
+	//localparam OP_2 = $sgn(0x2);
+	//localparam OP_MINUS_2 = $sgn(-0x2);
+	//localparam OP_3 = $sgn(0x3);
+	//localparam OP_MINUS_3 = $sgn(0x3);
 
 	//enum [WIDTH__OPCODE] Opcode
 	//{

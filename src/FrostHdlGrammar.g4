@@ -161,30 +161,29 @@ exprAddSub:
 	;
 
 exprMulDivModEtc:
-	exprUnary
+	exprPlusUnary
+	| exprMinusUnary
+	| exprLogNot
+	| exprBitNot
+	| exprCastUnsgn
+	| exprCastSgn
+	//| exprClog2
+	//| exprPow
 	| numExpr
 	| identExpr
 	| '(' expr ')'
 	;
 
-exprUnary:
-	| exprPlusUnary
-	| exprMinusUnary
-	| exprLogNot
-	| exprBitNot
-	| exprCastUnsigned
-	| exprCastSigned
-	//| exprClog2
-	;
 
 
 exprPlusUnary: TokPlus expr ;
 exprMinusUnary: TokMinus expr ;
 exprLogNot: TokExclamPoint expr ;
 exprBitNot: TokBitInvert expr ;
-exprCastUnsigned: TokKwDollarUnsigned '(' expr ')' ;
-exprCastSigned: TokKwDollarSigned '(' expr ')' ;
+exprCastUnsgn: TokKwDollarUnsgn '(' expr ')' ;
+exprCastSgn: TokKwDollarSgn '(' expr ')' ;
 //exprClog2: TokKwDollarClog2 '(' expr ')' ;
+//exprPow: TokKwDollarPow '(' expr ',' expr ')' ;
 
 
 numExpr:
@@ -206,7 +205,7 @@ rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
 // 0x3        ' 9
 //
 // Also, signed hard-coded numbers are *not* properly handled here, so you
-// are forced to do "$signed(...)" instead of "...'s...".  The lexer would
+// are forced to do "$sgn(...)" instead of "...'s...".  The lexer would
 // have to be more heavily involved here if signed, hard-coded numbers were
 // to be allowed with Verilog-style syntax.
 rawSizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
@@ -319,12 +318,15 @@ TokKwPackage: 'package' ;
 TokKwDollarConcat: '$concat' ;
 TokKwDollarRepl: '$repl' ;
 
-TokKwDollarUnsigned: '$unsigned' ;
-TokKwDollarSigned: '$signed' ;
-TokKwDollarIsUnsigned: '$is_unsigned' ;
-TokKwDollarIsSigned: '$is_signed' ;
+TokKwDollarUnsgn: '$unsgn' ;
+TokKwDollarSgn: '$sgn' ;
+TokKwDollarIsUnsgn: '$is_unsgn' ;
+TokKwDollarIsSgn: '$is_sgn' ;
 TokKwDollarSizeof: '$sizeof' ;
+TokKwDollarArrsize: '$arrsize' ;
+TokKwDollarLastindex: '$lastindex' ;
 TokKwDollarClog2: '$clog2' ;
+TokKwDollarPow: '$pow' ;
 
 
 

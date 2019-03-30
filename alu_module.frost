@@ -15,18 +15,19 @@
 //{
 //}
 module Alu
-	parameter(WIDTH__DIO)
+	parameter(WIDTH__DIO=PkgAlu::WIDTH__OPCODE'5)
 	(input logic [WIDTH__DIO] i_a, i_b,
 	input logic i_carry,
 	input logic [PkgAlu::WIDTH__OPCODE] i_opcode,
 	output logic [WIDTH__DIO] o_data,
 	output logic o_carry)
 {
+	logic [] egg;
 	//logic [WIDTH__DIO] not_constant;
 
 	//localparam NOT_CONSTANT = (3 + 3)'3;
 
-	localparam not_constant = 3;
-	localparam NOT_CONSTANT = $signed(not_constant'3);
+	localparam WIDTH = 3;
+	localparam CONSTANT = WIDTH'3;
 
 }

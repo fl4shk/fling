@@ -766,6 +766,9 @@ VisitorRetType ParseTreeVisitor::visitModuleStmtContAssign
 VisitorRetType ParseTreeVisitor::visitExpr
 	(Parser::ExprContext *ctx)
 {
+	//DEBUG_EXPR(visitExprAddSub, TokOpLogical);
+	//printout("\n");
+
 	if (ctx->TokOpLogical())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->exprLogical());
@@ -801,6 +804,9 @@ VisitorRetType ParseTreeVisitor::visitExpr
 VisitorRetType ParseTreeVisitor::visitExprLogical
 	(Parser::ExprLogicalContext *ctx)
 {
+	//DEBUG_EXPR(visitExprAddSub, TokOpCompare);
+	//printout("\n");
+
 	if (ctx->TokOpCompare())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->exprCompare());
@@ -855,6 +861,10 @@ VisitorRetType ParseTreeVisitor::visitExprLogical
 VisitorRetType ParseTreeVisitor::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 {
+	//DEBUG_EXPR(visitExprAddSub, TokPlus);
+	//DEBUG_EXPR(visitExprAddSub, TokMinus);
+	//printout("\n");
+
 	if (ctx->TokPlus())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->exprAddSub());
@@ -887,6 +897,10 @@ VisitorRetType ParseTreeVisitor::visitExprCompare
 VisitorRetType ParseTreeVisitor::visitExprAddSub
 	(Parser::ExprAddSubContext *ctx)
 {
+	//DEBUG_EXPR(visitExprAddSub, TokOpMulDivMod);
+	//DEBUG_EXPR(visitExprAddSub, TokOpBitwise);
+	//printout("\n");
+
 	if (ctx->TokOpMulDivMod())
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->exprMulDivModEtc());
@@ -974,29 +988,18 @@ VisitorRetType ParseTreeVisitor::visitExprAddSub
 VisitorRetType ParseTreeVisitor::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 {
-	ANY_ACCEPT_IF_BASIC(ctx->exprUnary())
+	ANY_ACCEPT_IF_BASIC(ctx->exprPlusUnary())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprMinusUnary())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprLogNot())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprBitNot())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprCastUnsgn())
+	else ANY_ACCEPT_IF_BASIC(ctx->exprCastSgn())
 	else ANY_ACCEPT_IF_BASIC(ctx->numExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->identExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->expr())
 	else
 	{
 		_err(ctx, "ParseTreeVisitor::visitExprMulDivModEtc():  Eek!");
-	}
-	return nullptr;
-}
-
-VisitorRetType ParseTreeVisitor::visitExprUnary
-	(Parser::ExprUnaryContext *ctx)
-{
-	ANY_ACCEPT_IF_BASIC(ctx->exprPlusUnary())
-	else ANY_ACCEPT_IF_BASIC(ctx->exprMinusUnary())
-	else ANY_ACCEPT_IF_BASIC(ctx->exprLogNot())
-	else ANY_ACCEPT_IF_BASIC(ctx->exprBitNot())
-	else ANY_ACCEPT_IF_BASIC(ctx->exprCastUnsigned())
-	else ANY_ACCEPT_IF_BASIC(ctx->exprCastSigned())
-	else
-	{
-		_err(ctx, "ParseTreeVisitor::visitExprUnary():  Eek!");
 	}
 	return nullptr;
 }
@@ -1038,8 +1041,8 @@ VisitorRetType ParseTreeVisitor::visitExprBitNot
 
 	return nullptr;
 }
-VisitorRetType ParseTreeVisitor::visitExprCastUnsigned
-	(Parser::ExprCastUnsignedContext *ctx)
+VisitorRetType ParseTreeVisitor::visitExprCastUnsgn
+	(Parser::ExprCastUnsgnContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
@@ -1048,8 +1051,8 @@ VisitorRetType ParseTreeVisitor::visitExprCastUnsigned
 
 	return nullptr;
 }
-VisitorRetType ParseTreeVisitor::visitExprCastSigned
-	(Parser::ExprCastSignedContext *ctx)
+VisitorRetType ParseTreeVisitor::visitExprCastSgn
+	(Parser::ExprCastSgnContext *ctx)
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop

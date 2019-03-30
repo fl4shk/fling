@@ -330,9 +330,6 @@ private:		// visitor functions
 	VisitorRetType visitExprMulDivModEtc
 		(Parser::ExprMulDivModEtcContext *ctx);
 
-	VisitorRetType visitExprUnary
-		(Parser::ExprUnaryContext *ctx);
-
 
 	VisitorRetType visitExprPlusUnary
 		(Parser::ExprPlusUnaryContext *ctx);
@@ -342,10 +339,10 @@ private:		// visitor functions
 		(Parser::ExprLogNotContext *ctx);
 	VisitorRetType visitExprBitNot
 		(Parser::ExprBitNotContext *ctx);
-	VisitorRetType visitExprCastUnsigned
-		(Parser::ExprCastUnsignedContext *ctx);
-	VisitorRetType visitExprCastSigned
-		(Parser::ExprCastSignedContext *ctx);
+	VisitorRetType visitExprCastUnsgn
+		(Parser::ExprCastUnsgnContext *ctx);
+	VisitorRetType visitExprCastSgn
+		(Parser::ExprCastSgnContext *ctx);
 	//VisitorRetType visitExprClog2
 	//	(Parser::ExprClog2Context *ctx);
 
