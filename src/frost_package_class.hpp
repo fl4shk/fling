@@ -32,10 +32,10 @@ public:		// functions
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostPackage);
 	virtual ~FrostPackage();
 
-	std::string scope_type_str() const
-	{
-		return std::string("package");
-	}
+	//std::string scope_type_str() const
+	//{
+	//	return std::string("package");
+	//}
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)

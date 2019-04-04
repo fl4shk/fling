@@ -127,7 +127,8 @@ insideModule:
 		| declVarList ';'
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
-		//| moduleStmtInstantiateModule ';'
+		| moduleStmtInstantiateModule ';'
+		| moduleStmtGenerate
 	)*
 	;
 
@@ -135,6 +136,45 @@ moduleStmtContAssign:
 	TokKwAssign identExpr TokAssign expr
 	;
 
+moduleStmtInstantiateModule:
+	TokKwInstance identName
+	'('
+		// For "module"s that have ports, this is actually required.
+		(instantiateModulePortsList?)
+	')'
+	;
+
+instantiateModulePortsList:
+	identName '(' identExpr ')'
+		((',' identName '(' identExpr ')')*)
+	;
+
+moduleStmtGenerate:
+	TokKwGenerate
+	(
+		generateHeaderFor
+		//| generateHeaderIf
+	)
+
+	'{'
+		// FUTURE:  Change this to support more things later (probably
+		// simply by using "insideModule+").
+		moduleStmtInstantiateModule ';'
+	'}'
+	;
+
+generateHeaderFor:
+	TokKwFor '(' identName ':' pseudoFuncCallRange ')'
+	;
+
+pseudoFuncCallRange:
+	//TokKwRange '(' ((expr ',')?) expr ')'
+	TokKwRange '(' expr ')'
+	;
+
+//generateHeaderIf:
+//	TokKwIf '(' expr ')'
+//	;
 
 
 // Expression parsing
@@ -259,6 +299,7 @@ scopedIdentName: identName TokScope identName
 
 
 
+
 // Lexer rules
 LexWhitespace: (' ' | '\t' | '\n') -> skip ;
 LexLineComment: '//' (~ '\n')* -> skip ;
@@ -371,6 +412,10 @@ TokKwElse: 'else' ;
 TokKwFor: 'for' ;
 TokKwWhile: 'while' ;
 TokKwDo: 'do' ;
+
+TokKwGenerate: 'generate' ;
+TokKwRange: 'range' ;
+TokKwInstance: 'instance' ;
 
 
 TokKwSwitch: 'switch' ;

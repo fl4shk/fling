@@ -19,7 +19,7 @@ syn keyword frost_hdl_keyword		function task
 syn keyword frost_hdl_keyword		package interface module 
 syn keyword frost_hdl_keyword		input output inout 
 syn keyword frost_hdl_keyword		if else switch case default 
-syn keyword frost_hdl_keyword		for while do in range
+syn keyword frost_hdl_keyword		for while do range
 syn keyword frost_hdl_keyword		assign initial always_comb always_seq
 syn keyword frost_hdl_keyword		generate
 syn keyword frost_hdl_keyword		posedge negedge

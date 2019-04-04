@@ -60,10 +60,10 @@ public:		// functions
 	//}
 
 
-	std::string scope_type_str() const
-	{
-		return std::string("module");
-	}
+	//std::string scope_type_str() const
+	//{
+	//	return std::string("module");
+	//}
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)

@@ -1,10 +1,15 @@
 module RippleCarryAdder
 	// "DIO" is short for "data input/output"
-	parameter(WIDTH__DIO=4)
-	(input logic [WIDTH__DIO] i_a, i_b,
-	input logic i_carry,
-	output logic [WIDTH__DIO] o_sum,
-	output logic o_carry)
+	parameter
+	(
+		WIDTH__DIO=4
+	)
+	(
+		input logic [WIDTH__DIO] i_a, i_b,
+		input logic i_carry,
+		output logic [WIDTH__DIO] o_sum,
+		output logic o_carry
+	)
 {
 	localparam WIDTH__INNER_CARRIES = WIDTH__DIO + 1;
 	//localparam MSB_POS__INNER_CARRIES = WIDTH__INNER_CARRIES - 1;
@@ -14,12 +19,15 @@ module RippleCarryAdder
 	assign _inner_carries[0] = i_carry;
 	assign o_carry = _inner_carries[WIDTH__INNER_CARRIES - 1];
 
-	generate for i in range(WIDTH__DIO)
+	generate for (i : range(WIDTH__DIO))
 	{
-		instance FullAdder(i_a(i_a[i]),
+		instance FullAdder
+		(
+			i_a(i_a[i]),
 			i_b(i_b[i]),
 			i_carry(_inner_carries[i]),
 			o_sum(o_sum[i]),
-			o_carry(_inner_carries[i + 1]));
+			o_carry(_inner_carries[i + 1])
+		);
 	}
 }
