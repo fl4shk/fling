@@ -13,7 +13,8 @@
 namespace frost_hdl
 {
 
-class FrostPackage : public InScopeErrWarnBase<SrcCodePos>
+//class FrostPackage : public InScopeErrWarnBase<SrcCodePos>
+class FrostPackage
 {
 private:		// variables
 	SrcCodePos _src_code_pos;

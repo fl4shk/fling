@@ -8,14 +8,15 @@
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 #include "frost_full_type_class.hpp"
-#include "in_scope_errwarn_base_class.hpp"
+//#include "in_scope_errwarn_base_class.hpp"
 
 namespace frost_hdl
 {
 
 // Class representing a module from HDL land (not a C++20 module).
 // Nested "module"s are not permitted, and they are always at global scope.
-class FrostModule : public InScopeErrWarnBase<SrcCodePos>
+//class FrostModule : public InScopeErrWarnBase<SrcCodePos>
+class FrostModule
 {
 private:		// variables
 	SrcCodePos _src_code_pos;

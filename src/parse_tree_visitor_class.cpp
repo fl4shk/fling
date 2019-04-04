@@ -116,27 +116,27 @@ void ParseTreeVisitor::_reparse()
 		*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
 	}
 }
-InScopeErrWarnBase<SrcCodePos>* ParseTreeVisitor::_in_scope_thing()
-{
-	if (_in_package_pass())
-	{
-		return _frost_program.curr_frost_package;
-	}
-	//else if (_in_interface_pass())
-	//{
-	//	return _frost_program.curr_frost_interface;
-	//}
-	else if (_in_module_pass())
-	{
-		return _frost_program.curr_frost_module;
-	}
-	else
-	{
-		_err(nullptr, "ParseTreeVisitor::_in_scope_thing():  Eek!");
-	}
-
-	return nullptr;
-}
+//InScopeErrWarnBase<SrcCodePos>* ParseTreeVisitor::_in_scope_thing()
+//{
+//	if (_in_package_pass())
+//	{
+//		return _frost_program.curr_frost_package;
+//	}
+//	//else if (_in_interface_pass())
+//	//{
+//	//	return _frost_program.curr_frost_interface;
+//	//}
+//	else if (_in_module_pass())
+//	{
+//		return _frost_program.curr_frost_module;
+//	}
+//	else
+//	{
+//		_err(nullptr, "ParseTreeVisitor::_in_scope_thing():  Eek!");
+//	}
+//
+//	return nullptr;
+//}
 
 // Basically just "module", "interface", and "package" declarations.
 // There are no other things permitted at global scope.
@@ -206,8 +206,9 @@ VisitorRetType ParseTreeVisitor::visitLhsBuiltinTypeName
 
 		if (!s_left_dim_expr->is_constant())
 		{
-			_in_scope_thing()->in_scope_err(_make_src_code_pos
-				(ctx->expr()), "Vectors must have constant dimensions.");
+			//_in_scope_thing()->in_scope_err(_make_src_code_pos
+			//	(ctx->expr()), "Vectors must have constant dimensions.");
+			_err(ctx->expr(), "Vectors must have constant dimensions.");
 		}
 	}
 
@@ -254,9 +255,9 @@ VisitorRetType ParseTreeVisitor::visitDeclNoLhsTypeVar
 
 		if (!s_right_dim_expr->is_constant())
 		{
-			//_err(ctx->expr(), "Arrays must have constant dimensions.");
-			_in_scope_thing()->in_scope_err(_make_src_code_pos
-				(ctx->expr()), "Arrays must have constant dimensions.");
+			_err(ctx->expr(), "Arrays must have constant dimensions.");
+			//_in_scope_thing()->in_scope_err(_make_src_code_pos
+			//	(ctx->expr()), "Arrays must have constant dimensions.");
 		}
 
 		_stacks.push_small_num(static_cast<SmallNum>
@@ -294,9 +295,12 @@ VisitorRetType ParseTreeVisitor::visitDeclVarList
 			//_err(s_src_code_pos, sconcat("Module \"", *module->ident(),
 			//	"\" already contains a symbol with identifier \"",
 			//	*s_ident, "\" at ", errwarn_string, "."));
-			module->in_scope_err(_make_src_code_pos(iter), sconcat("This ",
-				"module already contains a symbol called \"", *s_ident, 
-				"\", deifned at ", errwarn_string, "."));
+			//module->in_scope_err(_make_src_code_pos(iter), sconcat("This ",
+			//	"module already contains a symbol called \"", *s_ident, 
+			//	"\", deifned at ", errwarn_string, "."));
+			_err(iter, sconcat("This module already contains a symbol ",
+				"called \"", *s_ident, "\", deifned at ", errwarn_string,
+				"."));
 		}
 
 		const ScalarOrArray scalar_or_array = static_cast<ScalarOrArray>
@@ -353,9 +357,12 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 			{
 				auto&& errwarn_string = package->symbol_table().at(s_ident)
 					->src_code_pos().convert_to_errwarn_string();
-				package->in_scope_err(s_src_code_pos, sconcat
-					("This package already has a localparam called \"", 
-					*s_ident,  "\", defined at ",
+				//package->in_scope_err(s_src_code_pos, sconcat
+				//	("This package already has a localparam called \"", 
+				//	*s_ident,  "\", defined at ",
+				//	errwarn_string, "."));
+				_err(s_src_code_pos, sconcat ("This package already has ",
+					"a localparam called \"", *s_ident,  "\", defined at ",
 					errwarn_string, "."));
 			}
 
@@ -386,9 +393,12 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 			{
 				auto&& errwarn_string = module->find_symbol(s_ident)
 					->src_code_pos().convert_to_errwarn_string();
-				module->in_scope_err(s_src_code_pos, sconcat("This ",
-					"module already has a symbol called \"", *s_ident, 
-					"\", defined at ", errwarn_string, "."));
+				//module->in_scope_err(s_src_code_pos, sconcat("This ",
+				//	"module already has a symbol called \"", *s_ident, 
+				//	"\", defined at ", errwarn_string, "."));
+				_err(s_src_code_pos, sconcat("This module already has a ",
+					"symbol called \"", *s_ident, "\", defined at ",
+					errwarn_string, "."));
 			}
 
 			symbol_table = &module->local_symbol_table();
@@ -438,16 +448,21 @@ VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 
 		if (s_value->references_symbol(existing_symbol))
 		{
-			_in_scope_thing()->in_scope_err(existing_symbol
-				->src_code_pos(), sconcat("localparam with identifier \"",
-				*s_ident, "\" is defined in terms of itself."));
+			//_in_scope_thing()->in_scope_err(existing_symbol
+			//	->src_code_pos(), sconcat("localparam with identifier \"",
+			//	*s_ident, "\" is defined in terms of itself."));
+			_err(existing_symbol->src_code_pos(), sconcat("localparam ",
+				"with identifier \"", *s_ident, "\" is defined in terms ",
+				"of itself."));
 		}
 
 		if (!s_value->is_constant())
 		{
-			_in_scope_thing()->in_scope_err(existing_symbol
-				->src_code_pos(), sconcat("localparam with identifier \"",
-				*s_ident, "\" is not constant."));
+			//_in_scope_thing()->in_scope_err(existing_symbol
+			//	->src_code_pos(), sconcat("localparam with identifier \"",
+			//	*s_ident, "\" is not constant."));
+			_err(existing_symbol->src_code_pos(), sconcat("localparam ",
+				"with identifier \"", *s_ident, "\" is not constant."));
 		}
 
 		// Actually insert the value
@@ -626,9 +641,11 @@ VisitorRetType ParseTreeVisitor::visitDeclParameterVar
 	{
 		auto&& errwarn_string = module->find_symbol(s_ident)
 			->src_code_pos().convert_to_errwarn_string();
-		module->in_scope_err(_make_src_code_pos(ctx), sconcat("This ",
-			"module already has a parameter called \"", *s_ident, "\", ",
-			"defined at ", errwarn_string, "."));
+		//module->in_scope_err(_make_src_code_pos(ctx), sconcat("This ",
+		//	"module already has a parameter called \"", *s_ident, "\", ",
+		//	"defined at ", errwarn_string, "."));
+		_err(ctx, sconcat("This module already has a parameter called \"",
+			*s_ident, "\", defined at ", errwarn_string, "."));
 	}
 
 	Expression* s_value = nullptr;
@@ -1071,8 +1088,9 @@ VisitorRetType ParseTreeVisitor::visitExprClog2
 
 	if (!expr->is_constant())
 	{
-		_in_scope_thing()->in_scope_err(arg_src_code_pos, sconcat("This ",
-			"value must be constant."));
+		//_in_scope_thing()->in_scope_err(arg_src_code_pos, sconcat("This ",
+		//	"value must be constant."));
+		_err(arg_src_code_pos, sconcat("This value must be constant."));
 	}
 
 	_stacks.push_expr(ExpressionBuilder::make_expr_unop
@@ -1110,8 +1128,10 @@ VisitorRetType ParseTreeVisitor::visitNumExpr
 
 		if (!s_size_expr->is_constant())
 		{
-			_in_scope_thing()->in_scope_err(s_size_expr->src_code_pos(),
-				"Hard-coded constants must have constant widths.");
+			//_in_scope_thing()->in_scope_err(s_size_expr->src_code_pos(),
+			//	"Hard-coded constants must have constant widths.");
+			_err(s_size_expr->src_code_pos(), "Hard-coded constants "
+				"must have constant widths.");
 		}
 
 		_stacks.push_expr(ExpressionBuilder::make_expr_ident_sized_hc_num
@@ -1252,9 +1272,11 @@ VisitorRetType ParseTreeVisitor::visitPureIdentExpr
 			}
 			else
 			{
-				package->in_scope_err(_make_src_code_pos(ctx), sconcat
-					("Unknown symbol called \"", *ident, "\" at this ",
-					"point."));
+				//package->in_scope_err(_make_src_code_pos(ctx), sconcat
+				//	("Unknown symbol called \"", *ident, "\" at this ",
+				//	"point."));
+				_err(ctx, sconcat("Unknown symbol called \"", *ident,
+					"\" at this point."));
 			}
 		}
 
@@ -1269,9 +1291,11 @@ VisitorRetType ParseTreeVisitor::visitPureIdentExpr
 		//	}
 		//	else
 		//	{
-		//		interface->in_scope_err(_make_src_code_pos(ctx), sconcat
-		//			("Unknown symbol called \"", *ident, "\" at this ",
-		//			"point."));
+		//		//interface->in_scope_err(_make_src_code_pos(ctx), sconcat
+		//		//	("Unknown symbol called \"", *ident, "\" at this ",
+		//		//	"point."));
+		//		_err(ctx, sconcat("Unknown symbol called \"", *ident,
+		//			"\" at this point."));
 		//	}
 		//}
 
@@ -1298,9 +1322,11 @@ VisitorRetType ParseTreeVisitor::visitPureIdentExpr
 			}
 			else
 			{
-				module->in_scope_err(_make_src_code_pos(ctx), sconcat
-					("Unknown symbol called \"", *ident, "\" at this ",
-					"point."));
+				//module->in_scope_err(_make_src_code_pos(ctx), sconcat
+				//	("Unknown symbol called \"", *ident, "\" at this ",
+				//	"point."));
+				_err(ctx, sconcat("Unknown symbol called \"", *ident,
+					"\" at this point."));
 			}
 		}
 		else
@@ -1345,19 +1371,24 @@ VisitorRetType ParseTreeVisitor::visitPureIdentExpr
 
 			if (!frost_package_table.contains(which_scope))
 			{
-				_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
-					sconcat("Unknown package called \"", *which_scope,
-					"\"."));
+				//_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
+				//	sconcat("Unknown package called \"", *which_scope,
+				//	"\"."));
+				_err(ctx, sconcat("Unknown package called \"",
+					*which_scope, "\"."));
 			}
 
 			auto package = frost_package_table.at(which_scope);
 
 			if (!package->symbol_table().contains(most_inner_ident))
 			{
-				_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
-					sconcat("Package \"", *package->ident(), "\" does ",
-					"not contain a symbol called \"", *most_inner_ident,
-					"\"."));
+				//_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
+				//	sconcat("Package \"", *package->ident(), "\" does ",
+				//	"not contain a symbol called \"", *most_inner_ident,
+				//	"\"."));
+				_err(ctx, sconcat("Package \"", *package->ident(), "\" ",
+					"does not contain a symbol called \"",
+					*most_inner_ident, "\"."));
 			}
 
 			//auto symbol = package->symbol_table().at(most_inner_ident);
@@ -1473,9 +1504,12 @@ void ParseTreeVisitor::_insert_module_port_var
 	{
 		auto&& errwarn_string = module->find_symbol(s_ident)
 			->src_code_pos().convert_to_errwarn_string();
-		module->in_scope_err(s_src_code_pos, sconcat("This module ",
-			"already has a symbol called \"", *s_ident, "\", defined at ",
-			errwarn_string, "."));
+		//module->in_scope_err(s_src_code_pos, sconcat("This module ",
+		//	"already has a symbol called \"", *s_ident, "\", defined at ",
+		//	errwarn_string, "."));
+		_err(s_src_code_pos, sconcat("This module already has a symbol ",
+			"called \"", *s_ident, "\", defined at ", errwarn_string,
+			"."));
 	}
 
 	// Again, I am lazy.

@@ -242,7 +242,7 @@ private:		// functions
 
 	void _reparse();
 
-	InScopeErrWarnBase<SrcCodePos>* _in_scope_thing();
+	//InScopeErrWarnBase<SrcCodePos>* _in_scope_thing();
 
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 	GEN_GETTER_AND_SETTER_BY_VAL(subpass)
