@@ -4,14 +4,14 @@ problems I've run into with SystemVerilog, especially among FLOSS software.
 (It is not intended to be a compiler for SystemVerilog itself)
 
 In addition to solving the tool support problems I've run into, the
-language is intended as well to be higher level than synthesizeable
+language is intended as well to be comparable to synthesizeable
 SystemVerilog.
 
-Support for yosys-compatible SystemVerilog assertions will be directly
-supported.
+Yosys-compatible SystemVerilog assertions will be directly supported for
+formal verification.
 
 Code generation is currently being limited to Verilog-2001, but support for
-outputing SystemVerilog may also come.
+outputing SystemVerilog, or possibly Verilog-2005, may also come.
 
 Code generation that outputs VHDL is unlikely, but may eventually come
 (perhaps with some caveats).

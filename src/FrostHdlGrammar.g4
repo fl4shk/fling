@@ -210,31 +210,56 @@ rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
 // to be allowed with Verilog-style syntax.
 rawSizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
+// This permits using a constant to indicate the width of a hard-coded
+// number, permitting shorter Frost HDL source code in some situations.
 identSizedNumExpr: pureIdentExpr TokApostrophe rawNumExpr ;
 
 
 
-// Forcibly
 identExpr:
 	pureIdentExpr
+	| slicedPureIdentExpr
 	////| identConcatExpr
-	////| identSliced
+	//| memberAccessIdentExpr
 	;
 
+// Just an identifier, possibly scoped.
+// In the "ParseTreeVisitor", this rule produces an "ExprIdentName", from
+// which the "Symbol" can be referenced.
 pureIdentExpr:
 	identName
 	| scopedIdentName
 	;
+
+//memberAccessIdentExpr:
+//	identName (((sliceWithOne?) '.' identName)+) (sliceWithAny?)
+//	;
+
+slicedPureIdentExpr:
+	pureIdentExpr (sliceWithOne?) sliceWithAny
+	;
+
+sliceWithOne:
+	'[' expr ']'
+	;
+
+sliceWithRange:
+	'[' expr ':' expr ']'
+	;
+
+sliceWithAny:
+	sliceWithOne
+	| sliceWithRange
+	;
+
 
 identName: TokIdent ;
 scopedIdentName: identName TokScope identName
 	((TokScope identName)?);
 
 
+
 // Lexer rules
-// ALL tokens get a lexer rule of some sort because it forces ANTLR to
-// catch more (all?) syntax errors.
-// So that means no raw '...' stuff in the parser rules.
 LexWhitespace: (' ' | '\t' | '\n') -> skip ;
 LexLineComment: '//' (~ '\n')* -> skip ;
 

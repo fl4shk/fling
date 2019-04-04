@@ -357,11 +357,22 @@ private:		// visitor functions
 		(Parser::IdentSizedNumExprContext *ctx);
 
 
-
 	VisitorRetType visitIdentExpr
 		(Parser::IdentExprContext *ctx);
 	VisitorRetType visitPureIdentExpr
 		(Parser::PureIdentExprContext *ctx);
+	//VisitorRetType visitMemberAccessIdentExpr
+	//	(Parser::MemberAccessIdentExprContext *ctx);
+	VisitorRetType visitSlicedPureIdentExpr
+		(Parser::SlicedPureIdentExprContext *ctx);
+
+
+	VisitorRetType visitSliceWithOne
+		(Parser::SliceWithOneContext *ctx);
+	VisitorRetType visitSliceWithRange
+		(Parser::SliceWithRangeContext *ctx);
+	VisitorRetType visitSliceWithAny
+		(Parser::SliceWithAnyContext *ctx);
 
 
 	VisitorRetType visitIdentName

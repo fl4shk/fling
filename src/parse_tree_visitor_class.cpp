@@ -1403,7 +1403,33 @@ VisitorRetType ParseTreeVisitor::visitPureIdentExpr
 	}
 	return nullptr;
 }
+//VisitorRetType ParseTreeVisitor::visitMemberAccessIdentExpr
+//	(Parser::MemberAccessIdentExprContext *ctx)
+//{
+//	return nullptr;
+//}
+VisitorRetType ParseTreeVisitor::visitSlicedPureIdentExpr
+	(Parser::SlicedPureIdentExprContext *ctx)
+{
 
+	return nullptr;
+}
+
+VisitorRetType ParseTreeVisitor::visitSliceWithOne
+	(Parser::SliceWithOneContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitSliceWithRange
+	(Parser::SliceWithRangeContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitSliceWithAny
+	(Parser::SliceWithAnyContext *ctx)
+{
+	return nullptr;
+}
 
 VisitorRetType ParseTreeVisitor::visitIdentName
 	(Parser::IdentNameContext *ctx)
