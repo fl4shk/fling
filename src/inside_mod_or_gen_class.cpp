@@ -47,7 +47,7 @@ Symbol* InsideModOrGen::find_symbol(SavedString some_name) const
 	}
 
 	// This should *never* happen.  If it does, we spit out an error.
-	printerr("InsideModOrGen::find_symbol():  Eek!\n");
+	printerr("Error:  InsideModOrGen::find_symbol():  Eek!\n");
 	exit(1);
 
 	return nullptr;
