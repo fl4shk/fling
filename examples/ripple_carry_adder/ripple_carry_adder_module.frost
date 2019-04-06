@@ -21,13 +21,13 @@ module RippleCarryAdder
 
 	generate for (i : range(WIDTH__DIO))
 	{
-		instance FullAdder
-		(
-			i_a(i_a[i]),
-			i_b(i_b[i]),
-			i_carry(_inner_carries[i]),
-			o_sum(o_sum[i]),
-			o_carry(_inner_carries[i + 1])
-		);
+		//instance FullAdder
+		//(
+		//	i_a(i_a[i]),
+		//	i_b(i_b[i]),
+		//	i_carry(_inner_carries[i]),
+		//	o_sum(o_sum[i]),
+		//	o_carry(_inner_carries[i + 1])
+		//);
 	}
 }

@@ -656,10 +656,10 @@ VisitorRetType ParseTreeVisitor::visitDeclPortDirectionalVarList
 	{
 		s_port_type = Symbol::PortType::Output;
 	}
-	else if (ctx->TokKwInout())
-	{
-		s_port_type = Symbol::PortType::Inout;
-	}
+	//else if (ctx->TokKwInout())
+	//{
+	//	s_port_type = Symbol::PortType::Inout;
+	//}
 	else
 	{
 		_err(ctx, "ParseTreeVisitor::visitDeclPortDirectionalVarList():  "
@@ -1578,9 +1578,9 @@ void ParseTreeVisitor::_insert_module_port_var
 		symbol_table = &module->output_symbol_table();
 		break;
 
-	case Symbol::PortType::Inout:
-		symbol_table = &module->inout_symbol_table();
-		break;
+	//case Symbol::PortType::Inout:
+	//	symbol_table = &module->inout_symbol_table();
+	//	break;
 
 	default:
 		_err(s_src_code_pos, "ParseTreeVisitor"

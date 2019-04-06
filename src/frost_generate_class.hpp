@@ -1,17 +1,17 @@
-#ifndef src_frost_generate_construct_class_hpp
-#define src_frost_generate_construct_class_hpp
+#ifndef src_frost_generate_class_hpp
+#define src_frost_generate_class_hpp
 
-// src/frost_generate_construct_class.hpp
+// src/frost_generate_class.hpp
 
 #include "misc_includes.hpp"
 #include "symbol_class.hpp"
-#include "misc_types.hpp"
+//#include "table_types.hpp"
 
 
 namespace frost_hdl
 {
 
-class FrostGenerateConstruct
+class FrostGenerate
 {
 private:		// variables
 	SrcCodePos _src_code_pos;
@@ -20,12 +20,12 @@ private:		// variables
 	SymbolTable _local_symbol_table;
 
 public:		// functions
-	FrostGenerateConstruct(const SrcCodePos& s_src_code_pos,
+	FrostGenerate(const SrcCodePos& s_src_code_pos,
 		SavedString s_ident);
 
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostGenerateConstruct);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostGenerate);
 
-	virtual ~FrostGenerateConstruct();
+	virtual ~FrostGenerate();
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
@@ -36,4 +36,4 @@ public:		// functions
 } // namespace frost_hdl
 
 
-#endif		// src_frost_generate_construct_class_hpp
+#endif		// src_frost_generate_class_hpp

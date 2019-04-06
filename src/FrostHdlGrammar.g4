@@ -89,7 +89,7 @@ declPortVarList:
 
 
 declPortDirectionalVarList:
-	(TokKwInput | TokKwOutput | TokKwInout) declPortVarList
+	(TokKwInput | TokKwOutput) declPortVarList
 	;
 
 // "parameter" stuff
@@ -127,7 +127,7 @@ insideModuleOrGenerate:
 		| declVarList ';'
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
-		| moduleStmtInstantiateModule ';'
+		//| moduleStmtInstantiateModule ';'
 		| moduleStmtGenerate
 	)*
 	;

@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "symbol_class.hpp"
-#include "misc_types.hpp"
+#include "table_types.hpp"
 
 namespace frost_hdl
 {

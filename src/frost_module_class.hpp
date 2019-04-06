@@ -15,25 +15,26 @@ namespace frost_hdl
 
 // Class representing a module from HDL land (not a C++20 module).
 // Nested "module"s are not permitted, and they are always at global scope.
-//class FrostModule : public InScopeErrWarnBase<SrcCodePos>
 class FrostModule
 {
 private:		// variables
 	SrcCodePos _src_code_pos;
 	SavedString _ident = nullptr;
 	SymbolTable _parameter_symbol_table, _input_symbol_table,
-		_output_symbol_table, _inout_symbol_table, _local_symbol_table;
+		_output_symbol_table;
 
-	FrostLhsTypeTable _frost_lhs_type_table;
-	FrostFullTypeTable _frost_full_type_table;
+	FrostInsideModuleOrGenerate _inside_module_or_generate;
 
-	FrostFunctionTable _frost_function_table;
+	//FrostLhsTypeTable _frost_lhs_type_table;
+	//FrostFullTypeTable _frost_full_type_table;
 
-	FrostStatementTable _frost_statement_table;
+	//FrostFunctionTable _frost_function_table;
 
-	// Used by the "ParseTreeVisitor" purely to determine whether or not
-	// this "module" is defined in terms of itself.
-	std::set<FrostModule*> _contained_module_instance_types;
+	//FrostStatementTable _frost_statement_table;
+
+	//// Used by the "ParseTreeVisitor" purely to determine whether or not
+	//// this "module" is defined in terms of itself.
+	//std::set<FrostModule*> _contained_module_instance_types;
 
 
 	//FrostPackageImportTable _frost_package_import_table;
@@ -71,16 +72,15 @@ public:		// functions
 	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(input_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(output_symbol_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(inout_symbol_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(local_symbol_table)
+	////GEN_GETTERS_BY_CON_REF_AND_REF(inout_symbol_table)
+	//GEN_GETTERS_BY_CON_REF_AND_REF(local_symbol_table)
 
 
-
-	GEN_GETTERS_BY_CON_REF_AND_REF(frost_lhs_type_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
-	GEN_GETTERS_BY_CON_REF_AND_REF(contained_module_instance_types)
+	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_lhs_type_table)
+	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_full_type_table)
+	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
+	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
+	////GEN_GETTERS_BY_CON_REF_AND_REF(contained_module_instance_types)
 };
 
 
