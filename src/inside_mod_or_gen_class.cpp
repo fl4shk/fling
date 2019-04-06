@@ -15,16 +15,20 @@ InsideModOrGen::~InsideModOrGen()
 
 Symbol* InsideModOrGen::find_symbol(SavedString some_name) const
 {
-	if (local_symbol_table.contains(some_name))
-	{
-		return local_symbol_table.at(some_name);
-	}
-
 	if (std::holds_alternative<FrostGenerate*>(_parent))
 	{
+		// We only need to do this here because, if the "_parent" is a
+		// "FrostModule*", the "_parent"'s "find_symbol_in_top_scope()"
+		// member function will do this for us.
+		if (local_symbol_table.contains(some_name))
+		{
+			return local_symbol_table.at(some_name);
+		}
+
 		const auto& parent_of_parent = std::get<FrostGenerate*>(_parent)
 			->parent();
 
+		// I think this is right?
 		if (std::holds_alternative<FrostGenerate*>(parent_of_parent))
 		{
 			return std::get<FrostGenerate*>(parent_of_parent)
@@ -42,7 +46,9 @@ Symbol* InsideModOrGen::find_symbol(SavedString some_name) const
 			(some_name);
 	}
 
+	// This should *never* happen.  If it does, we spit out an error.
 	printerr("InsideModOrGen::find_symbol():  Eek!\n");
+	exit(1);
 
 	return nullptr;
 }
