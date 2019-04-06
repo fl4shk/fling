@@ -7,18 +7,23 @@
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 #include "frost_full_type_class.hpp"
+#include "generate_parent_class.hpp"
 
 namespace frost_hdl
 {
 
+// Here we have a rare instance of a class used in the IR not being derived
+// from "HasSrcCodePosBase"
 class InsideModOrGen
 {
 protected:		// variables
 	// This is intended to be used for searching for symbols in the
 	// "ParseTreeVisitor"
-	std::variant<FrostModule*, FrostGenerate*> _parent;
+	GenerateParent _parent;
 
 public:		// variables
+	// These are public because "InsideModOrGen" is intended to be used, as
+	// you may have guessed, only inside "FrostModule" or "FrostGenerate".
 	SymbolTable local_symbol_table;
 	FrostLhsTypeTable frost_lhs_type_table;
 	FrostFullTypeTable frost_full_type_table;

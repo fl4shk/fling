@@ -14,7 +14,7 @@ FrostModule::~FrostModule()
 {
 }
 
-Symbol* FrostModule::find_symbol(SavedString some_name) const
+Symbol* FrostModule::find_symbol_in_top_scope(SavedString some_name) const
 {
 	//if (parameter_symbol_table().contains(some_name))
 	//{

@@ -49,10 +49,10 @@ public:		// functions
 	virtual ~FrostModule();
 
 
-	Symbol* find_symbol(SavedString some_name) const;
-	inline bool contains_symbol(SavedString some_name) const
+	Symbol* find_symbol_in_top_scope(SavedString some_name) const;
+	inline bool contains_symbol_in_top_scope(SavedString some_name) const
 	{
-		return (find_symbol(some_name) != nullptr);
+		return (find_symbol_in_top_scope(some_name) != nullptr);
 	}
 	//Symbol* find_non_param_symbol(SavedString some_name) const;
 
@@ -79,6 +79,7 @@ public:		// functions
 	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
 	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
 	////GEN_GETTERS_BY_CON_REF_AND_REF(contained_module_instance_types)
+	GEN_GETTERS_BY_CON_REF_AND_REF(inside_mod_or_gen)
 };
 
 
