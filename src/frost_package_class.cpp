@@ -5,9 +5,8 @@ namespace frost_hdl
 
 FrostPackage::FrostPackage(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident)
+	: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
 {
-	_src_code_pos = s_src_code_pos;
-	_ident = s_ident;
 }
 
 FrostPackage::~FrostPackage()

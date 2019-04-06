@@ -1,10 +1,15 @@
 module RegisterFile
-	parameter(WIDTH__REG=32, ARR_SIZE__NUM_REGS=16)
-	(input logic clk, rst,
-	input logic [$clog2(ARR_SIZE__NUM_REGS)]
-		i_rd_a_index, i_rd_b_index, i_rd_c_index, i_wr_index,
-	input logic [WIDTH__REG] i_wr_data,
-	output logic [WIDTH__REG] o_rd_a_data, o_rd_b_data, o_rd_c_data)
+	#(
+		WIDTH__REG=32,
+		ARR_SIZE__NUM_REGS=16
+	)
+	(
+		input logic clk, rst,
+		input logic [$clog2(ARR_SIZE__NUM_REGS)]
+			i_rd_a_index, i_rd_b_index, i_rd_c_index, i_wr_index,
+		input logic [WIDTH__REG] i_wr_data,
+		output logic [WIDTH__REG] o_rd_a_data, o_rd_b_data, o_rd_c_data
+	)
 {
 	localparam WIDTH__REG_INDEX = $clog2(ARR_SIZE__NUM_REGS);
 

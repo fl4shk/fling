@@ -25,7 +25,7 @@ namespace frost_hdl
 // "FrostModule", but also intended for use inside of an "FrostFunction"),
 // to be processed into a direct equivalent of the destination HDL
 // (probably Verilog-2001).
-class FrostStatement
+class FrostStatement : public HasSrcCodePosBase
 {
 public:		// types
 	//typedef typename ScopedUnnamedTable<FrostStatement>::Node TableNode;
@@ -56,7 +56,7 @@ protected:		// variables
 	ExprsList _exprs;
 
 public:		// functions
-	FrostStatement() = default;
+	FrostStatement(const SrcCodePos& s_src_code_pos);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStatement);
 
@@ -88,7 +88,8 @@ protected:		// functions
 class FrostStmtContAssign : public FrostStatement
 {
 public:		// functions
-	FrostStmtContAssign(Expression* s_lhs_expr, Expression* s_rhs_expr);
+	FrostStmtContAssign(const SrcCodePos& s_src_code_pos,
+		Expression* s_lhs_expr, Expression* s_rhs_expr);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtContAssign);
 
@@ -119,7 +120,10 @@ public:		// functions
 class FrostStmtBehavBlockInitial : public FrostStatement
 {
 public:		// functions
-	FrostStmtBehavBlockInitial() = default;
+	inline FrostStmtBehavBlockInitial(const SrcCodePos& s_src_code_pos)
+		: FrostStatement(s_src_code_pos)
+	{
+	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockInitial);
 
 	virtual ~FrostStmtBehavBlockInitial() = default;
@@ -134,7 +138,10 @@ public:		// functions
 class FrostStmtBehavBlockAlwaysComb : public FrostStatement
 {
 public:		// functions
-	FrostStmtBehavBlockAlwaysComb() = default;
+	inline FrostStmtBehavBlockAlwaysComb(const SrcCodePos& s_src_code_pos)
+		: FrostStatement(s_src_code_pos)
+	{
+	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysComb);
 
 	virtual ~FrostStmtBehavBlockAlwaysComb() = default;
@@ -152,8 +159,8 @@ private:		// variables
 	EdgeSensType _edge_sens_type = EdgeSensType::Posedge;
 
 public:		// functions
-	FrostStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
-		Expression* s_ident_expr);
+	FrostStmtBehavBlockAlwaysSeq(const SrcCodePos& s_src_code_pos,
+		EdgeSensType s_edge_sens_type, Expression* s_ident_expr);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavBlockAlwaysSeq);
 
 	virtual ~FrostStmtBehavBlockAlwaysSeq() = default;
@@ -181,7 +188,8 @@ public:		// functions
 class FrostStmtBehavAssign : public FrostStatement
 {
 public:		// functions
-	FrostStmtBehavAssign(Expression* s_lhs_expr, Expression* s_rhs_expr);
+	FrostStmtBehavAssign(const SrcCodePos& s_src_code_pos,
+		Expression* s_lhs_expr, Expression* s_rhs_expr);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavAssign);
 
 	virtual ~FrostStmtBehavAssign() = default;
@@ -196,7 +204,8 @@ public:		// functions
 class FrostStmtBehavIf : public FrostStatement
 {
 public:		// functions
-	FrostStmtBehavIf(Expression* s_condition_expr);
+	FrostStmtBehavIf(const SrcCodePos& s_src_code_pos,
+		Expression* s_condition_expr);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostStmtBehavIf);
 };
 

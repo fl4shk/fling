@@ -104,7 +104,7 @@ declParameterVarList:
 // "module" stuff
 declModule:
 	TokKwModule identName
-		((TokKwParameter '(' declParameterVarList ')')?)
+		(('#' '(' declParameterVarList ')')?)
 
 		// ports
 		'('
@@ -114,14 +114,14 @@ declModule:
 		')'
 
 	'{'
-		insideModuleOrGenerate
+		insideModOrGen
 	'}'
 	;
 
 
 
 
-insideModuleOrGenerate:
+insideModOrGen:
 	(
 		declLocalparamList ';'
 		| declVarList ';'
@@ -157,7 +157,7 @@ moduleStmtGenerate:
 	)
 
 	'{'
-		insideModuleOrGenerate
+		insideModOrGen
 	'}'
 	;
 

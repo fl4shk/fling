@@ -10,6 +10,8 @@
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
 
+#include "has_src_code_pos_base_classes.hpp"
+
 namespace frost_hdl
 {
 
@@ -19,7 +21,7 @@ class FrostFunction;
 
 // The left-hand side of a type, i.e. everything about a type except for
 // array dimensions.  
-class FrostLhsType
+class FrostLhsType : public HasSrcCodePosAndIdentBase
 {
 public:		// types
 	typedef Expression* DimensionExpr;
@@ -96,10 +98,6 @@ public:		// types
 
 
 private:		// variables
-	SrcCodePos _src_code_pos;
-
-	SavedString _ident = nullptr;
-
 	bool _is_signed = false;
 
 

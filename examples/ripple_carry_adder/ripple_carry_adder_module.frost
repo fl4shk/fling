@@ -1,7 +1,13 @@
+//module FullAdder(input logic i_a, i_b, i_carry,
+//	output logic o_sum, o_carry)
+//{
+//	assign o_sum = (i_a ^ i_b) ^ i_carry;
+//	assign o_carry = (i_a & i_b) | ((i_a ^ i_b) & i_carry);
+//}
+
 module RippleCarryAdder
 	// "DIO" is short for "data input/output"
-	parameter
-	(
+	#(
 		WIDTH__DIO=4
 	)
 	(
@@ -12,7 +18,6 @@ module RippleCarryAdder
 	)
 {
 	localparam WIDTH__INNER_CARRIES = WIDTH__DIO + 1;
-	//localparam MSB_POS__INNER_CARRIES = WIDTH__INNER_CARRIES - 1;
 
 	logic [WIDTH__INNER_CARRIES] _inner_carries;
 
@@ -21,6 +26,7 @@ module RippleCarryAdder
 
 	generate for (i : range(WIDTH__DIO))
 	{
+		// Future module instantiation syntax:
 		//instance FullAdder
 		//(
 		//	i_a(i_a[i]),
@@ -29,5 +35,13 @@ module RippleCarryAdder
 		//	o_sum(o_sum[i]),
 		//	o_carry(_inner_carries[i + 1])
 		//);
+
+		// Since module instantiation isn't implemented yet (at the time of
+		// writing this comment), just insert the stuff directly here.
+		// Note:  concatenation is also not yet implemented at the time of
+		// writing this comment.
+		assign o_sum[i] = (i_a[i] ^ i_b[i]) ^ _inner_carries[i];
+		assign _inner_carries[i + 1] = (i_a[i] & i_b[i])
+			| ((i_a[i] ^ i_b[i]) & _inner_carries[i]);
 	}
 }

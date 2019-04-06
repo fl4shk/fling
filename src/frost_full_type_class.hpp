@@ -12,13 +12,9 @@ namespace frost_hdl
 
 // The full-fledged type of a "Symbol".  A "typedef" feaure will be
 // facilitated with this as well.
-class FrostFullType
+class FrostFullType : public HasSrcCodePosAndIdentBase
 {
 private:		// variables
-	// for typedefs
-	SrcCodePos _src_code_pos;
-	SavedString _ident = nullptr;
-
 	FrostLhsType* _frost_lhs_type = nullptr;
 	Expression* _right_dim_expr = nullptr;
 

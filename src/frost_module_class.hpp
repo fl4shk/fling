@@ -10,20 +10,21 @@
 #include "frost_full_type_class.hpp"
 //#include "in_scope_errwarn_base_class.hpp"
 
+#include "has_src_code_pos_base_classes.hpp"
+#include "inside_mod_or_gen_class.hpp"
+
 namespace frost_hdl
 {
 
 // Class representing a module from HDL land (not a C++20 module).
 // Nested "module"s are not permitted, and they are always at global scope.
-class FrostModule
+class FrostModule : public HasSrcCodePosAndIdentBase
 {
 private:		// variables
-	SrcCodePos _src_code_pos;
-	SavedString _ident = nullptr;
 	SymbolTable _parameter_symbol_table, _input_symbol_table,
 		_output_symbol_table;
 
-	FrostInsideModuleOrGenerate _inside_module_or_generate;
+	InsideModOrGen _inside_mod_or_gen;
 
 	//FrostLhsTypeTable _frost_lhs_type_table;
 	//FrostFullTypeTable _frost_full_type_table;
@@ -65,9 +66,6 @@ public:		// functions
 	//{
 	//	return std::string("module");
 	//}
-
-	GEN_GETTER_BY_CON_REF(src_code_pos)
-	GEN_GETTER_BY_VAL(ident)
 
 	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_symbol_table)
 	GEN_GETTERS_BY_CON_REF_AND_REF(input_symbol_table)

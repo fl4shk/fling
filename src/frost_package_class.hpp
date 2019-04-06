@@ -9,17 +9,15 @@
 #include "frost_full_type_class.hpp"
 
 #include "in_scope_errwarn_base_class.hpp"
+#include "has_src_code_pos_base_classes.hpp"
 
 namespace frost_hdl
 {
 
 //class FrostPackage : public InScopeErrWarnBase<SrcCodePos>
-class FrostPackage
+class FrostPackage : public HasSrcCodePosAndIdentBase
 {
 private:		// variables
-	SrcCodePos _src_code_pos;
-	SavedString _ident = nullptr;
-
 	SymbolTable _symbol_table;
 	FrostLhsTypeTable _frost_lhs_type_table;
 	//FrostFullTypeTable _frost_full_type_table;

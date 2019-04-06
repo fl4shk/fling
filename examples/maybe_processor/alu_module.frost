@@ -15,11 +15,15 @@
 //{
 //}
 module Alu
-	parameter(WIDTH__DIO=4)
-	(input logic [WIDTH__DIO] i_a, i_b,
-	input logic i_carry,
-	input logic [PkgAlu::WIDTH__OPCODE] i_opcode,
-	output logic [WIDTH__DIO] o_data,
-	output logic o_carry)
+	#(
+		WIDTH__DIO=4
+	)
+	(
+		input logic [WIDTH__DIO] i_a, i_b,
+		input logic i_carry,
+		input logic [PkgAlu::WIDTH__OPCODE] i_opcode,
+		output logic [WIDTH__DIO] o_data,
+		output logic o_carry
+	)
 {
 }

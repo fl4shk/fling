@@ -49,17 +49,15 @@ FrostLhsType::ComponentData::ComponentData(EnumVals&& s_vals_of_enum)
 //}
 FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, bool s_is_signed, DimensionExpr s_left_dim_expr)
+	: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
 {
-	_src_code_pos = s_src_code_pos;
-	_ident = s_ident;
 	_is_signed = s_is_signed;
 	_left_dim_expr = s_left_dim_expr;
 }
 FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, ComponentData&& s_component_data)
+	: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
 {
-	_src_code_pos = s_src_code_pos;
-	_ident = s_ident;
 	_is_signed = false;
 	_component_data = std::move(s_component_data);
 	_left_dim_expr = nullptr;

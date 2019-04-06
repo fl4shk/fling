@@ -22,7 +22,7 @@ FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident, FrostLhsType* s_frost_lhs_type,
 	Expression* s_right_dim_expr)
-	: _src_code_pos(s_src_code_pos), _ident(s_ident),
+	: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident),
 	_frost_lhs_type(s_frost_lhs_type), _right_dim_expr(s_right_dim_expr)
 {
 }

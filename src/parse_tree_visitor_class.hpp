@@ -146,39 +146,6 @@ private:		// variables
 	FrostProgram _frost_program;
 
 
-	class GenerateHeaderFor
-	{
-	public:		// variables
-		//SavedString iter_ident = nullptr;
-		Symbol* iter_sym = nullptr;
-		PseudoFuncCallRange pseudo_func_call_range;
-
-	public:		// functions
-		inline bool is_valid() const
-		{
-			return (pseudo_func_call_range.is_constant()
-				&& (!pseudo_func_call_range.left()->references_symbol
-				(iter_sym))
-				&& (!pseudo_func_call_range.right()->references_symbol
-				(iter_sym)));
-		}
-
-	} _generate_header_for;
-
-	class GenerateHeaderIf
-	{
-	public:		// variables
-		Expression* condition = nullptr;
-
-	public:		// functions
-		inline bool is_valid() const
-		{
-			return condition->is_constant();
-		}
-
-	} _generate_header_if;
-
-
 
 public:		// functions
 	ParseTreeVisitor(ListParsedSrcCode&& s_list_parsed_src_code);
@@ -355,8 +322,8 @@ private:		// visitor functions
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
 
-	VisitorRetType visitInsideModuleOrGenerate
-		(Parser::InsideModuleOrGenerateContext *ctx);
+	VisitorRetType visitInsideModOrGen
+		(Parser::InsideModOrGenContext *ctx);
 
 	VisitorRetType visitModuleStmtContAssign
 		(Parser::ModuleStmtContAssignContext *ctx);

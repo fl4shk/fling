@@ -6,6 +6,10 @@ namespace frost_hdl
 {
 
 //#define EXPR_TO_HDL_SOURCE(expr) (*expr()->to_hdl_source())
+FrostStatement::FrostStatement(const SrcCodePos& s_src_code_pos)
+	: HasSrcCodePosBase(s_src_code_pos)
+{
+}
 
 //SavedString FrostStatement::to_hdl_source(TableNode* top) const
 //{
@@ -13,8 +17,9 @@ namespace frost_hdl
 //}
 
 // Continuous assignment ("assign")
-FrostStmtContAssign::FrostStmtContAssign(Expression* s_lhs_expr,
-	Expression* s_rhs_expr)
+FrostStmtContAssign::FrostStmtContAssign(const SrcCodePos& s_src_code_pos,
+	Expression* s_lhs_expr, Expression* s_rhs_expr)
+	: FrostStatement(s_src_code_pos)
 {
 	_set_exprs(s_lhs_expr, s_rhs_expr);
 }
@@ -54,7 +59,9 @@ FrostStmtContAssign::FrostStmtContAssign(Expression* s_lhs_expr,
 
 // "always_seq"
 FrostStmtBehavBlockAlwaysSeq::FrostStmtBehavBlockAlwaysSeq
-	(EdgeSensType s_edge_sens_type, Expression* s_ident_expr)
+	(const SrcCodePos& s_src_code_pos, EdgeSensType s_edge_sens_type,
+	Expression* s_ident_expr)
+	: FrostStatement(s_src_code_pos)
 {
 	_edge_sens_type = s_edge_sens_type;
 	_set_exprs(s_ident_expr);
@@ -92,8 +99,10 @@ FrostStmtBehavBlockAlwaysSeq::FrostStmtBehavBlockAlwaysSeq
 // Behavioral assignment operator.  Can become either a blocking or a
 // non-blocking assignment depending on whether it was in an "initial",
 // "always_comb", or "always_seq" block.
-FrostStmtBehavAssign::FrostStmtBehavAssign(Expression* s_lhs_expr,
+FrostStmtBehavAssign::FrostStmtBehavAssign
+	(const SrcCodePos& s_src_code_pos, Expression* s_lhs_expr,
 	Expression* s_rhs_expr)
+	: FrostStatement(s_src_code_pos)
 {
 	_set_exprs(s_lhs_expr, s_rhs_expr);
 }

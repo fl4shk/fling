@@ -18,11 +18,9 @@ class FrostLhsType;
 
 // Barebones for now...
 // This will eventually be used for both "function"s and "task"s.
-class FrostFunction
+class FrostFunction : public HasSrcCodePosAndIdentBase
 {
 private:		// variables
-	SrcCodePos _src_code_pos;
-	SavedString _ident = nullptr;
 	bool _is_task = false;
 	bool _is_constexpr = false;
 
