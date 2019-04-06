@@ -23,7 +23,8 @@ protected:		// variables
 
 public:		// variables
 	// These are public because "InsideModOrGen" is intended to be used, as
-	// you may have guessed, only inside "FrostModule" or "FrostGenerate".
+	// you may have guessed from this class's name, only inside
+	// "FrostModule" or "FrostGenerate".
 	SymbolTable local_symbol_table;
 	FrostLhsTypeTable frost_lhs_type_table;
 	FrostFullTypeTable frost_full_type_table;
@@ -34,6 +35,10 @@ public:		// variables
 public:		// functions
 	InsideModOrGen();
 
+	// We don't want the tables to be initialized inline, so we call
+	// the constructor.  That is the purpose of having the constructor be
+	// in the ".cpp" file.  Link time optimization might mess with me here
+	// in some cases, though, heh.
 	template<typename ParentType>
 	inline InsideModOrGen(ParentType* s_parent)
 		: InsideModOrGen()
@@ -44,6 +49,12 @@ public:		// functions
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(InsideModOrGen);
 
 	virtual ~InsideModOrGen();
+
+	Symbol* find_symbol(SavedString some_name) const;
+	inline bool contains_symbol(SavedString some_name) const
+	{
+		return (find_symbol(some_name) != nullptr);
+	}
 
 	GEN_GETTER_BY_CON_REF(parent)
 };
