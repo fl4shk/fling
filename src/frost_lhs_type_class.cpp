@@ -7,30 +7,11 @@ namespace frost_hdl
 {
 
 // Construct data for a composite "FrostLhsType"
-FrostLhsType::ComponentData::ComponentData(CompositeType s_composite_type,
-	SymbolTable&& s_parameter_symbol_table, CompositeVars&& s_composite_vars,
-	CompositeFuncs&& s_funcs)
+FrostLhsType::ComponentData::ComponentData(bool s_is_packed,
+	SymbolTable&& s_parameter_symbol_table,
+	CompositeVars&& s_composite_vars, CompositeFuncs&& s_funcs)
 {
-	//_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
-	switch (s_composite_type)
-	{
-	case CompositeType::CompositePacked:
-		_type = ComponentType::Packed;
-		break;
-	case CompositeType::CompositeUnpacked:
-		_type = ComponentType::Unpacked;
-		break;
-	case CompositeType::CompositeSplitvar:
-		_type = ComponentType::Splitvar;
-		break;
-	default:
-		printerr("Internal ParseTreeVisitor Error:  FrostLhsType",
-			"::ComponentData::ComponentData():  Eek!\n");
-		exit(1);
-
-		// Useless "break"; only here for consistency.
-		break;
-	}
+	_type = s_is_packed ? ComponentType::Packed : ComponentType::Unpacked;
 
 	_parameter_symbol_table = std::move(s_parameter_symbol_table);
 	_can_be_parameterized = true;

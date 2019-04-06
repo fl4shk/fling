@@ -38,15 +38,8 @@ public:		// types
 		Enum,
 		Packed,
 		Unpacked,
-		Splitvar,
 	};
 
-	enum class CompositeType
-	{
-		CompositePacked,
-		CompositeUnpacked,
-		CompositeSplitvar,
-	};
 
 	// Stuff for custom types, not counting those that are arrays.
 	// If custom types that are arrays are supported (most likely via some
@@ -70,9 +63,9 @@ public:		// types
 		ComponentData() = default;
 
 		// Construct data for a composite "FrostLhsType"
-		ComponentData(CompositeType s_composite_type,
-			SymbolTable&& s_parameter_symbol_table, CompositeVars&& s_composite_vars,
-			CompositeFuncs&& s_funcs);
+		ComponentData(bool s_is_packed,
+			SymbolTable&& s_parameter_symbol_table,
+			CompositeVars&& s_composite_vars, CompositeFuncs&& s_funcs);
 
 
 		// Construct data for an enum "FrostLhsType"
@@ -168,10 +161,6 @@ public:		// functions
 	inline bool is_unpacked_composite() const
 	{
 		return (component_type() == ComponentType::Unpacked);
-	}
-	inline bool is_splitvar_composite() const
-	{
-		return (component_type() == ComponentType::Splitvar);
 	}
 
 	size_t left_dim() const;

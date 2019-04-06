@@ -82,7 +82,7 @@ insidePackage:
 
 
 // For now, port vars can't be arrays.  Perhaps things will actually stay
-// that way (such that arrays on ports *must* be in "splitvar" "struct"s)
+// that way (such that arrays on ports *must* be in "unpacked" "struct"s)
 declPortVarList:
 	lhsTypeName identName ((',' identName)*)
 	;
@@ -114,14 +114,14 @@ declModule:
 		')'
 
 	'{'
-		insideModule
+		insideModuleOrGenerate
 	'}'
 	;
 
 
 
 
-insideModule:
+insideModuleOrGenerate:
 	(
 		declLocalparamList ';'
 		| declVarList ';'
@@ -153,13 +153,11 @@ moduleStmtGenerate:
 	TokKwGenerate
 	(
 		generateHeaderFor
-		//| generateHeaderIf
+		| generateHeaderIf
 	)
 
 	'{'
-		// FUTURE:  Change this to support more things later (probably
-		// simply by using "insideModule+").
-		moduleStmtInstantiateModule ';'
+		insideModuleOrGenerate
 	'}'
 	;
 
@@ -168,13 +166,13 @@ generateHeaderFor:
 	;
 
 pseudoFuncCallRange:
-	//TokKwRange '(' ((expr ',')?) expr ')'
-	TokKwRange '(' expr ')'
+	TokKwRange '(' ((expr ',')?) expr ')'
 	;
 
-//generateHeaderIf:
-//	TokKwIf '(' expr ')'
-//	;
+
+generateHeaderIf:
+	TokKwIf '(' expr ')'
+	;
 
 
 // Expression parsing
@@ -292,6 +290,9 @@ sliceWithAny:
 	| sliceWithRange
 	;
 
+identConcatExpr:
+	TokKwConcat '(' identExpr ((',' identExpr)*) ')'
+	;
 
 identName: TokIdent ;
 scopedIdentName: identName TokScope identName
@@ -361,7 +362,6 @@ TokKwStruct: 'struct' ;
 
 TokKwPacked: 'packed' ;
 TokKwUnpacked: 'unpacked' ;
-TokKwSplitvar: 'splitvar' ;
 
 TokKwUnsigned: 'unsigned' ;
 TokKwSigned: 'signed' ;
@@ -381,8 +381,8 @@ TokKwFunction: 'function' ;
 TokKwPackage: 'package' ;
 
 
-TokKwDollarConcat: '$concat' ;
-TokKwDollarRepl: '$repl' ;
+TokKwConcat: 'concat' ;
+TokKwRepl: 'repl' ;
 
 TokKwDollarUnsgn: '$unsgn' ;
 TokKwDollarSgn: '$sgn' ;

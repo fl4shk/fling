@@ -333,6 +333,53 @@ VisitorRetType ParseTreeVisitor::visitDeclVarList
 
 	return nullptr;
 }
+VisitorRetType ParseTreeVisitor::visitModuleStmtInstantiateModule
+	(Parser::ModuleStmtInstantiateModuleContext *ctx)
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->identName());
+	auto ident = _stacks.pop_str();
+
+	if (ctx->instantiateModulePortsList())
+	{
+		ANY_ACCEPT_IF_BASIC(ctx->instantiateModulePortsList());
+	}
+	else // if (!ctx->instantiateModulePortsList())
+	{
+	}
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitInstantiateModulePortsList
+	(Parser::InstantiateModulePortsListContext *ctx)
+{
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitModuleStmtGenerate
+	(Parser::ModuleStmtGenerateContext *ctx)
+{
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitGenerateHeaderFor
+	(Parser::GenerateHeaderForContext *ctx)
+{
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitPseudoFuncCallRange
+	(Parser::PseudoFuncCallRangeContext *ctx)
+{
+
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitGenerateHeaderIf
+	(Parser::GenerateHeaderIfContext *ctx)
+{
+
+	return nullptr;
+}
+
 VisitorRetType ParseTreeVisitor::visitDeclNoKwLocalparam
 	(Parser::DeclNoKwLocalparamContext *ctx)
 {
@@ -570,7 +617,7 @@ VisitorRetType ParseTreeVisitor::visitInsidePackage
 }
 
 // For now, port vars can't be arrays.  Perhaps things will actually stay
-// that way (such that arrays on ports *must* be in "splitvar" "struct"s)
+// that way (such that arrays on ports *must* be in "unpacked" "struct"s)
 VisitorRetType ParseTreeVisitor::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 {
@@ -713,7 +760,7 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 		_frost_program.curr_frost_module
 			= _frost_program.frost_module_table.at(_stacks.pop_str());
 
-		ANY_JUST_ACCEPT_BASIC(ctx->insideModule());
+		ANY_JUST_ACCEPT_BASIC(ctx->insideModuleOrGenerate());
 	}
 	else
 	{
@@ -724,8 +771,8 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 	return nullptr;
 }
 
-VisitorRetType ParseTreeVisitor::visitInsideModule
-	(Parser::InsideModuleContext *ctx)
+VisitorRetType ParseTreeVisitor::visitInsideModuleOrGenerate
+	(Parser::InsideModuleOrGenerateContext *ctx)
 {
 	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
 		ctx->declLocalparamList())
@@ -1230,6 +1277,7 @@ VisitorRetType ParseTreeVisitor::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 {
 	ANY_ACCEPT_IF_BASIC(ctx->pureIdentExpr())
+	else ANY_ACCEPT_IF_BASIC(ctx->slicedPureIdentExpr())
 	//else if (ctx->identConcatExpr())
 	//{
 	//	ANY_JUST_ACCEPT_BASIC(ctx->identConcatExpr());
@@ -1458,6 +1506,11 @@ VisitorRetType ParseTreeVisitor::visitSliceWithRange
 }
 VisitorRetType ParseTreeVisitor::visitSliceWithAny
 	(Parser::SliceWithAnyContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitIdentConcatExpr
+	(Parser::IdentConcatExprContext *ctx)
 {
 	return nullptr;
 }

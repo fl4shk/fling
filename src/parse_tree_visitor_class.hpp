@@ -8,6 +8,7 @@
 
 #include "table_types.hpp"
 #include "frost_program_class.hpp"
+#include "pseudo_func_call_range_class.hpp"
 
 namespace frost_hdl
 {
@@ -71,7 +72,6 @@ public:		// types
 
 		Done,
 	};
-
 
 private:		// variables
 
@@ -144,6 +144,40 @@ private:		// variables
 
 	//MoveOnlyPrevCurrPair<FrostProgram> _frost_program;
 	FrostProgram _frost_program;
+
+
+	class GenerateHeaderFor
+	{
+	public:		// variables
+		//SavedString iter_ident = nullptr;
+		Symbol* iter_sym = nullptr;
+		PseudoFuncCallRange pseudo_func_call_range;
+
+	public:		// functions
+		inline bool is_valid() const
+		{
+			return (pseudo_func_call_range.is_constant()
+				&& (!pseudo_func_call_range.left()->references_symbol
+				(iter_sym))
+				&& (!pseudo_func_call_range.right()->references_symbol
+				(iter_sym)));
+		}
+
+	} _generate_header_for;
+
+	class GenerateHeaderIf
+	{
+	public:		// variables
+		Expression* condition = nullptr;
+
+	public:		// functions
+		inline bool is_valid() const
+		{
+			return condition->is_constant();
+		}
+
+	} _generate_header_if;
+
 
 
 public:		// functions
@@ -280,6 +314,19 @@ private:		// visitor functions
 	VisitorRetType visitDeclVarList
 		(Parser::DeclVarListContext *ctx);
 
+	VisitorRetType visitModuleStmtInstantiateModule
+		(Parser::ModuleStmtInstantiateModuleContext *ctx);
+	VisitorRetType visitInstantiateModulePortsList
+		(Parser::InstantiateModulePortsListContext *ctx);
+	VisitorRetType visitModuleStmtGenerate
+		(Parser::ModuleStmtGenerateContext *ctx);
+	VisitorRetType visitGenerateHeaderFor
+		(Parser::GenerateHeaderForContext *ctx);
+	VisitorRetType visitPseudoFuncCallRange
+		(Parser::PseudoFuncCallRangeContext *ctx);
+	VisitorRetType visitGenerateHeaderIf
+		(Parser::GenerateHeaderIfContext *ctx);
+
 	VisitorRetType visitDeclNoKwLocalparam
 		(Parser::DeclNoKwLocalparamContext *ctx);
 	VisitorRetType visitDeclLocalparamList
@@ -308,8 +355,8 @@ private:		// visitor functions
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
 
-	VisitorRetType visitInsideModule
-		(Parser::InsideModuleContext *ctx);
+	VisitorRetType visitInsideModuleOrGenerate
+		(Parser::InsideModuleOrGenerateContext *ctx);
 
 	VisitorRetType visitModuleStmtContAssign
 		(Parser::ModuleStmtContAssignContext *ctx);
@@ -373,6 +420,9 @@ private:		// visitor functions
 		(Parser::SliceWithRangeContext *ctx);
 	VisitorRetType visitSliceWithAny
 		(Parser::SliceWithAnyContext *ctx);
+
+	VisitorRetType visitIdentConcatExpr
+		(Parser::IdentConcatExprContext *ctx);
 
 
 	VisitorRetType visitIdentName
