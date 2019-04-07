@@ -284,4 +284,9 @@ void ExprNum::perf_asr(const ExprNum& to_shift, const ExprNum& amount)
 	set_data(std::move(n_data));
 }
 
+void ExprNum::perf_slice_with_range(const ExprNum& to_slice,
+	const ExprNum& range_left, const ExprNum& range_right)
+{
+}
+
 } // namespace frost_hdl

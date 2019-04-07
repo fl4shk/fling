@@ -4,7 +4,8 @@
 // src/expression_builder_class.hpp
 
 #include "misc_includes.hpp"
-#include "expression_classes.hpp"
+#include "expression_class.hpp"
+#include "expr/expr_all_classes.hpp"
 
 namespace frost_hdl
 {

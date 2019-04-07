@@ -153,6 +153,10 @@ public:		// functions
 	// Arithmetic Shift Right
 	void perf_asr(const ExprNum& to_shift, const ExprNum& amount);
 
+	// Slice with a range
+	void perf_slice_with_range(const ExprNum& to_slice,
+		const ExprNum& range_left, const ExprNum& range_right);
+
 	GEN_GETTER_AND_SETTER_BY_VAL(is_signed)
 };
 

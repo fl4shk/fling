@@ -4,7 +4,7 @@
 // src/pseudo_func_call_range_class.hpp
 
 #include "misc_includes.hpp"
-#include "expression_classes.hpp"
+#include "expression_class.hpp"
 
 namespace frost_hdl
 {

@@ -1,6 +1,6 @@
 #include "general_allocator_class.hpp"
 #include "expr_num_class.hpp"
-#include "expression_classes.hpp"
+#include "expression_class.hpp"
 #include "symbol_class.hpp"
 #include "frost_lhs_type_class.hpp"
 #include "frost_full_type_class.hpp"

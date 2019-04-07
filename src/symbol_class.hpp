@@ -6,7 +6,7 @@
 #include "misc_includes.hpp"
 #include "general_allocator_class.hpp"
 #include "ident_table_classes.hpp"
-//#include "expression_classes.hpp"
+//#include "expression_class.hpp"
 //#include "frost_full_type_class.hpp"
 //#include "misc_types.hpp"
 
@@ -45,7 +45,7 @@ public:		// types
 		// Ports
 		Input,
 		Output,
-		Inout,
+		//Inout,
 		//Splitvar,
 	};
 

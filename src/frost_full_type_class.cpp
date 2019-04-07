@@ -1,5 +1,5 @@
 #include "frost_full_type_class.hpp"
-#include "expression_classes.hpp"
+#include "expression_class.hpp"
 #include "expression_builder_class.hpp"
 
 namespace frost_hdl

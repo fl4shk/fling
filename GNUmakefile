@@ -4,6 +4,7 @@
 
 
 SHARED_SRC_DIRS:=src \
+	src/expr \
 	src/gen_src \
 	src/liborangepower_src/gmp_stuff \
 

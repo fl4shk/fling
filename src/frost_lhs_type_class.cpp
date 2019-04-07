@@ -1,5 +1,5 @@
 #include "frost_lhs_type_class.hpp"
-#include "expression_classes.hpp"
+#include "expression_class.hpp"
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 
