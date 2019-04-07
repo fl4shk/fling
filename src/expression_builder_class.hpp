@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "expression_class.hpp"
-#include "expr/expr_all_classes.hpp"
+#include "expr/expr_derived_classes.hpp"
 
 namespace frost_hdl
 {

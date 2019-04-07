@@ -4,7 +4,7 @@
 #include "frost_full_type_class.hpp"
 
 #include "expr/dot_cpp_defines.hpp"
-#include "expr/expr_all_classes.hpp"
+#include "expr/expr_derived_classes.hpp"
 
 #include "general_allocator_class.hpp"
 
