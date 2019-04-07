@@ -574,7 +574,7 @@ protected:		// functions
 		if (static_cast<BigNum>(_right_child_value())
 			== static_cast<BigNum>(0))
 		{
-			src_code_pos().err("Division by zero.");
+			_err("Division by zero.");
 		}
 
 		// FIXME:  BUG HERE
@@ -611,7 +611,7 @@ protected:		// functions
 		if (static_cast<BigNum>(_right_child_value())
 			== static_cast<BigNum>(0))
 		{
-			src_code_pos().err("Modulo by zero.");
+			_err("Modulo by zero.");
 		}
 
 		// FIXME:  BUG HERE

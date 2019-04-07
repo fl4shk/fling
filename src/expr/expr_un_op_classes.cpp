@@ -24,8 +24,9 @@ SavedString ExprBaseUnOp::to_hdl_source() const
 		break;
 	default:
 		// Eek!
-		printerr("ExprBaseUnOp::to_hdl_source():  Eek!\n");
-		exit(1);
+		//printerr("ExprBaseUnOp::to_hdl_source():  Eek!\n");
+		//exit(1);
+		_err("ExprBaseUnOp::to_hdl_source():  Eek!");
 		return nullptr;
 		break;
 	}

@@ -153,6 +153,7 @@ public:		// functions
 
 
 protected:		// functions
+	void _err(const std::string& msg) const;
 	inline void _set_value(const ExprNum& n_value)
 	{
 		_value = n_value;

@@ -141,7 +141,7 @@ SavedString Expression::to_hdl_source() const
 {
 	//printerr("Expression::to_hdl_source():  Eek!");
 	//exit(1);
-	src_code_pos().err("Expression::to_hdl_source():  Eek!");
+	_err("Expression::to_hdl_source():  Eek!");
 	return nullptr;
 }
 
@@ -150,11 +150,20 @@ auto Expression::lhs_category() const -> LhsCategory
 	return LhsCategory::None;
 }
 
+void Expression::_err(const std::string& msg) const
+{
+	src_code_pos().err(msg);
+}
+
+void Expression::_inner_finish_init_value()
+{
+}
 
 void Expression::_evaluate()
 {
-	printerr("Expression::_evaluate():  Eek!");
-	exit(1);
+	//printerr("Expression::_evaluate():  Eek!");
+	//exit(1);
+	_err("Expression::_evaluate():  Eek!");
 
 	_set_value(ExprNum(0, 1, false));
 }
@@ -167,8 +176,9 @@ bool Expression::_children_affect_length() const
 
 size_t Expression::_starting_length() const
 {
-	printerr("Expression::_starting_length():  Eek!");
-	exit(1);
+	//printerr("Expression::_starting_length():  Eek!");
+	//exit(1);
+	_err("Expression::_starting_length():  Eek!");
 
 	return 0;
 }
@@ -178,9 +188,6 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
-void Expression::_inner_finish_init_value()
-{
-}
 
 //Expression* Expression::_inner_dup_with_changed_symbols
 //	(const ReplaceSymsMap& replace_syms_map) const
