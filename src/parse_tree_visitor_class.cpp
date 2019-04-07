@@ -746,6 +746,10 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 		curr_frost_module = save_frost_module(FrostModule
 			(_make_src_code_pos(ctx), s_ident));
 
+		curr_frost_module->module_scope() = ModuleScope(curr_frost_module);
+
+		_stacks.push_module_scope(&curr_frost_module->module_scope());
+
 		// Process "parameter"s of this module.
 		ANY_ACCEPT_IF_BASIC(ctx->declParameterVarList())
 
@@ -754,17 +758,19 @@ VisitorRetType ParseTreeVisitor::visitDeclModule
 			ctx->declPortDirectionalVarList())
 
 		frost_module_table.insert_or_assign(curr_frost_module);
+
+		_stacks.pop_module_scope();
 	}
 	else if ((pass() == Pass::ListModuleInnerDecl)
 		|| (pass() == Pass::FinishRawModuleConstruct))
 	{
 		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		auto& module = _frost_program.curr_frost_module;
+		auto& curr_frost_module = _frost_program.curr_frost_module;
 
-		module = _frost_program.frost_module_table.at(_stacks
+		curr_frost_module = _frost_program.frost_module_table.at(_stacks
 			.pop_str());
 
-		_stacks.push_module_scope(&module->module_scope());
+		_stacks.push_module_scope(&curr_frost_module->module_scope());
 		ANY_JUST_ACCEPT_BASIC(ctx->moduleScope());
 		_stacks.pop_module_scope();
 	}

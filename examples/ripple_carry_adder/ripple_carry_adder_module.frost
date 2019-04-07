@@ -41,6 +41,10 @@ module RippleCarryAdder
 		// Note:  concatenation is also not yet implemented at the time of
 		// writing this comment.
 		assign o_sum[i] = (i_a[i] ^ i_b[i]) ^ _inner_carries[i];
+	}
+
+	generate for (i : range(WIDTH__DIO))
+	{
 		assign _inner_carries[i + 1] = (i_a[i] & i_b[i])
 			| ((i_a[i] ^ i_b[i]) & _inner_carries[i]);
 	}
