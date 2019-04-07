@@ -114,14 +114,14 @@ declModule:
 		')'
 
 	'{'
-		insideModOrGen
+		moduleScope
 	'}'
 	;
 
 
 
 
-insideModOrGen:
+moduleScope:
 	(
 		declLocalparamList ';'
 		| declVarList ';'
@@ -157,7 +157,7 @@ moduleStmtGenerate:
 	)
 
 	'{'
-		insideModOrGen
+		moduleScope
 	'}'
 	;
 

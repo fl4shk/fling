@@ -87,6 +87,7 @@ private:		// variables
 		X(FrostFullType*, FrostFullType*, full_type) \
 		X(FrostStatementTable::Node*, FrostStatementTable::Node*, \
 			statement_table_node) \
+		X(ModuleScope*, ModuleScope*, module_scope) \
 
 	class Stacks
 	{
@@ -112,6 +113,10 @@ private:		// variables
 				auto ret = _##whateverfix##_inner_stack.top(); \
 				_##whateverfix##_inner_stack.pop(); \
 				return ret; \
+			} \
+			inline const auto& whateverfix##_inner_stack() const \
+			{ \
+				return _##whateverfix##_inner_stack; \
 			}
 
 		LIST_FOR_GEN_STACK(GEN_STACK_FUNCS)
@@ -322,8 +327,8 @@ private:		// visitor functions
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
 
-	VisitorRetType visitInsideModOrGen
-		(Parser::InsideModOrGenContext *ctx);
+	VisitorRetType visitModuleScope
+		(Parser::ModuleScopeContext *ctx);
 
 	VisitorRetType visitModuleStmtContAssign
 		(Parser::ModuleStmtContAssignContext *ctx);

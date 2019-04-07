@@ -13,8 +13,14 @@ class Symbol;
 
 // Used for temporary type identifiers before actual dimension expressions
 // are evaluated.
-SavedString construct_initial_type_ident_from_expr(SavedString base_ident,
-	Expression* expr);
+template<typename Type>
+SavedString construct_initial_type_ident_from_pointer
+	(SavedString base_ident, Type* pointer)
+{
+	return dup_str(sconcat(*base_ident, "[",
+		reinterpret_cast<uintptr_t>(pointer),
+		"]"));
+}
 
 
 

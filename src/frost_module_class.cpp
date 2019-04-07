@@ -36,9 +36,9 @@ Symbol* FrostModule::find_symbol_in_top_scope(SavedString some_name) const
 	//{
 	//	return inout_symbol_table().at(some_name);
 	//}
-	if (_inside_mod_or_gen.local_symbol_table.contains(some_name))
+	if (_module_scope.local_symbol_table.contains(some_name))
 	{
-		return _inside_mod_or_gen.local_symbol_table.at(some_name);
+		return _module_scope.local_symbol_table.at(some_name);
 	}
 
 	return nullptr;

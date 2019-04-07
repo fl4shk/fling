@@ -9,7 +9,7 @@
 
 #include "has_src_code_pos_base_classes.hpp"
 #include "generate_header_classes.hpp"
-#include "inside_mod_or_gen_class.hpp"
+#include "module_scope_class.hpp"
 
 
 namespace frost_hdl
@@ -18,18 +18,18 @@ namespace frost_hdl
 class FrostGenerate : public HasSrcCodePosBase
 {
 private:		// variables
-	InsideModOrGen _inside_mod_or_gen;
+	ModuleScope _module_scope;
 
 	GenerateParent _parent;
 
-	std::variant<GenerateHeaderFor*, GenerateHeaderIf*> _header;
+	std::variant<GenerateHeaderFor, GenerateHeaderIf> _header;
 
 public:		// functions
 	FrostGenerate(const SrcCodePos& s_src_code_pos);
 
 	template<typename ParentType, typename HeaderType>
 	inline FrostGenerate(const SrcCodePos& s_src_code_pos,
-		ParentType* s_parent, HeaderType* s_header)
+		ParentType* s_parent, const HeaderType& s_header)
 		: FrostGenerate(s_src_code_pos)
 	{
 		_parent = s_parent;
@@ -40,7 +40,7 @@ public:		// functions
 
 	virtual ~FrostGenerate();
 
-	GEN_GETTERS_BY_CON_REF_AND_REF(inside_mod_or_gen)
+	GEN_GETTERS_BY_CON_REF_AND_REF(module_scope)
 	GEN_GETTER_BY_CON_REF(parent)
 	GEN_GETTER_BY_CON_REF(header)
 };

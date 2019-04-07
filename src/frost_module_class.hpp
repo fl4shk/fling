@@ -11,7 +11,7 @@
 //#include "in_scope_errwarn_base_class.hpp"
 
 #include "has_src_code_pos_base_classes.hpp"
-#include "inside_mod_or_gen_class.hpp"
+#include "module_scope_class.hpp"
 
 namespace frost_hdl
 {
@@ -24,7 +24,7 @@ private:		// variables
 	SymbolTable _parameter_symbol_table, _input_symbol_table,
 		_output_symbol_table;
 
-	InsideModOrGen _inside_mod_or_gen;
+	ModuleScope _module_scope;
 
 	//FrostLhsTypeTable _frost_lhs_type_table;
 	//FrostFullTypeTable _frost_full_type_table;
@@ -79,7 +79,7 @@ public:		// functions
 	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_function_table)
 	//GEN_GETTERS_BY_CON_REF_AND_REF(frost_statement_table)
 	////GEN_GETTERS_BY_CON_REF_AND_REF(contained_module_instance_types)
-	GEN_GETTERS_BY_CON_REF_AND_REF(inside_mod_or_gen)
+	GEN_GETTERS_BY_CON_REF_AND_REF(module_scope)
 };
 
 

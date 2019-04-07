@@ -17,7 +17,7 @@ class FrostFunction;
 class FrostPackage;
 class FrostInterface;
 class FrostModule;
-//class FrostInstModule;
+class FrostInstModule;
 class FrostStatement;
 class FrostGenerate;
 
@@ -32,7 +32,7 @@ typedef IdentToPointerTable<FrostFunction> FrostFunctionTable;
 typedef IdentToPointerTable<FrostPackage> FrostPackageTable;
 typedef IdentToPointerTable<FrostInterface> FrostInterfaceTable;
 typedef IdentToPointerTable<FrostModule> FrostModuleTable;
-//typedef IdentToPointerTable<FrostInstModule> FrostInstModuleTable;
+typedef IdentToPointerTable<FrostInstModule> FrostInstModuleTable;
 typedef ScopedUnnamedTable<FrostStatement> FrostStatementTable;
 typedef PointerVector<FrostGenerate> FrostGenerateTable;
 

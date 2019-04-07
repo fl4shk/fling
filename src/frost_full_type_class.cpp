@@ -14,9 +14,9 @@ FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 }
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 	FrostLhsType* s_frost_lhs_type, Expression* s_right_dim_expr)
-	: FrostFullType(s_src_code_pos, construct_initial_type_ident_from_expr
-	(s_frost_lhs_type->ident(), s_right_dim_expr),
-	s_frost_lhs_type, s_right_dim_expr)
+	: FrostFullType(s_src_code_pos,
+	construct_initial_type_ident_from_pointer(s_frost_lhs_type->ident(),
+	s_right_dim_expr), s_frost_lhs_type, s_right_dim_expr)
 {
 }
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,

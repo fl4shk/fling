@@ -76,7 +76,7 @@ SavedString FrostLhsType::construct_initial_builtin_type_ident
 	{
 		// Need some way to make the name unique!  Also, how do I handle
 		// cases where I don't know the values of named constants yet?
-		s_ident += *construct_initial_type_ident_from_expr
+		s_ident += *construct_initial_type_ident_from_pointer
 			(dup_str(s_ident), s_left_dim_expr);
 	}
 

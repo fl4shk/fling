@@ -1,19 +1,19 @@
-#include "inside_mod_or_gen_class.hpp"
+#include "module_scope_class.hpp"
 #include "frost_module_class.hpp"
 #include "frost_generate_class.hpp"
 
 namespace frost_hdl
 {
 
-InsideModOrGen::InsideModOrGen()
+ModuleScope::ModuleScope()
 {
 }
 
-InsideModOrGen::~InsideModOrGen()
+ModuleScope::~ModuleScope()
 {
 }
 
-Symbol* InsideModOrGen::find_symbol(SavedString some_name) const
+Symbol* ModuleScope::find_symbol(SavedString some_name) const
 {
 	if (std::holds_alternative<FrostGenerate*>(_parent))
 	{
@@ -32,13 +32,17 @@ Symbol* InsideModOrGen::find_symbol(SavedString some_name) const
 		if (std::holds_alternative<FrostGenerate*>(parent_of_parent))
 		{
 			return std::get<FrostGenerate*>(parent_of_parent)
-				->inside_mod_or_gen().find_symbol(some_name);
+				->module_scope().find_symbol(some_name);
 		}
 		else if (std::holds_alternative<FrostModule*>(parent_of_parent))
 		{
 			return std::get<FrostModule*>(parent_of_parent)
-				->inside_mod_or_gen().find_symbol(some_name);
+				->module_scope().find_symbol(some_name);
 		}
+
+		// This should *never* happen.  If it does, we spit out an error.
+		printerr("Error:  ModuleScope::find_symbol():  Eek 0!\n");
+		exit(1);
 	}
 	else if (std::holds_alternative<FrostModule*>(_parent))
 	{
@@ -47,7 +51,7 @@ Symbol* InsideModOrGen::find_symbol(SavedString some_name) const
 	}
 
 	// This should *never* happen.  If it does, we spit out an error.
-	printerr("Error:  InsideModOrGen::find_symbol():  Eek!\n");
+	printerr("Error:  ModuleScope::find_symbol():  Eek 1!\n");
 	exit(1);
 
 	return nullptr;

@@ -1,7 +1,7 @@
-#ifndef src_inside_mod_or_gen_class_hpp
-#define src_inside_mod_or_gen_class_hpp
+#ifndef src_module_scope_class_hpp
+#define src_module_scope_class_hpp
 
-// src/inside_mod_or_gen_class.hpp
+// src/module_scope_class.hpp
 
 #include "misc_includes.hpp"
 #include "symbol_class.hpp"
@@ -14,7 +14,9 @@ namespace frost_hdl
 
 // Here we have a rare instance of a class used in the IR not being derived
 // from "HasSrcCodePosBase"
-class InsideModOrGen
+// This class is used to represent the insides of of a "FrostModule" or the
+// insides of a "FrostGenerate".
+class ModuleScope
 {
 protected:		// variables
 	// This is intended to be used for searching for symbols in the
@@ -22,7 +24,7 @@ protected:		// variables
 	GenerateParent _parent;
 
 public:		// variables
-	// These are public because "InsideModOrGen" is intended to be used, as
+	// These are public because "ModuleScope" is intended to be used, as
 	// you may have guessed from this class's name, only inside
 	// "FrostModule" or "FrostGenerate".
 	SymbolTable local_symbol_table;
@@ -33,22 +35,22 @@ public:		// variables
 	FrostGenerateTable frost_generate_table;
 
 public:		// functions
-	InsideModOrGen();
+	ModuleScope();
 
 	// We don't want the tables to be initialized inline, so we call
 	// the constructor.  That is the purpose of having the constructor be
 	// in the ".cpp" file.  Link time optimization might mess with me here
 	// in some cases, though, heh.
 	template<typename ParentType>
-	inline InsideModOrGen(ParentType* s_parent)
-		: InsideModOrGen()
+	inline ModuleScope(ParentType* s_parent)
+		: ModuleScope()
 	{
 		_parent = s_parent;
 	}
 
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(InsideModOrGen);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ModuleScope);
 
-	virtual ~InsideModOrGen();
+	virtual ~ModuleScope();
 
 	Symbol* find_symbol(SavedString some_name) const;
 	inline bool contains_symbol(SavedString some_name) const
@@ -61,4 +63,4 @@ public:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src_inside_mod_or_gen_class_hpp
+#endif		// src_module_scope_class_hpp
