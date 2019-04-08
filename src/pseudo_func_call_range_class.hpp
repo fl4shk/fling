@@ -27,6 +27,9 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(PseudoFuncCallRange);
 	virtual ~PseudoFuncCallRange() = default;
 
+	// As far as I can tell, it doesn't really matter whether we use "<" or
+	// "<=" in "is_ascending()", but I am biased towards "<" because
+	// descending ranges are far more my thing than ascending ones.
 	inline bool is_ascending() const
 	{
 		return (static_cast<BigNum>(left()->value())
@@ -37,15 +40,20 @@ public:		// functions
 		return (!is_ascending());
 	}
 	//inline bool is_constant() const
-	//inline bool is_valid() const
 	//{
 	//	return (left()->is_constant() && right()->is_constant());
 	//}
+	inline bool is_constant() const
+	{
+		return (left()->is_constant() && right()->is_constant());
+	}
 	inline void evaluate() const
 	{
 		_left->full_evaluate_if_constant();
 		_right->full_evaluate_if_constant();
 	}
+
+	size_t size() const;
 
 	GEN_GETTER_BY_VAL(left)
 	GEN_GETTER_BY_VAL(right)

@@ -69,6 +69,8 @@ void Expression::finish_init_value()
 		_value.set_size(_starting_length());
 	}
 }
+
+
 bool Expression::references_symbol(Symbol* to_check) const
 {
 	//printout("Expression::references_symbol():  ", *to_check->ident(),
@@ -85,9 +87,10 @@ bool Expression::references_symbol(Symbol* to_check) const
 		return true;
 	}
 
-	// Here we execute the recursion.  This *only* works if "Expression"s
-	// are truly trees.  I *really* hope there are no bugs that can cause
-	// an "Expression" to have itself as a descendant.
+	// Here we execute the recursion into children.  This *only* works if
+	// "Expression"s are truly trees.  I *really* hope there are no bugs
+	// that can cause an "Expression" to have itself as a descendant, but I
+	// think this is a low risk.
 	for (auto iter : _children)
 	{
 		if (iter->references_symbol(to_check))
@@ -228,8 +231,10 @@ void Expression::_full_evaluate(bool is_real_top)
 		iter->_full_evaluate(false);
 	}
 
+	// When does this happen?
 	if (!_is_pseudo_top_level_node())
 	{
+		//printout("!_is_pseudo_top_level_node():  Test\n");
 		_perf_mega_descs_cast(value().size(), value().is_signed());
 	}
 	else // if (_is_pseudo_top_level_node())

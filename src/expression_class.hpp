@@ -56,9 +56,13 @@ protected:		// variables
 	ChildrenList _children;
 
 	Symbol* _symbol = nullptr;
+
 	bool _is_self_determined = false;
+
 	bool _handles_children_eval = false;
 	bool _handles_value_set_size = false;
+
+
 	ExprNum _value;
 
 	SrcCodePos _src_code_pos;
@@ -146,6 +150,7 @@ public:		// functions
 
 	GEN_GETTER_AND_SETTER_BY_VAL(is_self_determined)
 	GEN_GETTER_AND_SETTER_BY_VAL(handles_children_eval)
+	GEN_GETTER_AND_SETTER_BY_VAL(handles_value_set_size)
 
 	GEN_GETTER_AND_SETTER_BY_VAL(symbol)
 

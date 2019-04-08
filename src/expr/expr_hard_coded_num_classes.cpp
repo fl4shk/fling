@@ -13,7 +13,7 @@ ExprIdentSizedHardCodedNum::ExprIdentSizedHardCodedNum
 {
 	_size_expr = s_size_expr;
 	_temp_value = s_temp_value;
-	_handles_value_set_size = true;
+	set_handles_value_set_size(true);
 }
 void ExprIdentSizedHardCodedNum::_inner_finish_init_value()
 {

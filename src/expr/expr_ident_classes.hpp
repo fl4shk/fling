@@ -4,6 +4,7 @@
 // src/expr/expr_ident_classes.hpp
 
 #include "../misc_includes.hpp"
+#include "../pseudo_func_call_range_class.hpp"
 
 #include "dot_hpp_defines.hpp"
 
@@ -66,10 +67,12 @@ protected:		// functions
 
 class ExprIdentSlicedWithRange : public Expression
 {
+protected:		// variables
+	PseudoFuncCallRange _pseudo_func_call_range;
 public:		// functions
 	ExprIdentSlicedWithRange(const SrcCodePos& s_src_code_pos,
-		Symbol* s_symbol, Expression* range_left_child,
-		Expression* range_right_child);
+		Symbol* s_symbol,
+		const PseudoFuncCallRange& s_pseudo_func_call_range);
 
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const
@@ -85,15 +88,6 @@ protected:		// functions
 	void _inner_finish_init_value();
 	void _evaluate();
 	size_t _starting_length() const;
-
-	Expression* _range_left_child() const
-	{
-		return _children.at(0);
-	}
-	Expression* _range_right_child() const
-	{
-		return _children.at(1);
-	}
 };
 
 } // namespace frost_hdl
