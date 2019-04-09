@@ -290,14 +290,23 @@ private:		// visitor functions
 		(Parser::ModuleStmtInstantiateModuleContext *ctx);
 	VisitorRetType visitInstantiateModulePortsList
 		(Parser::InstantiateModulePortsListContext *ctx);
-	VisitorRetType visitModuleStmtGenerate
-		(Parser::ModuleStmtGenerateContext *ctx);
-	VisitorRetType visitGenerateHeaderFor
-		(Parser::GenerateHeaderForContext *ctx);
+
+
+	VisitorRetType visitGenerateBlockInModule
+		(Parser::GenerateBlockInModuleContext *ctx);
+	VisitorRetType visitGenerateBlockAnyHeader
+		(Parser::GenerateBlockAnyHeaderContext *ctx);
+	VisitorRetType visitGenerateBlockHeaderForLoop
+		(Parser::GenerateBlockHeaderForLoopContext *ctx);
+	VisitorRetType visitGenerateBlockHeaderIf
+		(Parser::GenerateBlockHeaderIfContext *ctx);
 	VisitorRetType visitPseudoFuncCallRange
 		(Parser::PseudoFuncCallRangeContext *ctx);
-	VisitorRetType visitGenerateHeaderIf
-		(Parser::GenerateHeaderIfContext *ctx);
+
+	VisitorRetType visitStmtBehavHeaderForLoop
+		(Parser::StmtBehavHeaderForLoopContext *ctx);
+	VisitorRetType visitStmtBehavHeaderIf
+		(Parser::StmtBehavHeaderIfContext *ctx);
 
 	VisitorRetType visitDeclNoKwLocalparam
 		(Parser::DeclNoKwLocalparamContext *ctx);

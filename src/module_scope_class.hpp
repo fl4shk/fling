@@ -7,7 +7,9 @@
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 #include "frost_full_type_class.hpp"
-#include "generate_parent_class.hpp"
+#include "generate_parent_classes.hpp"
+
+//#include "frost_generate_block_classes.hpp"
 
 namespace frost_hdl
 {
@@ -15,24 +17,24 @@ namespace frost_hdl
 // Here we have a rare instance of a class used in the IR not being derived
 // from "HasSrcCodePosBase"
 // This class is used to represent the insides of of a "FrostModule" or the
-// insides of a "FrostGenerate".
+// insides of a "FrostGenerateBlockBase".
 class ModuleScope
 {
 protected:		// variables
 	// This is intended to be used for searching for symbols in the
 	// "ParseTreeVisitor"
-	GenerateParent _parent;
+	GenerateBlockInModuleParent _parent;
 
 public:		// variables
 	// These are public because "ModuleScope" is intended to be used, as
 	// you may have guessed from this class's name, only inside
-	// "FrostModule" or "FrostGenerate".
+	// "FrostModule" or "FrostGenerateBlockBase".
 	SymbolTable local_symbol_table;
 	FrostLhsTypeTable frost_lhs_type_table;
 	FrostFullTypeTable frost_full_type_table;
 	FrostFunctionTable frost_function_table;
 	FrostStatementTable frost_statement_table;
-	FrostGenerateTable frost_generate_table;
+	FrostGenerateBlockInModuleTable frost_generate_block_table;
 
 public:		// functions
 	ModuleScope();

@@ -19,9 +19,17 @@ class FrostInterface;
 class FrostModule;
 class FrostInstModule;
 class FrostStatement;
-class FrostGenerate;
+//class FrostGenerateBlockBase;
+class FrostGenerateBlockInModule;
+class FrostGenerateBlockInInterface;
 
 class Expression;
+
+class ModuleScope;
+class InterfaceScope;
+
+template<typename MostOuterScopeType, typename ContainedScopeType>
+class FrostGenerateBlockBase;
 
 //typedef OrderedIdentToPointerTable<Symbol> SymbolTable;
 //typedef IdentToPointerTable<Symbol> SymbolTable;
@@ -34,7 +42,12 @@ typedef IdentToPointerTable<FrostInterface> FrostInterfaceTable;
 typedef IdentToPointerTable<FrostModule> FrostModuleTable;
 typedef IdentToPointerTable<FrostInstModule> FrostInstModuleTable;
 typedef ScopedUnnamedTable<FrostStatement> FrostStatementTable;
-typedef PointerVector<FrostGenerate> FrostGenerateTable;
+//typedef PointerVector<FrostGenerateBlockBase> FrostGenerateBlockBaseTable;
+
+typedef PointerVector<FrostGenerateBlockInModule>
+	FrostGenerateBlockInModuleTable;
+typedef PointerVector<FrostGenerateBlockInInterface>
+	FrostGenerateBlockInInterfaceTable;
 
 
 } // namespace frost_hdl

@@ -355,28 +355,42 @@ VisitorRetType ParseTreeVisitor::visitInstantiateModulePortsList
 {
 	return nullptr;
 }
-VisitorRetType ParseTreeVisitor::visitModuleStmtGenerate
-	(Parser::ModuleStmtGenerateContext *ctx)
+VisitorRetType ParseTreeVisitor::visitGenerateBlockInModule
+	(Parser::GenerateBlockInModuleContext *ctx)
 {
-
 	return nullptr;
 }
-VisitorRetType ParseTreeVisitor::visitGenerateHeaderFor
-	(Parser::GenerateHeaderForContext *ctx)
+VisitorRetType ParseTreeVisitor::visitGenerateBlockAnyHeader
+	(Parser::GenerateBlockAnyHeaderContext *ctx)
 {
-
 	return nullptr;
 }
+VisitorRetType ParseTreeVisitor::visitGenerateBlockHeaderForLoop
+	(Parser::GenerateBlockHeaderForLoopContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitGenerateBlockHeaderIf
+	(Parser::GenerateBlockHeaderIfContext *ctx)
+{
+	return nullptr;
+}
+
 VisitorRetType ParseTreeVisitor::visitPseudoFuncCallRange
 	(Parser::PseudoFuncCallRangeContext *ctx)
 {
-
 	return nullptr;
 }
-VisitorRetType ParseTreeVisitor::visitGenerateHeaderIf
-	(Parser::GenerateHeaderIfContext *ctx)
-{
 
+
+VisitorRetType ParseTreeVisitor::visitStmtBehavHeaderForLoop
+	(Parser::StmtBehavHeaderForLoopContext *ctx)
+{
+	return nullptr;
+}
+VisitorRetType ParseTreeVisitor::visitStmtBehavHeaderIf
+	(Parser::StmtBehavHeaderIfContext *ctx)
+{
 	return nullptr;
 }
 

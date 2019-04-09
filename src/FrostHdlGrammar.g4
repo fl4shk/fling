@@ -128,7 +128,7 @@ moduleScope:
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
 		//| moduleStmtInstantiateModule ';'
-		| moduleStmtGenerate
+		| generateBlockInModule
 	)*
 	;
 
@@ -149,31 +149,63 @@ instantiateModulePortsList:
 		(',' identName '(' identExpr ')')*
 	;
 
-moduleStmtGenerate:
+// generate block (that is) in (a) module
+// As of writing this comment, the only other place where "generate" can
+// appear is inside of an interface.
+generateBlockInModule:
 	TokKwGenerate
+		// Optional identifier, which is similar to a label in other HDLs;
+		// it allows access to the insides of a generate block.
 		identName?
-	(
-		generateHeaderFor
-		| generateHeaderIf
-	)
-
+		generateBlockAnyHeader
 	'{'
 		moduleScope
 	'}'
 	;
 
-generateHeaderFor:
-	TokKwFor '(' identName ':' pseudoFuncCallRange ')'
+
+generateBlockAnyHeader:
+	generateBlockHeaderForLoop
+	| generateBlockHeaderIf
+	;
+
+generateBlockHeaderForLoop:
+	stmtBehavHeaderForLoop
+	;
+
+generateBlockHeaderIf:
+	stmtBehavHeaderIf
 	;
 
 pseudoFuncCallRange:
-	TokKwRange '(' (expr ',')? expr ')'
+	TokKwPseudoFuncRange '(' (expr ',')? expr ')'
 	;
 
+//generateBlockInInterface:
+//	TokKwGenerate
+//		identName?
+//		generateBlockAnyHeader
+//	'{'
+//		interfaceScope
+//	'}'
+//	;
 
-generateHeaderIf:
+// Behavioral code statement "headers"
+stmtBehavHeaderForLoop:
+	TokKwFor '(' identName ':' pseudoFuncCallRange ')'
+	;
+stmtBehavHeaderIf:
 	TokKwIf '(' expr ')'
 	;
+
+//stmtBehavHeaderElseif:
+//	TokKwElse TokKwIf '(' expr ')'
+//	;
+
+//// This is boring, but I put it in here for consistency's sake.
+//stmtBehavHeaderElse:
+//	TokKwElse
+//	;
 
 
 // Expression parsing
@@ -429,7 +461,7 @@ TokKwInstance: 'instance' ;
 
 
 TokKwSwitch: 'switch' ;
-TokKwSwitchx: 'switchx' ;
+//TokKwSwitchx: 'switchx' ;
 TokKwSwitchz: 'switchz' ;
 TokKwCase: 'case' ;
 TokKwDefault: 'default' ;

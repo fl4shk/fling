@@ -1,7 +1,7 @@
-#ifndef src_generate_header_classes_hpp
-#define src_generate_header_classes_hpp
+#ifndef src_generate_block_header_classes_hpp
+#define src_generate_block_header_classes_hpp
 
-// src/generate_header_classes.hpp
+// src/generate_block_header_classes.hpp
 
 #include "misc_includes.hpp"
 #include "symbol_class.hpp"
@@ -10,7 +10,7 @@
 namespace frost_hdl
 {
 
-class GenerateHeaderFor
+class GenerateBlockHeaderFor
 {
 protected:		// variables
 	//SavedString iter_ident = nullptr;
@@ -18,18 +18,18 @@ protected:		// variables
 	PseudoFuncCallRange _pseudo_func_call_range;
 
 public:		// functions
-	GenerateHeaderFor() = default;
+	GenerateBlockHeaderFor() = default;
 
-	inline GenerateHeaderFor(Symbol* s_iter_sym,
+	inline GenerateBlockHeaderFor(Symbol* s_iter_sym,
 		const PseudoFuncCallRange& s_pseudo_func_call_range)
 		: _iter_sym(s_iter_sym),
 		_pseudo_func_call_range(s_pseudo_func_call_range)
 	{
 	}
 
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GenerateHeaderFor);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GenerateBlockHeaderFor);
 
-	virtual ~GenerateHeaderFor() = default;
+	virtual ~GenerateBlockHeaderFor() = default;
 
 	//inline bool is_valid() const
 	//{
@@ -45,22 +45,22 @@ public:		// functions
 
 };
 
-class GenerateHeaderIf
+class GenerateBlockHeaderIf
 {
 protected:		// variables
 	Expression* _condition = nullptr;
 
 public:		// functions
-	GenerateHeaderIf() = default;
+	GenerateBlockHeaderIf() = default;
 
-	inline GenerateHeaderIf(Expression* s_condition)
+	inline GenerateBlockHeaderIf(Expression* s_condition)
 		: _condition(s_condition)
 	{
 	}
 
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GenerateHeaderIf);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GenerateBlockHeaderIf);
 
-	virtual ~GenerateHeaderIf() = default;
+	virtual ~GenerateBlockHeaderIf() = default;
 
 	//inline bool is_valid() const
 	//{
@@ -71,7 +71,10 @@ public:		// functions
 
 };
 
+typedef std::variant<GenerateBlockHeaderFor, GenerateBlockHeaderIf>
+	AnyGenerateBlockHeader;
+
 } // namespace frost_hdl
 
 
-#endif		// src_generate_header_classes_hpp
+#endif		// src_generate_block_header_classes_hpp
