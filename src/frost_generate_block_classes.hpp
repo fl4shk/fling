@@ -27,10 +27,7 @@ private:		// variables
 
 public:		// functions
 	FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
-		SavedString s_ident)
-		: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
-	{
-	}
+		SavedString s_ident);
 
 	template<typename ParentType, typename HeaderType>
 	inline FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
@@ -44,7 +41,7 @@ public:		// functions
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostGenerateBlockInModule);
 
-	virtual ~FrostGenerateBlockInModule() = default;
+	virtual ~FrostGenerateBlockInModule();
 
 	GEN_GETTERS_BY_CON_REF_AND_REF(module_scope)
 	GEN_GETTER_BY_CON_REF(parent)
@@ -54,17 +51,14 @@ public:		// functions
 //class FrostGenerateBlockInInterface : public HasSrcCodePosAndIdentBase
 //{
 //private:		// variables
-//	InterfaceScope _scope;
+//	InterfaceScope _interface_scope;
 //
 //	GenerateBlockInInterfaceParent _parent;
 //	AnyGenerateBlockHeader _header;
 //
 //public:		// functions
 //	FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
-//		SavedString s_ident)
-//		: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
-//	{
-//	}
+//		SavedString s_ident);
 //
 //	template<typename ParentType, typename HeaderType>
 //	inline FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
@@ -78,9 +72,9 @@ public:		// functions
 //
 //	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostGenerateBlockInInterface);
 //
-//	virtual ~FrostGenerateBlockInInterface() = default;
+//	virtual ~FrostGenerateBlockInInterface();
 //
-//	GEN_GETTERS_BY_CON_REF_AND_REF(scope)
+//	GEN_GETTERS_BY_CON_REF_AND_REF(interface_scope)
 //	GEN_GETTER_BY_CON_REF(parent)
 //	GEN_GETTER_BY_CON_REF(header)
 //};

@@ -11,6 +11,12 @@ namespace frost_hdl
 {
 class Symbol;
 
+template<typename Type>
+SavedString construct_ident_from_pointer(SavedString base, Type* pointer)
+{
+	return dup_str(sconcat(*base, pointer));
+}
+
 // Used for temporary type identifiers before actual dimension expressions
 // are evaluated.
 template<typename Type>
@@ -21,6 +27,7 @@ SavedString construct_initial_type_ident_from_pointer
 		reinterpret_cast<uintptr_t>(pointer),
 		"]"));
 }
+
 
 
 
