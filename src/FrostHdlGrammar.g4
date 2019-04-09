@@ -388,8 +388,12 @@ TokKwDollarUnsgn: '$unsgn' ;
 TokKwDollarSgn: '$sgn' ;
 TokKwDollarIsUnsgn: '$is_unsgn' ;
 TokKwDollarIsSgn: '$is_sgn' ;
-TokKwDollarSizeof: '$sizeof' ;
-TokKwDollarArrsize: '$arrsize' ;
+TokKwDollarSize: '$size' ;
+TokKwDollarLow: '$low' ;
+TokKwDollarHigh: '$high' ;
+TokKwDollarFirst: '$first' ;
+TokKwDollarLast: '$last' ;
+TokKwDollarMsbpos: '$msbpos' ;
 TokKwDollarLastindex: '$lastindex' ;
 TokKwDollarClog2: '$clog2' ;
 TokKwDollarPow: '$pow' ;
@@ -414,7 +418,7 @@ TokKwWhile: 'while' ;
 TokKwDo: 'do' ;
 
 TokKwGenerate: 'generate' ;
-TokKwRange: 'range' ;
+TokKwPseudoFuncRange: 'range' ;
 TokKwInstance: 'instance' ;
 
 

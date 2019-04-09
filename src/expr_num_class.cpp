@@ -258,8 +258,8 @@ void ExprNum::perf_asr(const ExprNum& to_shift, const ExprNum& amount)
 	const auto& old_data = to_shift.data();
 	const auto amount_as_ui = amount.convert_to_unsigned_bignum().get_ui();
 
-	// ">>>" only acts as an arithmetic right shift when thing to shift is
-	// signed.
+	// ">>>" only acts as an arithmetic right shift when the thing to shift
+	// is signed.
 	if (to_shift.is_signed())
 	{
 		n_data.resize(to_shift.size(), old_data.back());

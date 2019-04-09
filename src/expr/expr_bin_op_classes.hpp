@@ -739,7 +739,10 @@ protected:		// functions
 	{
 		return dup_str("<<");
 	}
-	void _evaluate();
+	inline void _evaluate()
+	{
+		_value.perf_lsl(_left_child_value(), _right_child_value());
+	}
 
 	//inline Expression* _inner_dup_with_changed_symbols
 	//	(const ReplaceSymsMap& replace_syms_map) const
@@ -764,7 +767,10 @@ protected:		// functions
 	{
 		return dup_str(">>");
 	}
-	void _evaluate();
+	inline void _evaluate()
+	{
+		_value.perf_lsr(_left_child_value(), _right_child_value());
+	}
 
 	//inline Expression* _inner_dup_with_changed_symbols
 	//	(const ReplaceSymsMap& replace_syms_map) const
@@ -784,21 +790,28 @@ public:		// functions
 	{
 	}
 
-	// "ExprBaseBinOp"'s "to_hdl_source()" won't work here.
-	virtual SavedString to_hdl_source() const
-	{
-		// Verilog always treats the right argument of ">>>" as unsigned.
-		// Also, it will only perform an arithmetic shift right if the left
-		// argument of ">>>" is signed.
-		// For Frost HDL, all uses of ">>>" treat the left argument as
-		// signed, and this is also how I think the operator should work in
-		// Verilog.
-		return dup_str("$signed(", TO_HDL_SOURCE(_left_child), ") >>> ",
-			TO_HDL_SOURCE(_right_child));
-	}
+	//// "ExprBaseBinOp"'s "to_hdl_source()" won't work here.
+	//virtual SavedString to_hdl_source() const
+	//{
+	//	// Verilog always treats the right argument of ">>>" as unsigned.
+	//	// Also, it will only perform an arithmetic shift right if the left
+	//	// argument of ">>>" is signed.
+	//	// For Frost HDL, all uses of ">>>" treat the left argument as
+	//	// signed, and this is also how I think the operator should work in
+	//	// Verilog.
+	//	return dup_str("$signed(", TO_HDL_SOURCE(_left_child), ") >>> ",
+	//		TO_HDL_SOURCE(_right_child));
+	//}
 
 protected:		// functions
-	void _evaluate();
+	SavedString _binop_str() const
+	{
+		return dup_str(">>>");
+	}
+	inline void _evaluate()
+	{
+		_value.perf_asr(_left_child_value(), _right_child_value());
+	}
 
 	//inline Expression* _inner_dup_with_changed_symbols
 	//	(const ReplaceSymsMap& replace_syms_map) const
