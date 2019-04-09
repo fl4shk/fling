@@ -24,8 +24,8 @@ lhsTypeName:
 	;
 
 lhsBuiltinTypeName:
-	TokKwLogic ((TokKwUnsigned | TokKwSigned)?)
-		(('[' expr ']')?)
+	TokKwLogic (TokKwUnsigned | TokKwSigned)?
+		('[' expr ']')?
 	;
 
 // custom type name from the current scope, be it a module or a package.
@@ -43,14 +43,14 @@ lhsScopedCstmTypeName:
 
 // Array dimensions go here
 declNoLhsTypeVar:
-	identName (('[' expr ']')?)
+	identName ('[' expr ']')?
 	;
 
 // List of local variables.
 // (FUTURE:  The current scope's type will be important once custom types
 // are added in.)
 declVarList:
-	lhsTypeName declNoLhsTypeVar ((',' declNoLhsTypeVar)*)
+	lhsTypeName declNoLhsTypeVar (',' declNoLhsTypeVar)*
 	;
 
 declNoKwLocalparam:
@@ -58,7 +58,7 @@ declNoKwLocalparam:
 	;
 
 declLocalparamList:
-	TokKwLocalparam declNoKwLocalparam ((',' declNoKwLocalparam)*)
+	TokKwLocalparam declNoKwLocalparam (',' declNoKwLocalparam)*
 	;
 
 // "package" stuff
@@ -84,7 +84,7 @@ insidePackage:
 // For now, port vars can't be arrays.  Perhaps things will actually stay
 // that way (such that arrays on ports *must* be in "unpacked" "struct"s)
 declPortVarList:
-	lhsTypeName identName ((',' identName)*)
+	lhsTypeName identName (',' identName)*
 	;
 
 
@@ -94,23 +94,23 @@ declPortDirectionalVarList:
 
 // "parameter" stuff
 declParameterVar:
-	identName ((TokAssign expr)?)
+	identName (TokAssign expr)?
 	;
 declParameterVarList:
-	declParameterVar ((',' declParameterVar)*)
+	declParameterVar (',' declParameterVar)*
 	;
 
 
 // "module" stuff
 declModule:
 	TokKwModule identName
-		(('#' '(' declParameterVarList ')')?)
+		('#' '(' declParameterVarList ')')?
 
 		// ports
 		'('
 			// FUTURE:  allow "interface" "modport"s here
 			(declPortDirectionalVarList
-				((',' declPortDirectionalVarList)*))?
+				(',' declPortDirectionalVarList)*)?
 		')'
 
 	'{'
@@ -140,17 +140,18 @@ moduleStmtInstantiateModule:
 	TokKwInstance identName
 	'('
 		// For "module"s that have ports, this is actually required.
-		(instantiateModulePortsList?)
+		instantiateModulePortsList?
 	')'
 	;
 
 instantiateModulePortsList:
 	identName '(' identExpr ')'
-		((',' identName '(' identExpr ')')*)
+		(',' identName '(' identExpr ')')*
 	;
 
 moduleStmtGenerate:
 	TokKwGenerate
+		identName?
 	(
 		generateHeaderFor
 		| generateHeaderIf
@@ -166,7 +167,7 @@ generateHeaderFor:
 	;
 
 pseudoFuncCallRange:
-	TokKwRange '(' ((expr ',')?) expr ')'
+	TokKwRange '(' (expr ',')? expr ')'
 	;
 
 
@@ -270,11 +271,11 @@ pureIdentExpr:
 	;
 
 //memberAccessIdentExpr:
-//	identName (((sliceWithOne?) '.' identName)+) (sliceWithAny?)
+//	identName (sliceWithOne? '.' identName)+ sliceWithAny?
 //	;
 
 slicedPureIdentExpr:
-	pureIdentExpr (sliceWithOne?) sliceWithAny
+	pureIdentExpr sliceWithOne? sliceWithAny
 	;
 
 sliceWithOne:
@@ -291,12 +292,12 @@ sliceWithAny:
 	;
 
 identConcatExpr:
-	TokKwConcat '(' identExpr ((',' identExpr)*) ')'
+	TokKwConcat '(' identExpr (',' identExpr)* ')'
 	;
 
 identName: TokIdent ;
 scopedIdentName: identName TokScope identName
-	((TokScope identName)?);
+	(TokScope identName)?;
 
 
 
@@ -314,9 +315,9 @@ TokOpMulDivMod: ('*' | '/' | '%') ;
 TokOpBitwise: ('&' | '|' | '^' | '<<' | '>>' | '>>>') ;
 TokBitInvert: '~' ;
 
-TokDecNum: [0-9] ([0-9]*) ;
-TokHexNum: '0x' ([0-9A-Fa-f]+) ;
-TokBinNum: '0b' ([0-1]+) ;
+TokDecNum: [0-9] [0-9]* ;
+TokHexNum: '0x' [0-9A-Fa-f]+ ;
+TokBinNum: '0b' [0-1]+ ;
 
 
 TokAssign: '=' ;
@@ -342,6 +343,11 @@ TokRBrace: '}' ;
 
 // Not "pound", not "hash".  "number".
 TokNumber: '#' ;
+
+// Well, pointers don't exist in this language, despite the fact that
+// structs do.  Thus, we can just repurpose this symbol.  It's pretty
+// unambiguous.
+TokGenScope: '->' ;
 
 
 
@@ -431,6 +437,6 @@ TokKwDefault: 'default' ;
 
 
 
-TokIdent: [A-Za-z_] (([A-Za-z_] | [0-9])*) ;
+TokIdent: [A-Za-z_] ([A-Za-z_] | [0-9])* ;
 
 TokOther: . ;
