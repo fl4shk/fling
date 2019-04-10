@@ -88,6 +88,7 @@ private:		// variables
 		X(FrostStatementTable::Node*, FrostStatementTable::Node*, \
 			statement_table_node) \
 		X(ModuleScope*, ModuleScope*, module_scope) \
+		X(InterfaceScope*, InterfaceScope*, interface_scope) \
 
 	class Stacks
 	{
