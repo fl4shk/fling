@@ -1524,6 +1524,27 @@ VisitorRetType ParseTreeVisitor::visitPureIdentExpr
 VisitorRetType ParseTreeVisitor::visitSlicedPureIdentExpr
 	(Parser::SlicedPureIdentExprContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->pureIdentExpr());
+	auto ident_expr = _stacks.pop_expr();
+	auto symbol = ident_expr->symbol();
+
+	Expression* slice_with_one_expr = nullptr;
+
+	if (ctx->sliceWithOne())
+	{
+		// Ban array indexing into a non-array.
+		if (!symbol->frost_full_type()->is_array())
+		{
+			_err(ctx->sliceWithOne(), sconcat("Variable with identifier ",
+				"\"", *symbol->ident(), "\" is sliced too many times"));
+		}
+
+		ANY_JUST_ACCEPT_BASIC(ctx->sliceWithOne());
+		slice_with_one_expr = _stacks.pop_expr();
+	}
+
+	ANY_JUST_ACCEPT_BASIC(ctx->sliceWithAny());
+	auto slice_with_any_expr = _stacks.pop_expr();
 
 	return nullptr;
 }
