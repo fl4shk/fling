@@ -324,12 +324,19 @@ sliceWithAny:
 	;
 
 identConcatExpr:
-	TokKwConcat '(' identExpr (',' identExpr)* ')'
+	TokKwPseudoFuncConcat '(' identExpr (',' identExpr)* ')'
 	;
 
 identName: TokIdent ;
-scopedIdentName: identName TokScope identName
-	(TokScope identName)?;
+scopedIdentName:
+	identName TokScope identName (TokScope identName)?
+	;
+
+// This needs work.
+//genScopedIdentExpr:
+//	identName (TokGenScope identName (sliceWithOne? sliceWithAny)?)+
+//	(TokGenScope memberAccessIdentExpr)
+//	;
 
 
 
@@ -419,8 +426,8 @@ TokKwFunction: 'function' ;
 TokKwPackage: 'package' ;
 
 
-TokKwConcat: 'concat' ;
-TokKwRepl: 'repl' ;
+TokKwPseudoFuncConcat: 'concat' ;
+TokKwPseudoFuncRepl: 'repl' ;
 
 TokKwDollarUnsgn: '$unsgn' ;
 TokKwDollarSgn: '$sgn' ;

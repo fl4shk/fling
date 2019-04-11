@@ -24,7 +24,7 @@ module RippleCarryAdder
 	assign _inner_carries[0] = i_carry;
 	assign o_carry = _inner_carries[WIDTH__INNER_CARRIES - 1];
 
-	generate label for (i : range(WIDTH__DIO))
+	generate for (i : range(WIDTH__DIO))
 	{
 		// Future module instantiation syntax:
 		//instance FullAdder

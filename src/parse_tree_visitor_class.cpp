@@ -1528,7 +1528,7 @@ VisitorRetType ParseTreeVisitor::visitSlicedPureIdentExpr
 	auto ident_expr = _stacks.pop_expr();
 	auto symbol = ident_expr->symbol();
 
-	Expression* slice_with_one_expr = nullptr;
+	Expression* first_slice_with_one_expr = nullptr;
 
 	if (ctx->sliceWithOne())
 	{
@@ -1540,11 +1540,26 @@ VisitorRetType ParseTreeVisitor::visitSlicedPureIdentExpr
 		}
 
 		ANY_JUST_ACCEPT_BASIC(ctx->sliceWithOne());
-		slice_with_one_expr = _stacks.pop_expr();
+		first_slice_with_one_expr = _stacks.pop_expr();
 	}
 
 	ANY_JUST_ACCEPT_BASIC(ctx->sliceWithAny());
-	auto slice_with_any_expr = _stacks.pop_expr();
+
+	const auto num_exprs_in_slice_with_any = _stacks.pop_small_num();
+	if (num_exprs_in_slice_with_any == 1)
+	{
+		auto second_slice_with_one_expr = _stacks.pop_expr();
+	}
+	else if (num_exprs_in_slice_with_any == 2)
+	{
+		auto slice_with_range_left_expr = _stacks.pop_expr();
+		auto slice_with_range_right_expr = _stacks.pop_expr();
+	}
+	else
+	{
+		_err(ctx->sliceWithAny(), "ParseTreeVisitor"
+			"::visitSlicedPureIdentExpr():  Eek!");
+	}
 
 	return nullptr;
 }
@@ -1552,11 +1567,13 @@ VisitorRetType ParseTreeVisitor::visitSlicedPureIdentExpr
 VisitorRetType ParseTreeVisitor::visitSliceWithOne
 	(Parser::SliceWithOneContext *ctx)
 {
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	return nullptr;
 }
 VisitorRetType ParseTreeVisitor::visitSliceWithRange
 	(Parser::SliceWithRangeContext *ctx)
 {
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->expr());
 	return nullptr;
 }
 VisitorRetType ParseTreeVisitor::visitSliceWithAny

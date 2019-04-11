@@ -10,7 +10,7 @@ namespace frost_hdl
 {
 
 // This is not an expression because it doesn't make sense for this to have
-// a value.
+// one singular value.
 class PseudoFuncCallRange
 {
 private:		// variables

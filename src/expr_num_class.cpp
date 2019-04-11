@@ -288,7 +288,26 @@ void ExprNum::perf_asr(const ExprNum& to_shift, const ExprNum& amount)
 void ExprNum::perf_slice_with_range(const ExprNum& to_slice,
 	const ExprNum& range_left, const ExprNum& range_right)
 {
-	//static_assert(false, "You forgot to implement this!");
+	const auto range_left_uint = static_cast<BigNum>(range_left).get_ui(),
+		range_right_uint = static_cast<BigNum>(range_right).get_ui();
+
+	const bool range_is_ascending = (range_left_uint < range_right_uint);
+
+	const auto range_start = range_is_ascending ? range_left_uint
+		: range_right_uint;
+
+	// inclusive end
+	const auto range_end = range_is_ascending ? range_right_uint
+		: range_left_uint;
+
+	RawExprNumData n_data;
+
+	for (auto i=range_start; i<=range_end; ++i)
+	{
+		n_data.push_back(to_slice.data().at(i));
+	}
+
+	set_data(std::move(n_data));
 }
 
 

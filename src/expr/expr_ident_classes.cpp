@@ -164,7 +164,16 @@ void ExprIdentSlicedWithRange::_inner_finish_init_value()
 	// Require ranges to have non-negative values
 	_pseudo_func_call_range.evaluate();
 
-	//if (_pseudo_func_call_range
+	if (BigNum(_pseudo_func_call_range.left()->value()) < BigNum(0))
+	{
+		_pseudo_func_call_range.left()->src_code_pos().err("range left "
+			"expression evaluates to negative number");
+	}
+	if (BigNum(_pseudo_func_call_range.right()->value()) < BigNum(0))
+	{
+		_pseudo_func_call_range.right()->src_code_pos().err("range right "
+			"expression evaluates to negative number");
+	}
 }
 
 void ExprIdentSlicedWithRange::_evaluate()

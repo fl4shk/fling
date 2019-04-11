@@ -6,24 +6,26 @@
 
 int main(int argc, char** argv)
 {
-	// We need at least *one* source file.
-	if (argc < 2)
-	{
-		printerr("Usage:  ", argv[0], " <source_files>\n");
-		exit(1);
-	}
+	frost_hdl::test_expr_num_slice_with_range(std::cout);
 
-	frost_hdl::ParseTreeVisitor::ListParsedSrcCode s_list_parsed_src_code;
+	//// We need at least *one* source file.
+	//if (argc < 2)
+	//{
+	//	printerr("Usage:  ", argv[0], " <source_files>\n");
+	//	exit(1);
+	//}
 
-	//printout("argc:  ", argc, "\n");
+	//frost_hdl::ParseTreeVisitor::ListParsedSrcCode s_list_parsed_src_code;
 
-	for (int i=1; i<argc; ++i)
-	{
-		s_list_parsed_src_code.push_back(std::unique_ptr<frost_hdl
-			::ParsedSrcCode>(new frost_hdl::ParsedSrcCode(argv[i])));
-	}
+	////printout("argc:  ", argc, "\n");
 
-	frost_hdl::ParseTreeVisitor visitor(std::move(s_list_parsed_src_code));
-	return visitor.run();
+	//for (int i=1; i<argc; ++i)
+	//{
+	//	s_list_parsed_src_code.push_back(std::unique_ptr<frost_hdl
+	//		::ParsedSrcCode>(new frost_hdl::ParsedSrcCode(argv[i])));
+	//}
+
+	//frost_hdl::ParseTreeVisitor visitor(std::move(s_list_parsed_src_code));
+	//return visitor.run();
 
 }
