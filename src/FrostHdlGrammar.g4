@@ -473,6 +473,6 @@ TokKwDefault: 'default' ;
 
 
 
-TokIdent: [A-Za-z_] ([A-Za-z_] | [0-9])* ;
+TokIdent: [A-Za-z_] ([A-Za-z_0-9])* ;
 
 TokOther: . ;

@@ -93,20 +93,26 @@ void test_expr_num_slice_with_range(std::ostream& os)
 	const ExprNum to_slice(BigNum(prng(WIDTH2MP(static_cast<size_t>(1)
 		<< to_slice_size))), to_slice_size, false);
 	const ExprNum range_left(BigNum(prng(WIDTH2MP(to_slice_size))),
-		3, false);
+		false);
 	const ExprNum range_right(BigNum(prng(WIDTH2MP(to_slice_size))),
-		3, false);
+		false);
 
-	ExprNum ret;
-	ret.perf_slice_with_range(to_slice, range_left, range_right);
+	ExprNum result;
+	result.perf_slice_with_range(to_slice, range_left, range_right);
 
 	osprintout(os,
 		std::hex,
-		static_cast<BigNum>(ret), ":  ",
-		static_cast<BigNum>(to_slice), ":  ",
-		static_cast<BigNum>(range_left), " ",
-		static_cast<BigNum>(range_right), "\n",
+		"[",
+			strappcom2
+			(sconcat("0x", static_cast<BigNum>(result).get_str(16)),
+			sconcat("0x", static_cast<BigNum>(to_slice).get_str(16)),
+			sconcat("0x", static_cast<BigNum>(range_left).get_str(16)),
+			sconcat("0x", static_cast<BigNum>(range_right).get_str(16))),
+		"],\n",
 		std::dec);
+
+	//const auto result_str =  static_cast<BigNum>(result_str).get_str(2);
+	//const auto to_slice_str = static_cast<BigNum>(to_slice).get_str(2);
 }
 
 //void test_cpp_expressions(std::ostream& os)
