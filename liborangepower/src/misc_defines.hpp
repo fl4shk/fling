@@ -10,6 +10,7 @@
 	((((size_t)1 << ((size_t)(bit_pos_hi) - (size_t)(bit_pos_lo) \
 	+ (size_t)1)) - (size_t)1) << (size_t)(bit_pos_lo))
 
+
 #define _ALIGN4 aligned(4)
 #define _ALIGN2 aligned(2)
 
