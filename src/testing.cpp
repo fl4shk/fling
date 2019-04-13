@@ -93,9 +93,9 @@ void test_expr_num_slice_with_range(std::ostream& os)
 	const ExprNum to_slice(BigNum(prng(WIDTH2MP(static_cast<size_t>(1)
 		<< to_slice_size))), to_slice_size, false);
 	const ExprNum range_left(BigNum(prng(WIDTH2MP(to_slice_size))),
-		basic_ilog2(to_slice_size), false);
+		3, false);
 	const ExprNum range_right(BigNum(prng(WIDTH2MP(to_slice_size))),
-		basic_ilog2(to_slice_size), false);
+		3, false);
 
 	ExprNum ret;
 	ret.perf_slice_with_range(to_slice, range_left, range_right);
