@@ -83,8 +83,13 @@ protected:		// variables
 
 	// This is used for "struct", "class" (if those even make it into the
 	// language), and "interface" member accesses.
-	// This is also used for "concat()".
-	ChildrenList _ident_access_children;
+	// This is also used for "concat()", "repl()", and other things that
+	// reference identifiers.
+	// This (maybe?) makes it easier to change references to symbols when
+	// re-building the internal representation.
+	// Finally, this prevents children of the "Expression" from modified by
+	// "_perf_mega_descs_cast()" and friends.
+	ChildrenList _semi_hidden_children;
 
 	Symbol* _symbol = nullptr;
 
@@ -178,7 +183,7 @@ public:		// functions
 
 
 	GEN_GETTER_BY_CON_REF(children)
-	GEN_GETTER_BY_CON_REF(ident_access_children)
+	GEN_GETTER_BY_CON_REF(semi_hidden_children)
 	GEN_GETTER_BY_CON_REF(value)
 
 	GEN_GETTER_AND_SETTER_BY_VAL(is_self_determined)
@@ -272,17 +277,17 @@ protected:		// functions
 
 	// Require at LEAST one argument.
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline void _set_ident_access_children
+	inline void _set_semi_hidden_children
 		(FirstArgType&& first_ident_access_child,
-		RemArgTypes&&... rem_ident_access_children)
+		RemArgTypes&&... rem_semi_hidden_children)
 	{
-		_ident_access_children.push_back(first_ident_access_child);
+		_semi_hidden_children.push_back(first_ident_access_child);
 
 		// Oh hey, an actual use for "if constexpr" that actually CAN'T be
 		// written as a plain old "if"!
-		if constexpr (sizeof...(rem_ident_access_children) > 0)
+		if constexpr (sizeof...(rem_semi_hidden_children) > 0)
 		{
-			_set_ident_access_children(rem_ident_access_children...);
+			_set_semi_hidden_children(rem_semi_hidden_children...);
 		}
 	}
 };

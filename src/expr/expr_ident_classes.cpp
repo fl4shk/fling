@@ -83,22 +83,22 @@ size_t ExprIdentName::_starting_length() const
 //--------
 ExprIdentOneBitSlicedVector::ExprIdentOneBitSlicedVector
 	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol,
-	Expression* s_index_expr)
+	Expression* s_one_bit_index_expr)
 	: ExprIdentRefBase(s_src_code_pos, s_symbol)
 {
-	_index_expr = s_index_expr;
+	_set_semi_hidden_children(s_one_bit_index_expr);
 
-	if (!_index_expr->is_constant())
+	if (!_one_bit_index_expr()->is_constant())
 	{
-		_index_expr->src_code_pos().err("One-bit slice index is not "
-			"constant.");
+		_one_bit_index_expr()->src_code_pos().err("One-bit slice index is "
+			"not constant.");
 	}
 }
 
 SavedString ExprIdentOneBitSlicedVector::to_hdl_source() const
 {
 	return dup_str(sconcat(*symbol()->ident(), "[",
-		*_index_expr->to_hdl_source(), "]"));
+		*_one_bit_index_expr()->to_hdl_source(), "]"));
 }
 
 bool ExprIdentOneBitSlicedVector::is_constant() const
@@ -117,12 +117,12 @@ void ExprIdentOneBitSlicedVector::_inner_finish_init_value()
 	_value.set_is_signed(false);
 
 	// Require the one-bit index to have a non-negative value
-	_index_expr->full_evaluate_if_constant();
+	_one_bit_index_expr()->full_evaluate_if_constant();
 
-	if (BigNum(_index_expr->value()) < BigNum(0))
+	if (BigNum(_one_bit_index_expr()->value()) < BigNum(0))
 	{
-		_index_expr->src_code_pos().err("One-bit slice index expression "
-			"evaluates to a negative number");
+		_one_bit_index_expr()->src_code_pos().err("One-bit slice index "
+			"expression evaluates to a negative number");
 	}
 }
 void ExprIdentOneBitSlicedVector::_evaluate()
@@ -130,8 +130,8 @@ void ExprIdentOneBitSlicedVector::_evaluate()
 	symbol()->value()->full_evaluate_if_constant();
 	const auto unsliced_value = symbol()->value()->value();
 
-	_value.perf_slice_with_range(unsliced_value, _index_expr->value(),
-		_index_expr->value());
+	_value.perf_slice_with_range(unsliced_value,
+		_one_bit_index_expr()->value(), _one_bit_index_expr()->value());
 }
 size_t ExprIdentOneBitSlicedVector::_starting_length() const
 {
@@ -144,40 +144,38 @@ size_t ExprIdentOneBitSlicedVector::_starting_length() const
 //--------
 ExprIdentSlicedVector::ExprIdentSlicedVector
 	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol,
-	const PseudoFuncCallRange& s_pseudo_func_call_range)
+	Expression* s_range_left_expr, Expression* s_range_right_expr)
 	: ExprIdentRefBase(s_src_code_pos, s_symbol)
 {
-	_pseudo_func_call_range = s_pseudo_func_call_range;
+	_set_semi_hidden_children(s_range_left_expr, s_range_right_expr);
 
-	if (!_pseudo_func_call_range.is_constant())
+	if (!_pseudo_func_call_range().is_constant())
 	{
-		const u32 temp = ((_pseudo_func_call_range.left()->is_constant()
-			<< 1) | _pseudo_func_call_range.right()->is_constant());
+		const u32 temp = ((_range_left_child()->is_constant() << 1)
+			| _range_right_child()->is_constant());
 
 		// Produce a better error message than just the whole range isn't
 		// constant.
 		switch (temp)
 		{
 		default:
-			_pseudo_func_call_range.left()->src_code_pos().err
-				("ExprIdentSlicedVector::ExprIdentSlicedVector():  "
-				"Eek!  Eek!  Eek!");
+			_range_left_child()->src_code_pos().err("ExprIdentSlicedVector"
+				"::ExprIdentSlicedVector():  Eek!  Eek!  Eek!");
 			break;
 
 		case 0b01:
-			_pseudo_func_call_range.right()->src_code_pos().err
-				("Right-hand side of \":\" in range is not constant.");
+			_range_right_child()->src_code_pos().err("Right-hand side of "
+				"\":\" in range is not constant.");
 			break;
 
 		case 0b10:
-			_pseudo_func_call_range.left()->src_code_pos().err
-				("Left-hand side of \":\" in range is not constant.");
+			_range_left_child()->src_code_pos().err("Left-hand side of "
+				"\":\" in range is not constant.");
 			break;
 
 		case 0b11:
-			_pseudo_func_call_range.left()->src_code_pos().err
-				("Both left and right hand sides of \":\" in range are "
-				"not constant.");
+			_range_left_child()->src_code_pos().err("Both left and right "
+				"hand sides of \":\" in range are not constant.");
 			break;
 		}
 	}
@@ -198,8 +196,8 @@ ExprIdentSlicedVector::ExprIdentSlicedVector
 SavedString ExprIdentSlicedVector::to_hdl_source() const
 {
 	return dup_str(sconcat(*symbol()->ident(), "[",
-		*_pseudo_func_call_range.left()->to_hdl_source(), ":",
-		*_pseudo_func_call_range.right()->to_hdl_source(), "]"));
+		*_range_left_child()->to_hdl_source(), ":",
+		*_range_right_child()->to_hdl_source(), "]"));
 	//return dup_str(sconcat(*_ident_expr->to_hdl_source(), "[",
 	//	*_pseudo_func_call_range.left()->to_hdl_source(), ":",
 	//	*_pseudo_func_call_range.right()->to_hdl_source(), "]"));
@@ -227,17 +225,18 @@ void ExprIdentSlicedVector::_inner_finish_init_value()
 	_value.set_is_signed(false);
 
 	// Require ranges to have non-negative values
-	_pseudo_func_call_range.evaluate();
+	_range_left_child()->full_evaluate_if_constant();
+	_range_right_child()->full_evaluate_if_constant();
 
-	if (BigNum(_pseudo_func_call_range.left()->value()) < BigNum(0))
+	if (BigNum(_range_left_child()->value()) < BigNum(0))
 	{
-		_pseudo_func_call_range.left()->src_code_pos().err("range left "
-			"expression evaluates to negative number");
+		_range_left_child()->src_code_pos().err("range left expression "
+			"evaluates to negative number");
 	}
-	if (BigNum(_pseudo_func_call_range.right()->value()) < BigNum(0))
+	if (BigNum(_range_right_child()->value()) < BigNum(0))
 	{
-		_pseudo_func_call_range.right()->src_code_pos().err("range right "
-			"expression evaluates to negative number");
+		_range_right_child()->src_code_pos().err("range right expression "
+			"evaluates to negative number");
 	}
 }
 
@@ -247,18 +246,26 @@ void ExprIdentSlicedVector::_evaluate()
 	const auto unsliced_value = symbol()->value()->value();
 
 	_value.perf_slice_with_range(unsliced_value,
-		_pseudo_func_call_range.left()->value(),
-		_pseudo_func_call_range.right()->value());
+		_range_left_child()->value(),
+		_range_right_child()->value());
 }
 
 size_t ExprIdentSlicedVector::_starting_length() const
 {
-	_pseudo_func_call_range.evaluate();
-	return _pseudo_func_call_range.size();
+	return _pseudo_func_call_range().size();
 }
 //--------
 
-//--------
-//--------
+//// array[array_index]
+////--------
+//ExprIdentIndexedArray::ExprIdentIndexedArray
+//	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol,
+//	Expression* s_array_index_expr)
+//	: ExprIdentRefBase(s_src_code_pos, s_symbol)
+//{
+//	// This index expression doesn't have to be constant.
+//	_array_index_expr = s_array_index_expr;
+//}
+////--------
 
 } // namespace frost_hdl

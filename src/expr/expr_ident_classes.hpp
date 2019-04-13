@@ -62,12 +62,9 @@ protected:		// functions
 //--------
 class ExprIdentOneBitSlicedVector : public ExprIdentRefBase
 {
-protected:		// variables
-	Expression* _index_expr = nullptr;
-
 public:		// functions
 	ExprIdentOneBitSlicedVector(const SrcCodePos& s_src_code_pos,
-		Symbol* s_symbol, Expression* s_index_expr);
+		Symbol* s_symbol, Expression* s_one_bit_index_expr);
 
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const
@@ -85,6 +82,11 @@ protected:		// functions
 	void _inner_finish_init_value();
 	void _evaluate();
 	size_t _starting_length() const;
+
+	inline Expression* _one_bit_index_expr() const
+	{
+		return _semi_hidden_children.at(0);
+	}
 };
 //--------
 
@@ -92,13 +94,10 @@ protected:		// functions
 //--------
 class ExprIdentSlicedVector : public ExprIdentRefBase
 {
-protected:		// variables
-	PseudoFuncCallRange _pseudo_func_call_range;
-
 public:		// functions
 	ExprIdentSlicedVector(const SrcCodePos& s_src_code_pos,
-		Symbol* s_symbol,
-		const PseudoFuncCallRange& s_pseudo_func_call_range);
+		Symbol* s_symbol, Expression* s_range_left_expr,
+		Expression* s_range_right_expr);
 
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const
@@ -118,23 +117,53 @@ protected:		// functions
 	void _inner_finish_init_value();
 	void _evaluate();
 	size_t _starting_length() const;
+
+	inline Expression* _range_left_child() const
+	{
+		return _semi_hidden_children.at(0);
+	}
+	inline Expression* _range_right_child() const
+	{
+		return _semi_hidden_children.at(1);
+	}
+
+	inline PseudoFuncCallRange _pseudo_func_call_range() const
+	{
+		return PseudoFuncCallRange(_range_left_child(),
+			_range_right_child());
+	}
 };
 //--------
 
 
-//// array[array_index]
-////--------
-//class ExprIdentIndexedArray : public ExprIdentRefBase
-//{
-//protected:		// variables
-//	Expression* _index_expr = nullptr;
-//
-//public:		// functions
-//	ExprIdentIndexedArray(const SrcCodePos& s_src_code_pos,
-//		Symbol* s_symbol, Expression* s_index_expr);
-//};
-////--------
-//
+// array[array_index]
+//--------
+class ExprIdentIndexedArray : public ExprIdentRefBase
+{
+public:		// functions
+	ExprIdentIndexedArray(const SrcCodePos& s_src_code_pos,
+		Symbol* s_symbol, Expression* s_array_index_expr);
+
+	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::Sliced;
+	}
+	virtual SliceType slice_type() const
+	{
+		return SliceType::IndexedArray;
+	}
+
+	bool is_constant() const;
+
+protected:		// functions
+	inline Expression* _array_index_expr() const
+	{
+		return _semi_hidden_children.at(0);
+	}
+};
+//--------
+
 //// array[array_index][one_bit_index]
 ////--------
 //class ExprIdentIndexedAndOneBitSlicedArray : public ExprIdentRefBase
