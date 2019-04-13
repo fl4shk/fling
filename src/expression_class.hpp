@@ -37,10 +37,31 @@ public:		// types
 
 		NonSliced,
 		Sliced,
-		Concat,
 
 		MemberAccess,
-		MemberAccessSliced,
+
+		Concat,
+	};
+
+	// Concatenations and member accesses sometimes use this underneath.
+	enum class SliceType
+	{
+		None,
+
+		// vector[one_bit_index]
+		OneBitSlicedVector,
+
+		// vector[left:right]
+		SlicedVector,
+
+		// array[array_index]
+		IndexedArray,
+
+		// array[array_index][one_bit_index]
+		IndexedAndOneBitSlicedArray,
+
+		// array[array_index][left:right]
+		IndexedAndSlicedArray,
 	};
 
 	//enum class Category
@@ -60,9 +81,9 @@ protected:		// variables
 	// Wave o'babies!
 	ChildrenList _children;
 
-	// This covers "struct", "class" (if those even make it into the
-	// language), and "interface" member access.
-	// It *also* covers slices/array indexing.
+	// This is used for "struct", "class" (if those even make it into the
+	// language), and "interface" member accesses.
+	// This is also used for "concat()".
 	ChildrenList _ident_access_children;
 
 	Symbol* _symbol = nullptr;
@@ -129,6 +150,7 @@ public:		// functions
 	//	(const ReplaceSymsMap& replace_syms_map) const;
 	virtual SavedString to_hdl_source() const;
 	virtual LhsCategory lhs_category() const;
+	virtual SliceType slice_type() const;
 
 
 
@@ -246,6 +268,22 @@ protected:		// functions
 		//{
 		//	_value.set_size(_starting_length());
 		//}
+	}
+
+	// Require at LEAST one argument.
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline void _set_ident_access_children
+		(FirstArgType&& first_ident_access_child,
+		RemArgTypes&&... rem_ident_access_children)
+	{
+		_ident_access_children.push_back(first_ident_access_child);
+
+		// Oh hey, an actual use for "if constexpr" that actually CAN'T be
+		// written as a plain old "if"!
+		if constexpr (sizeof...(rem_ident_access_children) > 0)
+		{
+			_set_ident_access_children(rem_ident_access_children...);
+		}
 	}
 };
 

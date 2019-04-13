@@ -150,8 +150,15 @@ SavedString Expression::to_hdl_source() const
 
 auto Expression::lhs_category() const -> LhsCategory
 {
+	// Most types of expression fall under this LhsCategory
 	return LhsCategory::None;
 }
+
+auto Expression::slice_type() const -> SliceType
+{
+	// Most types of expression have this SliceType
+	return SliceType::None;
+};
 
 void Expression::_err(const std::string& msg) const
 {
