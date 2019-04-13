@@ -85,7 +85,7 @@ size_t ExprIdentName::_starting_length() const
 //--------
 
 //--------
-ExprIdentSliced::ExprIdentSliced
+ExprIdentSlicedVector::ExprIdentSlicedVector
 	(const SrcCodePos& s_src_code_pos, Expression* s_ident_expr,
 	const PseudoFuncCallRange& s_pseudo_func_call_range)
 	: Expression(s_src_code_pos)
@@ -104,7 +104,8 @@ ExprIdentSliced::ExprIdentSliced
 		{
 		default:
 			_pseudo_func_call_range.left()->src_code_pos().err
-				("ExprIdentSliced::ExprIdentSliced():  Eek!  Eek!  Eek!");
+				("ExprIdentSlicedVector::ExprIdentSlicedVector():  "
+				"Eek!  Eek!  Eek!");
 			break;
 
 		case 0b01:
@@ -138,7 +139,7 @@ ExprIdentSliced::ExprIdentSliced
 	//set_handles_value_set_size(true);
 }
 
-SavedString ExprIdentSliced::to_hdl_source() const
+SavedString ExprIdentSlicedVector::to_hdl_source() const
 {
 	//return dup_str(sconcat(*symbol()->ident(), "[",
 	//	*_pseudo_func_call_range.left()->to_hdl_source(), ":",
@@ -148,7 +149,7 @@ SavedString ExprIdentSliced::to_hdl_source() const
 		*_pseudo_func_call_range.right()->to_hdl_source(), "]"));
 }
 
-bool ExprIdentSliced::is_constant() const
+bool ExprIdentSlicedVector::is_constant() const
 {
 	//return (symbol()->is_constant() && _range_left_child()->is_constant()
 	//	&& _range_right_child()->is_constant());
@@ -156,7 +157,7 @@ bool ExprIdentSliced::is_constant() const
 	return _ident_expr->is_constant();
 }
 
-void ExprIdentSliced::_inner_finish_init_value()
+void ExprIdentSlicedVector::_inner_finish_init_value()
 {
 	//_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
 	//	->is_signed());
@@ -184,7 +185,7 @@ void ExprIdentSliced::_inner_finish_init_value()
 	}
 }
 
-void ExprIdentSliced::_evaluate()
+void ExprIdentSlicedVector::_evaluate()
 {
 	symbol()->value()->full_evaluate_if_constant();
 	const auto unsliced_value = symbol()->value()->value();
@@ -194,7 +195,7 @@ void ExprIdentSliced::_evaluate()
 		_pseudo_func_call_range.right()->value());
 }
 
-size_t ExprIdentSliced::_starting_length() const
+size_t ExprIdentSlicedVector::_starting_length() const
 {
 	_pseudo_func_call_range.evaluate();
 	return _pseudo_func_call_range.size();

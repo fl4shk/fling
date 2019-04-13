@@ -38,6 +38,9 @@ public:		// types
 		NonSliced,
 		Sliced,
 		Concat,
+
+		MemberAccess,
+		MemberAccessSliced,
 	};
 
 	//enum class Category
@@ -53,7 +56,14 @@ public:		// types
 
 
 protected:		// variables
+	// Children!
+	// Wave o'babies!
 	ChildrenList _children;
+
+	// This covers "struct", "class" (if those even make it into the
+	// language), and "interface" member access.
+	// It *also* covers slices/array indexing.
+	ChildrenList _ident_access_children;
 
 	Symbol* _symbol = nullptr;
 
@@ -146,6 +156,7 @@ public:		// functions
 
 
 	GEN_GETTER_BY_CON_REF(children)
+	GEN_GETTER_BY_CON_REF(ident_access_children)
 	GEN_GETTER_BY_CON_REF(value)
 
 	GEN_GETTER_AND_SETTER_BY_VAL(is_self_determined)

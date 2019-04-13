@@ -65,14 +65,13 @@ protected:		// functions
 //	bool is_constant() const;
 //};
 
-class ExprIdentSliced : public Expression
+class ExprIdentSlicedVector : public Expression
 {
 protected:		// variables
-	Expression* _ident_expr = nullptr;
 	PseudoFuncCallRange _pseudo_func_call_range;
 
 public:		// functions
-	ExprIdentSliced(const SrcCodePos& s_src_code_pos,
+	ExprIdentSlicedVector(const SrcCodePos& s_src_code_pos,
 		Expression* s_ident_expr,
 		const PseudoFuncCallRange& s_pseudo_func_call_range);
 
@@ -92,7 +91,15 @@ protected:		// functions
 	size_t _starting_length() const;
 };
 
-// How am I going to represent struct member accesses, anyway?
+
+class ExprIdentMemberAccess : public Expression
+{
+public:		// functions
+protected:		// functions
+	void _inner_finish_init_value();
+	void _evaluate();
+	size_t _starting_length() const;
+};
 
 } // namespace frost_hdl
 
