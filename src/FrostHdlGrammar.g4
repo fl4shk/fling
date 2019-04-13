@@ -439,7 +439,6 @@ TokKwDollarHigh: '$high' ;
 TokKwDollarFirst: '$first' ;
 TokKwDollarLast: '$last' ;
 TokKwDollarMsbpos: '$msbpos' ;
-TokKwDollarLastindex: '$lastindex' ;
 TokKwDollarClog2: '$clog2' ;
 TokKwDollarPow: '$pow' ;
 
@@ -464,8 +463,6 @@ TokKwDo: 'do' ;
 
 TokKwGenerate: 'generate' ;
 TokKwPseudoFuncRange: 'range' ;
-TokKwInstance: 'instance' ;
-
 
 TokKwSwitch: 'switch' ;
 //TokKwSwitchx: 'switchx' ;
