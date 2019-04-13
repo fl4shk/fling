@@ -1,7 +1,7 @@
-#ifndef src_parse_tree_visitor_class_hpp
-#define src_parse_tree_visitor_class_hpp
+#ifndef src_ptvisitor_class_hpp
+#define src_ptvisitor_class_hpp
 
-// src/parse_tree_visitor_class.hpp
+// src/ptvisitor_class.hpp
 
 #include "misc_includes.hpp"
 #include "parsed_src_code_class.hpp"
@@ -13,7 +13,8 @@
 namespace frost_hdl
 {
 
-class ParseTreeVisitor : public FrostHdlGrammarVisitor
+// Parse tree visitor
+class PTVisitor : public FrostHdlGrammarVisitor
 {
 public:		// types
 	typedef FrostHdlGrammarParser Parser;
@@ -154,8 +155,8 @@ private:		// variables
 
 
 public:		// functions
-	ParseTreeVisitor(ListParsedSrcCode&& s_list_parsed_src_code);
-	virtual ~ParseTreeVisitor();
+	PTVisitor(ListParsedSrcCode&& s_list_parsed_src_code);
+	virtual ~PTVisitor();
 	int run();
 
 
@@ -419,4 +420,4 @@ private:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src_parse_tree_visitor_class_hpp
+#endif		// src_ptvisitor_class_hpp

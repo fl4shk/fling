@@ -50,3 +50,4 @@ docs/*.lot
 docs/*.lof
 src/gen_src/*
 docs/*/build/*
+docs/old*/*

@@ -11,7 +11,7 @@ namespace frost_hdl
 {
 
 // A hard-coded number (not a named constant) whose value is fully known
-// by the "ParseTreeVisitor".
+// by the "PTVisitor".
 class ExprHardCodedNum : public Expression
 {
 public:		// functions
@@ -32,7 +32,7 @@ public:		// functions
 protected:		// functions
 
 	// Hard-coded numbers whose values are fully known by the
-	// "ParseTreeVisitor" don't really evaluate to anything.
+	// "PTVisitor" don't really evaluate to anything.
 	void _evaluate()
 	{
 	}
@@ -60,7 +60,7 @@ protected:		// functions
 
 // A hard-coded number that uses a "parameter" or "localparam" for its
 // width (and thus whose value is not fully known by the
-// "ParseTreeVisitor")
+// "PTVisitor")
 class ExprIdentSizedHardCodedNum : public Expression
 {
 private:		// variables

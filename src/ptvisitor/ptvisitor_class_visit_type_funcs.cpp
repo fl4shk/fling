@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -10,7 +10,7 @@ namespace frost_hdl
 {
 
 // Variable declaration stuff
-auto ParseTreeVisitor::visitLhsTypeName
+auto PTVisitor::visitLhsTypeName
 	(Parser::LhsTypeNameContext *ctx)
 	-> VisitorRetType
 {
@@ -19,12 +19,12 @@ auto ParseTreeVisitor::visitLhsTypeName
 	//else ANY_ACCEPT_IF_BASIC(ctx->lhsScopedCstmTypeName())
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitLhsTypeName():  Eek!");
+		_err(ctx, "PTVisitor::visitLhsTypeName():  Eek!");
 	}
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitLhsBuiltinTypeName
+auto PTVisitor::visitLhsBuiltinTypeName
 	(Parser::LhsBuiltinTypeNameContext *ctx)
 	-> VisitorRetType
 {
@@ -67,19 +67,23 @@ auto ParseTreeVisitor::visitLhsBuiltinTypeName
 
 // custom type name from the current scope, be it a module or a package.
 // (FUTURE)
-auto ParseTreeVisitor::visitLhsUnscopedCstmTypeName
+auto PTVisitor::visitLhsUnscopedCstmTypeName
 	(Parser::LhsUnscopedCstmTypeNameContext *ctx)
 	-> VisitorRetType
 {
+	_err(ctx, "PTVisitor::visitLhsUnscopedCstmTypeName() not"
+		"implemented Eek!");
 	return nullptr;
 }
 
 // custom type name from a package.
 // (FUTURE)
-auto ParseTreeVisitor::visitLhsScopedCstmTypeName
+auto PTVisitor::visitLhsScopedCstmTypeName
 	(Parser::LhsScopedCstmTypeNameContext *ctx)
 	-> VisitorRetType
 {
+	_err(ctx, "PTVisitor::visitLhsScopedCstmTypeName() not"
+		"implemented Eek!");
 	return nullptr;
 }
 

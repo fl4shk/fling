@@ -24,8 +24,7 @@ lhsTypeName:
 	;
 
 lhsBuiltinTypeName:
-	TokKwLogic (TokKwUnsigned | TokKwSigned)?
-		('[' expr ']')?
+	TokKwLogic (TokKwUnsigned | TokKwSigned)?  ('[' expr ']')?
 	;
 
 // custom type name from the current scope, be it a module or a package.
@@ -295,7 +294,7 @@ identExpr:
 	;
 
 // Just an identifier, possibly scoped.
-// In the "ParseTreeVisitor", this rule produces an "ExprIdentName", from
+// In the "PTVisitor", this rule produces an "ExprIdentName", from
 // which the "Symbol" can be referenced.
 pureIdentExpr:
 	identName

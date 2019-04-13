@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -10,7 +10,7 @@ namespace frost_hdl
 {
 
 // "package" stuff
-auto ParseTreeVisitor::visitDeclPackage
+auto PTVisitor::visitDeclPackage
 	(Parser::DeclPackageContext *ctx)
 	-> VisitorRetType
 {
@@ -46,11 +46,11 @@ auto ParseTreeVisitor::visitDeclPackage
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclPackage():  Eek!");
+		_err(ctx, "PTVisitor::visitDeclPackage():  Eek!");
 	}
 	return nullptr;
 }
-auto ParseTreeVisitor::visitInsidePackage
+auto PTVisitor::visitInsidePackage
 	(Parser::InsidePackageContext *ctx)
 	-> VisitorRetType
 {

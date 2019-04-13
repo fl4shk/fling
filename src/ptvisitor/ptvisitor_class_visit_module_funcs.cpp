@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -10,7 +10,7 @@ namespace frost_hdl
 {
 
 // "module" stuff
-auto ParseTreeVisitor::visitDeclModule
+auto PTVisitor::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
 	-> VisitorRetType
 {
@@ -64,14 +64,14 @@ auto ParseTreeVisitor::visitDeclModule
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclModule():  Eek!");
+		_err(ctx, "PTVisitor::visitDeclModule():  Eek!");
 	}
 
 
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitModuleScope
+auto PTVisitor::visitModuleScope
 	(Parser::ModuleScopeContext *ctx)
 	-> VisitorRetType
 {
@@ -101,7 +101,7 @@ auto ParseTreeVisitor::visitModuleScope
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitModuleStmtContAssign
+auto PTVisitor::visitModuleStmtContAssign
 	(Parser::ModuleStmtContAssignContext *ctx)
 	-> VisitorRetType
 {
@@ -135,11 +135,11 @@ auto ParseTreeVisitor::visitModuleStmtContAssign
 //{
 //	return nullptr;
 //}
-auto ParseTreeVisitor::visitModuleStmtInstantiateModule
+auto PTVisitor::visitModuleStmtInstantiateModule
 	(Parser::ModuleStmtInstantiateModuleContext *ctx)
 	-> VisitorRetType
 {
-	_err(ctx, "ParseTreeVisitor::visitModuleStmtInstantiateModule():  "
+	_err(ctx, "PTVisitor::visitModuleStmtInstantiateModule():  "
 		"not implemented Eek!");
 	//ANY_JUST_ACCEPT_BASIC(ctx->identName());
 	//auto ident = _stacks.pop_str();
@@ -154,11 +154,11 @@ auto ParseTreeVisitor::visitModuleStmtInstantiateModule
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitInstantiateModulePortsList
+auto PTVisitor::visitInstantiateModulePortsList
 	(Parser::InstantiateModulePortsListContext *ctx)
 	-> VisitorRetType
 {
-	_err(ctx, "ParseTreeVisitor::visitInstantiateModulePortsList():  "
+	_err(ctx, "PTVisitor::visitInstantiateModulePortsList():  "
 		"not implemented Eek!");
 	return nullptr;
 }

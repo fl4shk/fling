@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -11,7 +11,7 @@ namespace frost_hdl
 
 // Basically just "module", "interface", and "package" declarations.
 // There are no other things permitted at global scope.
-auto ParseTreeVisitor::visitProgram
+auto PTVisitor::visitProgram
 	(Parser::ProgramContext *ctx)
 	-> VisitorRetType
 {
@@ -33,7 +33,7 @@ auto ParseTreeVisitor::visitProgram
 	// else if (pass() == Pass::Done)
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitProgram():  Eek!");
+		_err(ctx, "PTVisitor::visitProgram():  Eek!");
 	}
 
 	return nullptr;

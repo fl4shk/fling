@@ -22,7 +22,7 @@ class ModuleScope
 {
 protected:		// variables
 	// This is intended to be used for searching for symbols in the
-	// "ParseTreeVisitor"
+	// "PTVisitor"
 	GenerateBlockInModuleParent _parent;
 
 public:		// variables

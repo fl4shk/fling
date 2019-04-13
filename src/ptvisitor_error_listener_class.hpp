@@ -1,7 +1,7 @@
-#ifndef src_parse_tree_visitor_error_listener_class_hpp
-#define src_parse_tree_visitor_error_listener_class_hpp
+#ifndef src_ptvisitor_error_listener_class_hpp
+#define src_ptvisitor_error_listener_class_hpp
 
-// src/parse_tree_visitor_error_listener_class_hpp
+// src/ptvisitor_error_listener_class_hpp
 
 #include "misc_includes.hpp"
 #include <ANTLRErrorListener.h>
@@ -10,14 +10,14 @@
 namespace frost_hdl
 {
 
-class ParseTreeVisitorErrorListener : public antlr4::ANTLRErrorListener
+class PTVisitorErrorListener : public antlr4::ANTLRErrorListener
 {
 private:		// variables
 	SavedString _filename = nullptr;
 
 public:		// functions
-	ParseTreeVisitorErrorListener(SavedString s_filename);
-	virtual ~ParseTreeVisitorErrorListener();
+	PTVisitorErrorListener(SavedString s_filename);
+	virtual ~PTVisitorErrorListener();
 
 	void syntaxError(antlr4::Recognizer *recognizer, 
 		antlr4::Token *offendingSymbol, size_t line, 
@@ -40,4 +40,4 @@ public:		// functions
 
 } // namespace frost_hdl
 
-#endif		// src_parse_tree_visitor_error_listener_class_hpp
+#endif		// src_ptvisitor_error_listener_class_hpp

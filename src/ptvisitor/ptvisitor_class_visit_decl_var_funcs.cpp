@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -10,7 +10,7 @@ namespace frost_hdl
 {
 
 // Array dimensions go here
-auto ParseTreeVisitor::visitDeclNoLhsTypeVar
+auto PTVisitor::visitDeclNoLhsTypeVar
 	(Parser::DeclNoLhsTypeVarContext *ctx)
 	-> VisitorRetType
 {
@@ -44,7 +44,7 @@ auto ParseTreeVisitor::visitDeclNoLhsTypeVar
 }
 
 // List of local variables
-auto ParseTreeVisitor::visitDeclVarList
+auto PTVisitor::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 	-> VisitorRetType
 {
@@ -90,7 +90,7 @@ auto ParseTreeVisitor::visitDeclVarList
 			break;
 
 		default:
-			_err(ctx, "ParseTreeVisitor::visitDeclVarList():  Eek!");
+			_err(ctx, "PTVisitor::visitDeclVarList():  Eek!");
 			break;
 		}
 
@@ -106,7 +106,7 @@ auto ParseTreeVisitor::visitDeclVarList
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitDeclNoKwLocalparam
+auto PTVisitor::visitDeclNoKwLocalparam
 	(Parser::DeclNoKwLocalparamContext *ctx)
 	-> VisitorRetType
 {
@@ -180,7 +180,7 @@ auto ParseTreeVisitor::visitDeclNoKwLocalparam
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+			_err(ctx, "PTVisitor::visitDeclNoKwLocalparam():  "
 				"InnerDecl pass() Eek!");
 		}
 
@@ -217,7 +217,7 @@ auto ParseTreeVisitor::visitDeclNoKwLocalparam
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+			_err(ctx, "PTVisitor::visitDeclNoKwLocalparam():  "
 				"FinishRaw...Construct pass() Eek!");
 		}
 
@@ -277,13 +277,13 @@ auto ParseTreeVisitor::visitDeclNoKwLocalparam
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclNoKwLocalparam():  "
+		_err(ctx, "PTVisitor::visitDeclNoKwLocalparam():  "
 			"invalid pass() Eek!");
 	}
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitDeclLocalparamList
+auto PTVisitor::visitDeclLocalparamList
 	(Parser::DeclLocalparamListContext *ctx)
 	-> VisitorRetType
 {
@@ -293,7 +293,7 @@ auto ParseTreeVisitor::visitDeclLocalparamList
 }
 
 // For now, port vars can't be arrays.  This will change.
-auto ParseTreeVisitor::visitDeclPortVarList
+auto PTVisitor::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 	-> VisitorRetType
 {
@@ -313,7 +313,7 @@ auto ParseTreeVisitor::visitDeclPortVarList
 }
 
 
-auto ParseTreeVisitor::visitDeclPortDirectionalVarList
+auto PTVisitor::visitDeclPortDirectionalVarList
 	(Parser::DeclPortDirectionalVarListContext *ctx)
 	-> VisitorRetType
 {
@@ -339,7 +339,7 @@ auto ParseTreeVisitor::visitDeclPortDirectionalVarList
 	//}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitDeclPortDirectionalVarList():  "
+		_err(ctx, "PTVisitor::visitDeclPortDirectionalVarList():  "
 			"Eek!");
 	}
 
@@ -353,7 +353,7 @@ auto ParseTreeVisitor::visitDeclPortDirectionalVarList
 }
 
 // "parameter" stuff
-auto ParseTreeVisitor::visitDeclParameterVar
+auto PTVisitor::visitDeclParameterVar
 	(Parser::DeclParameterVarContext *ctx)
 	-> VisitorRetType
 {
@@ -391,7 +391,7 @@ auto ParseTreeVisitor::visitDeclParameterVar
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitDeclParameterVarList
+auto PTVisitor::visitDeclParameterVarList
 	(Parser::DeclParameterVarListContext *ctx)
 	-> VisitorRetType
 {

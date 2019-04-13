@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -9,14 +9,14 @@
 namespace frost_hdl
 {
 
-auto ParseTreeVisitor::visitStmtBehavHeaderForLoop
+auto PTVisitor::visitStmtBehavHeaderForLoop
 	(Parser::StmtBehavHeaderForLoopContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitStmtBehavHeaderIf
+auto PTVisitor::visitStmtBehavHeaderIf
 	(Parser::StmtBehavHeaderIfContext *ctx)
 	-> VisitorRetType
 {

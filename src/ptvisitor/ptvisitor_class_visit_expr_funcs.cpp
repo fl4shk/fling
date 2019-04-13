@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -10,7 +10,7 @@ namespace frost_hdl
 {
 
 // Expression parsing
-auto ParseTreeVisitor::visitExpr
+auto PTVisitor::visitExpr
 	(Parser::ExprContext *ctx)
 	-> VisitorRetType
 {
@@ -39,7 +39,7 @@ auto ParseTreeVisitor::visitExpr
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitExpr():  Eek!");
+			_err(ctx, "PTVisitor::visitExpr():  Eek!");
 		}
 	}
 	else
@@ -49,7 +49,7 @@ auto ParseTreeVisitor::visitExpr
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitExprLogical
+auto PTVisitor::visitExprLogical
 	(Parser::ExprLogicalContext *ctx)
 	-> VisitorRetType
 {
@@ -98,7 +98,7 @@ auto ParseTreeVisitor::visitExprLogical
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitExprLogical():  Eek!");
+			_err(ctx, "PTVisitor::visitExprLogical():  Eek!");
 		}
 	}
 	else
@@ -107,7 +107,7 @@ auto ParseTreeVisitor::visitExprLogical
 	}
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprCompare
+auto PTVisitor::visitExprCompare
 	(Parser::ExprCompareContext *ctx)
 	-> VisitorRetType
 {
@@ -144,7 +144,7 @@ auto ParseTreeVisitor::visitExprCompare
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitExprAddSub
+auto PTVisitor::visitExprAddSub
 	(Parser::ExprAddSubContext *ctx)
 	-> VisitorRetType
 {
@@ -179,7 +179,7 @@ auto ParseTreeVisitor::visitExprAddSub
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  "
+			_err(ctx, "PTVisitor::visitExprAddSub():  "
 				"TokOpMulDivMod() "
 				"Eek!");
 		}
@@ -226,7 +226,7 @@ auto ParseTreeVisitor::visitExprAddSub
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitExprAddSub():  "
+			_err(ctx, "PTVisitor::visitExprAddSub():  "
 				"TokOpBitwise() Eek!");
 		}
 	}
@@ -236,7 +236,7 @@ auto ParseTreeVisitor::visitExprAddSub
 	}
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprMulDivModEtc
+auto PTVisitor::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 	-> VisitorRetType
 {
@@ -252,13 +252,13 @@ auto ParseTreeVisitor::visitExprMulDivModEtc
 	else ANY_ACCEPT_IF_BASIC(ctx->expr())
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitExprMulDivModEtc():  Eek!");
+		_err(ctx, "PTVisitor::visitExprMulDivModEtc():  Eek!");
 	}
 	return nullptr;
 }
 
 
-auto ParseTreeVisitor::visitExprPlusUnary
+auto PTVisitor::visitExprPlusUnary
 	(Parser::ExprPlusUnaryContext *ctx)
 	-> VisitorRetType
 {
@@ -268,7 +268,7 @@ auto ParseTreeVisitor::visitExprPlusUnary
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprMinusUnary
+auto PTVisitor::visitExprMinusUnary
 	(Parser::ExprMinusUnaryContext *ctx)
 	-> VisitorRetType
 {
@@ -278,7 +278,7 @@ auto ParseTreeVisitor::visitExprMinusUnary
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprLogNot
+auto PTVisitor::visitExprLogNot
 	(Parser::ExprLogNotContext *ctx)
 	-> VisitorRetType
 {
@@ -288,7 +288,7 @@ auto ParseTreeVisitor::visitExprLogNot
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprBitNot
+auto PTVisitor::visitExprBitNot
 	(Parser::ExprBitNotContext *ctx)
 	-> VisitorRetType
 {
@@ -298,7 +298,7 @@ auto ParseTreeVisitor::visitExprBitNot
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprCastUnsgn
+auto PTVisitor::visitExprCastUnsgn
 	(Parser::ExprCastUnsgnContext *ctx)
 	-> VisitorRetType
 {
@@ -309,7 +309,7 @@ auto ParseTreeVisitor::visitExprCastUnsgn
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprCastSgn
+auto PTVisitor::visitExprCastSgn
 	(Parser::ExprCastSgnContext *ctx)
 	-> VisitorRetType
 {
@@ -320,7 +320,7 @@ auto ParseTreeVisitor::visitExprCastSgn
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitExprClog2
+auto PTVisitor::visitExprClog2
 	(Parser::ExprClog2Context *ctx)
 	-> VisitorRetType
 {
@@ -342,7 +342,7 @@ auto ParseTreeVisitor::visitExprClog2
 }
 
 // I'm pretty sure this works.
-auto ParseTreeVisitor::visitNumExpr
+auto PTVisitor::visitNumExpr
 	(Parser::NumExprContext *ctx)
 	-> VisitorRetType
 {
@@ -382,14 +382,14 @@ auto ParseTreeVisitor::visitNumExpr
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitNumExpr():  Eek!");
+		_err(ctx, "PTVisitor::visitNumExpr():  Eek!");
 	}
 
 	return nullptr;
 }
 
 // I'm pretty sure this works.
-auto ParseTreeVisitor::visitRawNumExpr
+auto PTVisitor::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 	-> VisitorRetType
 {
@@ -450,12 +450,12 @@ auto ParseTreeVisitor::visitRawNumExpr
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitRawNumExpr():  Eek!");
+		_err(ctx, "PTVisitor::visitRawNumExpr():  Eek!");
 	}
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitRawSizedNumExpr
+auto PTVisitor::visitRawSizedNumExpr
 	(Parser::RawSizedNumExprContext *ctx)
 	-> VisitorRetType
 {
@@ -463,7 +463,7 @@ auto ParseTreeVisitor::visitRawSizedNumExpr
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitIdentSizedNumExpr
+auto PTVisitor::visitIdentSizedNumExpr
 	(Parser::IdentSizedNumExprContext *ctx)
 	-> VisitorRetType
 {
@@ -472,7 +472,7 @@ auto ParseTreeVisitor::visitIdentSizedNumExpr
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitIdentExpr
+auto PTVisitor::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 	-> VisitorRetType
 {
@@ -492,12 +492,12 @@ auto ParseTreeVisitor::visitIdentExpr
 	//}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitIdentExpr():  Eek!");
+		_err(ctx, "PTVisitor::visitIdentExpr():  Eek!");
 	}
 
 	return nullptr;
 }
-auto ParseTreeVisitor::visitPureIdentExpr
+auto PTVisitor::visitPureIdentExpr
 	(Parser::PureIdentExprContext *ctx)
 	-> VisitorRetType
 {
@@ -581,14 +581,14 @@ auto ParseTreeVisitor::visitPureIdentExpr
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
+			_err(ctx, "PTVisitor::visitPureIdentExpr():  "
 				"identName() pass() Eek!");
 		}
 	}
 
 	else if (ctx->scopedIdentName())
 	{
-		//_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
+		//_err(ctx, "PTVisitor::visitPureIdentExpr():  "
 		//	"scopedIdentName() not implemented Eek!");
 		ANY_JUST_ACCEPT_BASIC(ctx->scopedIdentName());
 	
@@ -668,29 +668,29 @@ auto ParseTreeVisitor::visitPureIdentExpr
 			// inside of a package.
 			// Since enums aren't fully implemented yet, this is being
 			// skipped for now.
-			_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
+			_err(ctx, "PTVisitor::visitPureIdentExpr():  "
 				"scopedIdentName() (num_scopes == 3) not implemented "
 				"Eek!");
 		}
 		else
 		{
-			_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  "
+			_err(ctx, "PTVisitor::visitPureIdentExpr():  "
 				"scopedIdentName() num_scopes Eek!");
 		}
 	}
 	else
 	{
-		_err(ctx, "ParseTreeVisitor::visitPureIdentExpr():  Eek!");
+		_err(ctx, "PTVisitor::visitPureIdentExpr():  Eek!");
 	}
 	return nullptr;
 }
-//auto ParseTreeVisitor::visitMemberAccessIdentExpr
+//auto PTVisitor::visitMemberAccessIdentExpr
 //	(Parser::MemberAccessIdentExprContext *ctx)
 //	-> VisitorRetType
 //{
 //	return nullptr;
 //}
-auto ParseTreeVisitor::visitSlicedPureIdentExpr
+auto PTVisitor::visitSlicedPureIdentExpr
 	(Parser::SlicedPureIdentExprContext *ctx)
 	-> VisitorRetType
 {
@@ -727,41 +727,41 @@ auto ParseTreeVisitor::visitSlicedPureIdentExpr
 	}
 	else
 	{
-		_err(ctx->sliceWithAny(), "ParseTreeVisitor"
+		_err(ctx->sliceWithAny(), "PTVisitor"
 			"::visitSlicedPureIdentExpr():  Eek!");
 	}
 
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitSliceWithOne
+auto PTVisitor::visitSliceWithOne
 	(Parser::SliceWithOneContext *ctx)
 	-> VisitorRetType
 {
 	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	return nullptr;
 }
-auto ParseTreeVisitor::visitSliceWithRange
+auto PTVisitor::visitSliceWithRange
 	(Parser::SliceWithRangeContext *ctx)
 	-> VisitorRetType
 {
 	ANY_JUST_ACCEPT_LOOPED(iter, ctx->expr());
 	return nullptr;
 }
-auto ParseTreeVisitor::visitSliceWithAny
+auto PTVisitor::visitSliceWithAny
 	(Parser::SliceWithAnyContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto ParseTreeVisitor::visitIdentConcatExpr
+auto PTVisitor::visitIdentConcatExpr
 	(Parser::IdentConcatExprContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitIdentName
+auto PTVisitor::visitIdentName
 	(Parser::IdentNameContext *ctx)
 	-> VisitorRetType
 {
@@ -771,7 +771,7 @@ auto ParseTreeVisitor::visitIdentName
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitScopedIdentName
+auto PTVisitor::visitScopedIdentName
 	(Parser::ScopedIdentNameContext *ctx)
 	-> VisitorRetType
 {

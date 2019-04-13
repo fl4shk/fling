@@ -1,21 +1,21 @@
-#include "parse_tree_visitor_error_listener_class.hpp"
+#include "ptvisitor_error_listener_class.hpp"
 #include "src_code_pos_class.hpp"
 
 
 namespace frost_hdl
 {
 
-ParseTreeVisitorErrorListener::ParseTreeVisitorErrorListener
+PTVisitorErrorListener::PTVisitorErrorListener
 	(SavedString s_filename)
 	: _filename(s_filename)
 {
 }
 
-ParseTreeVisitorErrorListener::~ParseTreeVisitorErrorListener()
+PTVisitorErrorListener::~PTVisitorErrorListener()
 {
 }
 
-void ParseTreeVisitorErrorListener::syntaxError
+void PTVisitorErrorListener::syntaxError
 	(antlr4::Recognizer *recognizer, 
 	antlr4::Token *offendingSymbol, size_t line, 
 	size_t charPositionInLine, const std::string &msg, 
@@ -27,7 +27,7 @@ void ParseTreeVisitorErrorListener::syntaxError
 	//exit(1);
 	SrcCodePos(_filename, line, charPositionInLine).syntax_error(msg);
 }
-void ParseTreeVisitorErrorListener::reportAmbiguity
+void PTVisitorErrorListener::reportAmbiguity
 	(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
 	size_t startIndex, size_t stopIndex, 
 	bool exact, const antlrcpp::BitSet &ambigAlts, 
@@ -35,7 +35,7 @@ void ParseTreeVisitorErrorListener::reportAmbiguity
 {
 }
 
-void ParseTreeVisitorErrorListener::reportAttemptingFullContext
+void PTVisitorErrorListener::reportAttemptingFullContext
 	(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, 
 	size_t startIndex, size_t stopIndex,
 	const antlrcpp::BitSet &conflictingAlts, 
@@ -43,7 +43,7 @@ void ParseTreeVisitorErrorListener::reportAttemptingFullContext
 {
 }
 
-void ParseTreeVisitorErrorListener::reportContextSensitivity
+void PTVisitorErrorListener::reportContextSensitivity
 	(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, 
 	size_t startIndex, size_t stopIndex, size_t prediction, 
 	antlr4::atn::ATNConfigSet *configs)

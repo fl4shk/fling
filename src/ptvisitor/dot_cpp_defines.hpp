@@ -1,4 +1,3 @@
-
 #define ANY_JUST_ACCEPT_BASIC(arg) \
 	arg->accept(this)
 
@@ -25,5 +24,5 @@
 	}
 
 #define DEBUG_EXPR(func, context) \
-	printout("ParseTreeVisitor::", #func, "():  ", #context, ":  ", \
+	printout("PTVisitor::", #func, "():  ", #context, ":  ", \
 		!!ctx->context(), "\n")

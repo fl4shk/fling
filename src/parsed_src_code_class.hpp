@@ -9,7 +9,7 @@
 #include "gen_src/FrostHdlGrammarLexer.h"
 #include "gen_src/FrostHdlGrammarParser.h"
 #include "gen_src/FrostHdlGrammarVisitor.h"
-#include "parse_tree_visitor_error_listener_class.hpp"
+#include "ptvisitor_error_listener_class.hpp"
 
 namespace frost_hdl
 {
@@ -22,8 +22,8 @@ private:		// variables
 	std::unique_ptr<FrostHdlGrammarLexer> _lexer;
 	std::unique_ptr<antlr4::CommonTokenStream> _tokens;
 	std::unique_ptr<FrostHdlGrammarParser> _parser;
-	std::unique_ptr<ParseTreeVisitorErrorListener>
-		_parse_tree_visitor_error_listener;
+	std::unique_ptr<PTVisitorErrorListener>
+		_ptvisitor_error_listener;
 
 public:		// functions
 	ParsedSrcCode();

@@ -11,7 +11,7 @@ namespace frost_hdl
 {
 
 // Contains the partially-processed contents of a program written in
-// Frost HDL, for the first set of passes that the "ParseTreeVisitor" goes through.
+// Frost HDL, for the first set of passes that the "PTVisitor" goes through.
 // This is simply used as a container.
 class FrostProgram
 {

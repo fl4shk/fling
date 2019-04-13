@@ -1,4 +1,4 @@
-#include "parse_tree_visitor_class.hpp"
+#include "ptvisitor_class.hpp"
 #include "general_allocator_class.hpp"
 #include "expression_builder_class.hpp"
 
@@ -11,20 +11,20 @@
 namespace frost_hdl
 {
 
-//typedef ParseTreeVisitor::VisitorRetType VisitorRetType;
+//typedef PTVisitor::VisitorRetType VisitorRetType;
 
 
-ParseTreeVisitor::ParseTreeVisitor
+PTVisitor::PTVisitor
 	(ListParsedSrcCode&& s_list_parsed_src_code)
 	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
 	//_program_ctx = parser.program();
 }
-ParseTreeVisitor::~ParseTreeVisitor()
+PTVisitor::~PTVisitor()
 {
 }
 
-int ParseTreeVisitor::run()
+int PTVisitor::run()
 {
 	while (pass() < Pass::Done)
 	{
@@ -80,7 +80,7 @@ int ParseTreeVisitor::run()
 	return 0;
 }
 
-void ParseTreeVisitor::_reparse()
+void PTVisitor::_reparse()
 {
 	// ...This is a HORRIBLE solution to a problem I don't know the
 	// actual cause of.
@@ -89,7 +89,7 @@ void ParseTreeVisitor::_reparse()
 		*parsed_src_code = ParsedSrcCode(*parsed_src_code->filename());
 	}
 }
-//InScopeErrWarnBase<SrcCodePos>* ParseTreeVisitor::_in_scope_thing()
+//InScopeErrWarnBase<SrcCodePos>* PTVisitor::_in_scope_thing()
 //{
 //	if (_in_package_pass())
 //	{
@@ -105,7 +105,7 @@ void ParseTreeVisitor::_reparse()
 //	}
 //	else
 //	{
-//		_err(nullptr, "ParseTreeVisitor::_in_scope_thing():  Eek!");
+//		_err(nullptr, "PTVisitor::_in_scope_thing():  Eek!");
 //	}
 //
 //	return nullptr;
@@ -114,14 +114,14 @@ void ParseTreeVisitor::_reparse()
 
 
 
-void ParseTreeVisitor::_insert_module_port_var
+void PTVisitor::_insert_module_port_var
 	(const SrcCodePos& s_src_code_pos, SavedString s_ident,
 	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
 {
 	// Call this ONLY if (pass() == Pass::FrostListModules)
 	if (pass() != Pass::ListModuleIdentifiers)
 	{
-		_err(s_src_code_pos, "ParseTreeVisitor"
+		_err(s_src_code_pos, "PTVisitor"
 			"::_insert_module_port_var():  pass() Eek!");
 	}
 
@@ -158,7 +158,7 @@ void ParseTreeVisitor::_insert_module_port_var
 	//	break;
 
 	default:
-		_err(s_src_code_pos, "ParseTreeVisitor"
+		_err(s_src_code_pos, "PTVisitor"
 			"::_insert_module_port_var():  PortType Eek!");
 		break;
 	}

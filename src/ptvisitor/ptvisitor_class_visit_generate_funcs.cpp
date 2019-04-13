@@ -1,4 +1,4 @@
-#include "../parse_tree_visitor_class.hpp"
+#include "../ptvisitor_class.hpp"
 #include "../general_allocator_class.hpp"
 #include "../expression_builder_class.hpp"
 #include <sstream>
@@ -9,32 +9,32 @@
 namespace frost_hdl
 {
 
-auto ParseTreeVisitor::visitGenerateBlockInModule
+auto PTVisitor::visitGenerateBlockInModule
 	(Parser::GenerateBlockInModuleContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto ParseTreeVisitor::visitGenerateBlockAnyHeader
+auto PTVisitor::visitGenerateBlockAnyHeader
 	(Parser::GenerateBlockAnyHeaderContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto ParseTreeVisitor::visitGenerateBlockHeaderForLoop
+auto PTVisitor::visitGenerateBlockHeaderForLoop
 	(Parser::GenerateBlockHeaderForLoopContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto ParseTreeVisitor::visitGenerateBlockHeaderIf
+auto PTVisitor::visitGenerateBlockHeaderIf
 	(Parser::GenerateBlockHeaderIfContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
 
-auto ParseTreeVisitor::visitPseudoFuncCallRange
+auto PTVisitor::visitPseudoFuncCallRange
 	(Parser::PseudoFuncCallRangeContext *ctx)
 	-> VisitorRetType
 {

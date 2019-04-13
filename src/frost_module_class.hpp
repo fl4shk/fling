@@ -33,7 +33,7 @@ private:		// variables
 
 	//FrostStatementTable _frost_statement_table;
 
-	//// Used by the "ParseTreeVisitor" purely to determine whether or not
+	//// Used by the "PTVisitor" purely to determine whether or not
 	//// this "module" is defined in terms of itself.
 	//std::set<FrostModule*> _contained_module_instance_types;
 

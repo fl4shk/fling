@@ -1,4 +1,4 @@
-#include "parse_tree_visitor_class.hpp"
+#include "ptvisitor_class.hpp"
 #include "expr_num_class.hpp"
 #include "expression_class.hpp"
 #include "testing.hpp"
@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 
-	frost_hdl::ParseTreeVisitor::ListParsedSrcCode s_list_parsed_src_code;
+	frost_hdl::PTVisitor::ListParsedSrcCode s_list_parsed_src_code;
 
 	//printout("argc:  ", argc, "\n");
 
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 			::ParsedSrcCode>(new frost_hdl::ParsedSrcCode(argv[i])));
 	}
 
-	frost_hdl::ParseTreeVisitor visitor(std::move(s_list_parsed_src_code));
+	frost_hdl::PTVisitor visitor(std::move(s_list_parsed_src_code));
 	return visitor.run();
 
 }

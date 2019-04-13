@@ -47,7 +47,7 @@ protected:		// functions
 	//}
 };
 
-//// Used by "ParseTreeVisitor" when constant "Symbol"s are defined in terms
+//// Used by "PTVisitor" when constant "Symbol"s are defined in terms
 //// of other, potentially unknown "Symbol"s.
 ////
 //// Please do not touch the "_value" of one of these!
@@ -65,13 +65,15 @@ protected:		// functions
 //	bool is_constant() const;
 //};
 
-class ExprIdentSlicedWithRange : public Expression
+class ExprIdentSliced : public Expression
 {
 protected:		// variables
+	Expression* _ident_expr = nullptr;
 	PseudoFuncCallRange _pseudo_func_call_range;
+
 public:		// functions
-	ExprIdentSlicedWithRange(const SrcCodePos& s_src_code_pos,
-		Symbol* s_symbol,
+	ExprIdentSliced(const SrcCodePos& s_src_code_pos,
+		Expression* s_ident_expr,
 		const PseudoFuncCallRange& s_pseudo_func_call_range);
 
 	virtual SavedString to_hdl_source() const;
@@ -89,6 +91,8 @@ protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
 };
+
+// How am I going to represent struct member accesses, anyway?
 
 } // namespace frost_hdl
 

@@ -7,6 +7,7 @@
 namespace frost_hdl
 {
 
+//--------
 ExprIdentName::ExprIdentName(const SrcCodePos& s_src_code_pos,
 	Symbol* s_symbol)
 	: Expression(s_src_code_pos)
@@ -64,9 +65,11 @@ size_t ExprIdentName::_starting_length() const
 	//return symbol()->frost_lhs_type()->left_dim();
 	return symbol()->frost_full_type()->frost_lhs_type()->left_dim();
 }
+//--------
 
 
 
+//--------
 //ExprSubpassIdentName::ExprSubpassIdentName
 //	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol)
 //	: Expression(s_src_code_pos)
@@ -79,13 +82,15 @@ size_t ExprIdentName::_starting_length() const
 //{
 //	return symbol()->is_constant();
 //}
+//--------
 
-ExprIdentSlicedWithRange::ExprIdentSlicedWithRange
-	(const SrcCodePos& s_src_code_pos, Symbol* s_symbol,
+//--------
+ExprIdentSliced::ExprIdentSliced
+	(const SrcCodePos& s_src_code_pos, Expression* s_ident_expr,
 	const PseudoFuncCallRange& s_pseudo_func_call_range)
 	: Expression(s_src_code_pos)
 {
-	_symbol = s_symbol;
+	_ident_expr = s_ident_expr;
 	_pseudo_func_call_range = s_pseudo_func_call_range;
 
 	if (!_pseudo_func_call_range.is_constant())
@@ -99,8 +104,7 @@ ExprIdentSlicedWithRange::ExprIdentSlicedWithRange
 		{
 		default:
 			_pseudo_func_call_range.left()->src_code_pos().err
-				("ExprIdentSlicedWithRange::ExprIdentSlicedWithRange():  "
-				"Eek!  Eek!  Eek!");
+				("ExprIdentSliced::ExprIdentSliced():  Eek!  Eek!  Eek!");
 			break;
 
 		case 0b01:
@@ -134,21 +138,25 @@ ExprIdentSlicedWithRange::ExprIdentSlicedWithRange
 	//set_handles_value_set_size(true);
 }
 
-SavedString ExprIdentSlicedWithRange::to_hdl_source() const
+SavedString ExprIdentSliced::to_hdl_source() const
 {
-	return dup_str(sconcat(*symbol()->ident(), "[",
+	//return dup_str(sconcat(*symbol()->ident(), "[",
+	//	*_pseudo_func_call_range.left()->to_hdl_source(), ":",
+	//	*_pseudo_func_call_range.right()->to_hdl_source(), "]"));
+	return dup_str(sconcat(*_ident_expr->to_hdl_source(), "[",
 		*_pseudo_func_call_range.left()->to_hdl_source(), ":",
 		*_pseudo_func_call_range.right()->to_hdl_source(), "]"));
 }
 
-bool ExprIdentSlicedWithRange::is_constant() const
+bool ExprIdentSliced::is_constant() const
 {
 	//return (symbol()->is_constant() && _range_left_child()->is_constant()
 	//	&& _range_right_child()->is_constant());
-	return symbol()->is_constant();
+	//return symbol()->is_constant();
+	return _ident_expr->is_constant();
 }
 
-void ExprIdentSlicedWithRange::_inner_finish_init_value()
+void ExprIdentSliced::_inner_finish_init_value()
 {
 	//_value.set_is_signed(symbol()->frost_full_type()->frost_lhs_type()
 	//	->is_signed());
@@ -176,7 +184,7 @@ void ExprIdentSlicedWithRange::_inner_finish_init_value()
 	}
 }
 
-void ExprIdentSlicedWithRange::_evaluate()
+void ExprIdentSliced::_evaluate()
 {
 	symbol()->value()->full_evaluate_if_constant();
 	const auto unsliced_value = symbol()->value()->value();
@@ -186,10 +194,14 @@ void ExprIdentSlicedWithRange::_evaluate()
 		_pseudo_func_call_range.right()->value());
 }
 
-size_t ExprIdentSlicedWithRange::_starting_length() const
+size_t ExprIdentSliced::_starting_length() const
 {
 	_pseudo_func_call_range.evaluate();
 	return _pseudo_func_call_range.size();
 }
+//--------
+
+//--------
+//--------
 
 } // namespace frost_hdl
