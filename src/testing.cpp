@@ -88,22 +88,25 @@ void test_expr_num_slice_with_range(std::ostream& os)
 {
 	liborangepower::time::Prng prng;
 
-	static constexpr size_t to_slice_size = 4;
+	static constexpr size_t to_slice_size = 8;
 
 	const ExprNum to_slice(BigNum(prng(WIDTH2MP(static_cast<size_t>(1)
 		<< to_slice_size))), to_slice_size, false);
 	const ExprNum range_left(BigNum(prng(WIDTH2MP(to_slice_size))),
-		compile_time_ilog2(to_slice_size), false);
+		basic_ilog2(to_slice_size), false);
 	const ExprNum range_right(BigNum(prng(WIDTH2MP(to_slice_size))),
-		compile_time_ilog2(to_slice_size), false);
+		basic_ilog2(to_slice_size), false);
 
 	ExprNum ret;
 	ret.perf_slice_with_range(to_slice, range_left, range_right);
 
-	osprintout(os, static_cast<BigNum>(ret), ":  ",
+	osprintout(os,
+		std::hex,
+		static_cast<BigNum>(ret), ":  ",
 		static_cast<BigNum>(to_slice), ":  ",
 		static_cast<BigNum>(range_left), " ",
-		static_cast<BigNum>(range_left), "\n");
+		static_cast<BigNum>(range_right), "\n",
+		std::dec);
 }
 
 //void test_cpp_expressions(std::ostream& os)
