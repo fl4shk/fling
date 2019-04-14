@@ -19,7 +19,8 @@ module RippleCarryAdder
 {
 	localparam _WIDTH__INNER_CARRIES = WIDTH__DIO + 1;
 
-	logic [_WIDTH__INNER_CARRIES] _inner_carries;
+	//logic [_WIDTH__INNER_CARRIES] _inner_carries;
+	logic _inner_carries[_WIDTH__INNER_CARRIES];
 
 
 	//// What I want to be able to do:

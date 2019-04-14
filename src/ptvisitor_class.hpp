@@ -389,10 +389,12 @@ private:		// visitor functions
 
 	VisitorRetType visitIdentExpr
 		(Parser::IdentExprContext *ctx);
-	VisitorRetType visitPureIdentExpr
-		(Parser::PureIdentExprContext *ctx);
+	VisitorRetType visitPureIdent
+		(Parser::PureIdentContext *ctx);
 	//VisitorRetType visitMemberAccessIdentExpr
 	//	(Parser::MemberAccessIdentExprContext *ctx);
+	VisitorRetType visitNonSlicedPureIdentExpr
+		(Parser::NonSlicedPureIdentExprContext *ctx);
 	VisitorRetType visitSlicedPureIdentExpr
 		(Parser::SlicedPureIdentExprContext *ctx);
 

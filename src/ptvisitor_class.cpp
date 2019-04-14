@@ -163,7 +163,7 @@ void PTVisitor::_insert_module_port_var
 		break;
 	}
 
-	// Ports can't be arrays.
+	// Ports can be arrays now!
 	auto s_frost_full_type = save_frost_full_type(FrostFullType
 		(s_src_code_pos, s_frost_lhs_type));
 

@@ -57,7 +57,10 @@ declNoKwLocalparam:
 	;
 
 declLocalparamList:
-	TokKwLocalparam declNoKwLocalparam (',' declNoKwLocalparam)*
+	TokKwLocalparam
+		//lhsTypeName?
+		declNoKwLocalparam
+		(',' declNoKwLocalparam)*
 	;
 
 // "package" stuff
@@ -80,10 +83,10 @@ insidePackage:
 	;
 
 
-// For now, port vars can't be arrays.  Perhaps things will actually stay
-// that way (such that arrays on ports *must* be in "unpacked" "struct"s)
+// Port vars can be arrays!
 declPortVarList:
-	lhsTypeName identName (',' identName)*
+	lhsTypeName identName ('[' expr ']')?
+		(',' identName ('[' expr ']')?)*
 	;
 
 
@@ -282,21 +285,19 @@ rawSizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 // This permits using a constant to indicate the width of a hard-coded
 // number, permitting shorter Frost HDL source code in some situations.
-identSizedNumExpr: pureIdentExpr TokApostrophe rawNumExpr ;
+identSizedNumExpr: nonSlicedPureIdentExpr TokApostrophe rawNumExpr ;
 
 
 
 identExpr:
-	pureIdentExpr
+	nonSlicedPureIdentExpr
 	| slicedPureIdentExpr
 	////| identConcatExpr
 	//| memberAccessIdentExpr
 	;
 
 // Just an identifier, possibly scoped.
-// In the "PTVisitor", this rule produces an "ExprIdentName", from
-// which the "Symbol" can be referenced.
-pureIdentExpr:
+pureIdent:
 	identName
 	| scopedIdentName
 	;
@@ -305,8 +306,12 @@ pureIdentExpr:
 //	identName (sliceWithOne? '.' identName)+ sliceWithAny?
 //	;
 
+nonSlicedPureIdentExpr:
+	pureIdent
+	;
+
 slicedPureIdentExpr:
-	pureIdentExpr sliceWithOne? sliceWithAny
+	pureIdent sliceWithOne? sliceWithAny
 	;
 
 sliceWithOne:
@@ -424,6 +429,7 @@ TokKwTask: 'task' ;
 TokKwFunction: 'function' ;
 TokKwPackage: 'package' ;
 
+TokKwInstance: 'instance' ;
 
 TokKwPseudoFuncConcat: 'concat' ;
 TokKwPseudoFuncRepl: 'repl' ;

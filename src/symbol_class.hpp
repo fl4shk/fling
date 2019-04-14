@@ -58,8 +58,10 @@ private:		// variables
 
 	// Whether or not this symbol is a named constant.
 	bool _is_constant = false;
+	//bool _is_incomplete = false;
 
 	FrostFullType* _frost_full_type = nullptr;
+
 
 
 	//// Compile-time values are stored here for both scalars and arrays.
@@ -124,16 +126,17 @@ public:		// functions
 	//	return (!becomes_wire());
 	//}
 
-	inline bool is_incomplete() const
-	{
-		return (_frost_full_type == nullptr);
-	}
+	//inline bool is_incomplete() const
+	//{
+	//	return (_frost_full_type == nullptr);
+	//}
 
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)
 	GEN_GETTER_BY_VAL(ident)
 	GEN_GETTER_BY_VAL(port_type)
 	GEN_GETTER_BY_VAL(is_constant)
+	//GEN_GETTER_AND_SETTER_BY_VAL(is_incomplete)
 	GEN_GETTER_BY_VAL(frost_full_type)
 
 	GEN_GETTER_BY_CON_REF(value)

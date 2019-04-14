@@ -467,7 +467,7 @@ auto PTVisitor::visitIdentSizedNumExpr
 	(Parser::IdentSizedNumExprContext *ctx)
 	-> VisitorRetType
 {
-	ANY_JUST_ACCEPT_BASIC(ctx->pureIdentExpr());
+	ANY_JUST_ACCEPT_BASIC(ctx->nonSlicedPureIdentExpr());
 	ANY_JUST_ACCEPT_BASIC(ctx->rawNumExpr());
 	return nullptr;
 }
@@ -476,7 +476,7 @@ auto PTVisitor::visitIdentExpr
 	(Parser::IdentExprContext *ctx)
 	-> VisitorRetType
 {
-	ANY_ACCEPT_IF_BASIC(ctx->pureIdentExpr())
+	ANY_ACCEPT_IF_BASIC(ctx->nonSlicedPureIdentExpr())
 	else ANY_ACCEPT_IF_BASIC(ctx->slicedPureIdentExpr())
 	//else if (ctx->identConcatExpr())
 	//{
@@ -497,8 +497,8 @@ auto PTVisitor::visitIdentExpr
 
 	return nullptr;
 }
-auto PTVisitor::visitPureIdentExpr
-	(Parser::PureIdentExprContext *ctx)
+auto PTVisitor::visitPureIdent
+	(Parser::PureIdentContext *ctx)
 	-> VisitorRetType
 {
 	if (ctx->identName())
@@ -515,9 +515,12 @@ auto PTVisitor::visitPureIdentExpr
 			auto package = _frost_program.curr_frost_package;
 			if (package->symbol_table().contains(ident))
 			{
-				_stacks.push_expr(save_expr(ExprIdentName
-					(_make_src_code_pos(ctx),
-					package->symbol_table().at(ident))));
+				//// This assumes that arrays can't be stored in packages.
+				//_stacks.push_expr(save_expr(ExprIdentName
+				//	(_make_src_code_pos(ctx),
+				//	package->symbol_table().at(ident))));
+				_stacks.push_sym(package->symbol_table().at(ident));
+				_stacks.push_src_code_pos(_make_src_code_pos(ctx));
 			}
 			else
 			{
@@ -531,12 +534,8 @@ auto PTVisitor::visitPureIdentExpr
 
 		//else if (_in_interface_pass())
 		//{
-		//	auto interface = _frost_program.curr_frost_interface;
-		//	if (interface->symbol_table().contains(ident))
+		//	if ()
 		//	{
-		//		_stacks.push_expr(save_expr(ExprIdentName
-		//			(_make_src_code_pos(ctx),
-		//			interface->symbol_table().at(ident))));
 		//	}
 		//	else
 		//	{
@@ -554,21 +553,8 @@ auto PTVisitor::visitPureIdentExpr
 			auto module_scope = _stacks.get_top_module_scope();
 			if (module_scope->contains_symbol(ident))
 			{
-				//auto symbol = module->find_symbol(ident);
-
-				//if (!symbol->is_incomplete())
-				//{
-				//	_stacks.push_expr(save_expr(ExprIdentName
-				//		(_make_src_code_pos(ctx), symbol)));
-				//}
-				//else // if (symbol->is_incomplete())
-				//{
-				//	_stacks.push_expr(save_expr(ExprSubpassIdentName
-				//		(_make_src_code_pos(ctx), symbol)));
-				//}
-				_stacks.push_expr(save_expr(ExprIdentName
-					(_make_src_code_pos(ctx),
-					module_scope->find_symbol(ident))));
+				_stacks.push_sym(module_scope->find_symbol(ident));
+				_stacks.push_src_code_pos(_make_src_code_pos(ctx));
 			}
 			else
 			{
@@ -604,21 +590,6 @@ auto PTVisitor::visitPureIdentExpr
 			// if a local symbol overrides a global one?
 			auto& frost_package_table = _frost_program.frost_package_table;
 
-			//InScopeErrWarnBase<SrcCodePos>* in_scope_thing = nullptr;
-
-			//if (_in_package_pass())
-			//{
-			//	in_scope_thing = _frost_program.curr_frost_package;
-			//}
-			////else if (_in_interface_pass())
-			////{
-			////	in_scope_thing = _frost_program.curr_frost_interface;
-			////}
-			//else if (_in_module_pass())
-			//{
-			//	in_scope_thing = _frost_program.curr_frost_module;
-			//}
-
 			if (!frost_package_table.contains(which_scope))
 			{
 				//_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
@@ -632,35 +603,13 @@ auto PTVisitor::visitPureIdentExpr
 
 			if (!package->symbol_table().contains(most_inner_ident))
 			{
-				//_in_scope_thing()->in_scope_err(_make_src_code_pos(ctx),
-				//	sconcat("Package \"", *package->ident(), "\" does ",
-				//	"not contain a symbol called \"", *most_inner_ident,
-				//	"\"."));
 				_err(ctx, sconcat("Package \"", *package->ident(), "\" ",
 					"does not contain a symbol called \"",
 					*most_inner_ident, "\"."));
 			}
 
-			//auto symbol = package->symbol_table().at(most_inner_ident);
-
-
-			//if (symbol->is_incomplete())
-			//{
-			//	//printout("test:  ", *symbol->ident(), "\n");
-			//	//in_scope_thing->in_scope_warn(_make_src_code_pos(ctx),
-			//	//	sconcat("test:  ", *symbol->ident()));
-			//	//_needs_another_subpass = true;
-			//	_stacks.push_expr(save_expr(ExprSubpassIdentName
-			//		(_make_src_code_pos(ctx), symbol)));
-			//}
-			//else // if (symbol->frost_full_type() != nullptr)
-			//{
-			//	_stacks.push_expr(save_expr(ExprIdentName
-			//		(_make_src_code_pos(ctx), symbol)));
-			//}
-			_stacks.push_expr(save_expr(ExprIdentName
-				(_make_src_code_pos(ctx), package->symbol_table()
-				.at(most_inner_ident))));
+			_stacks.push_sym(package->symbol_table().at(most_inner_ident));
+			_stacks.push_src_code_pos(_make_src_code_pos(ctx));
 		}
 		else if (num_scopes == 3)
 		{
@@ -690,20 +639,43 @@ auto PTVisitor::visitPureIdentExpr
 //{
 //	return nullptr;
 //}
+auto PTVisitor::visitNonSlicedPureIdentExpr
+	(Parser::NonSlicedPureIdentExprContext *ctx)
+	-> VisitorRetType
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->pureIdent());
+
+	auto symbol = _stacks.pop_sym();
+	const auto src_code_pos = _stacks.pop_src_code_pos();
+
+	if ((!symbol->is_constant())
+		&& (symbol->frost_full_type()->is_array()))
+	{
+		_err(src_code_pos, "Can only reference one array element at a "
+			"time");
+	}
+
+	_stacks.push_expr(save_expr(ExprIdentName(src_code_pos, symbol)));
+
+	return nullptr;
+};
 auto PTVisitor::visitSlicedPureIdentExpr
 	(Parser::SlicedPureIdentExprContext *ctx)
 	-> VisitorRetType
 {
-	ANY_JUST_ACCEPT_BASIC(ctx->pureIdentExpr());
-	auto ident_expr = _stacks.pop_expr();
-	auto symbol = ident_expr->symbol();
+	ANY_JUST_ACCEPT_BASIC(ctx->pureIdent());
+	//auto ident_expr = _stacks.pop_expr();
+	//auto symbol = ident_expr->symbol();
+	auto symbol = _stacks.pop_sym();
+	const auto src_code_pos = _stacks.pop_src_code_pos();
 
 	Expression* first_slice_with_one_expr = nullptr;
 
 	if (ctx->sliceWithOne())
 	{
 		// Ban array indexing into a non-array.
-		if (!symbol->frost_full_type()->is_array())
+		if (symbol->is_constant()
+			|| (!symbol->frost_full_type()->is_array()))
 		{
 			_err(ctx->sliceWithOne(), sconcat("Variable with identifier ",
 				"\"", *symbol->ident(), "\" is sliced too many times"));
@@ -719,11 +691,61 @@ auto PTVisitor::visitSlicedPureIdentExpr
 	if (num_exprs_in_slice_with_any == 1)
 	{
 		auto second_slice_with_one_expr = _stacks.pop_expr();
+
+		if (first_slice_with_one_expr == nullptr)
+		{
+			if (symbol->is_constant()
+				|| (!symbol->frost_full_type()->is_array()))
+			{
+				// vector[one_bit_index]
+				_stacks.push_expr(save_expr(ExprIdentOneBitSlicedVector
+					(_make_src_code_pos(ctx), symbol,
+					second_slice_with_one_expr)));
+			}
+			else // if (symbol->frost_full_type()->is_array())
+			{
+				// array[array_index]
+				_stacks.push_expr(save_expr(ExprIdentIndexedArray
+					(_make_src_code_pos(ctx), symbol,
+					second_slice_with_one_expr)));
+			}
+		}
+		else // if (first_slice_with_one_expr != nullptr)
+		{
+			// array[array_index][one_bit_index]
+			_stacks.push_expr(save_expr
+				(ExprIdentIndexedAndOneBitSlicedArray
+				(_make_src_code_pos(ctx), symbol,
+				first_slice_with_one_expr, second_slice_with_one_expr)));
+		}
 	}
 	else if (num_exprs_in_slice_with_any == 2)
 	{
 		auto slice_with_range_left_expr = _stacks.pop_expr();
 		auto slice_with_range_right_expr = _stacks.pop_expr();
+
+		if (first_slice_with_one_expr == nullptr)
+		{
+			// vector[left:right]
+			if ((!symbol->is_constant())
+				&& symbol->frost_full_type()->is_array())
+			{
+				_err(ctx->sliceWithAny(), sconcat("Cannot perform ",
+					"multiple element slice of entire array"));
+			}
+
+			_stacks.push_expr(save_expr(ExprIdentSlicedVector
+				(_make_src_code_pos(ctx), symbol,
+				slice_with_range_left_expr, slice_with_range_right_expr)));
+		}
+		else // if (first_slice_with_one_expr != nullptr)
+		{
+			// array[array_index][left:right]
+			_stacks.push_expr(save_expr(ExprIdentIndexedAndSlicedArray
+				(_make_src_code_pos(ctx), symbol,
+				first_slice_with_one_expr, slice_with_range_left_expr,
+				slice_with_range_right_expr)));
+		}
 	}
 	else
 	{
@@ -752,6 +774,21 @@ auto PTVisitor::visitSliceWithAny
 	(Parser::SliceWithAnyContext *ctx)
 	-> VisitorRetType
 {
+	if (ctx->sliceWithOne())
+	{
+		_stacks.push_small_num(1);
+		ANY_JUST_ACCEPT_BASIC(ctx->sliceWithOne());
+	}
+	else if (ctx->sliceWithRange())
+	{
+		_stacks.push_small_num(2);
+		ANY_JUST_ACCEPT_BASIC(ctx->sliceWithRange());
+	}
+	else
+	{
+		_err(ctx, "PTVisitor::visitSliceWithAny():  Eek!");
+	}
+
 	return nullptr;
 }
 auto PTVisitor::visitIdentConcatExpr

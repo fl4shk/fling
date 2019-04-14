@@ -1,39 +1,24 @@
 module NestedGenerate
 	#(
-		WIDTH__TO_ADD,
-		WIDTH__OUTER,
-		WIDTH__INNER
+		WIDTH__TO_ADD = 4,
+		ARR_SIZE__OUTER = 4,
+		ARR_SIZE__INNER = 4
 	)
 	(
-		// I *think* this will eventually be unnecessary because it'll be
-		// possible to just put arrays on ports anyway, but the generated
-		// Verilog will actually still use this.
-		input logic [WIDTH__TO_ADD * WIDTH__OUTER * WIDTH__INNER]
-			i_fake_arr_a, i_fake_arr_b,
-		output logic [WIDTH__TO_ADD * WIDTH__OUTER * WIDTH__INNER]
-			o_fake_arr_sum
+		input logic [WIDTH__TO_ADD]
+			i_arr_a[WIDTH__OUTER * WIDTH__INNER],
+			i_arr_b[WIDTH__OUTER * WIDTH__INNER],
+		output logic [WIDTH__TO_ADD]
+			o_arr_sum[WIDTH__OUTER * WIDTH__INNER]
 	)
 {
-	logic [WIDTH__TO_ADD] _inner_fake_arr_a[WIDTH__OUTER * WIDTH__INNER];
-	logic [WIDTH__TO_ADD] _inner_fake_arr_b[WIDTH__OUTER * WIDTH__INNER];
-	logic [WIDTH__TO_ADD] _inner_fake_arr_sum
-		[WIDTH__OUTER * WIDTH__INNER];
-
 	generate for (y : range(WIDTH__OUTER))
 	{
 		generate for (x : range(WIDTH__INNER))
 		{
-			generate for (i : range(WIDTH__TO_ADD))
-			{
-				assign _inner_fake_arr_a[y * WIDTH__INNER + x][i]
-					= i_fake_arr_a[y * WIDTH__INNER + x][i];
-
-				assign _inner_fake_arr_b[y * WIDTH__INNER + x][i]
-					= i_fake_arr_b[y * WIDTH__INNER + x][i];
-
-				assign o_fake_arr_sum[y * WIDTH__INNER + x][i]
-					= _inner_fake_arr_sum[y * WIDTH__INNER + x][i];
-			}
+			assign o_arr_sum[(y * WIDTH__INNER) + x]
+				= i_arr_a[(y * WIDTH__INNER) + x]
+				+ i_arr_b[(y * WIDTH__INNER) + x];
 		}
 	}
 }
