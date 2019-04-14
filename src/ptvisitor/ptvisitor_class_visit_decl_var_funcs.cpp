@@ -23,6 +23,8 @@ auto PTVisitor::visitDeclNoLhsTypeVar
 
 		auto s_right_dim_expr = _stacks.get_top_expr();
 
+		// Notice that we don't have to figure out the *actual* size of the
+		// array until later.
 		if (!s_right_dim_expr->is_constant())
 		{
 			_err(ctx->expr(), "Arrays must have constant dimensions.");
@@ -317,25 +319,7 @@ auto PTVisitor::visitDeclPortVarList
 	// How many port variables are in this particular list?
 	_stacks.push_small_num(ctx->declOnePortVar().size());
 
-	//auto&& identName = ctx->identName();
-	//auto&& expr = ctx->expr();
-
-	//for (size_t i=0; i<identName.size(); ++i)
-	//{
-	//	ANY_JUST_ACCEPT_BASIC(identName.at(i));
-	//	_stacks.push_src_code_pos(_make_src_code_pos(iter));
-
-	//	ANY_JUST_ACCEPT_BASIC(expr.at(i));
-	//}
-
-	//for (auto iter : ctx->declOnePortVar())
-	//{
-	//	ANY_JUST_ACCEPT_BASIC(iter);
-	//	_stacks.push_src_code_pos(_make_src_code_pos(iter);
-	//}
-
 	ANY_JUST_ACCEPT_LOOPED(decl_one_port_var_iter, ctx->declOnePortVar());
-
 
 	return nullptr;
 }
@@ -349,7 +333,7 @@ auto PTVisitor::visitDeclPortDirectionalVarList
 
 	auto frost_lhs_type = _stacks.pop_lhs_type();
 
-	const size_t num_ident_names = _stacks.pop_small_num();
+	const size_t num_port_vars = _stacks.pop_small_num();
 
 	Symbol::PortType s_port_type;
 
@@ -367,12 +351,11 @@ auto PTVisitor::visitDeclPortDirectionalVarList
 	//}
 	else
 	{
-		_err(ctx, "PTVisitor::visitDeclPortDirectionalVarList():  "
-			"Eek!");
+		_err(ctx, "PTVisitor::visitDeclPortDirectionalVarList():  Eek!");
 	}
 
 
-	for (size_t i=0; i<num_ident_names; ++i)
+	for (size_t i=0; i<num_port_vars; ++i)
 	{
 		const auto s_src_code_pos = _stacks .pop_src_code_pos();
 		auto s_frost_full_type = save_frost_full_type(FrostFullType

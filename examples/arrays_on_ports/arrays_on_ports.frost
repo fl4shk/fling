@@ -1,0 +1,16 @@
+module VectorAdder
+	#(
+		// You thought it was data input/output, but it was me, DIO!
+		WIDTH__DIO = 8,
+		ARR_SIZE__DIO = 8
+	)
+	(
+		input logic [WIDTH__DIO] i_a[ARR_SIZE__DIO], i_b[ARR_SIZE__DIO],
+		output logic [WIDTH__DIO] o_sum[ARR_SIZE__DIO]
+	)
+{
+	generate for (i : range(ARR_SIZE__DIO))
+	{
+		assign o_sum[i] = i_a[i] + i_b[i];
+	}
+}

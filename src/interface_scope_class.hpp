@@ -7,7 +7,7 @@
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 #include "frost_full_type_class.hpp"
-#include "generate_parent_classes.hpp"
+#include "scope_parent_classes.hpp"
 
 namespace frost_hdl
 {

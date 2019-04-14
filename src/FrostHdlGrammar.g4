@@ -128,12 +128,15 @@ declModule:
 
 moduleScope:
 	(
+		// Pass::ListModuleInnerDecl
 		declLocalparamList ';'
 		| declVarList ';'
+		| generateBlockInModule
+
+		// Pass::FinishRawModuleConstruct
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
 		//| moduleStmtInstantiateModule ';'
-		| generateBlockInModule
 	)*
 	;
 

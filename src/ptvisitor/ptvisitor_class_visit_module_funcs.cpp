@@ -80,12 +80,19 @@ auto PTVisitor::visitModuleScope
 	//	auto module = _frost_program.curr_frost_module;
 	//}
 
-	ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
-		ctx->declLocalparamList())
+	//ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
+	//	ctx->declLocalparamList())
 
 	if (pass() == Pass::ListModuleInnerDecl)
 	{
+		ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
+			ctx->declLocalparamList())
+
 		ANY_JUST_ACCEPT_LOOPED(decl_var_list_iter, ctx->declVarList())
+
+		// Do this AFTER the others.
+		ANY_JUST_ACCEPT_LOOPED(generate_block_in_module_iter,
+			ctx->generateBlockInModule())
 	}
 
 	// Only process these other things AFTER we know about declared
@@ -94,8 +101,10 @@ auto PTVisitor::visitModuleScope
 	{
 		ANY_JUST_ACCEPT_LOOPED(module_stmt_cont_assign_iter,
 			ctx->moduleStmtContAssign())
-		//ANY_JUST_ACCEPT_LOOPED(module_stmt_initial_iter,
+		//ANY_JUST_ACCEPT_LOOPED(module_stmt_behav_block_iter,
 		//	ctx->moduleStmtBehavBlock())
+		//ANY_JUST_ACCEPT_LOOPED(module_stmt_instantiate_module_iter,
+		//	ctx->moduleStmtInstantiateModule())
 	}
 
 	return nullptr;

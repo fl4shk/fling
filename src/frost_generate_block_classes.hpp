@@ -22,20 +22,26 @@ class FrostGenerateBlockInModule : public HasSrcCodePosAndIdentBase
 private:		// variables
 	ModuleScope _module_scope;
 
-	GenerateBlockInModuleParent _parent;
 	AnyGenerateBlockHeader _header;
 
 public:		// functions
 	FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
 		SavedString s_ident);
 
-	template<typename ParentType, typename HeaderType>
+	//template<typename ParentType, typename HeaderType>
+	//inline FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
+	//	SavedString s_ident, ParentType* s_parent,
+	//	const HeaderType& s_header)
+	//	: FrostGenerateBlockInModule(s_src_code_pos, s_ident)
+	//{
+	//	_parent = s_parent;
+	//	_header = s_header;
+	//}
+	template<typename HeaderType>
 	inline FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
-		SavedString s_ident, ParentType* s_parent,
-		const HeaderType& s_header)
+		SavedString s_ident, const HeaderType& s_header)
 		: FrostGenerateBlockInModule(s_src_code_pos, s_ident)
 	{
-		_parent = s_parent;
 		_header = s_header;
 	}
 
@@ -43,8 +49,13 @@ public:		// functions
 
 	virtual ~FrostGenerateBlockInModule();
 
+	inline auto parent() const
+	{
+		return _module_scope.parent();
+	}
+
 	GEN_GETTERS_BY_CON_REF_AND_REF(module_scope)
-	GEN_GETTER_BY_CON_REF(parent)
+	//GEN_GETTER_BY_CON_REF(parent)
 	GEN_GETTER_BY_CON_REF(header)
 };
 

@@ -71,7 +71,7 @@ class PointerVector : public std::vector<Type*>
 public:		// functions
 	inline PointerVector() = default;
 
-	GEN_COPY_CONSTRUCTOR_AND_ASSIGN(PointerVector);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(PointerVector);
 	virtual ~PointerVector() = default;
 };
 

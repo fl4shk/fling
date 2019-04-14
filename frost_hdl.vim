@@ -13,7 +13,7 @@ syn case match
 
 syn match frost_hdl_comment		"//.*"
 
-syn keyword frost_hdl_keyword		wire logic unsigned signed
+"syn keyword frost_hdl_keyword		wire logic unsigned signed
 syn keyword frost_hdl_keyword		parameter localparam 
 syn keyword frost_hdl_keyword		struct class enum typedef 
 syn keyword frost_hdl_keyword		function task 
@@ -26,6 +26,9 @@ syn keyword frost_hdl_keyword		generate
 syn keyword frost_hdl_keyword		posedge negedge
 syn keyword frost_hdl_keyword		instance
 syn keyword frost_hdl_keyword		concat repl
+
+
+syn keyword frost_hdl_builtin_type		wire logic unsigned signed
 
 "syn match frost_hdl_dollar_func		"\$[a-zA-Z_0-9]\+"
 "syn match frost_hdl_dollar_func		"\$concat"
@@ -65,4 +68,5 @@ hi def link frost_hdl_keyword		Statement
 hi def link frost_hdl_dollar_func		SpecialComment
 hi def link frost_hdl_number		Number
 hi def link frost_hdl_uppercase_ident		Constant
+hi def link frost_hdl_builtin_type		Type
 "hi frost_hdl_uppercase_ident	ctermfg=Green guifg=Green

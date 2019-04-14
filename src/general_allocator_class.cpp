@@ -7,6 +7,7 @@
 #include "frost_function_class.hpp"
 #include "frost_module_class.hpp"
 #include "frost_package_class.hpp"
+#include "frost_generate_block_classes.hpp"
 #include "list_for_gen_save_define.hpp"
 
 namespace frost_hdl

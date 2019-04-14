@@ -7,7 +7,7 @@
 #include "symbol_class.hpp"
 #include "frost_function_class.hpp"
 #include "frost_full_type_class.hpp"
-#include "generate_parent_classes.hpp"
+#include "scope_parent_classes.hpp"
 
 //#include "frost_generate_block_classes.hpp"
 
@@ -23,7 +23,7 @@ class ModuleScope
 protected:		// variables
 	// This is intended to be used for searching for symbols in the
 	// "PTVisitor"
-	GenerateBlockInModuleParent _parent;
+	ModuleScopeParent _parent;
 
 public:		// variables
 	// These are public because "ModuleScope" is intended to be used, as

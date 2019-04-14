@@ -39,7 +39,7 @@ public:		// types
 
 	enum class PortType
 	{
-		// "parameter"s, Local vars
+		// "parameter"s, "localparam"s, Local vars
 		NonPort,
 
 		// Ports
