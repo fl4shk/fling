@@ -321,7 +321,9 @@ private:		// visitor functions
 	VisitorRetType visitInsidePackage
 		(Parser::InsidePackageContext *ctx);
 
-	// For now, port vars can't be arrays.
+	// Port vars can be arrays!
+	VisitorRetType visitDeclOnePortVar
+		(Parser::DeclOnePortVarContext *ctx);
 	VisitorRetType visitDeclPortVarList
 		(Parser::DeclPortVarListContext *ctx);
 
@@ -415,9 +417,10 @@ private:		// visitor functions
 	VisitorRetType visitScopedIdentName
 		(Parser::ScopedIdentNameContext *ctx);
 private:		// functions
+	// Ports can be arrays now!
 	void _insert_module_port_var(const SrcCodePos& s_src_code_pos,
 		SavedString s_ident, Symbol::PortType s_port_type,
-		FrostLhsType* s_frost_lhs_type);
+		FrostFullType* s_frost_full_type);
 };
 
 } // namespace frost_hdl

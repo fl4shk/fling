@@ -114,15 +114,16 @@ void PTVisitor::_reparse()
 
 
 
-void PTVisitor::_insert_module_port_var
-	(const SrcCodePos& s_src_code_pos, SavedString s_ident,
-	Symbol::PortType s_port_type, FrostLhsType* s_frost_lhs_type)
+// Ports can be arrays now!
+void PTVisitor::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
+	SavedString s_ident, Symbol::PortType s_port_type,
+	FrostFullType* s_frost_full_type)
 {
 	// Call this ONLY if (pass() == Pass::FrostListModules)
 	if (pass() != Pass::ListModuleIdentifiers)
 	{
-		_err(s_src_code_pos, "PTVisitor"
-			"::_insert_module_port_var():  pass() Eek!");
+		_err(s_src_code_pos, "PTVisitor::_insert_module_port_var():  "
+			"pass() Eek!");
 	}
 
 	// I am lazy.
@@ -163,9 +164,8 @@ void PTVisitor::_insert_module_port_var
 		break;
 	}
 
-	// Ports can be arrays now!
-	auto s_frost_full_type = save_frost_full_type(FrostFullType
-		(s_src_code_pos, s_frost_lhs_type));
+	//auto s_frost_full_type = save_frost_full_type(FrostFullType
+	//	(s_src_code_pos, s_frost_lhs_type));
 
 	symbol_table->insert_or_assign(save_symbol(Symbol(s_src_code_pos,
 		s_ident, s_port_type, s_frost_full_type)));

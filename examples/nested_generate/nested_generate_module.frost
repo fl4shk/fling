@@ -6,19 +6,19 @@ module NestedGenerate
 	)
 	(
 		input logic [WIDTH__TO_ADD]
-			i_arr_a[WIDTH__OUTER * WIDTH__INNER],
-			i_arr_b[WIDTH__OUTER * WIDTH__INNER],
+			i_arr_a[ARR_SIZE__OUTER * ARR_SIZE__INNER],
+			i_arr_b[ARR_SIZE__OUTER * ARR_SIZE__INNER],
 		output logic [WIDTH__TO_ADD]
-			o_arr_sum[WIDTH__OUTER * WIDTH__INNER]
+			o_arr_sum[ARR_SIZE__OUTER * ARR_SIZE__INNER]
 	)
 {
-	generate for (y : range(WIDTH__OUTER))
+	generate for (y : range(ARR_SIZE__OUTER))
 	{
-		generate for (x : range(WIDTH__INNER))
+		generate for (x : range(ARR_SIZE__INNER))
 		{
-			assign o_arr_sum[(y * WIDTH__INNER) + x]
-				= i_arr_a[(y * WIDTH__INNER) + x]
-				+ i_arr_b[(y * WIDTH__INNER) + x];
+			assign o_arr_sum[(y * ARR_SIZE__INNER) + x]
+				= i_arr_a[(y * ARR_SIZE__INNER) + x]
+				+ i_arr_b[(y * ARR_SIZE__INNER) + x];
 		}
 	}
 }

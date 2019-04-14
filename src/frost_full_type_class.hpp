@@ -25,6 +25,8 @@ public:		// functions
 	FrostFullType(const SrcCodePos& s_src_code_pos,
 		FrostLhsType* s_frost_lhs_type);
 
+	// Array constructor, "_ident" taken from "_frost_lhs_type" and
+	// "s_right_dim_expr"
 	FrostFullType(const SrcCodePos& s_src_code_pos,
 		FrostLhsType* s_frost_lhs_type, Expression* s_right_dim_expr);
 	FrostFullType(const SrcCodePos& s_src_code_pos, SavedString s_ident,

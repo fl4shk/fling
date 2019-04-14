@@ -292,7 +292,22 @@ auto PTVisitor::visitDeclLocalparamList
 	return nullptr;
 }
 
-// For now, port vars can't be arrays.  This will change.
+// Port vars can be arrays!
+auto PTVisitor::visitDeclOnePortVar
+	(Parser::DeclOnePortVarContext *ctx)
+	-> VisitorRetType
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->identName());
+
+	ANY_ACCEPT_IF_BASIC(ctx->expr())
+	else
+	{
+		_stacks.push_expr(nullptr);
+	}
+	_stacks.push_src_code_pos(_make_src_code_pos(ctx));
+
+	return nullptr;
+}
 auto PTVisitor::visitDeclPortVarList
 	(Parser::DeclPortVarListContext *ctx)
 	-> VisitorRetType
@@ -300,13 +315,26 @@ auto PTVisitor::visitDeclPortVarList
 	ANY_JUST_ACCEPT_BASIC(ctx->lhsTypeName());
 
 	// How many port variables are in this particular list?
-	_stacks.push_small_num(ctx->identName().size());
+	_stacks.push_small_num(ctx->declOnePortVar().size());
 
-	for (auto iter : ctx->identName())
-	{
-		ANY_JUST_ACCEPT_BASIC(iter);
-		_stacks.push_src_code_pos(_make_src_code_pos(iter));
-	}
+	//auto&& identName = ctx->identName();
+	//auto&& expr = ctx->expr();
+
+	//for (size_t i=0; i<identName.size(); ++i)
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(identName.at(i));
+	//	_stacks.push_src_code_pos(_make_src_code_pos(iter));
+
+	//	ANY_JUST_ACCEPT_BASIC(expr.at(i));
+	//}
+
+	//for (auto iter : ctx->declOnePortVar())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(iter);
+	//	_stacks.push_src_code_pos(_make_src_code_pos(iter);
+	//}
+
+	ANY_JUST_ACCEPT_LOOPED(decl_one_port_var_iter, ctx->declOnePortVar());
 
 
 	return nullptr;
@@ -343,10 +371,14 @@ auto PTVisitor::visitDeclPortDirectionalVarList
 			"Eek!");
 	}
 
+
 	for (size_t i=0; i<num_ident_names; ++i)
 	{
-		_insert_module_port_var(_stacks.pop_src_code_pos(),
-			_stacks.pop_str(), s_port_type, frost_lhs_type);
+		const auto s_src_code_pos = _stacks .pop_src_code_pos();
+		auto s_frost_full_type = save_frost_full_type(FrostFullType
+			(s_src_code_pos, frost_lhs_type, _stacks.pop_expr()));
+		_insert_module_port_var(s_src_code_pos, _stacks.pop_str(),
+			s_port_type, s_frost_full_type);
 	}
 
 	return nullptr;

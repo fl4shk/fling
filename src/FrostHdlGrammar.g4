@@ -53,14 +53,15 @@ declVarList:
 	;
 
 declNoKwLocalparam:
-	identName TokAssign expr
+	identName TokAssign
+	expr
+	//callRetExpr
 	;
 
 declLocalparamList:
 	TokKwLocalparam
 		//lhsTypeName?
-		declNoKwLocalparam
-		(',' declNoKwLocalparam)*
+		declNoKwLocalparam (',' declNoKwLocalparam)*
 	;
 
 // "package" stuff
@@ -82,11 +83,13 @@ insidePackage:
 	)*
 	;
 
-
 // Port vars can be arrays!
+declOnePortVar:
+	identName ('[' expr ']')?
+	;
+
 declPortVarList:
-	lhsTypeName identName ('[' expr ']')?
-		(',' identName ('[' expr ']')?)*
+	lhsTypeName declOnePortVar (',' declOnePortVar)*
 	;
 
 
@@ -110,7 +113,7 @@ declModule:
 
 		// ports
 		'('
-			// FUTURE:  allow "interface" "modport"s here
+			// FUTURE:  allow "interface" stuff here
 			(declPortDirectionalVarList
 				(',' declPortDirectionalVarList)*)?
 		')'
@@ -408,6 +411,7 @@ TokKwInout: 'inout' ;
 
 TokKwLogic: 'logic' ;
 TokKwStruct: 'struct' ;
+TokKwClass: 'class' ;
 
 TokKwPacked: 'packed' ;
 TokKwUnpacked: 'unpacked' ;

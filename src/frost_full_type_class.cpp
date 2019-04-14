@@ -8,12 +8,16 @@ namespace frost_hdl
 // Scalar constructor, "_ident" taken from "_frost_lhs_type"
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 	FrostLhsType* s_frost_lhs_type)
+	// Calls the next constructor (which calls the constructor after that)
 	: FrostFullType(s_src_code_pos, s_frost_lhs_type->ident(),
 	s_frost_lhs_type, nullptr)
 {
 }
+// Array constructor, "_ident" taken from "_frost_lhs_type" and
+// "s_right_dim_expr"
 FrostFullType::FrostFullType(const SrcCodePos& s_src_code_pos,
 	FrostLhsType* s_frost_lhs_type, Expression* s_right_dim_expr)
+	// Calls the next constructor
 	: FrostFullType(s_src_code_pos,
 	construct_initial_type_ident_from_pointer(s_frost_lhs_type->ident(),
 	s_right_dim_expr), s_frost_lhs_type, s_right_dim_expr)
