@@ -118,19 +118,19 @@ protected:		// functions
 	void _evaluate();
 	size_t _starting_length() const;
 
-	inline Expression* _range_left_child() const
+	inline Expression* _range_left_expr() const
 	{
 		return _semi_hidden_children.at(0);
 	}
-	inline Expression* _range_right_child() const
+	inline Expression* _range_right_expr() const
 	{
 		return _semi_hidden_children.at(1);
 	}
 
 	inline PseudoFuncCallRange _pseudo_func_call_range() const
 	{
-		return PseudoFuncCallRange(_range_left_child(),
-			_range_right_child());
+		return PseudoFuncCallRange(_range_left_expr(),
+			_range_right_expr());
 	}
 };
 //--------
@@ -157,6 +157,10 @@ public:		// functions
 	bool is_constant() const;
 
 protected:		// functions
+	void _inner_finish_init_value();
+	void _evaluate();
+	size_t _starting_length();
+
 	inline Expression* _array_index_expr() const
 	{
 		return _semi_hidden_children.at(0);
@@ -164,22 +168,90 @@ protected:		// functions
 };
 //--------
 
-//// array[array_index][one_bit_index]
-////--------
-//class ExprIdentIndexedAndOneBitSlicedArray : public ExprIdentRefBase
-//{
-//
-//protected:		// variables
-//};
-////--------
-//
-//
-//// array[array_index][left:right]
-////--------
-//class ExprIdentIndexedAndSlicedArray : public ExprIdentRefBase
-//{
-//};
-////--------
+// array[array_index][one_bit_index]
+//--------
+class ExprIdentIndexedAndOneBitSlicedArray : public ExprIdentRefBase
+{
+public:		// functions
+	ExprIdentIndexedAndOneBitSlicedArray(const SrcCodePos& s_src_code_pos,
+		Symbol* s_symbol, Expression* s_array_index_expr,
+		Expression* s_one_bit_index_expr);
+
+	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::Sliced;
+	}
+	virtual SliceType slice_type() const
+	{
+		return SliceType::IndexedAndOneBitSlicedArray;
+	}
+
+	bool is_constant() const;
+
+protected:		// functions
+	void _inner_finish_init_value();
+	void _evaluate();
+	size_t _starting_length() const;
+
+	inline Expression* _array_index_expr() const
+	{
+		return _semi_hidden_children.at(0);
+	}
+	inline Expression* _one_bit_index_expr() const
+	{
+		return _semi_hidden_children.at(1);
+	}
+};
+//--------
+
+
+// array[array_index][left:right]
+//--------
+class ExprIdentIndexedAndSlicedArray : public ExprIdentRefBase
+{
+public:		// functions
+	ExprIdentIndexedAndSlicedArray(const SrcCodePos& s_src_code_pos,
+		Symbol* s_symbol, Expression* s_array_index_expr,
+		Expression* s_range_left_expr, Expression* s_range_right_expr);
+
+	virtual SavedString to_hdl_source() const;
+	virtual LhsCategory lhs_category() const
+	{
+		return LhsCategory::Sliced;
+	}
+	virtual SliceType slice_type() const
+	{
+		return SliceType::IndexedAndSlicedArray;
+	}
+
+	bool is_constant() const;
+
+protected:		// functions
+	void _inner_finish_init_value();
+	void _evaluate();
+	size_t _starting_length() const;
+
+	inline Expression* _array_index_expr() const
+	{
+		return _semi_hidden_children.at(0);
+	}
+	inline Expression* _range_left_expr() const
+	{
+		return _semi_hidden_children.at(1);
+	}
+	inline Expression* _range_right_expr() const
+	{
+		return _semi_hidden_children.at(2);
+	}
+
+	inline PseudoFuncCallRange _pseudo_func_call_range() const
+	{
+		return PseudoFuncCallRange(_range_left_expr(),
+			_range_right_expr());
+	}
+};
+//--------
 
 
 //// whatever.whatever.whatever
