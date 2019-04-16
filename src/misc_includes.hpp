@@ -23,6 +23,7 @@
 #include "liborangepower_src/prev_curr_pair_classes.hpp"
 #include "liborangepower_src/gmp_stuff.hpp"
 #include "liborangepower_src/time_stuff.hpp"
+#include "liborangepower_src/with_defines.hpp"
 
 using namespace liborangepower::printout_etc;
 using namespace liborangepower::misc_input;

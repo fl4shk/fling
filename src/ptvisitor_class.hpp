@@ -9,6 +9,9 @@
 #include "table_types.hpp"
 #include "frost_program_class.hpp"
 #include "pseudo_func_call_range_class.hpp"
+#include "generate_block_header_classes.hpp"
+
+#include "ptvisitor/list_for_gen_stack_defines.hpp"
 
 namespace frost_hdl
 {
@@ -33,7 +36,13 @@ public:		// types
 	enum class ScalarOrArray : SmallNum
 	{
 		Scalar,
-		Array
+		Array,
+	};
+
+	enum class ModuleOrInterface : SmallNum
+	{
+		Module,
+		Interface,
 	};
 
 	typedef uintmax_t PassUint;
@@ -76,20 +85,6 @@ public:		// types
 
 private:		// variables
 
-	//X(stack_type, ret_type, whateverfix)
-	#define LIST_FOR_GEN_STACK(X) \
-		X(BigNum, const BigNum&, big_num) \
-		X(SmallNum, SmallNum, small_num) \
-		X(SavedString, SavedString, str) \
-		X(SrcCodePos, SrcCodePos, src_code_pos) \
-		X(Expression*, Expression*, expr) \
-		X(Symbol*, Symbol*, sym) \
-		X(FrostLhsType*, FrostLhsType*, lhs_type) \
-		X(FrostFullType*, FrostFullType*, full_type) \
-		X(FrostStatementTable::Node*, FrostStatementTable::Node*, \
-			statement_table_node) \
-		X(ModuleScope*, ModuleScope*, module_scope) \
-		X(InterfaceScope*, InterfaceScope*, interface_scope) \
 
 	class Stacks
 	{
@@ -126,7 +121,36 @@ private:		// variables
 
 	} _stacks;
 
-	#undef LIST_FOR_GEN_STACK
+	#define GEN_WITH_STACKS(stack_type, var_type, whateverfix) \
+	friend class with_stacks_##whateverfix; \
+	class with_stacks_##whateverfix \
+	{ \
+	public:		/* variables */ \
+		/* I considered making this a static variable, but.... */ \
+		PTVisitor* visitor = nullptr; \
+	\
+	public:		/* functions */ \
+		inline with_stacks_##whateverfix(PTVisitor* s_visitor, \
+			var_type to_push) \
+		{ \
+			visitor = s_visitor; \
+			visitor->_stacks.push_##whateverfix(to_push); \
+		} \
+		\
+		inline with_stacks_##whateverfix \
+			(const with_stacks_##whateverfix& to_copy) = default; \
+		\
+		inline ~with_stacks_##whateverfix() \
+		{ \
+			visitor->_stacks.pop_##whateverfix(); \
+		} \
+		\
+		inline with_stacks_##whateverfix& operator = \
+			(const with_stacks_##whateverfix& to_copy) = default; \
+	};
+
+	LIST_FOR_GEN_STACK(GEN_WITH_STACKS)
+	#undef GEN_WITH_STACKS
 
 
 
@@ -424,5 +448,7 @@ private:		// functions
 };
 
 } // namespace frost_hdl
+
+#undef LIST_FOR_GEN_STACK
 
 #endif		// src_ptvisitor_class_hpp

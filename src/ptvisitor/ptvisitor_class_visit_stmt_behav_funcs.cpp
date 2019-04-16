@@ -13,6 +13,10 @@ auto PTVisitor::visitStmtBehavHeaderForLoop
 	(Parser::StmtBehavHeaderForLoopContext *ctx)
 	-> VisitorRetType
 {
+	// This is simple
+	_stacks.push_src_code_pos(_make_src_code_pos(ctx->identName()));
+	ANY_JUST_ACCEPT_BASIC(ctx->identName());
+	ANY_JUST_ACCEPT_BASIC(ctx->pseudoFuncCallRange());
 	return nullptr;
 }
 
@@ -20,6 +24,8 @@ auto PTVisitor::visitStmtBehavHeaderIf
 	(Parser::StmtBehavHeaderIfContext *ctx)
 	-> VisitorRetType
 {
+	// This is simple
+	ANY_JUST_ACCEPT_BASIC(ctx->expr());
 	return nullptr;
 }
 

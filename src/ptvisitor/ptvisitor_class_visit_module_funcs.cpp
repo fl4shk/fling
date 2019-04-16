@@ -36,18 +36,22 @@ auto PTVisitor::visitDeclModule
 
 		curr_frost_module->module_scope() = ModuleScope(curr_frost_module);
 
-		_stacks.push_module_scope(&curr_frost_module->module_scope());
+		with(curr_module_scope, with_stacks_module_scope(this, 
+			&curr_frost_module->module_scope()))
+		{
+			//_stacks.push_module_scope(&curr_frost_module->module_scope());
 
-		// Process "parameter"s of this module.
-		ANY_ACCEPT_IF_BASIC(ctx->declParameterVarList())
+			// Process "parameter"s of this module.
+			ANY_ACCEPT_IF_BASIC(ctx->declParameterVarList())
 
-		// Process ports of this module
-		ANY_JUST_ACCEPT_LOOPED(port_list_iter,
-			ctx->declPortDirectionalVarList())
+			// Process ports of this module
+			ANY_JUST_ACCEPT_LOOPED(port_list_iter,
+				ctx->declPortDirectionalVarList())
 
-		frost_module_table.insert_or_assign(curr_frost_module);
+			frost_module_table.insert_or_assign(curr_frost_module);
 
-		_stacks.pop_module_scope();
+			//_stacks.pop_module_scope();
+		}
 	}
 	else if ((pass() == Pass::ListModuleInnerDecl)
 		|| (pass() == Pass::FinishRawModuleConstruct))
@@ -58,9 +62,13 @@ auto PTVisitor::visitDeclModule
 		curr_frost_module = _frost_program.frost_module_table.at(_stacks
 			.pop_str());
 
-		_stacks.push_module_scope(&curr_frost_module->module_scope());
-		ANY_JUST_ACCEPT_BASIC(ctx->moduleScope());
-		_stacks.pop_module_scope();
+		with(curr_module_scope, with_stacks_module_scope(this,
+			&curr_frost_module->module_scope()))
+		{
+			//_stacks.push_module_scope(&curr_frost_module->module_scope());
+			ANY_JUST_ACCEPT_BASIC(ctx->moduleScope());
+			//_stacks.pop_module_scope();
+		}
 	}
 	else
 	{

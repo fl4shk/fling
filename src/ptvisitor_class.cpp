@@ -5,6 +5,7 @@
 #include <sstream>
 #include "ptvisitor/dot_cpp_defines.hpp"
 
+#include "ptvisitor/list_for_gen_stack_defines.hpp"
 
 
 
@@ -172,3 +173,5 @@ void PTVisitor::_insert_module_port_var(const SrcCodePos& s_src_code_pos,
 }
 
 } // namespace frost_hdl
+
+#undef LIST_FOR_GEN_STACK

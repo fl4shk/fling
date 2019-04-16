@@ -37,13 +37,13 @@ public:		// functions
 	//	_parent = s_parent;
 	//	_header = s_header;
 	//}
-	template<typename HeaderType>
-	inline FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
-		SavedString s_ident, const HeaderType& s_header)
-		: FrostGenerateBlockInModule(s_src_code_pos, s_ident)
-	{
-		_header = s_header;
-	}
+	//template<typename HeaderType>
+	//inline FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
+	//	SavedString s_ident, const HeaderType& s_header)
+	//	: FrostGenerateBlockInModule(s_src_code_pos, s_ident)
+	//{
+	//	_header = s_header;
+	//}
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostGenerateBlockInModule);
 
@@ -52,6 +52,12 @@ public:		// functions
 	inline auto parent() const
 	{
 		return _module_scope.parent();
+	}
+
+	template<typename HeaderType>
+	inline void set_header(const HeaderType& n_header)
+	{
+		_header = n_header;
 	}
 
 	GEN_GETTERS_BY_CON_REF_AND_REF(module_scope)
@@ -64,29 +70,46 @@ public:		// functions
 //private:		// variables
 //	InterfaceScope _interface_scope;
 //
-//	GenerateBlockInInterfaceParent _parent;
 //	AnyGenerateBlockHeader _header;
 //
 //public:		// functions
 //	FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
 //		SavedString s_ident);
 //
-//	template<typename ParentType, typename HeaderType>
-//	inline FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
-//		SavedString s_ident, ParentType* s_parent,
-//		const HeaderType& s_header)
-//		: FrostGenerateBlockInInterface(s_src_code_pos, s_ident)
-//	{
-//		_parent = s_parent;
-//		_header = s_header;
-//	}
+//	//template<typename ParentType, typename HeaderType>
+//	//inline FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
+//	//	SavedString s_ident, ParentType* s_parent,
+//	//	const HeaderType& s_header)
+//	//	: FrostGenerateBlockInInterface(s_src_code_pos, s_ident)
+//	//{
+//	//	_parent = s_parent;
+//	//	_header = s_header;
+//	//}
+//	//template<typename HeaderType>
+//	//inline FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
+//	//	SavedString s_ident, const HeaderType& s_header)
+//	//	: FrostGenerateBlockInInterface(s_src_code_pos, s_ident)
+//	//{
+//	//	_header = s_header;
+//	//}
 //
 //	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostGenerateBlockInInterface);
 //
 //	virtual ~FrostGenerateBlockInInterface();
 //
+//	inline auto parent() const
+//	{
+//		return _interface_scope.parent();
+//	}
+//
+//	template<typename HeaderType>
+//	inline void set_header(const HeaderType& n_header)
+//	{
+//		_header = n_header;
+//	}
+//
 //	GEN_GETTERS_BY_CON_REF_AND_REF(interface_scope)
-//	GEN_GETTER_BY_CON_REF(parent)
+//	//GEN_GETTER_BY_CON_REF(parent)
 //	GEN_GETTER_BY_CON_REF(header)
 //};
 

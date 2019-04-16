@@ -1,6 +1,9 @@
 #define ANY_JUST_ACCEPT_BASIC(arg) \
 	arg->accept(this)
 
+
+// This takes the iterator variable name as an argument to help prevent
+// name collisions
 #define ANY_JUST_ACCEPT_LOOPED(iter, arg) \
 	for (auto iter : arg) \
 	{ \
