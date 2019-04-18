@@ -112,6 +112,17 @@ void PTVisitor::_reparse()
 //	return nullptr;
 //}
 
+FrostLhsType* PTVisitor::_make_for_loop_iter_lhs_type
+	(const SrcCodePos& s_src_code_pos) const
+{
+	static constexpr size_t size = sizeof(intmax_t) * CHAR_BIT;
+
+	auto s_left_dim_expr = ExpressionBuilder::make_expr_hc_num
+		(s_src_code_pos, size);
+	return save_frost_lhs_type(FrostLhsType(s_src_code_pos,
+		FrostLhsType::construct_initial_builtin_type_ident(true,
+		s_left_dim_expr), true, s_left_dim_expr));
+}
 
 
 

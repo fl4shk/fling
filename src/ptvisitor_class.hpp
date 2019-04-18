@@ -125,16 +125,16 @@ private:		// variables
 	friend class with_stacks_##whateverfix; \
 	class with_stacks_##whateverfix \
 	{ \
-	public:		/* variables */ \
+	private:		/* variables */ \
 		/* I considered making this a static variable, but.... */ \
-		PTVisitor* visitor = nullptr; \
+		PTVisitor* _visitor = nullptr; \
 	\
 	public:		/* functions */ \
 		inline with_stacks_##whateverfix(PTVisitor* s_visitor, \
 			var_type to_push) \
 		{ \
-			visitor = s_visitor; \
-			visitor->_stacks.push_##whateverfix(to_push); \
+			_visitor = s_visitor; \
+			_visitor->_stacks.push_##whateverfix(to_push); \
 		} \
 		\
 		inline with_stacks_##whateverfix \
@@ -142,7 +142,7 @@ private:		// variables
 		\
 		inline ~with_stacks_##whateverfix() \
 		{ \
-			visitor->_stacks.pop_##whateverfix(); \
+			_visitor->_stacks.pop_##whateverfix(); \
 		} \
 		\
 		inline with_stacks_##whateverfix& operator = \
@@ -275,6 +275,8 @@ private:		// functions
 	void _reparse();
 
 	//InScopeErrWarnBase<SrcCodePos>* _in_scope_thing();
+	FrostLhsType* _make_for_loop_iter_lhs_type
+		(const SrcCodePos& s_src_code_pos) const;
 
 	GEN_GETTER_AND_SETTER_BY_VAL(pass)
 	GEN_GETTER_AND_SETTER_BY_VAL(subpass)

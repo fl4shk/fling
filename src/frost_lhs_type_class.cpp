@@ -60,41 +60,9 @@ FrostLhsType::FrostLhsType(const SrcCodePos& s_src_code_pos,
 {
 	_is_signed = false;
 	_component_data = std::move(s_component_data);
-	_left_dim_expr = nullptr;
-}
-SavedString FrostLhsType::construct_initial_builtin_type_ident
-	(bool s_is_signed, Expression* s_left_dim_expr)
-{
-	std::string s_ident = "logic ";
-
-	if (s_is_signed)
-	{
-		s_ident += "signed ";
-	}
-
-	if (s_left_dim_expr != nullptr)
-	{
-		// Need some way to make the name unique!  Also, how do I handle
-		// cases where I don't know the values of named constants yet?
-		s_ident += *construct_initial_type_ident_from_pointer
-			(dup_str(s_ident), s_left_dim_expr);
-	}
-
-	return dup_str(s_ident);
+	_left_dim_expr = static_cast<Expression*>(nullptr);
 }
 
-bool FrostLhsType::is_same_builtin_strict_signedness
-	(const FrostLhsType& other) const
-{
-	return (is_same_builtin_ignore_signedness(other)
-		&& (is_signed() == other.is_signed()));
-}
-bool FrostLhsType::is_same_builtin_ignore_signedness
-	(const FrostLhsType& other) const
-{
-	return (is_builtin() && other.is_builtin()
-		&& (left_dim() == other.left_dim()));
-}
 
 //bool FrostLhsType::operator == (const FrostLhsType& other) const
 //{
@@ -117,6 +85,37 @@ bool FrostLhsType::is_same_builtin_ignore_signedness
 //	}
 //}
 
+SavedString FrostLhsType::construct_initial_builtin_type_ident
+	(bool s_is_signed, Expression* s_left_dim_expr)
+{
+	std::string ret = "logic ";
+
+	if (s_is_signed)
+	{
+		ret += "signed ";
+	}
+
+	if (s_left_dim_expr != nullptr)
+	{
+		ret += *construct_initial_type_ident_from_pointer(dup_str(ret),
+			s_left_dim_expr);
+	}
+
+	return dup_str(ret);
+}
+
+bool FrostLhsType::is_same_builtin_strict_signedness
+	(const FrostLhsType& other) const
+{
+	return (is_same_builtin_ignore_signedness(other)
+		&& (is_signed() == other.is_signed()));
+}
+bool FrostLhsType::is_same_builtin_ignore_signedness
+	(const FrostLhsType& other) const
+{
+	return (is_builtin() && other.is_builtin()
+		&& (left_dim() == other.left_dim()));
+}
 size_t FrostLhsType::left_dim() const
 {
 	return (_left_dim_expr != nullptr)

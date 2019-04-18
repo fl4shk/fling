@@ -128,6 +128,10 @@ public:		// functions
 	// "parameter" in terms of itself.
 	bool references_symbol(Symbol* to_check) const;
 
+	//// Duplicate this expression *before* calling _evaluate()
+	//Expression* pure_dup() const;
+	//Expression* dupped_size_expr() const;
+
 	//bool defined_in_terms_of_any_incomplete_symbol() const;
 
 
@@ -182,6 +186,7 @@ public:		// functions
 
 
 
+
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_CON_REF(semi_hidden_children)
 	GEN_GETTER_BY_CON_REF(value)
@@ -216,6 +221,12 @@ protected:		// functions
 	virtual size_t _starting_length() const;
 
 	virtual bool _is_always_constant() const;
+
+	virtual bool _extra_check_for_references_symbol(Symbol* to_check)
+		const;
+
+	//virtual Expression* _inner_pure_dup() const;
+	//virtual Expression* _inner_dupped_size_expr() const;
 	//virtual Expression* _inner_dup_with_changed_symbols
 	//	(const ReplaceSymsMap& replace_syms_map) const;
 
@@ -252,6 +263,22 @@ protected:		// functions
 	//	_set_children(first_child, rem_children...);
 	//	return _has_only_constant_children();
 	//}
+
+	inline ChildrenList _all_children() const
+	{
+		ChildrenList ret;
+
+		for (auto iter : _children)
+		{
+			ret.push_back(iter);
+		}
+
+		for (auto iter : _semi_hidden_children)
+		{
+			ret.push_back(iter);
+		}
+		return ret;
+	}
 
 	// Require at LEAST one argument.
 	template<typename FirstArgType, typename... RemArgTypes>

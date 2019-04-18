@@ -27,6 +27,15 @@ inline SavedString construct_initial_type_ident_from_pointer
 		(pointer), "]"));
 }
 
+template<typename FirstArgType, typename SecondArgType>
+inline SavedString construct_initial_type_ident_from_two_ptrs
+	(SavedString base_ident, FirstArgType* first_ptr,
+	SecondArgType* second_ptr)
+{
+	return dup_str(sconcat(*base_ident, "[", *construct_str_from_pointer
+		(first_ptr), " ", *construct_str_from_pointer(second_ptr), "]"));
+}
+
 
 
 

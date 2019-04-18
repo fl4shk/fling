@@ -57,6 +57,11 @@ public:		// static functions
 		return save_expr(ExprIdentSizedHardCodedNum(s_src_code_pos,
 			s_size_expr, s_temp_value));
 	}
+	//static inline Expression* make_complex_expr_min
+	//	(const SrcCodePos& s_src_code_pos, Expression* s_left,
+	//	Expression* s_right)
+	//{
+	//}
 
 	template<typename ExprType>
 	static inline Expression* make_expr_unop

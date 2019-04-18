@@ -37,18 +37,18 @@ public:		// functions
 
 	//bool operator == (const FrostFullType& other) const;
 
-	inline bool is_same_builtin_strict_signedness
-		(const FrostFullType& other) const
-	{
-		return (frost_lhs_type()->is_same_builtin_ignore_signedness
-			(*other.frost_lhs_type()) && is_same_rhs_type(other));
-	}
-	inline bool is_same_builtin_ignore_signedness
-		(const FrostFullType& other) const
-	{
-		return (frost_lhs_type()->is_same_builtin_ignore_signedness
-			(*other.frost_lhs_type()) && is_same_rhs_type(other));
-	}
+	//inline bool is_same_builtin_strict_signedness
+	//	(const FrostFullType& other) const
+	//{
+	//	return (frost_lhs_type()->is_same_builtin_ignore_signedness
+	//		(*other.frost_lhs_type()) && is_same_rhs_type(other));
+	//}
+	//inline bool is_same_builtin_ignore_signedness
+	//	(const FrostFullType& other) const
+	//{
+	//	return (frost_lhs_type()->is_same_builtin_ignore_signedness
+	//		(*other.frost_lhs_type()) && is_same_rhs_type(other));
+	//}
 	bool is_same_rhs_type(const FrostFullType& other) const;
 
 	inline bool is_array() const
@@ -56,10 +56,10 @@ public:		// functions
 		return (_right_dim_expr != nullptr);
 	}
 
-	inline size_t left_dim() const
-	{
-		return _frost_lhs_type->left_dim();
-	}
+	//inline size_t left_dim() const
+	//{
+	//	return _frost_lhs_type->left_dim();
+	//}
 	size_t right_dim() const;
 
 	GEN_GETTER_BY_CON_REF(src_code_pos)

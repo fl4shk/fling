@@ -87,6 +87,11 @@ bool Expression::references_symbol(Symbol* to_check) const
 		return true;
 	}
 
+	if (_extra_check_for_references_symbol(to_check))
+	{
+		return true;
+	}
+
 	// Here we execute the recursion into children.  This *only* works if
 	// "Expression"s are truly trees.  I *really* hope there are no bugs
 	// that can cause an "Expression" to have itself as a descendant, but I
@@ -101,6 +106,15 @@ bool Expression::references_symbol(Symbol* to_check) const
 
 	return false;
 }
+
+//Expression* Expression::pure_dup() const
+//{
+//	return _inner_pure_dup();
+//}
+//Expression* Expression::dupped_size_expr() const
+//{
+//	return _inner_dupped_size_expr();
+//}
 
 //bool Expression::defined_in_terms_of_any_incomplete_symbol() const
 //{
@@ -198,6 +212,11 @@ bool Expression::_is_always_constant() const
 	return false;
 }
 
+bool Expression::_extra_check_for_references_symbol
+	(Symbol* to_check) const
+{
+	return false;
+}
 
 //Expression* Expression::_inner_dup_with_changed_symbols
 //	(const ReplaceSymsMap& replace_syms_map) const

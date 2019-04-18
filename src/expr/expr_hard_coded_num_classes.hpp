@@ -83,7 +83,8 @@ protected:		// functions
 
 	// Even for this type of hard-coded number, we still don't need to have
 	// "_evaluate()" do anything because "_inner_finish_init_value()" does
-	// this for us.
+	// this for us....  I think.
+	// TODO:  Check whether or not this needs to *actually* be implemented.
 	void _evaluate()
 	{
 	}
@@ -96,6 +97,11 @@ protected:		// functions
 	bool _is_always_constant() const
 	{
 		return true;
+	}
+
+	bool _extra_check_for_references_symbol(Symbol* to_check) const
+	{
+		return _size_expr->references_symbol(to_check);
 	}
 };
 
