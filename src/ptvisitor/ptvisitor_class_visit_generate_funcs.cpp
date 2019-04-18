@@ -39,6 +39,24 @@ auto PTVisitor::visitGenerateBlockInModule
 		with(top_level_context, with_stacks_small_num(this, SmallNum
 			(ModuleOrInterface::Module)))
 		{
+			if (std::holds_alternative<FrostModule*>(module_scope
+				->parent()))
+			{
+				curr_generate_block->set_parent(std::get
+					<FrostModule*>(module_scope->parent()));
+			}
+			else if (std::holds_alternative<FrostGenerateBlockInModule*>
+				(module_scope->parent()))
+			{
+				curr_generate_block->set_parent(std::get
+					<FrostGenerateBlockInModule*>(module_scope->parent()));
+			}
+			else
+			{
+				_err(ctx, "PTVisitor::visitGenerateBlockInModule():"
+					"  Eek!");
+			}
+
 			// The header is accept()ed AFTER creating a new
 			// FrostGenerateBlockInModule so that the local_symbol_table
 			// can be where the iterator variable of a generate for loop is

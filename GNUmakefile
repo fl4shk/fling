@@ -33,7 +33,7 @@ PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX)
 #VERBOSE_ASM_FLAG:=-fverbose-asm
 
 # Compilers and initial compiler flags
-CXX:=$(PREFIX)g++
+CXX:=$(PREFIX)clang++
 CXX_FLAGS:=$(CXX_FLAGS) -std=c++17 -Wall -I/usr/include/antlr4-runtime/
 #CXX_FLAGS:=$(CXX_FLAGS) -std=c++2a -Wall -I/usr/include/antlr4-runtime/
 #CXX_FLAGS:=$(CXX_FLAGS) -std=c++2a -fmodules-ts -Wall

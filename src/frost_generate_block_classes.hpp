@@ -24,6 +24,8 @@ private:		// variables
 
 	AnyGenerateBlockHeader _header;
 
+	ModuleScopeParent _parent;
+
 public:		// functions
 	FrostGenerateBlockInModule(const SrcCodePos& s_src_code_pos,
 		SavedString s_ident);
@@ -49,11 +51,16 @@ public:		// functions
 
 	virtual ~FrostGenerateBlockInModule();
 
-	inline auto parent() const
-	{
-		return _module_scope.parent();
-	}
+	//inline auto parent() const
+	//{
+	//	return _module_scope.parent();
+	//}
 
+	template<typename ParentType>
+	inline void set_parent(const ParentType& n_parent)
+	{
+		_parent = n_parent;
+	}
 	template<typename HeaderType>
 	inline void set_header(const HeaderType& n_header)
 	{
@@ -61,7 +68,7 @@ public:		// functions
 	}
 
 	GEN_GETTERS_BY_CON_REF_AND_REF(module_scope)
-	//GEN_GETTER_BY_CON_REF(parent)
+	GEN_GETTER_BY_CON_REF(parent)
 	GEN_GETTER_BY_CON_REF(header)
 };
 

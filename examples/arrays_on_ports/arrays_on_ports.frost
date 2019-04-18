@@ -5,12 +5,13 @@ module VectorAdder
 		ARR_SIZE__DIO = 8
 	)
 	(
-		input logic [WIDTH__DIO] i_a[ARR_SIZE__DIO], i_b[ARR_SIZE__DIO],
-		output logic [WIDTH__DIO] o_sum[ARR_SIZE__DIO]
+		input logic [WIDTH__DIO]
+			i_a_arr[ARR_SIZE__DIO], i_b_arr[ARR_SIZE__DIO],
+		output logic [WIDTH__DIO] o_sum_arr[ARR_SIZE__DIO]
 	)
 {
 	generate for (i : range(ARR_SIZE__DIO))
 	{
-		assign o_sum[i] = i_a[i] + i_b[i];
+		assign o_sum_arr[i] = i_a_arr[i] + i_b_arr[i];
 	}
 }

@@ -25,8 +25,8 @@ Symbol* ModuleScope::find_symbol(SavedString some_name) const
 			return local_symbol_table.at(some_name);
 		}
 
-		const auto& parent_of_parent
-			= std::get<FrostGenerateBlockInModule*>(_parent)->parent();
+		auto parent_of_parent = std::get<FrostGenerateBlockInModule*>
+			(_parent)->parent();
 
 		// I think this is right?
 		if (std::holds_alternative<FrostGenerateBlockInModule*>
@@ -39,6 +39,8 @@ Symbol* ModuleScope::find_symbol(SavedString some_name) const
 		{
 			return std::get<FrostModule*>(parent_of_parent)
 				->module_scope().find_symbol(some_name);
+			//return std::get<FrostModule*>(parent_of_parent)
+			//	->find_symbol_in_top_scope(some_name);
 		}
 
 		// This should *never* happen.  If it does, we spit out an error.
