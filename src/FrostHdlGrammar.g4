@@ -202,18 +202,19 @@ pseudoFuncCallRange:
 stmtBehavHeaderForLoop:
 	TokKwFor '(' identName ':' pseudoFuncCallRange ')'
 	;
+
 stmtBehavHeaderIf:
 	TokKwIf '(' expr ')'
 	;
 
-//stmtBehavHeaderElseif:
-//	TokKwElse TokKwIf '(' expr ')'
-//	;
+stmtBehavHeaderElseif:
+	TokKwElse TokKwIf '(' expr ')'
+	;
 
-//// This is boring, but I put it in here for consistency's sake.
-//stmtBehavHeaderElse:
-//	TokKwElse
-//	;
+// This is boring, but I put it in here for consistency's sake.
+stmtBehavHeaderElse:
+	TokKwElse
+	;
 
 
 // Expression parsing

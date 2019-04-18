@@ -42,21 +42,15 @@ auto PTVisitor::visitGenerateBlockInModule
 		{
 			if (std::holds_alternative<FrostModule*>(module_scope
 				->parent()))
-			//if (!module_scope->parent().holds_generate_block_in_module)
 			{
 				curr_generate_block->set_parent(std::get
 					<FrostModule*>(module_scope->parent()));
-				//curr_generate_block->set_parent(module_scope->parent()
-				//	.frost_module);
 			}
 			else if (std::holds_alternative<FrostGenerateBlockInModule*>
 				(module_scope->parent()))
-			//else if (module_scope->parent().holds_generate_block_in_module)
 			{
 				curr_generate_block->set_parent(std::get
 					<FrostGenerateBlockInModule*>(module_scope->parent()));
-				//curr_generate_block->set_parent(module_scope->parent()
-				//	.frost_generate_block_in_module);
 			}
 			else
 			{
@@ -109,11 +103,9 @@ auto PTVisitor::visitGenerateBlockHeaderForLoop
 	//	(s_src_code_pos, FrostLhsType
 	//	::construct_initial_builtin_type_ident(true,
 	//	s_pseudo_func_call_range), true, s_pseudo_func_call_range));
-	auto s_frost_lhs_type = _make_for_loop_iter_lhs_type(s_src_code_pos);
 
 
-	auto s_frost_full_type = save_frost_full_type(FrostFullType
-		(s_src_code_pos, s_frost_lhs_type, nullptr));
+	auto s_frost_full_type = _stacks.pop_full_type();
 
 	auto s_iter_sym = save_symbol(Symbol(s_src_code_pos, s_ident,
 		Symbol::PortType::NonPort, s_frost_full_type));

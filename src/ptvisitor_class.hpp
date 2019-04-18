@@ -335,6 +335,10 @@ private:		// visitor functions
 		(Parser::StmtBehavHeaderForLoopContext *ctx);
 	VisitorRetType visitStmtBehavHeaderIf
 		(Parser::StmtBehavHeaderIfContext *ctx);
+	VisitorRetType visitStmtBehavHeaderElseif
+		(Parser::StmtBehavHeaderElseifContext *ctx);
+	VisitorRetType visitStmtBehavHeaderElse
+		(Parser::StmtBehavHeaderElseContext *ctx);
 
 	VisitorRetType visitDeclNoKwLocalparam
 		(Parser::DeclNoKwLocalparamContext *ctx);
