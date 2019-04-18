@@ -20,7 +20,9 @@ module Arr2dAdder
 	{
 		generate for (x : range(ARR_SIZE_2D__WIDTH_NUM_ADDERS))
 		{
-			assign o_sum_arr_2d[i] = i_a_arr_2d[i] + i_b_arr_2d[i];
+			assign o_sum_arr_2d[(y * ARR_SIZE_2D__WIDTH_NUM_ADDERS) + x]
+				= i_a_arr_2d[(y * ARR_SIZE_2D__WIDTH_NUM_ADDERS) + x]
+				+ i_b_arr_2d[(y * ARR_SIZE_2D__WIDTH_NUM_ADDERS) + x];
 		}
 	}
 }

@@ -15,11 +15,12 @@ auto PTVisitor::visitStmtBehavHeaderForLoop
 {
 	// This is simple
 	const auto s_src_code_pos = _make_src_code_pos(ctx->identName());
-	_stacks.push_src_code_pos(s_src_code_pos);
 
 	auto s_frost_lhs_type = _make_for_loop_iter_lhs_type(s_src_code_pos);
 	_stacks.push_full_type(save_frost_full_type(FrostFullType
 		(s_src_code_pos, s_frost_lhs_type, nullptr)));
+
+	_stacks.push_src_code_pos(s_src_code_pos);
 
 	ANY_JUST_ACCEPT_BASIC(ctx->identName());
 	ANY_JUST_ACCEPT_BASIC(ctx->pseudoFuncCallRange());

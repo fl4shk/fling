@@ -30,13 +30,13 @@ auto PTVisitor::visitGenerateBlockInModule
 
 	auto curr_generate_block = module_scope->frost_generate_block_table
 		.back();
+
+	// This *has* to be done here.
 	curr_generate_block->module_scope() = ModuleScope(curr_generate_block);
 
 	with(inner_module_scope, with_stacks_module_scope(this,
 		&curr_generate_block->module_scope()))
 	{
-		//_stacks.push_module_scope(&curr_generate_block->module_scope());
-
 		with(top_level_context, with_stacks_small_num(this, SmallNum
 			(ModuleOrInterface::Module)))
 		{
@@ -69,7 +69,6 @@ auto PTVisitor::visitGenerateBlockInModule
 
 		// Lastly, go into the scope
 		ANY_JUST_ACCEPT_BASIC(ctx->moduleScope());
-		//_stacks.pop_module_scope();
 	}
 
 	return nullptr;

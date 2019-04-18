@@ -90,6 +90,10 @@ auto PTVisitor::visitModuleScope
 
 	//ANY_JUST_ACCEPT_LOOPED(decl_localparam_list_iter,
 	//	ctx->declLocalparamList())
+	//printout(static_cast<PassUint>(pass()), ":  ",
+	//	strappcom2(ctx->declLocalparamList().size(), 
+	//	ctx->declVarList().size(), ctx->generateBlockInModule().size(),
+	//	ctx->moduleStmtContAssign().size()), "\n");
 
 	if (pass() == Pass::ListModuleInnerDecl)
 	{
@@ -107,12 +111,16 @@ auto PTVisitor::visitModuleScope
 	// variables and stuff.
 	else if (pass() == Pass::FinishRawModuleConstruct)
 	{
+		ANY_JUST_ACCEPT_LOOPED(generate_block_in_module_iter,
+			ctx->generateBlockInModule())
+
 		ANY_JUST_ACCEPT_LOOPED(module_stmt_cont_assign_iter,
 			ctx->moduleStmtContAssign())
 		//ANY_JUST_ACCEPT_LOOPED(module_stmt_behav_block_iter,
 		//	ctx->moduleStmtBehavBlock())
 		//ANY_JUST_ACCEPT_LOOPED(module_stmt_instantiate_module_iter,
 		//	ctx->moduleStmtInstantiateModule())
+
 	}
 
 	return nullptr;
@@ -122,6 +130,7 @@ auto PTVisitor::visitModuleStmtContAssign
 	(Parser::ModuleStmtContAssignContext *ctx)
 	-> VisitorRetType
 {
+	//printout("test\n");
 	//auto module = _frost_program.curr_frost_module;
 	auto module_scope = _stacks.get_top_module_scope();
 

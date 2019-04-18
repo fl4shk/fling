@@ -79,6 +79,8 @@ public:		// functions
 //
 //	AnyGenerateBlockHeader _header;
 //
+//	InterfaceScopeParent _parent;
+//
 //public:		// functions
 //	FrostGenerateBlockInInterface(const SrcCodePos& s_src_code_pos,
 //		SavedString s_ident);
@@ -104,11 +106,16 @@ public:		// functions
 //
 //	virtual ~FrostGenerateBlockInInterface();
 //
-//	inline auto parent() const
-//	{
-//		return _interface_scope.parent();
-//	}
+//	//inline auto parent() const
+//	//{
+//	//	return _interface_scope.parent();
+//	//}
 //
+//	template<typename ParentType>
+//	inline void set_parent(ParentType* n_parent)
+//	{
+//		_parent = n_parent;
+//	}
 //	template<typename HeaderType>
 //	inline void set_header(const HeaderType& n_header)
 //	{
@@ -116,9 +123,10 @@ public:		// functions
 //	}
 //
 //	GEN_GETTERS_BY_CON_REF_AND_REF(interface_scope)
-//	//GEN_GETTER_BY_CON_REF(parent)
+//	GEN_GETTER_BY_CON_REF(parent)
 //	GEN_GETTER_BY_CON_REF(header)
 //};
+
 
 } // namespace frost_hdl
 
