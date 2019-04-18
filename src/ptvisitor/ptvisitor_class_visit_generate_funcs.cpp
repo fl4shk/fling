@@ -219,6 +219,14 @@ auto PTVisitor::visitPseudoFuncCallRange
 		_err(ctx, "PTVisitor::visitPseudoFuncCallRange():  Eek!");
 	}
 
+	const auto pseudo_func_call_range = _stacks
+		.get_top_pseudo_func_call_range();
+
+	if (!pseudo_func_call_range.is_constant())
+	{
+		_err(ctx, "range() not constant.");
+	}
+
 	return nullptr;
 }
 
