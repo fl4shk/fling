@@ -275,7 +275,7 @@ void ExprIdentIndexedArray::_evaluate()
 {
 	// Nothing.  Absolutely nothing.
 }
-size_t ExprIdentIndexedArray::_starting_length()
+size_t ExprIdentIndexedArray::_starting_length() const
 {
 	// Used when this array's elements are scalars, vectors, or "packed"
 	// composite types.

@@ -6,7 +6,8 @@ FrostGenerateBlockInModule::FrostGenerateBlockInModule
 	(const SrcCodePos& s_src_code_pos, SavedString s_ident)
 	: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
 {
-	_module_scope = ModuleScope(this);
+	// This caused the "_module_scope" to think this was on the stack
+	//_module_scope = ModuleScope(this);
 }
 
 FrostGenerateBlockInModule::~FrostGenerateBlockInModule()

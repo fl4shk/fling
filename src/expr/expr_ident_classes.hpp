@@ -159,7 +159,7 @@ public:		// functions
 protected:		// functions
 	void _inner_finish_init_value();
 	void _evaluate();
-	size_t _starting_length();
+	size_t _starting_length() const;
 
 	inline Expression* _array_index_expr() const
 	{

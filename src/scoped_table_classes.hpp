@@ -10,8 +10,7 @@
 namespace frost_hdl
 {
 
-template<typename Type, template<class> typename InnerTableType,
-	template<class> typename ContainerType>
+template<typename Type, template<class> typename InnerTableType>
 class ScopedTableNode
 {
 public:		// typedefs
@@ -22,7 +21,7 @@ public:		// variables
 	InnerTableType<Type> table;
 
 	ScopedTableNode* parent;
-	ContainerType<ScopedTableNode*> children;
+	std::vector<ScopedTableNode*> children;
 
 
 public:		// functions
@@ -67,8 +66,7 @@ public:		// functions
 
 
 // This is kind of like a stack
-template<typename Type, template<class> typename InnerTableType,
-	template<class> typename ContainerType=std::vector>
+template<typename Type, template<class> typename InnerTableType>
 class ScopedTableBase
 {
 public:		// typedefs and constants
@@ -77,7 +75,7 @@ public:		// typedefs and constants
 	//typedef intmax_t ScopeLevel;
 	typedef BigNum ScopeLevel;
 
-	typedef ScopedTableNode<Type, InnerTableType, ContainerType> Node;
+	typedef ScopedTableNode<Type, InnerTableType> Node;
 
 protected:		// variables
 	Node _tree;
@@ -88,12 +86,12 @@ protected:		// variables
 	ScopeLevel _scope_num = -1;
 
 	// I can't remember why exactly this wasn't
-	// ContainerType<std::unique_ptr<WhateverT>>, but I'll leave it be
+	// std::vector<std::unique_ptr<WhateverT>>, but I'll leave it be
 	// since I believe the destructor here *does* work properly.
 	// Note to self:  NEVER delete the contained pointers outside of the
 	// destructor.
-	ContainerType<Node*> _node_pool;
-	ContainerType<Type*> _data_pool;
+	std::vector<Node*> _node_pool;
+	std::vector<Type*> _data_pool;
 
 
 public:		// functions
@@ -165,12 +163,12 @@ public:		// functions
 };
 
 
-template<typename Type, template<class> typename ContainerType=std::vector>
+template<typename Type>
 class ScopedIdentTable
-	: public ScopedTableBase<Type, IdentToPointerTable, ContainerType>
+	: public ScopedTableBase<Type, IdentToPointerTable>
 {
 public:		// types
-	typedef ScopedTableBase<Type, IdentToPointerTable, ContainerType>
+	typedef ScopedTableBase<Type, IdentToPointerTable>
 		Base;
 
 	typedef typename Base::Node Node;
@@ -297,12 +295,12 @@ public:		// functions
 
 
 // Primarily intended for use with "FrostStatementTable".
-template<typename Type, template<class> typename ContainerType=std::vector>
+template<typename Type>
 class ScopedUnnamedTable
-	: public ScopedTableBase<Type, PointerVector, ContainerType>
+	: public ScopedTableBase<Type, PointerVector>
 {
 public:		// types
-	typedef ScopedTableBase<Type, PointerVector, ContainerType> Base;
+	typedef ScopedTableBase<Type, PointerVector> Base;
 
 	typedef typename Base::Node Node;
 

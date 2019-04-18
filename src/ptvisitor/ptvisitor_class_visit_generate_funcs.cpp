@@ -30,6 +30,7 @@ auto PTVisitor::visitGenerateBlockInModule
 
 	auto curr_generate_block = module_scope->frost_generate_block_table
 		.back();
+	curr_generate_block->module_scope() = ModuleScope(curr_generate_block);
 
 	with(inner_module_scope, with_stacks_module_scope(this,
 		&curr_generate_block->module_scope()))
@@ -39,17 +40,23 @@ auto PTVisitor::visitGenerateBlockInModule
 		with(top_level_context, with_stacks_small_num(this, SmallNum
 			(ModuleOrInterface::Module)))
 		{
-			if (std::holds_alternative<FrostModule*>(module_scope
-				->parent()))
+			//if (std::holds_alternative<FrostModule*>(module_scope
+			//	->parent()))
+			if (!module_scope->parent().holds_generate_block_in_module)
 			{
-				curr_generate_block->set_parent(std::get
-					<FrostModule*>(module_scope->parent()));
+				//curr_generate_block->set_parent(std::get
+				//	<FrostModule*>(module_scope->parent()));
+				curr_generate_block->set_parent(module_scope->parent()
+					.frost_module);
 			}
-			else if (std::holds_alternative<FrostGenerateBlockInModule*>
-				(module_scope->parent()))
+			//else if (std::holds_alternative<FrostGenerateBlockInModule*>
+			//	(module_scope->parent()))
+			else if (module_scope->parent().holds_generate_block_in_module)
 			{
-				curr_generate_block->set_parent(std::get
-					<FrostGenerateBlockInModule*>(module_scope->parent()));
+				//curr_generate_block->set_parent(std::get
+				//	<FrostGenerateBlockInModule*>(module_scope->parent()));
+				curr_generate_block->set_parent(module_scope->parent()
+					.frost_module);
 			}
 			else
 			{

@@ -3,11 +3,14 @@
 namespace frost_hdl
 {
 
-// Stick this in here so that things don't get inlined.
+// Stick this in a .cpp file so that the large member variables don't have
+// their constructor calls inlined.
 FrostModule::FrostModule(const SrcCodePos& s_src_code_pos,
 	SavedString s_ident)
 	: HasSrcCodePosAndIdentBase(s_src_code_pos, s_ident)
 {
+	// This caused the "_module_scope" to think this was on the stack
+	//_module_scope = ModuleScope(this);
 }
 
 FrostModule::~FrostModule()

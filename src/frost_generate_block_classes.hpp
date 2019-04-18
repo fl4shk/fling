@@ -57,7 +57,7 @@ public:		// functions
 	//}
 
 	template<typename ParentType>
-	inline void set_parent(const ParentType& n_parent)
+	inline void set_parent(ParentType* n_parent)
 	{
 		_parent = n_parent;
 	}
