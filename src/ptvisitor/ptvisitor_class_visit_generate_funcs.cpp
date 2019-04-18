@@ -56,7 +56,7 @@ auto PTVisitor::visitGenerateBlockInModule
 				//curr_generate_block->set_parent(std::get
 				//	<FrostGenerateBlockInModule*>(module_scope->parent()));
 				curr_generate_block->set_parent(module_scope->parent()
-					.frost_module);
+					.frost_generate_block_in_module);
 			}
 			else
 			{

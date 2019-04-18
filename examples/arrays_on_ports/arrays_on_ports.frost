@@ -1,17 +1,26 @@
-module VectorAdder
+module Arr2dAdder
 	#(
 		// You thought it was data input/output, but it was me, DIO!
 		WIDTH__DIO = 8,
-		ARR_SIZE__DIO = 8
+		ARR_SIZE_2D__HEIGHT_NUM_ADDERS = 8,
+		ARR_SIZE_2D__WIDTH_NUM_ADDERS = 8
 	)
 	(
 		input logic [WIDTH__DIO]
-			i_a_arr[ARR_SIZE__DIO], i_b_arr[ARR_SIZE__DIO],
-		output logic [WIDTH__DIO] o_sum_arr[ARR_SIZE__DIO]
+			i_a_arr_2d[ARR_SIZE_2D__HEIGHT_NUM_ADDERS
+			* ARR_SIZE_2D__WIDTH_NUM_ADDERS],
+			i_b_arr_2d[ARR_SIZE_2D__HEIGHT_NUM_ADDERS
+			* ARR_SIZE_2D__WIDTH_NUM_ADDERS],
+		output logic [WIDTH__DIO]
+			o_sum_arr_2d[ARR_SIZE_2D__HEIGHT_NUM_ADDERS
+			* ARR_SIZE_2D__WIDTH_NUM_ADDERS]
 	)
 {
-	generate for (i : range(ARR_SIZE__DIO))
+	generate for (y : range(ARR_SIZE_2D__HEIGHT_NUM_ADDERS))
 	{
-		assign o_sum_arr[i] = i_a_arr[i] + i_b_arr[i];
+		generate for (x : range(ARR_SIZE_2D__WIDTH_NUM_ADDERS))
+		{
+			assign o_sum_arr_2d[i] = i_a_arr_2d[i] + i_b_arr_2d[i];
+		}
 	}
 }
