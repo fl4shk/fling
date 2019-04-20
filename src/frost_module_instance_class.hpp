@@ -10,13 +10,16 @@
 namespace frost_hdl
 {
 
-class FrostModuleInstance
+
+// The identifier here is optional and perhaps only useful for debugging.
+class FrostModuleInstance : public HasSrcCodePosAndIdentBase
 {
 private:		// variables
-	SrcCodePos _src_code_pos;
-	SavedString _ident = nullptr;
+	ModuleScope* _where = nullptr;
+	FrostModule* _what = nullptr;
 
-	// What is the mapping from variables to ports going to look like?
+	IdentExprToSymbolConnectionMap _parameter_connection_map,
+		_input_connection_map, _output_connection_map;
 
 public:		// functions
 	FrostModuleInstance(const SrcCodePos& s_src_code_pos,
@@ -26,8 +29,11 @@ public:		// functions
 
 	virtual ~FrostModuleInstance();
 
-	GEN_GETTER_BY_CON_REF(src_code_pos)
-	GEN_GETTER_BY_VAL(ident)
+	GEN_GETTER_AND_SETTER_BY_VAL(where)
+	GEN_GETTER_AND_SETTER_BY_VAL(what)
+	GEN_GETTERS_BY_CON_REF_AND_REF(parameter_connection_map)
+	GEN_GETTERS_BY_CON_REF_AND_REF(input_connection_map)
+	GEN_GETTERS_BY_CON_REF_AND_REF(output_connection_map)
 };
 
 } // namespace frost_hdl

@@ -111,6 +111,7 @@ auto PTVisitor::visitModuleScope
 	// variables and stuff.
 	else if (pass() == Pass::FinishRawModuleConstruct)
 	{
+		// generate blocks actually have to be gone into in both passes
 		ANY_JUST_ACCEPT_LOOPED(generate_block_in_module_iter,
 			ctx->generateBlockInModule())
 
@@ -118,9 +119,8 @@ auto PTVisitor::visitModuleScope
 			ctx->moduleStmtContAssign())
 		//ANY_JUST_ACCEPT_LOOPED(module_stmt_behav_block_iter,
 		//	ctx->moduleStmtBehavBlock())
-		//ANY_JUST_ACCEPT_LOOPED(module_stmt_instantiate_module_iter,
-		//	ctx->moduleStmtInstantiateModule())
-
+		ANY_JUST_ACCEPT_LOOPED(module_stmt_instantiate_module_iter,
+			ctx->moduleStmtInstantiateModule())
 	}
 
 	return nullptr;
@@ -180,11 +180,11 @@ auto PTVisitor::visitModuleStmtInstantiateModule
 
 	return nullptr;
 }
-auto PTVisitor::visitInstantiateModulePortsList
-	(Parser::InstantiateModulePortsListContext *ctx)
+auto PTVisitor::visitInstantiateModuleConnectionList
+	(Parser::InstantiateModuleConnectionListContext *ctx)
 	-> VisitorRetType
 {
-	_err(ctx, "PTVisitor::visitInstantiateModulePortsList():  "
+	_err(ctx, "PTVisitor::visitInstantiateModuleConnectionList():  "
 		"not implemented Eek!");
 	return nullptr;
 }

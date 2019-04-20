@@ -35,6 +35,7 @@ public:		// variables
 	FrostFunctionTable frost_function_table;
 	FrostStatementTable frost_statement_table;
 	FrostGenerateBlockInModuleTable frost_generate_block_table;
+	FrostModuleInstanceTable frost_module_instance_table;
 
 public:		// functions
 	ModuleScope();

@@ -19,9 +19,9 @@ class FrostInterface;
 class FrostModule;
 class FrostInstModule;
 class FrostStatement;
-//class FrostGenerateBlockBase;
 class FrostGenerateBlockInModule;
 class FrostGenerateBlockInInterface;
+class FrostModuleInstance;
 
 class Expression;
 
@@ -48,6 +48,9 @@ typedef PointerVector<FrostGenerateBlockInModule>
 	FrostGenerateBlockInModuleTable;
 typedef PointerVector<FrostGenerateBlockInInterface>
 	FrostGenerateBlockInInterfaceTable;
+
+typedef IdentToPointerTable<FrostModuleInstance> FrostModuleInstanceTable;
+typedef std::map<Expression*, Symbol*> IdentExprToSymbolConnectionMap;
 
 
 } // namespace frost_hdl

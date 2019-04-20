@@ -316,8 +316,8 @@ private:		// visitor functions
 
 	VisitorRetType visitModuleStmtInstantiateModule
 		(Parser::ModuleStmtInstantiateModuleContext *ctx);
-	VisitorRetType visitInstantiateModulePortsList
-		(Parser::InstantiateModulePortsListContext *ctx);
+	VisitorRetType visitInstantiateModuleConnectionList
+		(Parser::InstantiateModuleConnectionListContext *ctx);
 
 
 	VisitorRetType visitGenerateBlockInModule

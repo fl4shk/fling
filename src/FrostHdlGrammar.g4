@@ -136,7 +136,7 @@ moduleScope:
 		// Pass::FinishRawModuleConstruct
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
-		//| moduleStmtInstantiateModule ';'
+		| moduleStmtInstantiateModule ';'
 	)*
 	;
 
@@ -146,15 +146,20 @@ moduleStmtContAssign:
 
 moduleStmtInstantiateModule:
 	TokKwInstance identName
+	(
+		'#' '('
+			instantiateModuleConnectionList
+		')'
+	)?
 	'('
 		// For "module"s that have ports, this is actually required.
-		instantiateModulePortsList?
+		instantiateModuleConnectionList?
 	')'
 	;
 
-instantiateModulePortsList:
-	identName '(' identExpr ')'
-		(',' identName '(' identExpr ')')*
+instantiateModuleConnectionList:
+	'.' identName '(' identExpr ')'
+		(',' '.' identName '(' identExpr ')')*
 	;
 
 // generate block (that is) in (a) module
@@ -215,6 +220,31 @@ stmtBehavHeaderElseif:
 stmtBehavHeaderElse:
 	TokKwElse
 	;
+
+
+//stmtChunkBehavIf:
+//	stmtBehavHeaderIf
+//	'{'
+//		stmtBehavAny*
+//	'}'
+//	;
+//stmtChunkBehavElseif:
+//	stmtBehavHeaderElseif
+//	'{'
+//		stmtBehavAny*
+//	'}'
+//	;
+//stmtChunkBehavElse:
+//	stmtBehavHeaderElse
+//	'{'
+//		stmtBehavAny*
+//	'}'
+//	;
+//
+//stmtBehavIfElseChain:
+//	stmtChunkBehavIf ((stmtChunkBehavElseif*) stmtChunkBehavElse)?
+//	;
+
 
 
 // Expression parsing
