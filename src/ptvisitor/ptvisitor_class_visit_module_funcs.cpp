@@ -165,27 +165,88 @@ auto PTVisitor::visitModuleStmtInstantiateModule
 	(Parser::ModuleStmtInstantiateModuleContext *ctx)
 	-> VisitorRetType
 {
-	_err(ctx, "PTVisitor::visitModuleStmtInstantiateModule():  "
-		"not implemented Eek!");
-	//ANY_JUST_ACCEPT_BASIC(ctx->identName());
-	//auto ident = _stacks.pop_str();
+	////_err(ctx, "PTVisitor::visitModuleStmtInstantiateModule():  not "
+	////	"implemented Eek!");
 
-	//if (ctx->instantiateModulePortsList())
+	//const auto s_src_code_pos = _make_src_code_pos(ctx);
+
+	//SavedString inst_ident = nullptr, module_ident = nullptr;
+
+	//if (ctx->identName().size() == 1)
 	//{
-	//	ANY_ACCEPT_IF_BASIC(ctx->instantiateModulePortsList());
+	//	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName());
+	//	module_ident = _stacks.pop_str();
 	//}
-	//else // if (!ctx->instantiateModulePortsList())
+	//else if (ctx->identName().size() == 2)
 	//{
+	//	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identName());
+
+	//	// Optional name of the instance comes second, but because of the
+	//	// stack, we have reverse order.
+	//	inst_ident = _stacks.pop_str();
+
+	//	module_ident = _stacks.pop_str();
 	//}
+	//else
+	//{
+	//	_err(ctx, "PTVisitor::visitModuleStmtInstantiateModule():  "
+	//		"ctx->identName().size() Eek!");
+	//}
+
+	//auto& frost_module_table = _frost_program.frost_module_table;
+
+	//if (!frost_module_table.contains(module_ident))
+	//{
+	//	_err(ctx, sconcat("No module called \"", *module_ident, "\" has ",
+	//		"been declared."));
+	//}
+
+	//auto s_what = frost_module_table.at(module_ident);
+
+
+	//// Only the super-edgy Crimson Chin of 1985 can s_where, and he got
+	//// cancelled.
+	//auto s_where = _stacks.get_top_module_scope();
+
+	//FrostModuleInstance s_frost_module_instance(_make_src_code_pos(ctx),
+	//	nullptr,
+
+	//if (ctx->instantiateModuleParameterConnectionList())
+	//{
+	//	ANY_JUST_ACCEPT_BASIC(ctx->idnsta
+	//}
+
 
 	return nullptr;
 }
+auto PTVisitor::visitInstantiateModuleParameterConnectionList
+	(Parser::InstantiateModuleParameterConnectionListContext *ctx)
+	-> VisitorRetType
+{
+	ANY_JUST_ACCEPT_BASIC(ctx->instantiateModuleConnectionList());
+	return nullptr;
+}
+
 auto PTVisitor::visitInstantiateModuleConnectionList
 	(Parser::InstantiateModuleConnectionListContext *ctx)
 	-> VisitorRetType
 {
-	_err(ctx, "PTVisitor::visitInstantiateModuleConnectionList():  "
-		"not implemented Eek!");
+	//_err(ctx, "PTVisitor::visitInstantiateModuleConnectionList():  "
+	//	"not implemented Eek!");
+
+	SmallNum num_elems_in_list = 0;
+
+	for (auto iter : ctx->identName())
+	{
+		_stacks.push_src_code_pos(_make_src_code_pos(iter));
+		ANY_JUST_ACCEPT_BASIC(iter);
+		++num_elems_in_list;
+	}
+
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->identExpr())
+
+	_stacks.push_small_num(num_elems_in_list);
+
 	return nullptr;
 }
 

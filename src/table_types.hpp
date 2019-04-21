@@ -22,6 +22,7 @@ class FrostStatement;
 class FrostGenerateBlockInModule;
 class FrostGenerateBlockInInterface;
 class FrostModuleInstance;
+class ModuleInstConnection;
 
 class Expression;
 
@@ -50,7 +51,10 @@ typedef PointerVector<FrostGenerateBlockInInterface>
 	FrostGenerateBlockInInterfaceTable;
 
 typedef IdentToPointerTable<FrostModuleInstance> FrostModuleInstanceTable;
-typedef std::map<Expression*, Symbol*> IdentExprToSymbolConnectionMap;
+//typedef std::map<Expression*, Symbol*> IdentExprToSymbolConnectionMap;
+// Eh, this time we can just use an "IdentTable" instead of an
+// "IdentToPointerTable".
+typedef IdentTable<ModuleInstConnection> ModuleInstConnectionTable;
 
 
 } // namespace frost_hdl

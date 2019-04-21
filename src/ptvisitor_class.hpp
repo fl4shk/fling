@@ -316,6 +316,8 @@ private:		// visitor functions
 
 	VisitorRetType visitModuleStmtInstantiateModule
 		(Parser::ModuleStmtInstantiateModuleContext *ctx);
+	VisitorRetType visitInstantiateModuleParameterConnectionList
+		(Parser::InstantiateModuleParameterConnectionListContext *ctx);
 	VisitorRetType visitInstantiateModuleConnectionList
 		(Parser::InstantiateModuleConnectionListContext *ctx);
 

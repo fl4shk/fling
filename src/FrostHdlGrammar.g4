@@ -145,18 +145,25 @@ moduleStmtContAssign:
 	;
 
 moduleStmtInstantiateModule:
-	TokKwInstance identName
-	(
-		'#' '('
-			instantiateModuleConnectionList
-		')'
-	)?
+	TokKwInstance
+
+	// Name of the module
+	identName
+
+	// Optional name of the instance
+	identName?
+	instantiateModuleParameterConnectionList?
 	'('
 		// For "module"s that have ports, this is actually required.
 		instantiateModuleConnectionList?
 	')'
 	;
 
+instantiateModuleParameterConnectionList:
+	'#' '('
+		instantiateModuleConnectionList
+	')'
+	;
 instantiateModuleConnectionList:
 	'.' identName '(' identExpr ')'
 		(',' '.' identName '(' identExpr ')')*
