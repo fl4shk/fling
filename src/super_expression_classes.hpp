@@ -5,6 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "expression_class.hpp"
+#include "symbol_class.hpp"
 #include "has_src_code_pos_base_classes.hpp"
 
 namespace frost_hdl
