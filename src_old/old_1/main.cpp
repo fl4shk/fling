@@ -1,7 +1,7 @@
 #include "ptvisitor_class.hpp"
-//#include "expr_num_class.hpp"
-//#include "expression_class.hpp"
-//#include "testing.hpp"
+#include "expr_num_class.hpp"
+#include "expression_class.hpp"
+#include "testing.hpp"
 
 
 int main(int argc, char** argv)

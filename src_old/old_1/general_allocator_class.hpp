@@ -12,16 +12,6 @@
 namespace frost_hdl
 {
 
-class Dummy
-{
-public:		// functions
-	inline Dummy() = default;
-
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Dummy);
-
-	virtual ~Dummy() = default;
-};
-
 #define GEN_SAVE_FORWARD_DECLARE(dummy_0, needed, dummy_1) \
 	class needed;
 
