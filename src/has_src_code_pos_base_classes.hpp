@@ -19,11 +19,11 @@ public:		// functions
 	HasSrcCodePosBase();
 	HasSrcCodePosBase(const SrcCodePos& s_src_code_pos);
 
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasSrcCodePosBase)
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasSrcCodePosBase);
 
 	virtual ~HasSrcCodePosBase();
 
-	GEN_GETTER_BY_CON_REF(src_code_pos)
+	GEN_GETTER_BY_CON_REF(src_code_pos);
 };
 
 class HasSrcCodePosAndIdentBase : public HasSrcCodePosBase
@@ -36,11 +36,11 @@ public:		// functions
 	HasSrcCodePosAndIdentBase(const SrcCodePos& s_src_code_pos,
 		SavedString s_ident);
 
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasSrcCodePosAndIdentBase)
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasSrcCodePosAndIdentBase);
 
 	virtual ~HasSrcCodePosAndIdentBase();
 
-	GEN_GETTER_BY_VAL(ident)
+	GEN_GETTER_BY_VAL(ident);
 };
 
 } // namespace frost_hdl

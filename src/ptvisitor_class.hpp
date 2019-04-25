@@ -27,7 +27,6 @@ public:		// types
 	typedef std::vector<std::unique_ptr<ParsedSrcCode>> ListParsedSrcCode;
 
 
-
 	typedef antlrcpp::Any VisitorRetType;
 
 	// Please excuse me calling something with "max" in its name "Small".
@@ -48,61 +47,21 @@ public:		// types
 
 	typedef uintmax_t PassUint;
 
-	// Passes where we walk the parse tree.  Some semantic analysis is done
-	// here, so long as said semantic analysis does not need to actually
-	// evaluate constant expressions.
-	enum class Pass : PassUint
-	{
-		// List "package" names.
-		ListPackageIdentifiers,
-
-		// Add named things to the symbol tables and type tables and stuff
-		ListPackageInnerDecl,
-
-		// Construct raw "package"s, such that their "param"s are not
-		// yet evaluated
-		FinishRawPackageConstruct,
-
-		//ListInterfaceIdentifiers,
-		//// Add named things to the symbol tables and type tables and stuff
-		//ListInterfaceInnerDecl,
-		//FinishRawInterfaceConstruct,
-
-
-		// List "module"s, their "param"s, and their ports.
-		// (FUTURE:  Add "interface" "modport" stuff here.)
-		ListModuleIdentifiers,
-
-		// Add named things to the symbol tables and type tables and stuff
-		ListModuleInnerDecl,
-
-		// Construct raw modules (such that "param"s are not yet
-		// evaluated)
-		FinishRawModuleConstruct,
-
-
-		Done,
-	};
 
 private:		// variables
-
-
-
-
-
 	//Parser::ProgramContext* _program_ctx = nullptr;
 
 
 	//ParsedSrcCode* _curr_parsed_src_code;
 	ListParsedSrcCode _list_parsed_src_code;
 
-	Pass _pass = static_cast<Pass>(0);
+	//Pass _pass = static_cast<Pass>(0);
 
 	// For when a pass needs multiple sub-passes.
-	PassUint _subpass = 0;
+	//PassUint _subpass = 0;
 
-	static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024)
-		* static_cast<PassUint>(1024);
+	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024)
+	//	* static_cast<PassUint>(1024);
 	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(1024);
 	//static constexpr PassUint MAX_SUBPASS = static_cast<PassUint>(8);
 
@@ -115,8 +74,8 @@ public:		// functions
 
 
 private:		// functions
-	GEN_GETTER_AND_SETTER_BY_VAL(pass)
-	GEN_GETTER_AND_SETTER_BY_VAL(subpass)
+	//GEN_GETTER_AND_SETTER_BY_VAL(pass)
+	//GEN_GETTER_AND_SETTER_BY_VAL(subpass)
 
 private:		// visitor functions
 	VisitorRetType visitProgram

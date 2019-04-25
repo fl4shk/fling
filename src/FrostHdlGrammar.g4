@@ -19,8 +19,8 @@ program:
 // Variable declaration stuff
 lhsTypeName:
 	lhsBuiltinTypeName
-	//| lhsUnscopedCstmTypeName
-	//| lhsScopedCstmTypeName
+	| lhsUnscopedCstmTypeName
+	| lhsScopedCstmTypeName
 	;
 
 lhsBuiltinTypeName:
