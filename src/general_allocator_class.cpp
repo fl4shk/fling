@@ -3,7 +3,7 @@
 //#include "expression_class.hpp"
 //#include "symbol_class.hpp"
 //#include "frost_lhs_type_class.hpp"
-//#include "frost_full_type_class.hpp"
+//#include "frost_full_type_instance_class.hpp"
 //#include "frost_function_class.hpp"
 //#include "frost_module_class.hpp"
 //#include "frost_package_class.hpp"

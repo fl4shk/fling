@@ -11,20 +11,22 @@ namespace frost_hdl
 {
 
 // Used for error reporting during semantic analysis.
-// Many, many things use this.
+// Many, many things use this, usually in the form of deriving from
+// `HasSrcCodePosBase`
 class SrcCodePos
 {
 private:		// variables
 	SavedString _filename = nullptr;
 	antlr4::ParserRuleContext* _ctx = nullptr;
+	SavedString _text = nullptr;
 	size_t _src_line = 0, _src_pos_in_line = 0;
 
 public:		// functions
 	SrcCodePos();
 	explicit SrcCodePos(SavedString s_filename,
 		antlr4::ParserRuleContext* s_ctx);
-	explicit SrcCodePos(SavedString s_filename, size_t s_src_line,
-		size_t s_src_pos_in_line);
+	explicit SrcCodePos(SavedString s_filename, SavedString s_text,
+		size_t s_src_line, size_t s_src_pos_in_line);
 
 	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
@@ -33,17 +35,17 @@ public:		// functions
 
 	std::string convert_to_errwarn_string() const;
 
-	inline void syntax_error(const std::string& msg) const
+	inline void syntax_error(const std::string& msg, int status=1) const
 	{
 		printerr("Syntax error at ", convert_to_errwarn_string(), ":  ",
 			msg, "\n");
-		exit(1);
+		exit(status);
 	}
-	inline void err(const std::string& msg) const
+	inline void err(const std::string& msg, int status=1) const
 	{
 		printerr("Error at ", convert_to_errwarn_string(), ":  ", msg,
 			"\n");
-		exit(1);
+		exit(status);
 	}
 	inline void warn(const std::string& msg) const
 	{

@@ -14,13 +14,13 @@ namespace frost_hdl
 
 
 
-ReplaceSymsMap::ReplaceSymsMap()
-{
-}
-
-ReplaceSymsMap::~ReplaceSymsMap()
-{
-}
+//ReplaceSymsMap::ReplaceSymsMap()
+//{
+//}
+//
+//ReplaceSymsMap::~ReplaceSymsMap()
+//{
+//}
 
 
 } // namespace frost_hdl

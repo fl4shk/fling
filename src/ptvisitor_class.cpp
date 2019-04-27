@@ -3,9 +3,9 @@
 //#include "expression_builder_class.hpp"
 
 #include <sstream>
-//#include "ptvisitor/dot_cpp_defines.hpp"
+#include "ptvisitor/dot_cpp_defines.hpp"
 
-//#include "ptvisitor/list_for_gen_stack_defines.hpp"
+#include "ptvisitor/list_for_gen_stack_defines.hpp"
 
 
 

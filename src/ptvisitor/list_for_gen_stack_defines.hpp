@@ -12,7 +12,7 @@
 	X(Expression*, Expression*, expr) \
 	X(Symbol*, Symbol*, sym) \
 	X(FrostLhsType*, FrostLhsType*, lhs_type) \
-	X(FrostFullTypeInstance*, FrostFullTypeInstance*, full_type) \
+	X(FrostFullType*, FrostFullType*, full_type) \
 	X(FrostStatementTable::Node*, FrostStatementTable::Node*, \
 		statement_table_node) \
 	X(ModuleScope*, ModuleScope*, module_scope) \

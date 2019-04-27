@@ -1,5 +1,8 @@
 #include "ptvisitor_error_listener_class.hpp"
 #include "src_code_pos_class.hpp"
+#include "gen_src/FrostHdlGrammarLexer.h"
+#include "gen_src/FrostHdlGrammarParser.h"
+#include "gen_src/FrostHdlGrammarVisitor.h"
 
 
 namespace frost_hdl
@@ -25,7 +28,8 @@ void PTVisitorErrorListener::syntaxError
 	//	", position ", charPositionInLine, 
 	//	":  ", msg, "\n");
 	//exit(1);
-	SrcCodePos(_filename, line, charPositionInLine).syntax_error(msg);
+	SrcCodePos(_filename, dup_str(offendingSymbol->getText()), line,
+		charPositionInLine).syntax_error(msg);
 }
 void PTVisitorErrorListener::reportAmbiguity
 	(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
