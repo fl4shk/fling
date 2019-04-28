@@ -22,7 +22,7 @@ protected:		// variables
 	FrostProgramNode * _parent = nullptr,
 		* _actual_scope_fpn = nullptr;
 
-	CircLinkedList<FrostProgramNode> _children;
+	std::unique_ptr<CircLinkedList<FrostProgramNode>> _children;
 
 	//SymbolTable _symbol_table;
 
