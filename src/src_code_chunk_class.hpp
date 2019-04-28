@@ -1,7 +1,7 @@
-#ifndef src_src_code_pos_class_hpp
-#define src_src_code_pos_class_hpp
+#ifndef src_src_code_chunk_class_hpp
+#define src_src_code_chunk_class_hpp
 
-// src/src_code_pos_class.hpp
+// src/src_code_chunk_class.hpp
 
 #include "misc_includes.hpp"
 #include <ANTLRErrorListener.h>
@@ -12,8 +12,8 @@ namespace frost_hdl
 
 // Used for error reporting during semantic analysis.
 // Many, many things use this, usually in the form of deriving from
-// `HasSrcCodePosBase`
-class SrcCodePos
+// `HasSrcCodeChunkBase`
+class SrcCodeChunk
 {
 private:		// variables
 	SavedString _filename = nullptr;
@@ -22,16 +22,16 @@ private:		// variables
 	size_t _src_line = 0, _src_pos_in_line = 0;
 
 public:		// functions
-	SrcCodePos();
-	explicit SrcCodePos(SavedString s_filename,
+	SrcCodeChunk();
+	explicit SrcCodeChunk(SavedString s_filename,
 		antlr4::ParserRuleContext* s_ctx);
-	explicit SrcCodePos(SavedString s_filename, SavedString s_text,
+	explicit SrcCodeChunk(SavedString s_filename, SavedString s_text,
 		size_t s_src_line, size_t s_src_pos_in_line);
 
-	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodePos);
+	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodeChunk);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodeChunk);
 
-	virtual ~SrcCodePos();
+	virtual ~SrcCodeChunk();
 
 	std::string convert_to_errwarn_string() const;
 
@@ -64,4 +64,4 @@ public:		// functions
 } // namespace frost_hdl
 
 
-#endif		// src_src_code_pos_class_hpp
+#endif		// src_src_code_chunk_class_hpp

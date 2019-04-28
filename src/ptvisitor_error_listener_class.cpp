@@ -1,5 +1,5 @@
 #include "ptvisitor_error_listener_class.hpp"
-#include "src_code_pos_class.hpp"
+#include "src_code_chunk_class.hpp"
 #include "gen_src/FrostHdlGrammarLexer.h"
 #include "gen_src/FrostHdlGrammarParser.h"
 #include "gen_src/FrostHdlGrammarVisitor.h"
@@ -28,7 +28,7 @@ void PTVisitorErrorListener::syntaxError
 	//	", position ", charPositionInLine, 
 	//	":  ", msg, "\n");
 	//exit(1);
-	SrcCodePos(_filename, dup_str(offendingSymbol->getText()), line,
+	SrcCodeChunk(_filename, dup_str(offendingSymbol->getText()), line,
 		charPositionInLine).syntax_error(msg);
 }
 void PTVisitorErrorListener::reportAmbiguity

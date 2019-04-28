@@ -4,7 +4,7 @@
 // src/err_warn_base_class.hpp
 
 #include "misc_includes.hpp"
-#include "src_code_pos_class.hpp"
+#include "src_code_chunk_class.hpp"
 #include "parsed_src_code_class.hpp"
 
 namespace frost_hdl
@@ -42,15 +42,15 @@ protected:		// functions
 			////	line, ", position ", pos_in_line, ":  ", msg, "\n");
 			//printerr("Error on line ", line, ", position ", pos_in_line, 
 			//	":  ", msg, "\n");
-			_err(_make_src_code_pos(ctx), msg);
+			_err(_make_src_code_chunk(ctx), msg);
 		}
 		exit(1);
 	}
-	inline void _err(const SrcCodePos& src_code_pos,
+	inline void _err(const SrcCodeChunk& src_code_chunk,
 		const std::string& msg)
 	{
-		//_err(src_code_pos.ctx(), msg);
-		src_code_pos.err(msg);
+		//_err(src_code_chunk.ctx(), msg);
+		src_code_chunk.err(msg);
 	}
 	inline void _err(const std::string& msg)
 	{
@@ -73,23 +73,23 @@ protected:		// functions
 			////	line, ", position ", pos_in_line, ":  ", msg, "\n");
 			//printerr("Warning on line ", line, ", position ", pos_in_line, 
 			//	":  ", msg, "\n");
-			_warn(_make_src_code_pos(ctx), msg);
+			_warn(_make_src_code_chunk(ctx), msg);
 		}
 	}
-	inline void _warn(const SrcCodePos& src_code_pos,
+	inline void _warn(const SrcCodeChunk& src_code_chunk,
 		const std::string& msg)
 	{
-		//_warn(src_code_pos.ctx(), msg);
-		src_code_pos.warn(msg);
+		//_warn(src_code_chunk.ctx(), msg);
+		src_code_chunk.warn(msg);
 	}
 	inline void _warn(const std::string& msg)
 	{
 		printerr("Warning:  ", msg, "\n");
 	}
 
-	inline SrcCodePos _make_src_code_pos(ParserRuleContext* ctx) const
+	inline SrcCodeChunk _make_src_code_chunk(ParserRuleContext* ctx) const
 	{
-		return SrcCodePos(_curr_filename, ctx);
+		return SrcCodeChunk(_curr_filename, ctx);
 	}
 };
 

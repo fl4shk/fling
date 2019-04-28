@@ -8,7 +8,7 @@
 	X(BigNum, const BigNum&, big_num) \
 	X(SmallNum, SmallNum, small_num) \
 	X(SavedString, SavedString, str) \
-	X(SrcCodePos, SrcCodePos, src_code_pos) \
+	X(SrcCodeChunk, SrcCodeChunk, src_code_chunk) \
 	X(Expression*, Expression*, expr) \
 	X(Symbol*, Symbol*, sym) \
 	X(FrostLhsType*, FrostLhsType*, lhs_type) \
