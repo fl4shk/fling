@@ -13,28 +13,28 @@ class Symbol;
 class FrostProgramNode;
 
 template<typename Type>
-inline SavedString construct_str_from_pointer(Type* pointer)
+inline std::string construct_str_from_pointer(Type* pointer)
 {
-	return dup_str(sconcat(reinterpret_cast<uintptr_t>(pointer)));
+	return sconcat(reinterpret_cast<uintptr_t>(pointer));
 }
 
 // Used for temporary type identifiers before actual dimension expressions
 // are evaluated.
 template<typename Type>
-inline SavedString construct_initial_type_ident_from_pointer
-	(SavedString base_ident, Type* pointer)
+inline std::string construct_initial_type_ident_from_pointer
+	(const std::string& base_ident, Type* pointer)
 {
-	return dup_str(sconcat(*base_ident, "[", *construct_str_from_pointer
-		(pointer), "]"));
+	return sconcat(base_ident, "[", *construct_str_from_pointer
+		(pointer), "]");
 }
 
 template<typename FirstArgType, typename SecondArgType>
-inline SavedString construct_initial_type_ident_from_two_ptrs
-	(SavedString base_ident, FirstArgType* first_ptr,
+inline std::string construct_initial_type_ident_from_two_ptrs
+	(const std::string& base_ident, FirstArgType* first_ptr,
 	SecondArgType* second_ptr)
 {
-	return dup_str(sconcat(*base_ident, "[", *construct_str_from_pointer
-		(first_ptr), " ", *construct_str_from_pointer(second_ptr), "]"));
+	return sconcat(base_ident, "[", *construct_str_from_pointer(first_ptr),
+		" ", *construct_str_from_pointer(second_ptr), "]");
 }
 
 

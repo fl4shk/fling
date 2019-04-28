@@ -4,22 +4,25 @@
 // src/expr_num_class.hpp
 
 #include "misc_includes.hpp"
-#include "general_allocator_class.hpp"
+//#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {
 
 class ExprNum
 {
+public:		// types
+	typedef std::vector<bool> ExprNumData;
+
 protected:		// variables
-	ExprNumData _data = nullptr;
+	ExprNumData _data;
 	bool _is_signed = false;
 
 public:		// functions
 	ExprNum() = default;
 
-	ExprNum(const RawExprNumData& s_data, bool s_is_signed=false);
-	ExprNum(RawExprNumData&& s_data, bool s_is_signed=false);
+	ExprNum(const ExprNumData& s_data, bool s_is_signed=false);
+	ExprNum(ExprNumData&& s_data, bool s_is_signed=false);
 	explicit ExprNum(bool s_data, bool s_is_signed=false);
 
 
@@ -91,10 +94,10 @@ public:		// functions
 
 
 
-	inline const auto& data() const
-	{
-		return *_data;
-	}
+	//inline const auto& data() const
+	//{
+	//	return *_data;
+	//}
 
 	inline size_t size() const
 	{
@@ -118,7 +121,7 @@ public:		// functions
 	{
 		return data().at(index);
 	}
-	RawExprNumData multiple_bits(size_t start_index, size_t amount) const;
+	ExprNumData multiple_bits(size_t start_index, size_t amount) const;
 
 	inline void set_bit(size_t index, bool val)
 	{
@@ -127,17 +130,17 @@ public:		// functions
 		set_data(n_data);
 	}
 	void set_multiple_bits(size_t start_index,
-		const RawExprNumData& some_bits);
+		const ExprNumData& some_bits);
 
 
-	inline void set_data(const RawExprNumData& n_data)
-	{
-		_data = dup_expr_num_data(n_data);
-	}
-	inline void set_data(RawExprNumData&& n_data)
-	{
-		_data = dup_expr_num_data(std::move(n_data));
-	}
+	//inline void set_data(const ExprNumData& n_data)
+	//{
+	//	_data = dup_expr_num_data(n_data);
+	//}
+	//inline void set_data(ExprNumData&& n_data)
+	//{
+	//	_data = dup_expr_num_data(std::move(n_data));
+	//}
 
 	inline bool is_negative() const
 	{
@@ -157,7 +160,11 @@ public:		// functions
 	void perf_slice_with_range(const ExprNum& to_slice,
 		const ExprNum& range_left, const ExprNum& range_right);
 
+
 	GEN_GETTER_AND_SETTER_BY_VAL(is_signed)
+
+	GEN_GETTER_AND_SETTER_BY_CON_REF(data)
+	GEN_SETTER_BY_RVAL_REF(data)
 };
 
 } // namespace frost_hdl

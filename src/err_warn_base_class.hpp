@@ -16,7 +16,7 @@ public:		// types
 	typedef antlr4::ParserRuleContext ParserRuleContext;
 
 protected:		// variables
-	SavedString _curr_filename = nullptr;
+	std::string _curr_filename;
 
 public:		// functions
 	inline ErrWarnBase() = default;

@@ -22,9 +22,10 @@ ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 	//	(new frost_hdl::PTVisitorErrorListener());
 	//parser.addErrorListener(ptvisitor_error_listener.get());
 
-	_filename = dup_str(s_filename);
+	//_filename = dup_str(s_filename);
+	_filename = s_filename;
 
-	std::ifstream fstm(*filename());
+	std::ifstream fstm(filename());
 
 	//std::string&& raw_file_as_string = get_istream_as_str(fstm);
 	//std::string file_as_string;

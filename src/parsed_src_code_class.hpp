@@ -4,7 +4,7 @@
 // src/parsed_src_code_class.hpp
 
 #include "misc_includes.hpp"
-#include "general_allocator_class.hpp"
+//#include "general_allocator_class.hpp"
 #include <ANTLRErrorListener.h>
 #include "gen_src/FrostHdlGrammarLexer.h"
 #include "gen_src/FrostHdlGrammarParser.h"
@@ -17,7 +17,8 @@ namespace frost_hdl
 class ParsedSrcCode
 {
 private:		// variables
-	SavedString _filename;
+	//SavedString _filename;
+	std::string _filename;
 	std::unique_ptr<antlr4::ANTLRInputStream> _input_stream;
 	std::unique_ptr<FrostHdlGrammarLexer> _lexer;
 	std::unique_ptr<antlr4::CommonTokenStream> _tokens;

@@ -4,30 +4,66 @@
 // src/frost_program_node_class.hpp
 
 #include "misc_includes.hpp"
+#include "table_types.hpp"
 
-#include "symbol_class.hpp"
-#include "scoped_table_classes.hpp"
+#include "has_src_code_chunk_base_classes.hpp"
+
+//#include "symbol_class.hpp"
+//#include "scoped_table_classes.hpp"
+#include "doubly_linked_list_class.hpp"
 
 
 namespace frost_hdl
 {
 
+// Base class for a node in the pseudo-AST internal representation.
 class FrostProgramNode : public HasSrcCodeChunkAndIdentBase
 {
 protected:		// variables
-	//FrostProgramNode* _parent = nullptr;
+	FrostProgramNode * _parent = nullptr,
+		* _actual_scope_fpn = nullptr;
+
+	DoublyLinkedList<FrostProgramNode> _children;
+
+	SymbolTable _symbol_table;
+
+
+	enum class ScopeType
+	{
+		None,
+		Package,
+		Interface,
+		Module,
+		Function,
+	};
+
+	enum class SymbolType
+	{
+		None,
+		Var,
+		Function,
+		LhsType,
+		//TypedefOfLhsType,
+	};
+
+	enum class PortType
+	{
+		None,
+		Input,
+		Output,
+
+		// This might only ever be used for `task` arguments.
+		Inout,
+	};
 
 	//std::vector<FrostProgramNode> _children;
 	//std::list<FrostProgramNode*> _children;
-	FrostProgramNode* _actual_scope_fpn = nullptr;
 
 public:		// functions
 	FrostProgramNode();
 
 	FrostProgramNode(const SrcCodeChunk& s_src_code_chunk,
-		SavedString s_ident);
-	FrostProgramNode(const SrcCodeChunk& s_src_code_chunk,
-		SavedString s_ident, FrostProgramNode* s_actual_scope_fpn);
+		const std::string& s_ident);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostProgramNode);
 
@@ -36,7 +72,18 @@ public:		// functions
 	virtual bool is_expr() const;
 	virtual bool is_constant_expr() const;
 
-	GEN_GETTER_BY_VAL(actual_scope_fpn)
+	virtual ScopeType scope_type() const;
+	virtual SymbolType symbol_type() const;
+	virtual PortType port_type() const;
+
+	virtual void insert_child(FrostProgramNode* to_insert_after,
+		FrostProgramNode&& to_insert);
+
+
+	GEN_GETTER_AND_SETTER_BY_VAL(parent)
+	GEN_GETTER_AND_SETTER_BY_VAL(actual_scope_fpn)
+	//GEN_GETTERS_BY_CON_REF_AND_REF(children)
+	GEN_GETTER_BY_CON_REF(children)
 };
 
 } // namespace frost_hdl

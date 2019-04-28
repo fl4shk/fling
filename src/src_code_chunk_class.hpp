@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include <ANTLRErrorListener.h>
-#include "general_allocator_class.hpp"
+//#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {
@@ -16,17 +16,18 @@ namespace frost_hdl
 class SrcCodeChunk
 {
 private:		// variables
-	SavedString _filename = nullptr;
+	std::string _filename;
 	antlr4::ParserRuleContext* _ctx = nullptr;
-	SavedString _text = nullptr;
+	std::string _text;
 	size_t _src_line = 0, _src_pos_in_line = 0;
 
 public:		// functions
 	SrcCodeChunk();
-	explicit SrcCodeChunk(SavedString s_filename,
+	explicit SrcCodeChunk(const std::string& s_filename,
 		antlr4::ParserRuleContext* s_ctx);
-	explicit SrcCodeChunk(SavedString s_filename, SavedString s_text,
-		size_t s_src_line, size_t s_src_pos_in_line);
+	explicit SrcCodeChunk(const std::string& s_filename,
+		const std::string& s_text, size_t s_src_line,
+		size_t s_src_pos_in_line);
 
 	//GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(SrcCodeChunk);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SrcCodeChunk);
@@ -55,8 +56,9 @@ public:		// functions
 
 
 
-	GEN_GETTER_BY_VAL(filename)
+	GEN_GETTER_BY_CON_REF(filename)
 	GEN_GETTER_BY_VAL(ctx)
+	GEN_GETTER_BY_CON_REF(text)
 	GEN_GETTER_BY_VAL(src_line)
 	GEN_GETTER_BY_VAL(src_pos_in_line)
 };

@@ -11,8 +11,8 @@ Symbol::Symbol()
 {
 }
 
-Symbol::Symbol(SavedString s_ident, FrostProgramNode* s_var_decl_fpn)
-	: _ident(s_ident), _var_decl_fpn(s_var_decl_fpn)
+Symbol::Symbol(SavedString s_ident, FrostProgramNode* s_decl_fpn)
+	: _ident(s_ident), _decl_fpn(s_decl_fpn)
 {
 }
 
@@ -20,9 +20,5 @@ Symbol::~Symbol()
 {
 }
 
-//FrostFullType Symbol::frost_full_type() const
-//{
-//	return FrostFullType();
-//}
 
 } // namespace frost_hdl

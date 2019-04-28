@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "src_code_chunk_class.hpp"
-#include "general_allocator_class.hpp"
+//#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {
@@ -29,18 +29,18 @@ public:		// functions
 class HasSrcCodeChunkAndIdentBase : public HasSrcCodeChunkBase
 {
 protected:		// variables
-	SavedString _ident = nullptr;
+	std::string _ident;
 
 public:		// functions
 	HasSrcCodeChunkAndIdentBase();
 	HasSrcCodeChunkAndIdentBase(const SrcCodeChunk& s_src_code_chunk,
-		SavedString s_ident);
+		const std::string& s_ident);
 
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasSrcCodeChunkAndIdentBase);
 
 	virtual ~HasSrcCodeChunkAndIdentBase();
 
-	GEN_GETTER_BY_VAL(ident);
+	GEN_GETTER_BY_CON_REF(ident);
 };
 
 } // namespace frost_hdl

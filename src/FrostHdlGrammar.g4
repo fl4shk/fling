@@ -255,6 +255,7 @@ stmtBehavHeaderElse:
 
 
 // Expression parsing
+// (avoid left-recursion)
 expr:
 	exprLogical
 	| exprLogical TokOpLogical expr 

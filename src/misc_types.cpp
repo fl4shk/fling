@@ -1,6 +1,6 @@
 #include "misc_types.hpp"
 
-#include "general_allocator_class.hpp"
+//#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {

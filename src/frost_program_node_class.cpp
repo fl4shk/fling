@@ -8,8 +8,9 @@ FrostProgramNode::FrostProgramNode()
 }
 
 FrostProgramNode::FrostProgramNode(const SrcCodeChunk& s_src_code_chunk,
-	SavedString s_ident)
-	: HasSrcCodeChunkAndIdentBase(s_src_code_chunk, s_ident)
+	const std::string& s_ident)
+	: HasSrcCodeChunkAndIdentBase(s_src_code_chunk, s_ident),
+	_parent(nullptr), _actual_scope_fpn(nullptr)
 {
 }
 
@@ -25,6 +26,23 @@ bool FrostProgramNode::is_expr() const
 bool FrostProgramNode::is_constant_expr() const
 {
 	return false;
+}
+
+auto FrostProgramNode::scope_type() const
+	-> ScopeType
+{
+	return ScopeType::None;
+}
+
+auto FrostProgramNode::symbol_type() const
+	-> SymbolType
+{
+	return SymbolType::None;
+}
+auto FrostProgramNode::port_type() const
+	-> PortType
+{
+	return PortType::None;
 }
 
 } // namespace frost_hdl

@@ -296,8 +296,7 @@ public:		// functions
 
 // Primarily intended for use with "FrostStatementTable".
 template<typename Type>
-class ScopedUnnamedTable
-	: public ScopedTableBase<Type, PointerVector>
+class ScopedUnnamedTable : public ScopedTableBase<Type, PointerVector>
 {
 public:		// types
 	typedef ScopedTableBase<Type, PointerVector> Base;

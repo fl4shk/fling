@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include <ANTLRErrorListener.h>
-#include "general_allocator_class.hpp"
+//#include "general_allocator_class.hpp"
 
 namespace frost_hdl
 {
@@ -13,10 +13,10 @@ namespace frost_hdl
 class PTVisitorErrorListener : public antlr4::ANTLRErrorListener
 {
 private:		// variables
-	SavedString _filename = nullptr;
+	std::string _filename;
 
 public:		// functions
-	PTVisitorErrorListener(SavedString s_filename);
+	PTVisitorErrorListener(const std::string& s_filename);
 	virtual ~PTVisitorErrorListener();
 
 	void syntaxError(antlr4::Recognizer *recognizer, 

@@ -3,12 +3,12 @@
 namespace frost_hdl
 {
 
-ExprNum::ExprNum(const RawExprNumData& s_data, bool s_is_signed)
+ExprNum::ExprNum(const ExprNumData& s_data, bool s_is_signed)
 {
 	set_data(s_data);
 	set_is_signed(s_is_signed);
 }
-ExprNum::ExprNum(RawExprNumData&& s_data, bool s_is_signed)
+ExprNum::ExprNum(ExprNumData&& s_data, bool s_is_signed)
 {
 	set_data(std::move(s_data));
 	set_is_signed(s_is_signed);
@@ -52,7 +52,7 @@ void ExprNum::copy_from_bignum(const BigNum& n_data, size_t n_data_size)
 {
 	BigNum mask = 1;
 
-	RawExprNumData temp_data;
+	ExprNumData temp_data;
 
 	for (size_t i=0; i<n_data_size; ++i)
 	{
@@ -137,15 +137,16 @@ std::string ExprNum::convert_to_verilog_literal() const
 
 void ExprNum::set_size(size_t n_size)
 {
-	if (_data == nullptr)
-	{
-		RawExprNumData n_data;
-		n_data.resize(n_size, false);
-		set_data(n_data);
+	//if (_data == nullptr)
+	//{
+	//	ExprNumData n_data;
+	//	n_data.resize(n_size, false);
+	//	set_data(n_data);
 
-		return;
-	}
-	RawExprNumData n_data(data());
+	//	return;
+	//}
+
+	ExprNumData n_data(data());
 	n_data.resize(n_size, false);
 
 	if (n_size > size())
@@ -179,10 +180,10 @@ void ExprNum::set_size(size_t n_size)
 	set_data(n_data);
 }
 
-RawExprNumData ExprNum::multiple_bits(size_t start_index, size_t amount)
-	const
+auto ExprNum::multiple_bits(size_t start_index, size_t amount) const
+	-> ExprNumData
 {
-	RawExprNumData ret;
+	ExprNumData ret;
 
 	for (size_t i=start_index; i<(start_index + amount); ++i)
 	{
@@ -192,7 +193,7 @@ RawExprNumData ExprNum::multiple_bits(size_t start_index, size_t amount)
 	return ret;
 }
 void ExprNum::set_multiple_bits(size_t start_index,
-	const RawExprNumData& some_bits)
+	const ExprNumData& some_bits)
 {
 	auto n_data(data());
 
@@ -207,7 +208,7 @@ void ExprNum::set_multiple_bits(size_t start_index,
 // Logical Shift Left
 void ExprNum::perf_lsl(const ExprNum& to_shift, const ExprNum& amount)
 {
-	RawExprNumData n_value_data;
+	ExprNumData n_value_data;
 	n_value_data.resize(to_shift.size(), false);
 
 	const auto& old_data = to_shift.data();
@@ -230,7 +231,7 @@ void ExprNum::perf_lsl(const ExprNum& to_shift, const ExprNum& amount)
 // Logical Shift Right
 void ExprNum::perf_lsr(const ExprNum& to_shift, const ExprNum& amount)
 {
-	RawExprNumData n_data;
+	ExprNumData n_data;
 	n_data.resize(to_shift.size(), false);
 
 	const auto& old_data = to_shift.data();
@@ -253,7 +254,7 @@ void ExprNum::perf_lsr(const ExprNum& to_shift, const ExprNum& amount)
 // Arithmetic Shift Right
 void ExprNum::perf_asr(const ExprNum& to_shift, const ExprNum& amount)
 {
-	RawExprNumData n_data;
+	ExprNumData n_data;
 
 	const auto& old_data = to_shift.data();
 	const auto amount_as_ui = amount.convert_to_unsigned_bignum().get_ui();
@@ -300,7 +301,7 @@ void ExprNum::perf_slice_with_range(const ExprNum& to_slice,
 	const auto range_end = range_is_ascending ? range_right_uint
 		: range_left_uint;
 
-	RawExprNumData n_data;
+	ExprNumData n_data;
 
 	for (auto i=range_start; i<=range_end; ++i)
 	{

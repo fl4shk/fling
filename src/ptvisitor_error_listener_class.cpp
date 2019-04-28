@@ -9,7 +9,7 @@ namespace frost_hdl
 {
 
 PTVisitorErrorListener::PTVisitorErrorListener
-	(SavedString s_filename)
+	(const std::string& s_filename)
 	: _filename(s_filename)
 {
 }
@@ -28,7 +28,7 @@ void PTVisitorErrorListener::syntaxError
 	//	", position ", charPositionInLine, 
 	//	":  ", msg, "\n");
 	//exit(1);
-	SrcCodeChunk(_filename, dup_str(offendingSymbol->getText()), line,
+	SrcCodeChunk(_filename, offendingSymbol->getText(), line,
 		charPositionInLine).syntax_error(msg);
 }
 void PTVisitorErrorListener::reportAmbiguity
