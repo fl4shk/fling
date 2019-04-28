@@ -22,7 +22,7 @@ protected:		// variables
 	FrostProgramNode * _parent = nullptr,
 		* _actual_scope_fpn = nullptr;
 
-	CircularlyLinkedList<FrostProgramNode> _children;
+	CircLinkedList<FrostProgramNode> _children;
 
 	//SymbolTable _symbol_table;
 

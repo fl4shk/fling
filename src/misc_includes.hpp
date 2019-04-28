@@ -40,7 +40,7 @@ using namespace liborangepower::json;
 using liborangepower::bignum::BigNum;
 
 using liborangepower::containers::MoveOnlyPrevCurrPair;
-using liborangepower::containers::CircularlyLinkedList;
+using liborangepower::containers::CircLinkedList;
 
 
 #endif		// src_misc_includes_hpp
