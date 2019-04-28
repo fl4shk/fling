@@ -5,6 +5,7 @@
 
 #include "misc_includes.hpp"
 //#include "general_allocator_class.hpp"
+#include "misc_types.hpp"
 
 namespace frost_hdl
 {
@@ -74,20 +75,20 @@ public:		// functions
 	{
 		return BigNum(ExprNum(*this, size(), false));
 	}
-	inline std::string convert_to_string() const
+	inline Ident convert_to_string() const
 	{
 		return liborangepower::bignum::convert_bignum_to_str
 			(convert_to_bignum());
 	}
 
-	std::string convert_to_verilog_literal() const;
+	Ident convert_to_verilog_literal() const;
 
 	inline operator BigNum() const
 	{
 		return convert_to_bignum();
 	}
 
-	explicit inline operator std::string() const
+	explicit inline operator Ident() const
 	{
 		return convert_to_string();
 	}

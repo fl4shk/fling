@@ -11,7 +11,7 @@ SrcCodeChunk::SrcCodeChunk()
 	_src_pos_in_line(0)
 {
 }
-SrcCodeChunk::SrcCodeChunk(const std::string& s_filename,
+SrcCodeChunk::SrcCodeChunk(const Ident& s_filename,
 	antlr4::ParserRuleContext* s_ctx)
 	: _filename(s_filename), _ctx(s_ctx)
 {
@@ -21,8 +21,8 @@ SrcCodeChunk::SrcCodeChunk(const std::string& s_filename,
 	_src_line = tok->getLine();
 	_src_pos_in_line = tok->getCharPositionInLine();
 }
-SrcCodeChunk::SrcCodeChunk(const std::string& s_filename,
-	const std::string& s_text, size_t s_src_line, size_t s_src_pos_in_line)
+SrcCodeChunk::SrcCodeChunk(const Ident& s_filename,
+	const Ident& s_text, size_t s_src_line, size_t s_src_pos_in_line)
 	: _filename(s_filename), _ctx(nullptr), _text(s_text),
 	_src_line(s_src_line), _src_pos_in_line(s_src_pos_in_line)
 {
@@ -32,7 +32,7 @@ SrcCodeChunk::~SrcCodeChunk()
 {
 }
 
-std::string SrcCodeChunk::convert_to_errwarn_string() const
+Ident SrcCodeChunk::convert_to_errwarn_string() const
 {
 	return sconcat(_filename, ":", _src_line, ":", _src_pos_in_line,
 		"(near text \"", _text, "\")");

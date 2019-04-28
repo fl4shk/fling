@@ -20,7 +20,7 @@ HasSrcCodeChunkAndIdentBase::HasSrcCodeChunkAndIdentBase()
 {
 }
 HasSrcCodeChunkAndIdentBase::HasSrcCodeChunkAndIdentBase
-	(const SrcCodeChunk& s_src_code_chunk, const std::string& s_ident)
+	(const SrcCodeChunk& s_src_code_chunk, const Ident& s_ident)
 	: HasSrcCodeChunkBase(s_src_code_chunk), _ident(s_ident)
 {
 }

@@ -18,7 +18,7 @@ class ParsedSrcCode
 {
 private:		// variables
 	//SavedString _filename;
-	std::string _filename;
+	Ident _filename;
 	std::unique_ptr<antlr4::ANTLRInputStream> _input_stream;
 	std::unique_ptr<FrostHdlGrammarLexer> _lexer;
 	std::unique_ptr<antlr4::CommonTokenStream> _tokens;
@@ -29,7 +29,7 @@ private:		// variables
 public:		// functions
 	ParsedSrcCode();
 
-	ParsedSrcCode(const std::string& s_filename);
+	ParsedSrcCode(const Ident& s_filename);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ParsedSrcCode);
 	virtual ~ParsedSrcCode();

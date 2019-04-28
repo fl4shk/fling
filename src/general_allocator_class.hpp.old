@@ -29,7 +29,7 @@ LIST_FOR_GEN_SAVE(GEN_SAVE_FORWARD_DECLARE)
 
 #undef GEN_SAVE_FORWARD_DECLARE
 
-typedef std::string RawSavedString;
+typedef Ident RawSavedString;
 typedef const RawSavedString* SavedString;
 
 typedef std::vector<bool> RawExprNumData;

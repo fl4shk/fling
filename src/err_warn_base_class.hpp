@@ -16,7 +16,7 @@ public:		// types
 	typedef antlr4::ParserRuleContext ParserRuleContext;
 
 protected:		// variables
-	std::string _curr_filename;
+	Ident _curr_filename;
 
 public:		// functions
 	inline ErrWarnBase() = default;
@@ -27,7 +27,7 @@ public:		// functions
 
 protected:		// functions
 	inline void _err(antlr4::ParserRuleContext* ctx,
-		const std::string& msg)
+		const Ident& msg)
 	{
 		if (ctx == nullptr)
 		{
@@ -47,18 +47,18 @@ protected:		// functions
 		exit(1);
 	}
 	inline void _err(const SrcCodeChunk& src_code_chunk,
-		const std::string& msg)
+		const Ident& msg)
 	{
 		//_err(src_code_chunk.ctx(), msg);
 		src_code_chunk.err(msg);
 	}
-	inline void _err(const std::string& msg)
+	inline void _err(const Ident& msg)
 	{
 		//printerr("Error in file \"", *_filename, "\":  ", msg, "\n");
 		printerr("Error:  ", msg, "\n");
 		exit(1);
 	}
-	inline void _warn(ParserRuleContext* ctx, const std::string& msg)
+	inline void _warn(ParserRuleContext* ctx, const Ident& msg)
 	{
 		if (ctx == nullptr)
 		{
@@ -77,12 +77,12 @@ protected:		// functions
 		}
 	}
 	inline void _warn(const SrcCodeChunk& src_code_chunk,
-		const std::string& msg)
+		const Ident& msg)
 	{
 		//_warn(src_code_chunk.ctx(), msg);
 		src_code_chunk.warn(msg);
 	}
-	inline void _warn(const std::string& msg)
+	inline void _warn(const Ident& msg)
 	{
 		printerr("Warning:  ", msg, "\n");
 	}

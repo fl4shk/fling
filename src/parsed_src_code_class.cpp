@@ -8,7 +8,7 @@ ParsedSrcCode::ParsedSrcCode()
 {
 }
 
-ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
+ParsedSrcCode::ParsedSrcCode(const Ident& s_filename)
 {
 	//antlr4::ANTLRInputStream input(from_stdin);
 	//FrostHdlGrammarLexer lexer(&input);
@@ -27,8 +27,8 @@ ParsedSrcCode::ParsedSrcCode(const std::string& s_filename)
 
 	std::ifstream fstm(filename());
 
-	//std::string&& raw_file_as_string = get_istream_as_str(fstm);
-	//std::string file_as_string;
+	//Ident&& raw_file_as_string = get_istream_as_str(fstm);
+	//Ident file_as_string;
 
 	//if (raw_file_as_string.at(raw_file_as_string.size() - 1) == EOF)
 	//{

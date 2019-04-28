@@ -28,6 +28,7 @@
 #include "liborangepower_src/gmp_stuff.hpp"
 #include "liborangepower_src/time_stuff.hpp"
 #include "liborangepower_src/with_defines.hpp"
+#include "liborangepower_src/linked_list_classes.hpp"
 
 using namespace liborangepower::printout_etc;
 using namespace liborangepower::misc_input;
@@ -39,6 +40,7 @@ using namespace liborangepower::json;
 using liborangepower::bignum::BigNum;
 
 using liborangepower::containers::MoveOnlyPrevCurrPair;
+using liborangepower::containers::CircularlyLinkedList;
 
 
 #endif		// src_misc_includes_hpp

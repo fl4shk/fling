@@ -4,6 +4,7 @@
 // src/table_types.hpp
 
 #include "misc_includes.hpp"
+#include "misc_types.hpp"
 //#include "general_allocator_class.hpp"
 
 //#include "scoped_table_classes.hpp"
@@ -25,7 +26,7 @@ class FrostProgramNode;
 //	FrostGenerateBlockInModuleTable;
 
 
-typedef std::map<std::string, FrostProgramNode*> SymbolTable;
+typedef std::map<Ident, FrostProgramNode*> SymbolTable;
 
 } // namespace frost_hdl
 

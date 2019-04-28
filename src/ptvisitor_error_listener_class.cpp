@@ -9,7 +9,7 @@ namespace frost_hdl
 {
 
 PTVisitorErrorListener::PTVisitorErrorListener
-	(const std::string& s_filename)
+	(const Ident& s_filename)
 	: _filename(s_filename)
 {
 }
@@ -21,7 +21,7 @@ PTVisitorErrorListener::~PTVisitorErrorListener()
 void PTVisitorErrorListener::syntaxError
 	(antlr4::Recognizer *recognizer, 
 	antlr4::Token *offendingSymbol, size_t line, 
-	size_t charPositionInLine, const std::string &msg, 
+	size_t charPositionInLine, const Ident &msg, 
 	std::exception_ptr e)
 {
 	//printerr("Syntax error on line ", line, 

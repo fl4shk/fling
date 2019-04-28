@@ -8,7 +8,7 @@ FrostProgramNode::FrostProgramNode()
 }
 
 FrostProgramNode::FrostProgramNode(const SrcCodeChunk& s_src_code_chunk,
-	const std::string& s_ident)
+	const Ident& s_ident)
 	: HasSrcCodeChunkAndIdentBase(s_src_code_chunk, s_ident),
 	_parent(nullptr), _actual_scope_fpn(nullptr)
 {

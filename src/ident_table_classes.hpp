@@ -8,8 +8,9 @@
 
 namespace frost_hdl
 {
+typedef std::string Ident;
 
-//typedef std::string* Ident;
+//typedef Ident* Ident;
 
 template<typename Type>
 class IdentTable
@@ -18,7 +19,7 @@ public:		// typedefs
 	//typedef SavedString Ident;
 
 private:		// variables
-	std::map<std::string, Type> _table;
+	std::map<Ident, Type> _table;
 
 public:		// functions
 	IdentTable() = default;
@@ -26,17 +27,17 @@ public:		// functions
 	virtual ~IdentTable() = default;
 
 	// Type accessors
-	inline Type& at(const std::string& some_name)
+	inline Type& at(const Ident& some_name)
 	{
 		return _table[some_name];
 	}
 
-	inline const Type& at(const std::string& some_name) const
+	inline const Type& at(const Ident& some_name) const
 	{
 		return _table.at(some_name);
 	}
 
-	inline bool contains(const std::string& some_name) const
+	inline bool contains(const Ident& some_name) const
 	{
 		return (_table.count(some_name) == 1);
 	}
@@ -60,7 +61,7 @@ public:		// typedefs
 	//typedef SavedString Ident;
 
 private:		// variables
-	std::map<std::string, Type*> _table;
+	std::map<Ident, Type*> _table;
 
 public:		// functions
 	IdentToPointerTable() = default;
@@ -68,17 +69,17 @@ public:		// functions
 	virtual ~IdentToPointerTable() = default;
 
 	// Type accessors
-	inline auto& at(const std::string& some_name)
+	inline auto& at(const Ident& some_name)
 	{
 		return _table[some_name];
 	}
 
-	inline const auto& at(const std::string& some_name) const
+	inline const auto& at(const Ident& some_name) const
 	{
 		return _table.at(some_name);
 	}
 
-	inline bool contains(const std::string& some_name) const
+	inline bool contains(const Ident& some_name) const
 	{
 		return (_table.count(some_name) == 1);
 	}
@@ -106,7 +107,7 @@ public:		// functions
 	virtual ~OrderedIdentToPointerTable() = default;
 
 
-	Type* find(const std::string& some_name) const
+	Type* find(const Ident& some_name) const
 	{
 		for (size_t i=0; i<Base::size(); ++i)
 		{
@@ -119,7 +120,7 @@ public:		// functions
 		return nullptr;
 	}
 
-	inline bool contains(const std::string& some_name) const
+	inline bool contains(const Ident& some_name) const
 	{
 		return (find(some_name) != nullptr);
 	}

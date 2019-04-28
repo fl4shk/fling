@@ -4,6 +4,7 @@
 // src/ptvisitor_error_listener_class_hpp
 
 #include "misc_includes.hpp"
+#include "misc_types.hpp"
 #include <ANTLRErrorListener.h>
 //#include "general_allocator_class.hpp"
 
@@ -13,15 +14,15 @@ namespace frost_hdl
 class PTVisitorErrorListener : public antlr4::ANTLRErrorListener
 {
 private:		// variables
-	std::string _filename;
+	Ident _filename;
 
 public:		// functions
-	PTVisitorErrorListener(const std::string& s_filename);
+	PTVisitorErrorListener(const Ident& s_filename);
 	virtual ~PTVisitorErrorListener();
 
 	void syntaxError(antlr4::Recognizer *recognizer, 
 		antlr4::Token *offendingSymbol, size_t line, 
-		size_t charPositionInLine, const std::string &msg, 
+		size_t charPositionInLine, const Ident &msg, 
 		std::exception_ptr e);
 	void reportAmbiguity(antlr4::Parser *recognizer, 
 		const antlr4::dfa::DFA &dfa, size_t startIndex, size_t stopIndex, 

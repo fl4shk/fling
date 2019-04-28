@@ -10,7 +10,6 @@
 
 //#include "symbol_class.hpp"
 //#include "scoped_table_classes.hpp"
-#include "doubly_linked_list_class.hpp"
 
 
 namespace frost_hdl
@@ -23,9 +22,9 @@ protected:		// variables
 	FrostProgramNode * _parent = nullptr,
 		* _actual_scope_fpn = nullptr;
 
-	DoublyLinkedList<FrostProgramNode> _children;
+	CircularlyLinkedList<FrostProgramNode> _children;
 
-	SymbolTable _symbol_table;
+	//SymbolTable _symbol_table;
 
 
 	enum class ScopeType
@@ -35,6 +34,7 @@ protected:		// variables
 		Interface,
 		Module,
 		Function,
+		Task,
 	};
 
 	enum class SymbolType
@@ -60,15 +60,20 @@ protected:		// variables
 	//std::list<FrostProgramNode*> _children;
 
 public:		// functions
+	//--------
 	FrostProgramNode();
 
 	FrostProgramNode(const SrcCodeChunk& s_src_code_chunk,
-		const std::string& s_ident);
+		const Ident& s_ident);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(FrostProgramNode);
 
 	virtual ~FrostProgramNode();
+	//--------
 
+
+
+	//--------
 	virtual bool is_expr() const;
 	virtual bool is_constant_expr() const;
 
@@ -78,12 +83,16 @@ public:		// functions
 
 	virtual void insert_child(FrostProgramNode* to_insert_after,
 		FrostProgramNode&& to_insert);
+	//--------
 
 
+
+	//--------
 	GEN_GETTER_AND_SETTER_BY_VAL(parent)
 	GEN_GETTER_AND_SETTER_BY_VAL(actual_scope_fpn)
 	//GEN_GETTERS_BY_CON_REF_AND_REF(children)
 	GEN_GETTER_BY_CON_REF(children)
+	//--------
 };
 
 } // namespace frost_hdl
