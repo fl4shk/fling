@@ -88,10 +88,19 @@ public:		// functions
 
 
 	//--------
+	inline auto& children()
+	{
+		return *_children;
+	}
+	inline const auto& children() const
+	{
+		return *_children;
+	}
+
 	GEN_GETTER_AND_SETTER_BY_VAL(parent)
 	GEN_GETTER_AND_SETTER_BY_VAL(actual_scope_fpn)
 	//GEN_GETTERS_BY_CON_REF_AND_REF(children)
-	GEN_GETTER_BY_CON_REF(children)
+	//GEN_GETTER_BY_CON_REF(children)
 	//--------
 };
 

@@ -3,6 +3,7 @@
 namespace frost_hdl
 {
 
+//--------
 FrostProgramNode::FrostProgramNode()
 {
 }
@@ -10,14 +11,17 @@ FrostProgramNode::FrostProgramNode()
 FrostProgramNode::FrostProgramNode(const SrcCodeChunk& s_src_code_chunk,
 	const Ident& s_ident)
 	: HasSrcCodeChunkAndIdentBase(s_src_code_chunk, s_ident),
-	_parent(nullptr), _actual_scope_fpn(nullptr)
+	_parent(nullptr), _actual_scope_fpn(nullptr),
+	_children(new CircLinkedList<FrostProgramNode>())
 {
 }
 
 FrostProgramNode::~FrostProgramNode()
 {
 }
+//--------
 
+//--------
 bool FrostProgramNode::is_expr() const
 {
 	return false;
@@ -44,5 +48,6 @@ auto FrostProgramNode::port_type() const
 {
 	return PortType::None;
 }
+//--------
 
 } // namespace frost_hdl
