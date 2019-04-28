@@ -4,6 +4,7 @@
 // src/frost_full_type_class.hpp
 
 #include "misc_includes.hpp"
+#include "misc_types.hpp"
 #include "frost_program_node_class.hpp"
 
 namespace frost_hdl
@@ -12,8 +13,13 @@ namespace frost_hdl
 class FrostFullType final
 {
 private:		// variables
+	ParametersFpnVec _parameters_fpn_vec;
+
 public:		// functions
 	FrostFullType();
+
+	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostFullType, delete, delete);
+
 	~FrostFullType();
 };
 
