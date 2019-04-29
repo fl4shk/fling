@@ -14,25 +14,22 @@ int main(int argc, char** argv)
 	auto next_2 = a.insert_before(next_1, 20);
 
 
-	for (auto iter : a)
+	while (!a.empty())
 	{
-		printout(iter.data, "\n");
+		for (auto iter : a)
+		{
+			printout(iter.data, "\n");
+		}
+
+		a.remove(a.begin());
+		//a.remove(a.end()->prev());
+
+		if (!a.empty())
+		{
+			printout("\n");
+		}
 	}
 
-	//a.remove_after(next_2);
-	//a.remove_before(next_2);
-	//a.remove(next_2);
-
-	a.remove(a.end()->prev());
-	a.remove(a.end()->prev());
-	a.remove(a.end()->prev());
-
-	printout("\n");
-
-	for (auto& iter : a)
-	{
-		printout(iter.data, "\n");
-	}
 
 	return 0;
 
