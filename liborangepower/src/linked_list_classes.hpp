@@ -37,6 +37,8 @@ public:		// types
 		{
 		}
 
+		GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Node);
+
 		~Node() = default;
 
 		GEN_GETTER_BY_VAL(next)
@@ -58,7 +60,8 @@ public:		// types
 		}
 
 		//GEN_COPY_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeIterator);
-		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(NodeIterator);
+		GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeIterator);
+
 		~NodeIterator() = default;
 
 		inline NodeIterator& operator ++ ()
@@ -110,9 +113,10 @@ public:		// functions
 		_head._prev = &_head;
 	}
 
-	GEN_NO_CM_CONSTRUCTORS_AND_ASSIGN(CircLinkedList);
+	//GEN_NO_CM_CONSTRUCTORS_AND_ASSIGN(CircLinkedList);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(CircLinkedList)
 
-	inline ~CircLinkedList()
+	virtual inline ~CircLinkedList()
 	{
 		//for (auto iter=_head.next(); iter!=&_head; )
 		//{
@@ -127,7 +131,8 @@ public:		// functions
 		//}
 		while (!empty())
 		{
-			remove(begin());
+			//remove(begin());
+			pop_front();
 		}
 	}
 
@@ -198,6 +203,15 @@ public:		// functions
 	{
 		return insert_before(head(), std::move(to_push));
 	}
+	inline void pop_front()
+	{
+		remove_after(head());
+	}
+	inline void pop_back()
+	{
+		remove_before(head());
+	}
+
 
 	inline NodeIterator insert_before(Node* where, const Type& to_insert)
 	{
