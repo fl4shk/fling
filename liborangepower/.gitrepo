@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/fl4shk/liborangepower.git
 	branch = master
-	commit = 3201f7c7c898c12eb125e9b198d496c963f4ac0b
-	parent = fa324f2e7c396e7658828330fcf96cdf39769349
+	commit = 312af4cdf2a6e9b44f5773d6d75519431bf71c40
+	parent = 05d76a336f1da3df2d681575bf2a30fab6628a92
 	cmdver = 0.3.1
