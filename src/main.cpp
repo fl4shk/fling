@@ -14,16 +14,19 @@ int main(int argc, char** argv)
 	auto next_2 = a.insert_before(next_1, 20);
 
 
-	//for (auto iter : a)
-	//{
-	//	printout(iter.data, "\n");
-	//}
+	for (auto iter : a)
+	{
+		printout(iter.data, "\n");
+	}
+
+	//a.remove_after(next_2);
+	//a.remove_before(next_2);
 
 	printout("\n");
 
-	for (auto* iter : a)
+	for (auto& iter : a)
 	{
-		printout(iter->data, "\n");
+		printout(iter.data, "\n");
 	}
 
 	return 0;
