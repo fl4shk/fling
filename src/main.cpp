@@ -19,12 +19,11 @@ int main(int argc, char** argv)
 	//	printout(iter.data, "\n");
 	//}
 
-
 	printout("\n");
 
-	for (auto iter : a)
+	for (auto* iter : a)
 	{
-		printout(iter.data, "\n");
+		printout(iter->data, "\n");
 	}
 
 	return 0;
