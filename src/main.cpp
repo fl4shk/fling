@@ -27,6 +27,22 @@ int main(int argc, char** argv)
 	show();
 
 
+	while (!a.empty())
+	{
+		//show();
+		printout("contains:  \n");
+		for (auto iter : vec)
+		{
+			printout("\t", a.contains(iter), "\n");
+		}
+		//a.pop_front();
+		a.pop_back();
+
+		if (!a.empty())
+		{
+			printout("\n");
+		}
+	}
 
 	//while (!a.empty())
 	//{
