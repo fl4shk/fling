@@ -7,7 +7,9 @@
 int main(int argc, char** argv)
 {
 	CircLinkedList<int> a;
-	a.insert_after(*(&a.begin()), 3);
+	//a.insert_after(&(*a.begin()), 3);
+	auto front = a.push_front(3);
+	a.insert_after(front, 9);
 
 	//// We need at least *one* source file.
 	//if (argc < 2)
