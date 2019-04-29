@@ -7,28 +7,48 @@
 int main(int argc, char** argv)
 {
 	CircLinkedList<int> a;
+
+	auto show = [&a]() -> void
+	{
+		for (auto iter : a)
+		{
+			printout(iter.data, "\n");
+		}
+	};
+
+
 	//a.insert_after(&(*a.begin()), 3);
+
+	std::vector<decltype(a)::NodeIterator> test;
+
 	auto front = a.push_front(3);
 	auto next_0 = a.insert_after(front, 9);
 	auto next_1 = a.insert_after(next_0, 7);
 	auto next_2 = a.insert_before(next_1, 20);
 
 
-	while (!a.empty())
-	{
-		for (auto iter : a)
-		{
-			printout(iter.data, "\n");
-		}
+	show();
 
-		a.remove(a.begin());
-		//a.remove(a.end()->prev());
+	printout(a.contains(front), "\n");
+	printout(a.contains(next_0), "\n");
 
-		if (!a.empty())
-		{
-			printout("\n");
-		}
-	}
+
+	//while (!a.empty())
+	//{
+	//	for (auto iter : a)
+	//	{
+	//		printout(iter.data, "\n");
+	//	}
+
+	//	a.remove(a.begin());
+	//	//a.remove(a.end()->prev());
+
+	//	if (!a.empty())
+	//	{
+	//		printout("\n");
+	//	}
+	//}
+
 
 
 	return 0;
