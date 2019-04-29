@@ -1,69 +1,11 @@
 #include "ptvisitor_class.hpp"
 //#include "expr_num_class.hpp"
 //#include "expression_class.hpp"
-//#include "testing.hpp"
+#include "testing.hpp"
 
 
 int main(int argc, char** argv)
 {
-	CircLinkedList<int> a;
-
-	auto show = [&a]() -> void
-	{
-		for (auto iter : a)
-		{
-			printout(iter.data, "\n");
-		}
-	};
-
-
-	std::vector<decltype(a)::NodeIterator> vec;
-
-	vec.push_back(a.push_back(3));
-	vec.push_back(a.push_back(9));
-	vec.push_back(a.push_back(7));
-	vec.push_back(a.push_back(20));
-
-	show();
-
-
-	while (!a.empty())
-	{
-		//show();
-		printout("contains:  \n");
-		for (auto iter : vec)
-		{
-			printout("\t", a.contains(iter), "\n");
-		}
-		//a.pop_front();
-		a.pop_back();
-
-		if (!a.empty())
-		{
-			printout("\n");
-		}
-	}
-
-	//while (!a.empty())
-	//{
-	//	for (auto iter : a)
-	//	{
-	//		printout(iter.data, "\n");
-	//	}
-
-	//	a.remove(a.begin());
-	//	//a.remove(a.end()->prev());
-
-	//	if (!a.empty())
-	//	{
-	//		printout("\n");
-	//	}
-	//}
-
-
-
-	return 0;
-
 	//// We need at least *one* source file.
 	//if (argc < 2)
 	//{
