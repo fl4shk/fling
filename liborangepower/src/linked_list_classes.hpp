@@ -72,14 +72,20 @@ public:		// types
 			return *this;
 		}
 
-		inline Type& operator * () const
+		inline operator Node* ()
 		{
-			return _node->data;
+			return _node;
 		}
 
-		inline Type* operator -> () const
+		//inline Type& operator * () const
+		inline Node& operator * () const
 		{
-			return &_node->data;
+			return *_node;
+		}
+
+		inline Node* operator -> () const
+		{
+			return _node;
 		}
 
 		inline bool operator == (const NodeIterator& other) const
