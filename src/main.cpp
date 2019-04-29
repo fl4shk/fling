@@ -17,20 +17,14 @@ int main(int argc, char** argv)
 	};
 
 
-	//a.insert_after(&(*a.begin()), 3);
+	std::vector<decltype(a)::NodeIterator> vec;
 
-	std::vector<decltype(a)::NodeIterator> test;
-
-	auto front = a.push_front(3);
-	auto next_0 = a.insert_after(front, 9);
-	auto next_1 = a.insert_after(next_0, 7);
-	auto next_2 = a.insert_before(next_1, 20);
-
+	vec.push_back(a.push_front(3));
+	vec.push_back(a.insert_after(vec.back(), 9));
+	vec.push_back(a.insert_after(vec.back(), 7));
+	vec.push_back(a.insert_before(vec.back(), 20));
 
 	show();
-
-	printout(a.contains(front), "\n");
-	printout(a.contains(next_0), "\n");
 
 
 	//while (!a.empty())
