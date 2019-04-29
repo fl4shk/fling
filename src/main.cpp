@@ -19,12 +19,13 @@ int main(int argc, char** argv)
 
 	std::vector<decltype(a)::NodeIterator> vec;
 
-	vec.push_back(a.push_front(3));
-	vec.push_back(a.insert_after(vec.back(), 9));
-	vec.push_back(a.insert_after(vec.back(), 7));
-	vec.push_back(a.insert_before(vec.back(), 20));
+	vec.push_back(a.push_back(3));
+	vec.push_back(a.push_back(9));
+	vec.push_back(a.push_back(7));
+	vec.push_back(a.push_back(20));
 
 	show();
+
 
 
 	//while (!a.empty())
