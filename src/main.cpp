@@ -21,6 +21,11 @@ int main(int argc, char** argv)
 
 	//a.remove_after(next_2);
 	//a.remove_before(next_2);
+	//a.remove(next_2);
+
+	a.remove(a.end()->prev());
+	a.remove(a.end()->prev());
+	a.remove(a.end()->prev());
 
 	printout("\n");
 
