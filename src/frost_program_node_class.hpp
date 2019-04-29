@@ -81,8 +81,8 @@ public:		// functions
 	virtual SymbolType symbol_type() const;
 	virtual PortType port_type() const;
 
-	virtual void insert_child(FrostProgramNode* to_insert_after,
-		FrostProgramNode&& to_insert);
+	//virtual void insert_child(FrostProgramNode* to_insert_after,
+	//	FrostProgramNode&& to_insert);
 	//--------
 
 
