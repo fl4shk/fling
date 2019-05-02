@@ -4,7 +4,7 @@
 // src/frost_program_node_class.hpp
 
 #include "misc_includes.hpp"
-#include "table_types.hpp"
+//#include "table_types.hpp"
 
 #include "has_src_code_chunk_base_classes.hpp"
 
@@ -18,14 +18,19 @@ namespace frost_hdl
 // Base class for a node in the pseudo-AST internal representation.
 class FrostProgramNode : public HasSrcCodeChunkAndIdentBase
 {
+public:		// types
+	typedef CircLinkedList<FrostProgramNode> ChildrenList;
+	//typedef std::map<Ident, FrostProgramNode*> SymbolTable;
+
+	typedef IdentToPointerTable<FrostProgramNode> SymbolTable;
+
 protected:		// variables
 	FrostProgramNode * _parent = nullptr,
 		* _actual_scope_fpn = nullptr;
 
-	std::unique_ptr<CircLinkedList<FrostProgramNode>> _children;
+	std::unique_ptr<ChildrenList> _children;
 
-	//SymbolTable _symbol_table;
-
+	SymbolTable _symbol_table;
 
 	enum class ScopeType
 	{
@@ -53,6 +58,7 @@ protected:		// variables
 		Output,
 
 		// This might only ever be used for `task` arguments.
+		// I am unsure about permitting it for `module` ports.
 		Inout,
 	};
 
@@ -88,11 +94,11 @@ public:		// functions
 
 
 	//--------
-	inline auto& children()
+	inline ChildrenList& children()
 	{
 		return *_children;
 	}
-	inline const auto& children() const
+	inline const ChildrenList& children() const
 	{
 		return *_children;
 	}
