@@ -11,7 +11,7 @@ namespace frost_hdl
 {
 //typedef std::string Ident;
 
-class FrostProgramNode;
+class AstNode;
 
 template<typename Type>
 inline Ident construct_str_from_pointer(Type* pointer)
@@ -39,7 +39,7 @@ inline Ident construct_initial_type_ident_from_two_ptrs
 }
 
 
-typedef std::vector<FrostProgramNode*> ParametersFpnVec;
+typedef std::vector<AstNode*> ParametersFpnVec;
 
 
 template<typename Type>

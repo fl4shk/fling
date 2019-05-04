@@ -5,7 +5,7 @@
 
 #include "misc_includes.hpp"
 #include "misc_types.hpp"
-#include "frost_program_node_class.hpp"
+#include "ast_node_class.hpp"
 
 namespace frost_hdl
 {
