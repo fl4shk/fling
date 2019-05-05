@@ -19,27 +19,27 @@ inline Ident construct_str_from_pointer(Type* pointer)
 	return sconcat(reinterpret_cast<uintptr_t>(pointer));
 }
 
-// Used for temporary type identifiers before actual dimension expressions
-// are evaluated.
-template<typename Type>
-inline Ident construct_initial_type_ident_from_pointer
-	(const Ident& base_ident, Type* pointer)
-{
-	return sconcat(base_ident, "[", *construct_str_from_pointer
-		(pointer), "]");
-}
+//// Used for temporary type identifiers before actual dimension expressions
+//// are evaluated.
+//template<typename Type>
+//inline Ident construct_initial_type_ident_from_pointer
+//	(const Ident& base_ident, Type* pointer)
+//{
+//	return sconcat(base_ident, "[", *construct_str_from_pointer
+//		(pointer), "]");
+//}
+//
+//template<typename FirstArgType, typename SecondArgType>
+//inline Ident construct_initial_type_ident_from_two_ptrs
+//	(const Ident& base_ident, FirstArgType* first_ptr,
+//	SecondArgType* second_ptr)
+//{
+//	return sconcat(base_ident, "[", *construct_str_from_pointer(first_ptr),
+//		" ", *construct_str_from_pointer(second_ptr), "]");
+//}
 
-template<typename FirstArgType, typename SecondArgType>
-inline Ident construct_initial_type_ident_from_two_ptrs
-	(const Ident& base_ident, FirstArgType* first_ptr,
-	SecondArgType* second_ptr)
-{
-	return sconcat(base_ident, "[", *construct_str_from_pointer(first_ptr),
-		" ", *construct_str_from_pointer(second_ptr), "]");
-}
 
-
-typedef std::vector<AstNode*> ParametersFpnVec;
+typedef std::vector<AstNode*> ParametersVec;
 
 
 template<typename Type>
