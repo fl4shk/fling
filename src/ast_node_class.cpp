@@ -21,38 +21,36 @@ AstNode::~AstNode()
 //--------
 
 //--------
-void AstNode::push_child_back(AstNode&& to_push)
+void AstNode::push_child_back(Child&& to_push)
 {
-	_finish_child_insert(_children.push_back(_convert_to_child(std::move
-		(to_push))));
+	_finish_child_insert(_children.push_back(std::move(to_push)));
 }
-void AstNode::push_child_front(AstNode&& to_push)
+void AstNode::push_child_front(Child&& to_push)
 {
-	_finish_child_insert(_children.push_front(_convert_to_child(std::move
-		(to_push))));
+	_finish_child_insert(_children.push_front(std::move(to_push)));
 }
 
 void AstNode::insert_child_after(ChildrenList::Node* where,
-	AstNode&& to_insert)
+	Child&& to_insert)
 {
 	if (where->data->_parent != this)
 	{
 		src_code_chunk().err("AstNode::insert_child_after():  Eek!");
 	}
 
-	_finish_child_insert(_children.insert_after(where, _convert_to_child
-		(std::move(to_insert))));
+	_finish_child_insert(_children.insert_after(where,
+		std::move(to_insert)));
 }
 void AstNode::insert_child_before(ChildrenList::Node* where,
-	AstNode&& to_insert)
+	Child&& to_insert)
 {
 	if (where->data->_parent != this)
 	{
 		src_code_chunk().err("AstNode::insert_child_before():  Eek!");
 	}
 
-	_finish_child_insert(_children.insert_before(where, _convert_to_child
-		(std::move(to_insert))));
+	_finish_child_insert(_children.insert_before(where,
+		std::move(to_insert)));
 }
 
 

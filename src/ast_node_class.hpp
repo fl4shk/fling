@@ -22,17 +22,17 @@ public:		// types
 	typedef std::unique_ptr<AstNode> Child;
 	typedef CircLinkedList<Child> ChildrenList;
 
-	// Node type
-	enum class Type
-	{
-		Module,
-		Interface,
-		Package,
-		Function,
-		Task,
+	//// Node type
+	//enum class Type
+	//{
+	//	Module,
+	//	Interface,
+	//	Package,
+	//	Function,
+	//	Task,
 
-		Expr,
-	};
+	//	Expr,
+	//};
 
 protected:		// variables
 	AstNode * _parent = nullptr,
@@ -61,13 +61,11 @@ public:		// functions
 	//--------
 
 	//--------
-	void push_child_back(AstNode&& to_push);
-	void push_child_front(AstNode&& to_push);
+	void push_child_back(Child&& to_push);
+	void push_child_front(Child&& to_push);
 
-	void insert_child_after(ChildrenList::Node* where,
-		AstNode&& to_insert);
-	void insert_child_before(ChildrenList::Node* where,
-		AstNode&& to_insert);
+	void insert_child_after(ChildrenList::Node* where, Child&& to_insert);
+	void insert_child_before(ChildrenList::Node* where, Child&& to_insert);
 
 	void remove_child_after(ChildrenList::Node* where);
 	void remove_child_before(ChildrenList::Node* where);
@@ -106,10 +104,6 @@ private:		// functions
 	{
 		inserted->data->_parent = this;
 		inserted->data->_actual_scope = _actual_scope;
-	}
-	inline Child _convert_to_child(AstNode&& to_convert)
-	{
-		return Child(new AstNode(std::move(to_convert)));
 	}
 };
 
