@@ -19,7 +19,8 @@ namespace frost_hdl
 class AstNode : public HasSrcCodeChunkAndIdentBase
 {
 public:		// types
-	typedef CircLinkedList<AstNode> ChildrenList;
+	typedef std::unique_ptr<AstNode> Child;
+	typedef CircLinkedList<Child> ChildrenList;
 
 	// Node type
 	enum class Type
@@ -37,7 +38,7 @@ protected:		// variables
 	AstNode * _parent = nullptr,
 		* _actual_scope = nullptr;
 
-	std::unique_ptr<ChildrenList> _children;
+	ChildrenList _children;
 
 
 public:		// functions
@@ -64,35 +65,34 @@ public:		// functions
 		AstNode&& to_insert);
 	void insert_child_before(const ChildrenList::NodeIterator& where,
 		AstNode&& to_insert);
+
 	void push_child_back(AstNode&& to_push);
 	void push_child_front(AstNode&& to_push);
+
+	void remove_child_after(const ChildrenList::NodeIterator& where);
+	void remove_child_before(const ChildrenList::NodeIterator& where);
 	//--------
 
 
 	//--------
-	inline ChildrenList& children()
-	{
-		return *_children;
-	}
-	inline const ChildrenList& children() const
-	{
-		return *_children;
-	}
-
 	GEN_GETTER_BY_VAL(parent)
 	GEN_GETTER_BY_VAL(actual_scope)
-	//GEN_GETTERS_BY_CON_REF_AND_REF(children)
+	GEN_GETTERS_BY_CON_REF_AND_REF(children)
 	//GEN_GETTER_BY_CON_REF(children)
 	//--------
 
 private:		// functions
-	template<typename NodeIteratorType>
-	inline void finish_child_insert(NodeIteratorType inserted)
+	inline void _finish_child_insert
+		(const ChildrenList::NodeIterator& inserted)
 	{
-		inserted->data._parent = this;
+		inserted->data->_parent = this;
 
 		// I'm not 100% certain this is correct, but I *think* it is.
-		inserted->data._actual_scope = _actual_scope;
+		inserted->data->_actual_scope = _actual_scope;
+	}
+	inline Child _convert_to_child(AstNode&& to_convert)
+	{
+		return Child(new AstNode(std::move(to_convert)));
 	}
 };
 

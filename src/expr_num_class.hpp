@@ -10,7 +10,7 @@
 namespace frost_hdl
 {
 
-class ExprNum
+class ExprNum final
 {
 public:		// types
 	typedef std::vector<bool> ExprNumData;
@@ -41,7 +41,7 @@ public:		// functions
 	ExprNum(const ExprNum& to_copy) = default;
 
 
-	virtual ~ExprNum() = default;
+	~ExprNum() = default;
 
 
 	ExprNum& operator = (const ExprNum& to_copy) = default;
