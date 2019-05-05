@@ -101,6 +101,7 @@ declPortDirectionalVarList:
 declParameterVar:
 	identName (TokAssign expr)?
 	;
+
 declParameterVarList:
 	declParameterVar (',' declParameterVar)*
 	;
@@ -441,7 +442,7 @@ TokGenScope: '->' ;
 
 // Keywords
 TokKwModule: 'module' ;
-TokKwParameter: 'parameter' ;
+//TokKwParameter: 'parameter' ;
 TokKwLocalparam: 'localparam' ;
 
 TokKwInterface: 'interface' ;
@@ -510,7 +511,7 @@ TokKwIf: 'if' ;
 TokKwElse: 'else' ;
 TokKwFor: 'for' ;
 TokKwWhile: 'while' ;
-TokKwDo: 'do' ;
+//TokKwDo: 'do' ;
 
 TokKwGenerate: 'generate' ;
 TokKwPseudoFuncRange: 'range' ;

@@ -5,30 +5,30 @@
 
 #include "misc_includes.hpp"
 #include "expr_num_class.hpp"
-#include "has_src_code_chunk_base_classes.hpp"
 
 namespace frost_hdl
 {
 
-// Class for values
-class ExprValue final : HasSrcCodeChunkAndIdentBase
+// Class for the value of an expression (or the value of a symbol)
+class ExprValue final
 {
 public:		// types
 	typedef std::vector<ExprNum> NumVec;
-
-	// Use a linked list here to make removal faster
-	typedef CircLinkedList<std::unique_ptr<ExprValue>> ValList;
+	typedef std::vector<ExprValue> ValVec;
 
 private:		// variables
-	std::variant<ExprNum, NumVec, ValList> _data;
+	std::variant<ExprNum, NumVec, ValVec> _data;
 
 public:		// functions
+	//--------
 	ExprValue();
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ExprValue);
 
 	~ExprValue();
+	//--------
 
+	//--------
 	inline bool holds_expr_num() const
 	{
 		return std::holds_alternative<ExprNum>(_data);
@@ -37,11 +37,13 @@ public:		// functions
 	{
 		return std::holds_alternative<NumVec>(_data);
 	}
-	inline bool holds_val_list() const
+	inline bool holds_val_vec() const
 	{
-		return std::holds_alternative<ValList>(_data);
+		return std::holds_alternative<ValVec>(_data);
 	}
+	//--------
 
+	//--------
 	inline void make_hold_expr_num()
 	{
 		_data = ExprNum();
@@ -50,11 +52,13 @@ public:		// functions
 	{
 		_data = NumVec();
 	}
-	inline void make_hold_val_list()
+	inline void make_hold_val_vec()
 	{
-		_data = ValList();
+		_data = ValVec();
 	}
+	//--------
 
+	//--------
 	inline ExprNum& expr_num()
 	{
 		return std::get<ExprNum>(_data);
@@ -63,7 +67,9 @@ public:		// functions
 	{
 		return std::get<ExprNum>(_data);
 	}
+	//--------
 
+	//--------
 	inline NumVec& num_vec()
 	{
 		return std::get<NumVec>(_data);
@@ -72,15 +78,18 @@ public:		// functions
 	{
 		return std::get<NumVec>(_data);
 	}
+	//--------
 
-	inline ValList& val_list()
+	//--------
+	inline ValVec& val_vec()
 	{
-		return std::get<ValList>(_data);
+		return std::get<ValVec>(_data);
 	}
-	inline const ValList& val_list() const
+	inline const ValVec& val_vec() const
 	{
-		return std::get<ValList>(_data);
+		return std::get<ValVec>(_data);
 	}
+	//--------
 };
 
 
