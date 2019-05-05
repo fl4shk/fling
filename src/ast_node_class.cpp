@@ -21,35 +21,67 @@ AstNode::~AstNode()
 //--------
 
 //--------
-void AstNode::insert_child_after(const ChildrenList::NodeIterator& where,
-	AstNode&& to_insert)
-{
-	_finish_child_insert(children().insert_after(where, _convert_to_child
-		(std::move(to_insert))));
-}
-void AstNode::insert_child_before(const ChildrenList::NodeIterator& where,
-	AstNode&& to_insert)
-{
-	_finish_child_insert(children().insert_before(where, _convert_to_child
-		(std::move(to_insert))));
-}
-
 void AstNode::push_child_back(AstNode&& to_push)
 {
-	_finish_child_insert(children().push_back(_convert_to_child(
-		std::move(to_push))));
+	_finish_child_insert(_children.push_back(_convert_to_child(std::move
+		(to_push))));
 }
 void AstNode::push_child_front(AstNode&& to_push)
 {
-	_finish_child_insert(children().push_front(_convert_to_child
-		(std::move(to_push))));
+	_finish_child_insert(_children.push_front(_convert_to_child(std::move
+		(to_push))));
 }
 
-void AstNode::remove_child_after(const ChildrenList::NodeIterator& where)
+void AstNode::insert_child_after(ChildrenList::Node* where,
+	AstNode&& to_insert)
 {
+	if (where->data->_parent != this)
+	{
+		src_code_chunk().err("AstNode::insert_child_after():  Eek!");
+	}
+
+	_finish_child_insert(_children.insert_after(where, _convert_to_child
+		(std::move(to_insert))));
 }
-void AstNode::remove_child_before(const ChildrenList::NodeIterator& where)
+void AstNode::insert_child_before(ChildrenList::Node* where,
+	AstNode&& to_insert)
 {
+	if (where->data->_parent != this)
+	{
+		src_code_chunk().err("AstNode::insert_child_before():  Eek!");
+	}
+
+	_finish_child_insert(_children.insert_before(where, _convert_to_child
+		(std::move(to_insert))));
+}
+
+
+void AstNode::remove_child_after(ChildrenList::Node* where)
+{
+	if (where->data->_parent != this)
+	{
+		src_code_chunk().err("AstNode::remove_child_after():  Eek!");
+	}
+
+	_children.remove_after(where);
+}
+void AstNode::remove_child_before(ChildrenList::Node* where)
+{
+	if (where->data->_parent != this)
+	{
+		src_code_chunk().err("AstNode::remove_child_before():  Eek!");
+	}
+
+	_children.remove_before(where);
+}
+void AstNode::remove_child(ChildrenList::Node* where)
+{
+	if (where->data->_parent != this)
+	{
+		src_code_chunk().err("AstNode::remove_child():  Eek!");
+	}
+
+	_children.remove(where);
 }
 //--------
 
