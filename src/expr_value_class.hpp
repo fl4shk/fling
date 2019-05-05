@@ -17,7 +17,7 @@ public:		// types
 	typedef std::vector<ExprNum> NumVec;
 
 	// Use a linked list here to make removal faster
-	typedef CircLinkedList<ExprValue> ValList;
+	typedef CircLinkedList<std::unique_ptr<ExprValue>> ValList;
 
 private:		// variables
 	std::variant<ExprNum, NumVec, ValList> _data;
