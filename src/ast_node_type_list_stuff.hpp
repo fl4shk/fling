@@ -94,11 +94,10 @@ namespace frost_hdl
 	X(BehavBlkAssign) \
 	\
 	X(BehavIf) \
-	X(BehavElseIf) \
 	X(BehavElse) \
 	\
 	X(BehavSwitch) \
-	X(BehavSwitchz) \
+	/* X(BehavSwitchz) */ \
 	X(BehavCase) \
 	X(BehavDefault) \
 	\

@@ -26,8 +26,7 @@ public:		// functions
 	virtual ~ErrWarnBase() = default;
 
 protected:		// functions
-	inline void _err(antlr4::ParserRuleContext* ctx,
-		const Ident& msg)
+	inline void _err(ParserRuleContext* ctx, const Ident& msg)
 	{
 		if (ctx == nullptr)
 		{
@@ -46,8 +45,7 @@ protected:		// functions
 		}
 		exit(1);
 	}
-	inline void _err(const SrcCodeChunk& src_code_chunk,
-		const Ident& msg)
+	inline void _err(const SrcCodeChunk& src_code_chunk, const Ident& msg)
 	{
 		//_err(src_code_chunk.ctx(), msg);
 		src_code_chunk.err(msg);
@@ -76,8 +74,7 @@ protected:		// functions
 			_warn(_make_src_code_chunk(ctx), msg);
 		}
 	}
-	inline void _warn(const SrcCodeChunk& src_code_chunk,
-		const Ident& msg)
+	inline void _warn(const SrcCodeChunk& src_code_chunk, const Ident& msg)
 	{
 		//_warn(src_code_chunk.ctx(), msg);
 		src_code_chunk.warn(msg);
