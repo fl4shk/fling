@@ -36,7 +36,7 @@ lhsUnscopedCstmTypeName:
 // custom type name from a package.
 // (FUTURE)
 lhsScopedCstmTypeName:
-	scopedIdentName
+	identScope identName
 	;
 
 
@@ -334,34 +334,9 @@ rawSizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;
 
 // This permits using a constant to indicate the width of a hard-coded
 // number, permitting shorter Frost HDL source code in some situations.
-identSizedNumExpr: nonSlicedPureIdentExpr TokApostrophe rawNumExpr ;
+identSizedNumExpr: identPure TokApostrophe rawNumExpr ;
 
 
-
-identExpr:
-	nonSlicedPureIdentExpr
-	| slicedPureIdentExpr
-	////| identConcatExpr
-	//| memberAccessIdentExpr
-	;
-
-// Just an identifier, possibly scoped.
-pureIdent:
-	identName
-	| scopedIdentName
-	;
-
-//memberAccessIdentExpr:
-//	identName (sliceWithOne? '.' identName)+ sliceWithAny?
-//	;
-
-nonSlicedPureIdentExpr:
-	pureIdent
-	;
-
-slicedPureIdentExpr:
-	pureIdent sliceWithOne? sliceWithAny
-	;
 
 sliceWithOne:
 	'[' expr ']'
@@ -376,14 +351,31 @@ sliceWithAny:
 	| sliceWithRange
 	;
 
+
+identPure:
+	identScope? identName
+	;
+
+identExpr:
+	(identScope? identInnerExpr)
+	| (identConcatExpr)
+	;
+
+identInnerExpr:
+	identName (sliceWithAny?) (TokPeriod identInnerExpr)?
+	;
+
 identConcatExpr:
 	TokKwPseudoFuncConcat '(' identExpr (',' identExpr)* ')'
 	;
 
+
 identName: TokIdent ;
-scopedIdentName:
-	identName TokScope identName (TokScope identName)?
+
+identScope:
+	(identName TokScope)+
 	;
+
 
 // This needs work.
 //genScopedIdentExpr:

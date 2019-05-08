@@ -175,19 +175,7 @@ private:		// visitor functions
 	VisitorRetType visitIdentSizedNumExpr
 		(Parser::IdentSizedNumExprContext *ctx);
 
-
-	VisitorRetType visitIdentExpr
-		(Parser::IdentExprContext *ctx);
-	VisitorRetType visitPureIdent
-		(Parser::PureIdentContext *ctx);
-	//VisitorRetType visitMemberAccessIdentExpr
-	//	(Parser::MemberAccessIdentExprContext *ctx);
-	VisitorRetType visitNonSlicedPureIdentExpr
-		(Parser::NonSlicedPureIdentExprContext *ctx);
-	VisitorRetType visitSlicedPureIdentExpr
-		(Parser::SlicedPureIdentExprContext *ctx);
-
-
+	
 	VisitorRetType visitSliceWithOne
 		(Parser::SliceWithOneContext *ctx);
 	VisitorRetType visitSliceWithRange
@@ -195,14 +183,21 @@ private:		// visitor functions
 	VisitorRetType visitSliceWithAny
 		(Parser::SliceWithAnyContext *ctx);
 
+	VisitorRetType visitIdentPure
+		(Parser::IdentPureContext *ctx);
+
+	VisitorRetType visitIdentExpr
+		(Parser::IdentExprContext *ctx);
+
+	VisitorRetType visitIdentInnerExpr
+		(Parser::IdentInnerExprContext *ctx);
 	VisitorRetType visitIdentConcatExpr
 		(Parser::IdentConcatExprContext *ctx);
 
-
 	VisitorRetType visitIdentName
 		(Parser::IdentNameContext *ctx);
-	VisitorRetType visitScopedIdentName
-		(Parser::ScopedIdentNameContext *ctx);
+	VisitorRetType visitIdentScope
+		(Parser::IdentScopeContext *ctx);
 private:		// functions
 };
 
