@@ -201,7 +201,6 @@ private:		// visitor functions
 		(Parser::IdentNameContext *ctx);
 	VisitorRetType visitIdentScope
 		(Parser::IdentScopeContext *ctx);
-private:		// functions
 };
 
 } // namespace frost_hdl

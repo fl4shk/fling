@@ -42,5 +42,8 @@ using liborangepower::bignum::BigNum;
 using liborangepower::containers::MoveOnlyPrevCurrPair;
 using liborangepower::containers::CircLinkedList;
 
+#include <boost/mp11.hpp>
+using namespace boost::mp11;
+
 
 #endif		// src_misc_includes_hpp

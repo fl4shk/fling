@@ -56,6 +56,11 @@ public:		// functions
 	{
 		return Child(new AstNode(s_src_code_chunk, s_type, s_parent));
 	}
+	static inline Child make_child(const SrcCodeChunk& s_src_code_chunk,
+		Type s_type, Child& s_parent)
+	{
+		return make_child(s_src_code_chunk, s_type, s_parent.get());
+	}
 	//--------
 
 	//--------
