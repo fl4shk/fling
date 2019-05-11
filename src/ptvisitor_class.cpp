@@ -42,7 +42,7 @@ auto PTVisitor::visitProgram
 	-> VisitorRetType
 {
 	//auto program = _stacks.get_top_ast_node();
-	_ast->push_child_back(_make_ast_child(_make_src_code_chunk(ctx),
+	_ast->push_child_back(AstNode::make_child(_make_src_code_chunk(ctx),
 		AstNodeType::Program, _ast.get()));
 
 	//for (auto iter : ctx->declPackage())

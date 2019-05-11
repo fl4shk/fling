@@ -47,13 +47,6 @@ public:		// functions
 
 
 private:		// functions
-	inline AstNode::Child _make_ast_child
-		(const SrcCodeChunk& s_src_code_chunk, AstNode::Type s_type,
-		AstNode* s_parent) const
-	{
-		return AstNode::Child(new AstNode(s_src_code_chunk, s_type,
-			s_parent));
-	}
 
 private:		// visitor functions
 	VisitorRetType visitProgram

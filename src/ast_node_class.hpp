@@ -51,6 +51,14 @@ public:		// functions
 	//--------
 
 	//--------
+	static inline Child make_child(const SrcCodeChunk& s_src_code_chunk,
+		Type s_type, AstNode* s_parent)
+	{
+		return Child(new AstNode(s_src_code_chunk, s_type, s_parent));
+	}
+	//--------
+
+	//--------
 	inline std::string dump(bool show_src_code_chunk) const
 	{
 		return _inner_dump(0, show_src_code_chunk);
