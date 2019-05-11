@@ -32,10 +32,14 @@ SrcCodeChunk::~SrcCodeChunk()
 {
 }
 
+Ident SrcCodeChunk::convert_to_pos_string() const
+{
+	return sconcat(_filename, ":", _src_line, ":", _src_pos_in_line);
+}
 Ident SrcCodeChunk::convert_to_errwarn_string() const
 {
-	return sconcat(_filename, ":", _src_line, ":", _src_pos_in_line,
-		"(near text \"", _text, "\")");
+	return sconcat(convert_to_pos_string(), " (near text \"", _text,
+		"\")");
 }
 
 } // namespace frost_hdl

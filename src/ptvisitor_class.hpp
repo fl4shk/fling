@@ -13,7 +13,8 @@
 //#include "pseudo_func_call_range_class.hpp"
 //#include "generate_block_header_classes.hpp"
 
-//#include "ptvisitor/list_for_gen_stack_defines.hpp"
+#include "ast_node_class.hpp"
+
 
 namespace frost_hdl
 {
@@ -28,9 +29,16 @@ public:		// types
 
 	typedef antlrcpp::Any VisitorRetType;
 
+	typedef uintmax_t SmallNum;
+
 
 private:		// variables
 	ListParsedSrcCode _list_parsed_src_code;
+	AstNode _ast;
+
+	#include "ptvisitor/list_for_gen_stack_defines.hpp"
+	#include "gen_stacks_stuff.hpp"
+	#undef LIST_FOR_GEN_STACK
 
 public:		// functions
 	PTVisitor(ListParsedSrcCode&& s_list_parsed_src_code);
@@ -50,15 +58,8 @@ private:		// visitor functions
 	VisitorRetType visitLhsBuiltinTypeName
 		(Parser::LhsBuiltinTypeNameContext *ctx);
 
-	// custom type name from the current scope, be it a module or a
-	// package.
-	// (FUTURE)
-	VisitorRetType visitLhsUnscopedCstmTypeName
-		(Parser::LhsUnscopedCstmTypeNameContext *ctx);
-	// custom type name from a package.
-	// (FUTURE)
-	VisitorRetType visitLhsScopedCstmTypeName
-		(Parser::LhsScopedCstmTypeNameContext *ctx);
+	VisitorRetType visitLhsCstmTypeName
+		(Parser::LhsCstmTypeNameContext *ctx);
 
 
 	// Array dimensions go here
@@ -203,6 +204,5 @@ private:		// functions
 
 } // namespace frost_hdl
 
-#undef LIST_FOR_GEN_STACK
 
 #endif		// src_ptvisitor_class_hpp

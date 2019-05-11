@@ -52,9 +52,9 @@ public:		// functions
 	//--------
 
 	//--------
-	inline std::string dump() const
+	inline std::string dump(bool show_src_code_chunk) const
 	{
-		return _inner_dump(0);
+		return _inner_dump(0, show_src_code_chunk);
 	}
 	const Ident type_to_str() const;
 	//--------
@@ -120,7 +120,8 @@ private:		// functions
 		--_num_children;
 	}
 
-	std::string _inner_dump(size_t num_indents) const;
+	std::string _inner_dump(size_t num_indents,
+		bool show_src_code_chunk) const;
 };
 
 } // namespace frost_hdl

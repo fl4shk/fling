@@ -35,6 +35,7 @@ public:		// functions
 
 	virtual ~SrcCodeChunk();
 
+	Ident convert_to_pos_string() const;
 	Ident convert_to_errwarn_string() const;
 
 	inline void syntax_error(const Ident& msg, int status=1) const

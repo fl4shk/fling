@@ -17,13 +17,10 @@
 	}
 
 
-#define TOK_TO_DUPPED_STR(arg) \
-	dup_str(arg->toString())
-
 #define ANY_PUSH_TOK_IF(arg) \
 	if (arg) \
 	{ \
-		_stacks.push_str(TOK_TO_DUPPED_STR(arg)); \
+		_stacks.push_str(arg->toString()); \
 	}
 
 #define DEBUG_EXPR(func, context) \

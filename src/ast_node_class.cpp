@@ -109,7 +109,8 @@ void AstNode::remove_child(ChildrenList::Node* where)
 //--------
 
 //--------
-std::string AstNode::_inner_dump(size_t num_indents) const
+std::string AstNode::_inner_dump(size_t num_indents,
+	bool show_src_code_chunk) const
 {
 	std::string ret;
 
@@ -118,12 +119,20 @@ std::string AstNode::_inner_dump(size_t num_indents) const
 		ret += "  ";
 	}
 
-	ret += sconcat(type_to_str(), "(\"", text(), "\")\n");
+	ret += sconcat(type_to_str(), "(");
+
+	if (show_src_code_chunk)
+	{
+		ret += sconcat(src_code_chunk().convert_to_pos_string(), ", ");
+	}
+
+	ret += sconcat("\"", text(), "\")\n");
 
 	//for (const auto& iter : children())
 	for (auto iter=cbegin(); iter!=cend(); ++iter)
 	{
-		ret += iter->data->_inner_dump(num_indents + 1);
+		ret += iter->data->_inner_dump(num_indents + 1,
+			show_src_code_chunk);
 	}
 
 	return ret;

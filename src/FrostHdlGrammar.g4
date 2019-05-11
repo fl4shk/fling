@@ -19,24 +19,15 @@ program:
 // Variable declaration stuff
 lhsTypeName:
 	lhsBuiltinTypeName
-	| lhsUnscopedCstmTypeName
-	| lhsScopedCstmTypeName
+	| lhsCstmTypeName
 	;
 
 lhsBuiltinTypeName:
 	TokKwLogic (TokKwUnsigned | TokKwSigned)?  ('[' expr ']')?
 	;
 
-// custom type name from the current scope, be it a module or a package.
-// (FUTURE)
-lhsUnscopedCstmTypeName:
-	identName
-	;
-
-// custom type name from a package.
-// (FUTURE)
-lhsScopedCstmTypeName:
-	identScope identName
+lhsCstmTypeName:
+	identScope? identName
 	;
 
 
