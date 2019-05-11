@@ -28,7 +28,7 @@ const Ident AstNode::type_to_str() const
 	{
 		#define X(val) \
 			case Type::val: \
-				return #val; \
+			return #val;
 
 		LIST_OF_AST_NODE_TYPES(X)
 
@@ -43,35 +43,39 @@ const Ident AstNode::type_to_str() const
 //--------
 
 //--------
-void AstNode::push_child_back(Child&& to_push)
+auto AstNode::push_child_back(Child&& to_push)
+	-> ChildrenList::Node*
 {
-	_finish_child_insert(_children.push_back(std::move(to_push)));
+	return _finish_child_insert(_children.push_back(std::move(to_push)));
 }
-void AstNode::push_child_front(Child&& to_push)
+auto AstNode::push_child_front(Child&& to_push)
+	-> ChildrenList::Node*
 {
-	_finish_child_insert(_children.push_front(std::move(to_push)));
+	return _finish_child_insert(_children.push_front(std::move(to_push)));
 }
 
-void AstNode::insert_child_after(ChildrenList::Node* where,
+auto AstNode::insert_child_after(ChildrenList::Node* where,
 	Child&& to_insert)
+	-> ChildrenList::Node*
 {
 	if (where->data->parent() != this)
 	{
 		src_code_chunk().err("AstNode::insert_child_after():  Eek!");
 	}
 
-	_finish_child_insert(_children.insert_after(where,
+	return _finish_child_insert(_children.insert_after(where,
 		std::move(to_insert)));
 }
-void AstNode::insert_child_before(ChildrenList::Node* where,
+auto AstNode::insert_child_before(ChildrenList::Node* where,
 	Child&& to_insert)
+	-> ChildrenList::Node*
 {
 	if (where->data->parent() != this)
 	{
 		src_code_chunk().err("AstNode::insert_child_before():  Eek!");
 	}
 
-	_finish_child_insert(_children.insert_before(where,
+	return _finish_child_insert(_children.insert_before(where,
 		std::move(to_insert)));
 }
 

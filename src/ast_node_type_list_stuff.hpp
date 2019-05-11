@@ -51,6 +51,13 @@ namespace frost_hdl
 	\
 	\
 	/* -------- */ \
+	X(Input) \
+	X(Output) \
+	X(Inout) \
+	/* -------- */ \
+	\
+	\
+	/* -------- */ \
 	X(IdentName) \
 	X(LhsTypeName) \
 	X(Logic) \
@@ -69,8 +76,8 @@ namespace frost_hdl
 	X(PortVarList) \
 	X(PortVarInst) \
 	\
-	X(NonPortVarList) \
-	X(NonPortVarInst) \
+	X(LocalVarList) \
+	X(LocalVarInst) \
 	/* -------- */ \
 	\
 	/* -------- */ \

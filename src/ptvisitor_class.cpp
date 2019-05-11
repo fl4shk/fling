@@ -18,6 +18,8 @@ namespace frost_hdl
 PTVisitor::PTVisitor(ListParsedSrcCode&& s_list_parsed_src_code)
 	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
+	_ast.reset(new AstNode(SrcCodeChunk("<dummy>", "<dummy>", 9001, 9001),
+		AstNodeType::Bad, nullptr));
 }
 PTVisitor::~PTVisitor()
 {
@@ -39,17 +41,22 @@ auto PTVisitor::visitProgram
 	(Parser::ProgramContext *ctx)
 	-> VisitorRetType
 {
-	for (auto iter : ctx->declPackage())
-	{
-	}
+	//auto program = _stacks.get_top_ast_node();
+	_ast->push_child_back(_make_ast_child(_make_src_code_chunk(ctx),
+		AstNodeType::Program, _ast.get()));
 
-	//for (auto iter : ctx->declInterface())
+	//for (auto iter : ctx->declPackage())
 	//{
+	//	ANY_JUST_ACCEPT_BASIC(iter);
 	//}
 
-	for (auto iter : ctx->declModule())
-	{
-	}
+	////for (auto iter : ctx->declInterface())
+	////{
+	////}
+
+	//for (auto iter : ctx->declModule())
+	//{
+	//}
 
 	return nullptr;
 }

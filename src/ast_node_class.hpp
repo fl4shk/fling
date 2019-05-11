@@ -27,7 +27,6 @@ public:		// types
 
 	typedef AstNodeType Type;
 
-
 private:		// variables
 	Type _type = Type::Bad;
 
@@ -67,11 +66,13 @@ public:		// functions
 	//--------
 
 	//--------
-	void push_child_back(Child&& to_push);
-	void push_child_front(Child&& to_push);
+	ChildrenList::Node* push_child_back(Child&& to_push);
+	ChildrenList::Node* push_child_front(Child&& to_push);
 
-	void insert_child_after(ChildrenList::Node* where, Child&& to_insert);
-	void insert_child_before(ChildrenList::Node* where, Child&& to_insert);
+	ChildrenList::Node* insert_child_after(ChildrenList::Node* where,
+		Child&& to_insert);
+	ChildrenList::Node* insert_child_before(ChildrenList::Node* where,
+		Child&& to_insert);
 
 	void remove_child_after(ChildrenList::Node* where);
 	void remove_child_before(ChildrenList::Node* where);
@@ -109,11 +110,14 @@ public:		// functions
 	//--------
 
 private:		// functions
-	inline void _finish_child_insert(ChildrenList::Node* inserted)
+	inline ChildrenList::Node* _finish_child_insert
+		(ChildrenList::Node* inserted)
 	{
 		inserted->data->_parent = this;
 		inserted->data->_actual_scope = _actual_scope;
 		++_num_children;
+
+		return inserted;
 	}
 	inline void _finish_child_remove()
 	{
