@@ -14,6 +14,7 @@
 //#include "generate_block_header_classes.hpp"
 
 #include "ast_node_class.hpp"
+#include "ast_builder_class.hpp"
 
 
 namespace frost_hdl

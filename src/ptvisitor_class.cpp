@@ -19,7 +19,7 @@ PTVisitor::PTVisitor(ListParsedSrcCode&& s_list_parsed_src_code)
 	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
 	_ast.reset(new AstNode(SrcCodeChunk("<dummy>", "<dummy>", 9001, 9001),
-		AstNodeType::Bad, nullptr));
+		AstNodeType::Bad));
 }
 PTVisitor::~PTVisitor()
 {
@@ -41,24 +41,27 @@ auto PTVisitor::visitProgram
 	(Parser::ProgramContext *ctx)
 	-> VisitorRetType
 {
-	////auto program = _stacks.get_top_ast_node();
+	//auto program = _stacks.get_top_ast_node();
 	//_ast->push_child_back(AstNode::make_child(_make_src_code_chunk(ctx),
-	//	AstNodeType::Program, _ast));
+	//	AstNodeType::Program));
+	with(_ast->push_child_back(AstBuilder::mk_program(_make_src_code_chunk
+		(ctx)));
 
-	//for (auto iter : ctx->declPackage())
-	//{
-	//	ANY_JUST_ACCEPT_BASIC(iter);
-	//}
+	for (auto iter : ctx->declPackage())
+	{
+		ANY_JUST_ACCEPT_BASIC(iter);
+	}
 
-	////for (auto iter : ctx->declInterface())
-	////{
-	////}
-
-	//for (auto iter : ctx->declModule())
+	//for (auto iter : ctx->declInterface())
 	//{
 	//}
 
-	//return nullptr;
+	for (auto iter : ctx->declModule())
+	{
+		ANY_JUST_ACCEPT_BASIC(iter);
+	}
+
+	return nullptr;
 }
 
 

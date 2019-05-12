@@ -42,8 +42,7 @@ public:		// functions
 	//--------
 	AstNode();
 
-	AstNode(const SrcCodeChunk& s_src_code_chunk, Type s_type,
-		AstNode* s_parent);
+	AstNode(const SrcCodeChunk& s_src_code_chunk, Type s_type);
 
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNode);
 
@@ -52,14 +51,9 @@ public:		// functions
 
 	//--------
 	static inline Child make_child(const SrcCodeChunk& s_src_code_chunk,
-		Type s_type, AstNode* s_parent)
+		Type s_type)
 	{
-		return Child(new AstNode(s_src_code_chunk, s_type, s_parent));
-	}
-	static inline Child make_child(const SrcCodeChunk& s_src_code_chunk,
-		Type s_type, Child& s_parent)
-	{
-		return make_child(s_src_code_chunk, s_type, s_parent.get());
+		return Child(new AstNode(s_src_code_chunk, s_type));
 	}
 	//--------
 
@@ -116,7 +110,7 @@ public:		// functions
 	}
 
 	GEN_GETTER_BY_VAL(type)
-	GEN_GETTER_BY_VAL(parent)
+	GEN_GETTER_AND_SETTER_BY_VAL(parent)
 	GEN_GETTER_AND_SETTER_BY_VAL(actual_scope)
 	GEN_GETTER_BY_CON_REF(children)
 	GEN_GETTER_BY_VAL(num_children)
