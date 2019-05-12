@@ -44,21 +44,22 @@ auto PTVisitor::visitProgram
 	//auto program = _stacks.get_top_ast_node();
 	//_ast->push_child_back(AstNode::make_child(_make_src_code_chunk(ctx),
 	//	AstNodeType::Program));
-	with(_ast->push_child_back(AstBuilder::mk_program(_make_src_code_chunk
-		(ctx)));
-
-	for (auto iter : ctx->declPackage())
+	with(program, _ast->push_child_back(AstBuilder::mk_program
+		(_make_src_code_chunk(ctx))))
 	{
-		ANY_JUST_ACCEPT_BASIC(iter);
-	}
+		for (auto iter : ctx->declPackage())
+		{
+			ANY_JUST_ACCEPT_BASIC(iter);
+		}
 
-	//for (auto iter : ctx->declInterface())
-	//{
-	//}
+		//for (auto iter : ctx->declInterface())
+		//{
+		//}
 
-	for (auto iter : ctx->declModule())
-	{
-		ANY_JUST_ACCEPT_BASIC(iter);
+		for (auto iter : ctx->declModule())
+		{
+			ANY_JUST_ACCEPT_BASIC(iter);
+		}
 	}
 
 	return nullptr;
@@ -408,8 +409,8 @@ auto PTVisitor::visitIdentExpr
 	return nullptr;
 }
 
-auto PTVisitor::visitIdentInnerExpr
-	(Parser::IdentInnerExprContext *ctx)
+auto PTVisitor::visitIdentAccess
+	(Parser::IdentAccessContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;

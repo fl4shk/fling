@@ -193,8 +193,8 @@ private:		// visitor functions
 	VisitorRetType visitIdentExpr
 		(Parser::IdentExprContext *ctx);
 
-	VisitorRetType visitIdentInnerExpr
-		(Parser::IdentInnerExprContext *ctx);
+	VisitorRetType visitIdentAccess
+		(Parser::IdentAccessContext *ctx);
 	VisitorRetType visitIdentConcatExpr
 		(Parser::IdentConcatExprContext *ctx);
 

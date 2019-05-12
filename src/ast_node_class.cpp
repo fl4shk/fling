@@ -10,7 +10,7 @@ AstNode::AstNode()
 }
 
 AstNode::AstNode(const SrcCodeChunk& s_src_code_chunk, Type s_type)
-	: HasSrcCodeChunkBase(s_src_code_chunk), _type(s_type),
+	: HasSrcCodeChunkBase(s_src_code_chunk), _type(s_type)
 {
 }
 

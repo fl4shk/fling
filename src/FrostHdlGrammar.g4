@@ -348,12 +348,14 @@ identPure:
 	;
 
 identExpr:
-	(identScope? identInnerExpr)
+	// the final, optional `sliceWithAny` is for slicing of *vectors, not
+	// arrays*.
+	(identScope? identAccess sliceWithAny?)
 	| (identConcatExpr)
 	;
 
-identInnerExpr:
-	identName (sliceWithAny?) (TokPeriod identInnerExpr)?
+identAccess:
+	identName (sliceWithAny?) (TokPeriod identAccess)?
 	;
 
 identConcatExpr:
