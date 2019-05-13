@@ -59,6 +59,7 @@ namespace frost_hdl
 	\
 	/* -------- */ \
 	X(IdentName) \
+	X(IdentScope) \
 	X(LhsTypeName) \
 	X(Logic) \
 	X(Unsigned) \

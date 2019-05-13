@@ -2,7 +2,7 @@ grammar FrostHdlGrammar;
 
 // Parser rules
 
-// Basically just "module", "interface", and "package" declarations.  There
+// Basically just `module`, `interface`, and `package` declarations.  There
 // are no other things at global scope.
 program:
 	(
@@ -51,11 +51,24 @@ declNoKwLocalparam:
 
 declLocalparamList:
 	TokKwLocalparam
-		//lhsTypeName?
+		lhsTypeName?
 		declNoKwLocalparam (',' declNoKwLocalparam)*
 	;
 
-// "package" stuff
+// `struct` stuff
+declStruct:
+	TokKwStruct identName
+		outerDeclParameterVarList?
+	'{'
+		insideStruct
+	'}'
+	;
+
+insideStruct:
+	(declVarList | declLocalparamList)*
+	;
+
+// `package` stuff
 declPackage:
 	TokKwPackage identName
 	'{'
@@ -66,7 +79,7 @@ declPackage:
 insidePackage:
 	(
 		declLocalparamList ';'
-		//| declStruct ';'
+		| declStruct ';'
 		////| declClass ';'
 		//| declEnum ';'
 		//| declFunction ';'
@@ -88,24 +101,32 @@ declPortDirectionalVarList:
 	(TokKwInput | TokKwOutput) declPortVarList
 	;
 
-// "parameter" stuff
+declTaskfuncArgDirectionalVarList:
+	(TokKwInput | TokKwOutput | TokKwInout) declPortVarList
+	;
+
+// `parameter` stuff
 declParameterVar:
 	identName (TokAssign expr)?
 	;
 
 declParameterVarList:
-	declParameterVar (',' declParameterVar)*
+	lhsTypeName? declParameterVar (',' declParameterVar)*
+	;
+
+outerDeclParameterVarList:
+	'#' '(' declParameterVarList ')'
 	;
 
 
-// "module" stuff
+// `module` stuff
 declModule:
 	TokKwModule identName
-		('#' '(' declParameterVarList ')')?
+		outerDeclParameterVarList?
 
 		// ports
 		'('
-			// FUTURE:  allow "interface" stuff here
+			// FUTURE:  allow `interface` stuff here
 			(declPortDirectionalVarList
 				(',' declPortDirectionalVarList)*)?
 		')'
@@ -148,7 +169,7 @@ moduleStmtInstantiateModule:
 
 	instantiateModuleParameterConnectionList?
 	'('
-		// For "module"s that have ports, this is actually required.
+		// For `module`s that have ports, this is actually required.
 		instantiateModuleConnectionList?
 	')'
 	;
@@ -165,7 +186,7 @@ instantiateModuleConnectionList:
 	;
 
 // generate block (that is) in (a) module
-// As of writing this comment, the only other place where "generate" can
+// As of writing this comment, the only other place where `generate` can
 // appear is inside of an interface.
 generateBlockInModule:
 	TokKwGenerate
@@ -318,7 +339,7 @@ rawNumExpr: (TokDecNum | TokHexNum | TokBinNum) ;
 // 0x3        ' 9
 //
 // Also, signed hard-coded numbers are *not* properly handled here, so you
-// are forced to do "$sgn(...)" instead of "...'s...".  The lexer would
+// are forced to do `$sgn(...)` instead of `...'s...`.  The lexer would
 // have to be more heavily involved here if signed, hard-coded numbers were
 // to be allowed with Verilog-style syntax.
 rawSizedNumExpr: rawNumExpr TokApostrophe rawNumExpr ;

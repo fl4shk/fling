@@ -14,12 +14,18 @@ namespace frost_hdl
 
 //typedef PTVisitor::VisitorRetType VisitorRetType;
 
+#define AST_CHILD(type) \
+	_push_ast_child_back(_stacks.get_top_ast_node(), ctx, \
+	AstNodeType::type)
+
+#define WSTACKS_AST_CHILD(type) \
+	with_stacks_ast_node(this, AST_CHILD(type)->data.get())
 
 PTVisitor::PTVisitor(ListParsedSrcCode&& s_list_parsed_src_code)
 	: _list_parsed_src_code(std::move(s_list_parsed_src_code))
 {
 	_ast.reset(new AstNode(SrcCodeChunk("<dummy>", "<dummy>", 9001, 9001),
-		AstNodeType::Bad));
+		AstNodeType::Program));
 }
 PTVisitor::~PTVisitor()
 {
@@ -41,25 +47,11 @@ auto PTVisitor::visitProgram
 	(Parser::ProgramContext *ctx)
 	-> VisitorRetType
 {
-	//auto program = _stacks.get_top_ast_node();
-	//_ast->push_child_back(AstNode::make_child(_make_src_code_chunk(ctx),
-	//	AstNodeType::Program));
-	with(program, _ast->push_child_back(AstBuilder::mk_program
-		(_make_src_code_chunk(ctx))))
+	with(program, with_stacks_ast_node(this, _ast.get()))
 	{
-		for (auto iter : ctx->declPackage())
-		{
-			ANY_JUST_ACCEPT_BASIC(iter);
-		}
-
-		//for (auto iter : ctx->declInterface())
-		//{
-		//}
-
-		for (auto iter : ctx->declModule())
-		{
-			ANY_JUST_ACCEPT_BASIC(iter);
-		}
+		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declPackage())
+		//ANY_JUST_ACCEPT_LOOPED(iter, ctx->declInterface())
+		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declModule())
 	}
 
 	return nullptr;
@@ -191,20 +183,35 @@ auto PTVisitor::visitDeclLocalparamList
 	(Parser::DeclLocalparamListContext *ctx)
 	-> VisitorRetType
 {
+	with(localparam_var_list, WSTACKS_AST_CHILD(LocalparamVarList))
+	{
+		ANY_ACCEPT_IF_BASIC(ctx->lhsTypeName())
+		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declNoKwLocalparam())
+	}
+
 	return nullptr;
 }
 
-// "package" stuff
+// `package` stuff
 auto PTVisitor::visitDeclPackage
 	(Parser::DeclPackageContext *ctx)
 	-> VisitorRetType
 {
+	with(package, WSTACKS_AST_CHILD(Package))
+	{
+		// The model is different this time.
+		ANY_JUST_ACCEPT_BASIC(ctx->identName());
+		ANY_JUST_ACCEPT_BASIC(ctx->insidePackage());
+	}
+
 	return nullptr;
 }
 auto PTVisitor::visitInsidePackage
 	(Parser::InsidePackageContext *ctx)
 	-> VisitorRetType
 {
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declLocalparamList())
+	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declStruct())
 	return nullptr;
 }
 
@@ -228,8 +235,28 @@ auto PTVisitor::visitDeclPortDirectionalVarList
 {
 	return nullptr;
 }
+auto PTVisitor::visitDeclTaskfuncArgDirectionalVarList
+	(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx)
+	-> VisitorRetType 
+{
+	return nullptr;
+}
 
-// "parameter" stuff
+// `struct` stuff
+auto PTVisitor::visitDeclStruct
+	(Parser::DeclStructContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitInsideStruct
+	(Parser::InsideStructContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+// `parameter` stuff
 auto PTVisitor::visitDeclParameterVar
 	(Parser::DeclParameterVarContext *ctx)
 	-> VisitorRetType
@@ -242,8 +269,14 @@ auto PTVisitor::visitDeclParameterVarList
 {
 	return nullptr;
 }
+auto PTVisitor::visitOuterDeclParameterVarList
+	(Parser::OuterDeclParameterVarListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
 
-// "module" stuff
+// `module` stuff
 auto PTVisitor::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
 	-> VisitorRetType
@@ -426,6 +459,8 @@ auto PTVisitor::visitIdentName
 	(Parser::IdentNameContext *ctx)
 	-> VisitorRetType
 {
+	AST_CHILD(IdentName);
+
 	return nullptr;
 }
 auto PTVisitor::visitIdentScope
@@ -438,3 +473,5 @@ auto PTVisitor::visitIdentScope
 } // namespace frost_hdl
 
 #undef LIST_FOR_GEN_STACK
+#undef AST_CHILD
+#undef WSTACKS_AST_CHILD

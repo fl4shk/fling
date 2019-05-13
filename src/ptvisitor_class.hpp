@@ -14,7 +14,6 @@
 //#include "generate_block_header_classes.hpp"
 
 #include "ast_node_class.hpp"
-#include "ast_builder_class.hpp"
 
 
 namespace frost_hdl
@@ -48,6 +47,11 @@ public:		// functions
 
 
 private:		// functions
+	inline auto _push_ast_child_back(AstNode* parent,
+		ParserRuleContext* ctx, AstNodeType s_type) const
+	{
+		return parent->push_child_back(_make_src_code_chunk(ctx), s_type);
+	}
 
 private:		// visitor functions
 	VisitorRetType visitProgram
@@ -106,7 +110,13 @@ private:		// visitor functions
 	VisitorRetType visitDeclLocalparamList
 		(Parser::DeclLocalparamListContext *ctx);
 
-	// "package" stuff
+	// `struct` stuff
+	VisitorRetType visitDeclStruct
+		(Parser::DeclStructContext *ctx);
+	VisitorRetType visitInsideStruct
+		(Parser::InsideStructContext *ctx);
+
+	// `package` stuff
 	VisitorRetType visitDeclPackage
 		(Parser::DeclPackageContext *ctx);
 	VisitorRetType visitInsidePackage
@@ -120,14 +130,18 @@ private:		// visitor functions
 
 	VisitorRetType visitDeclPortDirectionalVarList
 		(Parser::DeclPortDirectionalVarListContext *ctx);
+	VisitorRetType visitDeclTaskfuncArgDirectionalVarList
+		(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx);
 
-	// "parameter" stuff
+	// `parameter` stuff
 	VisitorRetType visitDeclParameterVar
 		(Parser::DeclParameterVarContext *ctx);
 	VisitorRetType visitDeclParameterVarList
 		(Parser::DeclParameterVarListContext *ctx);
+	VisitorRetType visitOuterDeclParameterVarList
+		(Parser::OuterDeclParameterVarListContext *ctx);
 
-	// "module" stuff
+	// `module` stuff
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
 

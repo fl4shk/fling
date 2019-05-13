@@ -74,12 +74,37 @@ public:		// functions
 
 	//--------
 	ChildrenList::Node* push_child_back(Child&& to_push);
+	inline ChildrenList::Node* push_child_back
+		(const SrcCodeChunk& s_src_code_chunk, Type s_type)
+	{
+		return push_child_back(make_child(s_src_code_chunk, s_type));
+	}
 	ChildrenList::Node* push_child_front(Child&& to_push);
+	inline ChildrenList::Node* push_child_front
+		(const SrcCodeChunk& s_src_code_chunk, Type s_type)
+	{
+		return push_child_front(make_child(s_src_code_chunk, s_type));
+	}
 
 	ChildrenList::Node* insert_child_after(ChildrenList::Node* where,
 		Child&& to_insert);
+	inline ChildrenList::Node* insert_child_after
+		(ChildrenList::Node* where, const SrcCodeChunk& s_src_code_chunk,
+		Type s_type)
+	{
+		return insert_child_after(where, make_child(s_src_code_chunk,
+			s_type));
+	}
+
 	ChildrenList::Node* insert_child_before(ChildrenList::Node* where,
 		Child&& to_insert);
+	inline ChildrenList::Node* insert_child_before
+		(ChildrenList::Node* where, const SrcCodeChunk& s_src_code_chunk,
+		Type s_type)
+	{
+		return insert_child_before(where, make_child(s_src_code_chunk,
+			s_type));
+	}
 
 	void remove_child_after(ChildrenList::Node* where);
 	void remove_child_before(ChildrenList::Node* where);
