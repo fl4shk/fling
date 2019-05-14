@@ -57,8 +57,6 @@ auto PTVisitor::visitProgram
 	return nullptr;
 }
 
-
-// Variable declaration stuff
 auto PTVisitor::visitLhsTypeName
 	(Parser::LhsTypeNameContext *ctx)
 	-> VisitorRetType
@@ -89,7 +87,9 @@ auto PTVisitor::visitDeclNoLhsTypeVar
 	return nullptr;
 }
 
-// List of local variables
+// List of local variables.
+// (FUTURE:  The current scope's type will be important once custom
+// types are added in.)
 auto PTVisitor::visitDeclVarList
 	(Parser::DeclVarListContext *ctx)
 	-> VisitorRetType
@@ -97,32 +97,165 @@ auto PTVisitor::visitDeclVarList
 	return nullptr;
 }
 
-auto PTVisitor::visitModuleStmtInstantiateModule
-	(Parser::ModuleStmtInstantiateModuleContext *ctx)
+auto PTVisitor::visitDeclNoKwLocalparam
+	(Parser::DeclNoKwLocalparamContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto PTVisitor::visitInstantiateModuleParameterConnectionList
-	(Parser::InstantiateModuleParameterConnectionListContext *ctx)
+
+auto PTVisitor::visitDeclLocalparamList
+	(Parser::DeclLocalparamListContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto PTVisitor::visitInstantiateModuleConnectionList
-	(Parser::InstantiateModuleConnectionListContext *ctx)
+
+// `struct` stuff
+auto PTVisitor::visitDeclStruct
+	(Parser::DeclStructContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitInsideStruct
+	(Parser::InsideStructContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+// `package` stuff
+auto PTVisitor::visitDeclPackage
+	(Parser::DeclPackageContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitInsidePackage
+	(Parser::InsidePackageContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+// Port vars can be arrays!
+auto PTVisitor::visitDeclPortVarInst
+	(Parser::DeclPortVarInstContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitDeclPortVarList
+	(Parser::DeclPortVarListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitDeclPortDirectionalVarList
+	(Parser::DeclPortDirectionalVarListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitDeclTaskfuncArgDirectionalVarList
+	(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+// `parameter` stuff
+auto PTVisitor::visitDeclParameterVarInst
+	(Parser::DeclParameterVarInstContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitDeclParameterVarList
+	(Parser::DeclParameterVarListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitDeclParameterTypeInst
+	(Parser::DeclParameterTypeInstContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitDeclParameterTypeList
+	(Parser::DeclParameterTypeListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitDeclParameterList
+	(Parser::DeclParameterListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+// `module` stuff
+auto PTVisitor::visitDeclModule
+	(Parser::DeclModuleContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
 
 
+
+auto PTVisitor::visitModuleScope
+	(Parser::ModuleScopeContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitModuleStmtContAssign
+	(Parser::ModuleStmtContAssignContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitModuleStmtInstModule
+	(Parser::ModuleStmtInstModuleContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitInstParameterList
+	(Parser::InstParameterListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitInstModuleConnectionList
+	(Parser::InstModuleConnectionListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+// generate block (that is) in (a) module
+// As of writing this comment, the only other place where `generate` can
+// appear is inside of an interface.
 auto PTVisitor::visitGenerateBlockInModule
 	(Parser::GenerateBlockInModuleContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
+
 auto PTVisitor::visitGenerateBlockAnyHeader
 	(Parser::GenerateBlockAnyHeaderContext *ctx)
 	-> VisitorRetType
@@ -147,13 +280,21 @@ auto PTVisitor::visitPseudoFuncCallRange
 {
 	return nullptr;
 }
+//auto PTVisitor::visitGenerateBlockInInterface
+//	(Parser::GenerateBlockInInterfaceCon *ctx)
+//	-> VisitorRetType
+//{
+//	return nullptr;
+//}
 
+// Behavioral code statement "headers"
 auto PTVisitor::visitStmtBehavHeaderForLoop
 	(Parser::StmtBehavHeaderForLoopContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 auto PTVisitor::visitStmtBehavHeaderIf
 	(Parser::StmtBehavHeaderIfContext *ctx)
 	-> VisitorRetType
@@ -166,6 +307,7 @@ auto PTVisitor::visitStmtBehavHeaderElseif
 {
 	return nullptr;
 }
+// This is boring, but I put it in here for consistency's sake.
 auto PTVisitor::visitStmtBehavHeaderElse
 	(Parser::StmtBehavHeaderElseContext *ctx)
 	-> VisitorRetType
@@ -173,138 +315,35 @@ auto PTVisitor::visitStmtBehavHeaderElse
 	return nullptr;
 }
 
-auto PTVisitor::visitDeclNoKwLocalparam
-	(Parser::DeclNoKwLocalparamContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-auto PTVisitor::visitDeclLocalparamList
-	(Parser::DeclLocalparamListContext *ctx)
-	-> VisitorRetType
-{
-	with(localparam_var_list, WSTACKS_AST_CHILD(LocalparamVarList))
-	{
-		ANY_ACCEPT_IF_BASIC(ctx->lhsTypeName())
-		ANY_JUST_ACCEPT_LOOPED(iter, ctx->declNoKwLocalparam())
-	}
-
-	return nullptr;
-}
-
-// `package` stuff
-auto PTVisitor::visitDeclPackage
-	(Parser::DeclPackageContext *ctx)
-	-> VisitorRetType
-{
-	with(package, WSTACKS_AST_CHILD(Package))
-	{
-		// The model is different this time.
-		ANY_JUST_ACCEPT_BASIC(ctx->identName());
-		ANY_JUST_ACCEPT_BASIC(ctx->insidePackage());
-	}
-
-	return nullptr;
-}
-auto PTVisitor::visitInsidePackage
-	(Parser::InsidePackageContext *ctx)
-	-> VisitorRetType
-{
-	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declLocalparamList())
-	ANY_JUST_ACCEPT_LOOPED(iter, ctx->declStruct())
-	return nullptr;
-}
-
-// Port vars can be arrays!
-auto PTVisitor::visitDeclOnePortVar
-	(Parser::DeclOnePortVarContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-auto PTVisitor::visitDeclPortVarList
-	(Parser::DeclPortVarListContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-
-auto PTVisitor::visitDeclPortDirectionalVarList
-	(Parser::DeclPortDirectionalVarListContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-auto PTVisitor::visitDeclTaskfuncArgDirectionalVarList
-	(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx)
-	-> VisitorRetType 
-{
-	return nullptr;
-}
-
-// `struct` stuff
-auto PTVisitor::visitDeclStruct
-	(Parser::DeclStructContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-auto PTVisitor::visitInsideStruct
-	(Parser::InsideStructContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-
-// `parameter` stuff
-auto PTVisitor::visitDeclParameterVar
-	(Parser::DeclParameterVarContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-auto PTVisitor::visitDeclParameterVarList
-	(Parser::DeclParameterVarListContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-auto PTVisitor::visitOuterDeclParameterVarList
-	(Parser::OuterDeclParameterVarListContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-
-// `module` stuff
-auto PTVisitor::visitDeclModule
-	(Parser::DeclModuleContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-
-auto PTVisitor::visitModuleScope
-	(Parser::ModuleScopeContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-
-auto PTVisitor::visitModuleStmtContAssign
-	(Parser::ModuleStmtContAssignContext *ctx)
-	-> VisitorRetType
-{
-	return nullptr;
-}
-//auto PTVisitor::visitModuleStmtBehavBlock
-//	(Parser::ModuleStmtBehavBlockContext *ctx)
+//auto PTVisitor::visitStmtChunkBehavIf
+//	(Parser::StmtChunkBehavIfCon *ctx)
+//	-> VisitorRetType
+//{
+//	return nullptr;
+//}
+//auto PTVisitor::visitStmtChunkBehavElseif
+//	(Parser::StmtChunkBehavElseifCon *ctx)
+//	-> VisitorRetType
+//{
+//	return nullptr;
+//}
+//auto PTVisitor::visitStmtChunkBehavElse
+//	(Parser::StmtChunkBehavElseCon *ctx)
+//	-> VisitorRetType
+//{
+//	return nullptr;
+//}
+//auto PTVisitor::visitStmtBehavIfElseChain
+//	(Parser::StmtBehavIfElseChainCon *ctx)
 //	-> VisitorRetType
 //{
 //	return nullptr;
 //}
 
+
+
 // Expression parsing
+// (avoid left-recursion)
 auto PTVisitor::visitExpr
 	(Parser::ExprContext *ctx)
 	-> VisitorRetType
@@ -324,19 +363,20 @@ auto PTVisitor::visitExprCompare
 {
 	return nullptr;
 }
-
 auto PTVisitor::visitExprAddSub
 	(Parser::ExprAddSubContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 auto PTVisitor::visitExprMulDivModEtc
 	(Parser::ExprMulDivModEtcContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 
 
 auto PTVisitor::visitExprPlusUnary
@@ -381,6 +421,13 @@ auto PTVisitor::visitExprClog2
 {
 	return nullptr;
 }
+//auto PTVisitor::visitExprPow
+//	(Parser::ExprPowCon *ctx)
+//	-> VisitorRetType
+//{
+//	return nullptr;
+//}
+
 
 auto PTVisitor::visitNumExpr
 	(Parser::NumExprContext *ctx)
@@ -389,18 +436,35 @@ auto PTVisitor::visitNumExpr
 	return nullptr;
 }
 
+// I have no interest in octal numbers, at least for now.
 auto PTVisitor::visitRawNumExpr
 	(Parser::RawNumExprContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
+// Yes, this is done with the parser instead of the lexer.
+//
+// That is very strange, Bobbeh.
+//
+// It allows you to do things like
+//
+// 0x3        ' 9
+//
+// Also, signed hard-coded numbers are *not* properly handled here, so
+// you are forced to do `$sgn(...)` instead of `...'s...`.  The lexer
+// would have to be more heavily involved here if signed, hard-coded
+// numbers were to be allowed with Verilog-style syntax.
 auto PTVisitor::visitRawSizedNumExpr
 	(Parser::RawSizedNumExprContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
+// This permits using a constant to indicate the width of a hard-coded
+// number, permitting shorter Frost HDL source code in some situations.
 auto PTVisitor::visitIdentSizedNumExpr
 	(Parser::IdentSizedNumExprContext *ctx)
 	-> VisitorRetType
@@ -409,24 +473,28 @@ auto PTVisitor::visitIdentSizedNumExpr
 }
 
 
+
 auto PTVisitor::visitSliceWithOne
 	(Parser::SliceWithOneContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 auto PTVisitor::visitSliceWithRange
 	(Parser::SliceWithRangeContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 auto PTVisitor::visitSliceWithAny
 	(Parser::SliceWithAnyContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 
 auto PTVisitor::visitIdentPure
 	(Parser::IdentPureContext *ctx)
@@ -448,6 +516,7 @@ auto PTVisitor::visitIdentAccess
 {
 	return nullptr;
 }
+
 auto PTVisitor::visitIdentConcatExpr
 	(Parser::IdentConcatExprContext *ctx)
 	-> VisitorRetType
@@ -459,16 +528,16 @@ auto PTVisitor::visitIdentName
 	(Parser::IdentNameContext *ctx)
 	-> VisitorRetType
 {
-	AST_CHILD(IdentName);
-
 	return nullptr;
 }
+
 auto PTVisitor::visitIdentScope
 	(Parser::IdentScopeContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
 
 } // namespace frost_hdl
 

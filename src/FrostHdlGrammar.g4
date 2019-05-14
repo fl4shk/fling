@@ -27,7 +27,7 @@ lhsBuiltinTypeName:
 	;
 
 lhsCstmTypeName:
-	identScope? identName
+	identScope? identName instParameterList?
 	;
 
 
@@ -58,7 +58,7 @@ declLocalparamList:
 // `struct` stuff
 declStruct:
 	TokKwStruct identName
-		outerDeclParameterVarList?
+		declParameterList?
 	'{'
 		insideStruct
 	'}'
@@ -88,12 +88,12 @@ insidePackage:
 	;
 
 // Port vars can be arrays!
-declOnePortVar:
+declPortVarInst:
 	identName ('[' expr ']')?
 	;
 
 declPortVarList:
-	lhsTypeName declOnePortVar (',' declOnePortVar)*
+	lhsTypeName declPortVarInst (',' declPortVarInst)*
 	;
 
 
@@ -106,23 +106,32 @@ declTaskfuncArgDirectionalVarList:
 	;
 
 // `parameter` stuff
-declParameterVar:
+declParameterVarInst:
 	identName (TokAssign expr)?
 	;
 
 declParameterVarList:
-	lhsTypeName? declParameterVar (',' declParameterVar)*
+	lhsTypeName? declParameterVarInst (',' declParameterVarInst)*
 	;
 
-outerDeclParameterVarList:
-	'#' '(' declParameterVarList ')'
+
+declParameterTypeInst:
+	identName (TokAssign lhsTypeName)?
+	;
+
+declParameterTypeList:
+	TokKwType declParameterTypeInst (',' declParameterTypeInst)*
+	;
+
+declParameterList:
+	'#' '(' (declParameterVarList | declParameterTypeList)* ')'
 	;
 
 
 // `module` stuff
 declModule:
 	TokKwModule identName
-		outerDeclParameterVarList?
+		declParameterList?
 
 		// ports
 		'('
@@ -149,7 +158,7 @@ moduleScope:
 		// Pass::FinishRawModuleConstruct
 		| moduleStmtContAssign ';'
 		//| moduleStmtBehavBlock
-		| moduleStmtInstantiateModule ';'
+		| moduleStmtInstModule ';'
 	)*
 	;
 
@@ -158,7 +167,7 @@ moduleStmtContAssign:
 	;
 
 
-moduleStmtInstantiateModule:
+moduleStmtInstModule:
 	TokKwInstance
 
 	// Name of the module
@@ -167,20 +176,21 @@ moduleStmtInstantiateModule:
 	// Optional name of the instance
 	identName?
 
-	instantiateModuleParameterConnectionList?
+	instParameterList?
 	'('
 		// For `module`s that have ports, this is actually required.
-		instantiateModuleConnectionList?
+		instModuleConnectionList?
 	')'
 	;
 
 
-instantiateModuleParameterConnectionList:
+instParameterList:
 	'#' '('
-		instantiateModuleConnectionList
+		'.' identName '(' (identExpr | lhsTypeName) ')'
+			(',' '.' identName '(' (identExpr | lhsTypeName) ')')*
 	')'
 	;
-instantiateModuleConnectionList:
+instModuleConnectionList:
 	'.' identName '(' identExpr ')'
 		(',' '.' identName '(' identExpr ')')*
 	;
@@ -453,6 +463,7 @@ TokGenScope: '->' ;
 TokKwModule: 'module' ;
 //TokKwParameter: 'parameter' ;
 TokKwLocalparam: 'localparam' ;
+TokKwType: 'type' ;
 
 TokKwInterface: 'interface' ;
 TokKwModport: 'modport' ;

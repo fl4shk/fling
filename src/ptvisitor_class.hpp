@@ -57,8 +57,6 @@ private:		// visitor functions
 	VisitorRetType visitProgram
 		(Parser::ProgramContext *ctx);
 
-
-	// Variable declaration stuff
 	VisitorRetType visitLhsTypeName
 		(Parser::LhsTypeNameContext *ctx);
 
@@ -73,20 +71,83 @@ private:		// visitor functions
 	VisitorRetType visitDeclNoLhsTypeVar
 		(Parser::DeclNoLhsTypeVarContext *ctx);
 
-	// List of local variables
+	// List of local variables.
+	// (FUTURE:  The current scope's type will be important once custom
+	// types are added in.)
 	VisitorRetType visitDeclVarList
 		(Parser::DeclVarListContext *ctx);
 
-	VisitorRetType visitModuleStmtInstantiateModule
-		(Parser::ModuleStmtInstantiateModuleContext *ctx);
-	VisitorRetType visitInstantiateModuleParameterConnectionList
-		(Parser::InstantiateModuleParameterConnectionListContext *ctx);
-	VisitorRetType visitInstantiateModuleConnectionList
-		(Parser::InstantiateModuleConnectionListContext *ctx);
+	VisitorRetType visitDeclNoKwLocalparam
+		(Parser::DeclNoKwLocalparamContext *ctx);
+
+	VisitorRetType visitDeclLocalparamList
+		(Parser::DeclLocalparamListContext *ctx);
+
+	// `struct` stuff
+	VisitorRetType visitDeclStruct
+		(Parser::DeclStructContext *ctx);
+
+	VisitorRetType visitInsideStruct
+		(Parser::InsideStructContext *ctx);
+
+	// `package` stuff
+	VisitorRetType visitDeclPackage
+		(Parser::DeclPackageContext *ctx);
+
+	VisitorRetType visitInsidePackage
+		(Parser::InsidePackageContext *ctx);
+
+	// Port vars can be arrays!
+	VisitorRetType visitDeclPortVarInst
+		(Parser::DeclPortVarInstContext *ctx);
+
+	VisitorRetType visitDeclPortVarList
+		(Parser::DeclPortVarListContext *ctx);
+
+	VisitorRetType visitDeclPortDirectionalVarList
+		(Parser::DeclPortDirectionalVarListContext *ctx);
+	VisitorRetType visitDeclTaskfuncArgDirectionalVarList
+		(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx);
+	// `parameter` stuff
+	VisitorRetType visitDeclParameterVarInst
+		(Parser::DeclParameterVarInstContext *ctx);
+	VisitorRetType visitDeclParameterVarList
+		(Parser::DeclParameterVarListContext *ctx);
+
+	VisitorRetType visitDeclParameterTypeInst
+		(Parser::DeclParameterTypeInstContext *ctx);
+	VisitorRetType visitDeclParameterTypeList
+		(Parser::DeclParameterTypeListContext *ctx);
+	VisitorRetType visitDeclParameterList
+		(Parser::DeclParameterListContext *ctx);
+
+	// `module` stuff
+	VisitorRetType visitDeclModule
+		(Parser::DeclModuleContext *ctx);
 
 
+
+	VisitorRetType visitModuleScope
+		(Parser::ModuleScopeContext *ctx);
+
+	VisitorRetType visitModuleStmtContAssign
+		(Parser::ModuleStmtContAssignContext *ctx);
+
+	VisitorRetType visitModuleStmtInstModule
+		(Parser::ModuleStmtInstModuleContext *ctx);
+
+	VisitorRetType visitInstParameterList
+		(Parser::InstParameterListContext *ctx);
+	VisitorRetType visitInstModuleConnectionList
+		(Parser::InstModuleConnectionListContext *ctx);
+
+	// generate block (that is) in (a) module
+	// As of writing this comment, the only other place where `generate` can
+	// appear is inside of an interface.
 	VisitorRetType visitGenerateBlockInModule
 		(Parser::GenerateBlockInModuleContext *ctx);
+
+
 	VisitorRetType visitGenerateBlockAnyHeader
 		(Parser::GenerateBlockAnyHeaderContext *ctx);
 	VisitorRetType visitGenerateBlockHeaderForLoop
@@ -95,65 +156,34 @@ private:		// visitor functions
 		(Parser::GenerateBlockHeaderIfContext *ctx);
 	VisitorRetType visitPseudoFuncCallRange
 		(Parser::PseudoFuncCallRangeContext *ctx);
+	//VisitorRetType visitGenerateBlockInInterface
+	//	(Parser::GenerateBlockInInterfaceCon *ctx);
 
+	// Behavioral code statement "headers"
 	VisitorRetType visitStmtBehavHeaderForLoop
 		(Parser::StmtBehavHeaderForLoopContext *ctx);
+
 	VisitorRetType visitStmtBehavHeaderIf
 		(Parser::StmtBehavHeaderIfContext *ctx);
 	VisitorRetType visitStmtBehavHeaderElseif
 		(Parser::StmtBehavHeaderElseifContext *ctx);
+	// This is boring, but I put it in here for consistency's sake.
 	VisitorRetType visitStmtBehavHeaderElse
 		(Parser::StmtBehavHeaderElseContext *ctx);
 
-	VisitorRetType visitDeclNoKwLocalparam
-		(Parser::DeclNoKwLocalparamContext *ctx);
-	VisitorRetType visitDeclLocalparamList
-		(Parser::DeclLocalparamListContext *ctx);
+	//VisitorRetType visitStmtChunkBehavIf
+	//	(Parser::StmtChunkBehavIfCon *ctx);
+	//VisitorRetType visitStmtChunkBehavElseif
+	//	(Parser::StmtChunkBehavElseifCon *ctx);
+	//VisitorRetType visitStmtChunkBehavElse
+	//	(Parser::StmtChunkBehavElseCon *ctx);
+	//VisitorRetType visitStmtBehavIfElseChain
+	//	(Parser::StmtBehavIfElseChainCon *ctx);
 
-	// `struct` stuff
-	VisitorRetType visitDeclStruct
-		(Parser::DeclStructContext *ctx);
-	VisitorRetType visitInsideStruct
-		(Parser::InsideStructContext *ctx);
 
-	// `package` stuff
-	VisitorRetType visitDeclPackage
-		(Parser::DeclPackageContext *ctx);
-	VisitorRetType visitInsidePackage
-		(Parser::InsidePackageContext *ctx);
-
-	// Port vars can be arrays!
-	VisitorRetType visitDeclOnePortVar
-		(Parser::DeclOnePortVarContext *ctx);
-	VisitorRetType visitDeclPortVarList
-		(Parser::DeclPortVarListContext *ctx);
-
-	VisitorRetType visitDeclPortDirectionalVarList
-		(Parser::DeclPortDirectionalVarListContext *ctx);
-	VisitorRetType visitDeclTaskfuncArgDirectionalVarList
-		(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx);
-
-	// `parameter` stuff
-	VisitorRetType visitDeclParameterVar
-		(Parser::DeclParameterVarContext *ctx);
-	VisitorRetType visitDeclParameterVarList
-		(Parser::DeclParameterVarListContext *ctx);
-	VisitorRetType visitOuterDeclParameterVarList
-		(Parser::OuterDeclParameterVarListContext *ctx);
-
-	// `module` stuff
-	VisitorRetType visitDeclModule
-		(Parser::DeclModuleContext *ctx);
-
-	VisitorRetType visitModuleScope
-		(Parser::ModuleScopeContext *ctx);
-
-	VisitorRetType visitModuleStmtContAssign
-		(Parser::ModuleStmtContAssignContext *ctx);
-	//VisitorRetType visitModuleStmtBehavBlock
-	//	(Parser::ModuleStmtBehavBlockContext *ctx);
 
 	// Expression parsing
+	// (avoid left-recursion)
 	VisitorRetType visitExpr
 		(Parser::ExprContext *ctx);
 
@@ -161,11 +191,12 @@ private:		// visitor functions
 		(Parser::ExprLogicalContext *ctx);
 	VisitorRetType visitExprCompare
 		(Parser::ExprCompareContext *ctx);
-
 	VisitorRetType visitExprAddSub
 		(Parser::ExprAddSubContext *ctx);
+
 	VisitorRetType visitExprMulDivModEtc
 		(Parser::ExprMulDivModEtcContext *ctx);
+
 
 
 	VisitorRetType visitExprPlusUnary
@@ -182,24 +213,48 @@ private:		// visitor functions
 		(Parser::ExprCastSgnContext *ctx);
 	VisitorRetType visitExprClog2
 		(Parser::ExprClog2Context *ctx);
+	//VisitorRetType visitExprPow
+	//	(Parser::ExprPowCon *ctx);
+
 
 	VisitorRetType visitNumExpr
 		(Parser::NumExprContext *ctx);
 
+	// I have no interest in octal numbers, at least for now.
 	VisitorRetType visitRawNumExpr
 		(Parser::RawNumExprContext *ctx);
+
+	// Yes, this is done with the parser instead of the lexer.
+	//
+	// That is very strange, Bobbeh.
+	//
+	// It allows you to do things like
+	//
+	// 0x3        ' 9
+	//
+	// Also, signed hard-coded numbers are *not* properly handled here, so
+	// you are forced to do `$sgn(...)` instead of `...'s...`.  The lexer
+	// would have to be more heavily involved here if signed, hard-coded
+	// numbers were to be allowed with Verilog-style syntax.
 	VisitorRetType visitRawSizedNumExpr
 		(Parser::RawSizedNumExprContext *ctx);
+
+	// This permits using a constant to indicate the width of a hard-coded
+	// number, permitting shorter Frost HDL source code in some situations.
 	VisitorRetType visitIdentSizedNumExpr
 		(Parser::IdentSizedNumExprContext *ctx);
 
-	
+
+
 	VisitorRetType visitSliceWithOne
 		(Parser::SliceWithOneContext *ctx);
+
 	VisitorRetType visitSliceWithRange
 		(Parser::SliceWithRangeContext *ctx);
+
 	VisitorRetType visitSliceWithAny
 		(Parser::SliceWithAnyContext *ctx);
+
 
 	VisitorRetType visitIdentPure
 		(Parser::IdentPureContext *ctx);
@@ -209,11 +264,13 @@ private:		// visitor functions
 
 	VisitorRetType visitIdentAccess
 		(Parser::IdentAccessContext *ctx);
+
 	VisitorRetType visitIdentConcatExpr
 		(Parser::IdentConcatExprContext *ctx);
 
 	VisitorRetType visitIdentName
 		(Parser::IdentNameContext *ctx);
+
 	VisitorRetType visitIdentScope
 		(Parser::IdentScopeContext *ctx);
 };
