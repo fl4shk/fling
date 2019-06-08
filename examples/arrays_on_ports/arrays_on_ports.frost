@@ -17,7 +17,7 @@ module FullAdder
 
 module Adc
 	#(
-		WIDTH__DIO
+		param WIDTH__DIO
 	)
 	(
 		//--------
@@ -36,9 +36,9 @@ module Adc
 	assign _inner_carries[0] = i_carry;
 	assign o_carry = _inner_carries[WIDTH__DIO];
 
-	generate for (i : range(WIDTH__DIO))
+	for (genvar i=0; i<WIDTH__DIO; i+=1)
 	{
-		instance FullAdder
+		FullAdder
 		(
 			//--------
 			.i_a(i_a[i]),
@@ -56,7 +56,7 @@ module Adc
 
 module AddWithoutCarry
 	#(
-		WIDTH__DIO
+		param WIDTH__DIO
 	)
 	(
 		//--------
@@ -88,9 +88,9 @@ module AddWithoutCarry
 module Arr2dAddWithouCarry
 	#(
 		// You thought it was data input/output, but it was me, DIO!
-		WIDTH__DIO = 4,
-		ARR_SIZE_2D__HEIGHT_NUM_ADDERS = 2,
-		ARR_SIZE_2D__WIDTH_NUM_ADDERS = 3
+		param WIDTH__DIO = 4,
+		param ARR_SIZE_2D__HEIGHT_NUM_ADDERS = 2,
+		param ARR_SIZE_2D__WIDTH_NUM_ADDERS = 3
 	)
 	(
 		//--------

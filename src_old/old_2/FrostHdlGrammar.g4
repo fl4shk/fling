@@ -7,7 +7,7 @@ grammar FrostHdlGrammar;
 program:
 	(
 		declPackage
-		//| declInterface
+		| declInterface
 		| declModule
 	)*
 	EOF
@@ -96,13 +96,28 @@ declPortVarList:
 	lhsTypeName declPortVarInst (',' declPortVarInst)*
 	;
 
-
-declPortDirectionalVarList:
+declPortDirVarList:
 	(TokKwInput | TokKwOutput) declPortVarList
 	;
 
-declTaskfuncArgDirectionalVarList:
+declTaskfuncArgDirVarList:
 	(TokKwInput | TokKwOutput | TokKwInout) declPortVarList
+	;
+
+
+declPortInterfaceVarInst:
+	identName ('[' expr ']')?
+	;
+
+declPortInterfaceVarList:
+	((identScope? identName)
+		| TokKwInterface)
+		declPortInterfaceVarInst (',' declPortInterfaceVarInst)*
+	;
+
+declPortList:
+	(declPortDirVarList | declPortInterfaceVarList)
+		(',' (declPortDirVarList | declPortInterfaceVarList))*
 	;
 
 // `parameter` stuff
@@ -128,27 +143,50 @@ declParameterList:
 	;
 
 
+
+
+// `interface` stuff
+declInterface:
+	TokKwInterface identName
+		declParameterList?
+		'('
+			declPortList
+		')'
+	'{'
+		insideInterface
+	'}'
+	;
+
+insideInterface:
+	(
+		declLocalparamList ';'
+		| declVarList ';'
+		//| generateBlockInInterface
+
+		//| interfaceStmtContAssign ';'
+		//| interfaceStmtBehavBlock ';'
+		//| interfaceStmtInstInterface ';'
+	)*
+	;
+
+
 // `module` stuff
 declModule:
 	TokKwModule identName
 		declParameterList?
-
-		// ports
 		'('
-			// FUTURE:  allow `interface` stuff here
-			(declPortDirectionalVarList
-				(',' declPortDirectionalVarList)*)?
+			declPortList
 		')'
 
 	'{'
-		moduleScope
+		insideModule
 	'}'
 	;
 
 
 
 
-moduleScope:
+insideModule:
 	(
 		// Pass::ListModuleInnerDecl
 		declLocalparamList ';'
@@ -205,7 +243,7 @@ generateBlockInModule:
 		identName?
 		generateBlockAnyHeader
 	'{'
-		moduleScope
+		insideModule
 	'}'
 	;
 
@@ -232,7 +270,7 @@ pseudoFuncCallRange:
 //		identName?
 //		generateBlockAnyHeader
 //	'{'
-//		interfaceScope
+//		insideInterface
 //	'}'
 //	;
 

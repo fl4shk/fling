@@ -104,10 +104,21 @@ private:		// visitor functions
 	VisitorRetType visitDeclPortVarList
 		(Parser::DeclPortVarListContext *ctx);
 
-	VisitorRetType visitDeclPortDirectionalVarList
-		(Parser::DeclPortDirectionalVarListContext *ctx);
-	VisitorRetType visitDeclTaskfuncArgDirectionalVarList
-		(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx);
+	VisitorRetType visitDeclPortDirVarList
+		(Parser::DeclPortDirVarListContext *ctx);
+	VisitorRetType visitDeclTaskfuncArgDirVarList
+		(Parser::DeclTaskfuncArgDirVarListContext *ctx);
+
+	VisitorRetType visitDeclPortInterfaceVarInst
+		(Parser::DeclPortInterfaceVarInstContext *ctx);
+
+	VisitorRetType visitDeclPortInterfaceVarList
+		(Parser::DeclPortInterfaceVarListContext *ctx);
+
+	VisitorRetType visitDeclPortList
+		(Parser::DeclPortListContext *ctx);
+
+
 	// `parameter` stuff
 	VisitorRetType visitDeclParameterVarInst
 		(Parser::DeclParameterVarInstContext *ctx);
@@ -121,14 +132,20 @@ private:		// visitor functions
 	VisitorRetType visitDeclParameterList
 		(Parser::DeclParameterListContext *ctx);
 
+	// `interface` stuff
+	VisitorRetType visitDeclInterface
+		(Parser::DeclInterfaceContext *ctx);
+	VisitorRetType visitInsideInterface
+		(Parser::InsideInterfaceContext *ctx);
+
 	// `module` stuff
 	VisitorRetType visitDeclModule
 		(Parser::DeclModuleContext *ctx);
 
 
 
-	VisitorRetType visitModuleScope
-		(Parser::ModuleScopeContext *ctx);
+	VisitorRetType visitInsideModule
+		(Parser::InsideModuleContext *ctx);
 
 	VisitorRetType visitModuleStmtContAssign
 		(Parser::ModuleStmtContAssignContext *ctx);

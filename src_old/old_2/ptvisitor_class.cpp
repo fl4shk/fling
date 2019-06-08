@@ -156,18 +156,41 @@ auto PTVisitor::visitDeclPortVarList
 	return nullptr;
 }
 
-auto PTVisitor::visitDeclPortDirectionalVarList
-	(Parser::DeclPortDirectionalVarListContext *ctx)
+auto PTVisitor::visitDeclPortDirVarList
+	(Parser::DeclPortDirVarListContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
-auto PTVisitor::visitDeclTaskfuncArgDirectionalVarList
-	(Parser::DeclTaskfuncArgDirectionalVarListContext *ctx)
+auto PTVisitor::visitDeclTaskfuncArgDirVarList
+	(Parser::DeclTaskfuncArgDirVarListContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;
 }
+
+
+auto PTVisitor::visitDeclPortInterfaceVarInst
+	(Parser::DeclPortInterfaceVarInstContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitDeclPortInterfaceVarList
+	(Parser::DeclPortInterfaceVarListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
+auto PTVisitor::visitDeclPortList
+	(Parser::DeclPortListContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
 // `parameter` stuff
 auto PTVisitor::visitDeclParameterVarInst
 	(Parser::DeclParameterVarInstContext *ctx)
@@ -201,6 +224,20 @@ auto PTVisitor::visitDeclParameterList
 	return nullptr;
 }
 
+// `interface` stuff
+auto PTVisitor::visitDeclInterface
+	(Parser::DeclInterfaceContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+auto PTVisitor::visitInsideInterface
+	(Parser::InsideInterfaceContext *ctx)
+	-> VisitorRetType
+{
+	return nullptr;
+}
+
 // `module` stuff
 auto PTVisitor::visitDeclModule
 	(Parser::DeclModuleContext *ctx)
@@ -211,8 +248,8 @@ auto PTVisitor::visitDeclModule
 
 
 
-auto PTVisitor::visitModuleScope
-	(Parser::ModuleScopeContext *ctx)
+auto PTVisitor::visitInsideModule
+	(Parser::InsideModuleContext *ctx)
 	-> VisitorRetType
 {
 	return nullptr;

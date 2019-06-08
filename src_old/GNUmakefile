@@ -4,6 +4,10 @@
 
 
 SHARED_SRC_DIRS:=src \
+	src/expr \
+	src/ptvisitor \
+	src/gen_src \
+	src/liborangepower_src/gmp_stuff \
 
 CXX_DIRS:=$(SHARED_SRC_DIRS)
 # End of source directories
@@ -15,6 +19,7 @@ CXX_DIRS:=$(SHARED_SRC_DIRS)
 DEBUG_OPTIMIZATION_LEVEL:=-O0
 REGULAR_OPTIMIZATION_LEVEL:=-O2
 
+GRAMMAR_PREFIX:=FrostHdlGrammar
 
 ALWAYS_DEBUG_SUFFIX:=_debug
 ifdef DEBUG
@@ -29,7 +34,10 @@ PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX)
 
 # Compilers and initial compiler flags
 CXX:=$(PREFIX)g++
-CXX_FLAGS:=$(CXX_FLAGS) -std=c++17 -Wall
+CXX_FLAGS:=$(CXX_FLAGS) -std=c++17 -Wall -I/usr/include/antlr4-runtime/ \
+	-flto
+#CXX_FLAGS:=$(CXX_FLAGS) -std=c++2a -Wall -I/usr/include/antlr4-runtime/
+#CXX_FLAGS:=$(CXX_FLAGS) -std=c++2a -fmodules-ts -Wall
 
 OBJDUMP:=$(PREFIX)objdump
 
@@ -37,7 +45,9 @@ OBJDUMP:=$(PREFIX)objdump
 LD:=$(CXX)
 
 # Initial linker flags
-LD_FLAGS:=$(LD_FLAGS) -lm -lgmpxx -lgmp
+LD_FLAGS:=$(LD_FLAGS) -lm -lgmpxx -lgmp \
+	-lantlr4-runtime \
+	-flto
 
 
 
@@ -67,6 +77,7 @@ LD_FLAGS:=$(LD_FLAGS) $(EXTRA_LD_FLAGS) $(COMMON_LD_FLAGS)
 OBJDIR:=objs$(DEBUG_SUFFIX)
 ASMOUTDIR:=asmouts$(DEBUG_SUFFIX)
 DEPDIR:=deps$(DEBUG_SUFFIX)
+PREPROCDIR:=preprocs$(DEBUG_SUFFIX)
 
 
 
@@ -87,9 +98,25 @@ OFILES:=$(CXX_OFILES)
 PFILES:=$(CXX_PFILES)
 ASMOUTS:=$(CXX_ASMOUTS)
 
+# Preprocessed output of C++ and/or C files
+CXX_EFILES := $(CXX_SOURCES:%.cpp=$(PREPROCDIR)/%.E)
+EFILES:=$(CXX_EFILES)
+
+MODIFED_GENERATED_SOURCES:=
+FINAL_GENERATED_SOURCES:=src/gen_src/$(GRAMMAR_PREFIX)Parser.h
+GENERATED_SOURCES:=$(MODIFED_GENERATED_SOURCES) \
+	$(FINAL_GENERATED_SOURCES)
 
 .PHONY : all
-all : all_pre $(OFILES)
+all : all_pre $(MODIFED_GENERATED_SOURCES)
+	@$(MAKE) final_generated
+
+.PHONY : final_generated
+final_generated : all_pre $(FINAL_GENERATED_SOURCES)
+	@$(MAKE) non_generated
+
+.PHONY : non_generated
+non_generated : all_pre $(OFILES)
 	$(LD) $(OFILES) -o $(PROJ) $(LD_FLAGS)
 
 
@@ -106,7 +133,7 @@ do_asmouts : all_pre all_pre_asmout $(ASMOUTS)
 
 .PHONY : all_pre
 all_pre :
-	mkdir -p $(OBJDIR) $(DEPDIR)
+	mkdir -p $(OBJDIR) $(DEPDIR) src/gen_src/
 	@for ofile in $(OFILES); \
 	do \
 		mkdir -p $$(dirname $$ofile); \
@@ -126,6 +153,16 @@ all_pre_asmout :
 		mkdir -p $$(dirname $$asmout); \
 	done
 
+
+.PHONY : grammar_stuff
+grammar_stuff : src/gen_src/$(GRAMMAR_PREFIX)Parser.h \
+	@#
+
+src/gen_src/$(GRAMMAR_PREFIX)Parser.h : src/$(GRAMMAR_PREFIX).g4
+	if [ ! -d src/gen_src ]; then make all_pre; fi; \
+	cp src/$(GRAMMAR_PREFIX).g4 src/gen_src && cd src/gen_src \
+	&& antlr4 -no-listener -visitor -Dlanguage=Cpp $(GRAMMAR_PREFIX).g4 \
+	&& rm $(GRAMMAR_PREFIX).g4
 
 # Here's where things get really messy. 
 $(CXX_OFILES) : $(OBJDIR)/%.o : %.cpp
@@ -148,10 +185,32 @@ $(CXX_ASMOUTS) : $(ASMOUTDIR)/%.s : %.cpp
 
 #¯\(°_o)/¯
 
+.PHONY : only_preprocess
+only_preprocess : only_preprocess_pre $(EFILES)
+
+.PHONY : only_preprocess_pre
+only_preprocess_pre :
+	mkdir -p $(DEPDIR) $(PREPROCDIR)
+	@for efile in $(EFILES); \
+	do \
+		mkdir -p $$(dirname $$efile); \
+	done
+	@for pfile in $(PFILES); \
+	do \
+		mkdir -p $$(dirname $$pfile); \
+	done
+
+
+$(CXX_EFILES) : $(PREPROCDIR)/%.E : %.cpp
+	$(CXX) $(CXX_FLAGS) -MMD -E $< -o $@
+	@cp $(PREPROCDIR)/$*.d $(DEPDIR)/$*.P
+	@rm -f $(PREPROCDIR)/$*.d
+
+
 
 .PHONY : clean
 clean :
-	rm -rfv $(OBJDIR) $(DEPDIR) $(ASMOUTDIR) $(PREPROCDIR) $(PROJ) tags *.taghl gmon.out
+	rm -rfv $(OBJDIR) $(DEPDIR) $(ASMOUTDIR) $(PREPROCDIR) $(PROJ) tags *.taghl gmon.out $(GENERATED_SOURCES) src/gen_src
 
 
 # Flags for make disassemble*
