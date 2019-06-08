@@ -39,8 +39,10 @@ enum class Tok
 	//--------
 
 	//--------
-	ContAssign,
+	// `=:`
 	BlkAssign,
+
+	// `=<`
 	NonblkAssign,
 	//--------
 
@@ -51,6 +53,7 @@ enum class Tok
 
 
 	//--------
+	DollarIdent,
 	Ident,
 	Num,
 

@@ -63,6 +63,7 @@ syn match frost_hdl_dollar_func		"\$pow"
 syn match frost_hdl_number		"\<[0-9]\+\>"
 syn match frost_hdl_number		"\<0x[a-fA-F0-9]\+\>"
 syn match frost_hdl_number		"\<0b[01]\+\>"
+syn match frost_hdl_number		"\<0o[0-7]\+\>"
 
 syn match frost_hdl_uppercase_ident		"\<[A-Z_][A-Z_0-9]\+\>"
 

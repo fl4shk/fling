@@ -41,8 +41,6 @@ private:		// functions
 	int _next_char(); 
 	void _eat_whitespace();
 	void _inner_next_tok();
-
-	//template<typename FirstType, typename... RemArgTypes>
 };
 
 } // namespace frost_hdl

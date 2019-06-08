@@ -29,6 +29,7 @@
 #include "liborangepower_src/time_stuff.hpp"
 #include "liborangepower_src/with_defines.hpp"
 #include "liborangepower_src/linked_list_classes.hpp"
+#include "liborangepower_src/range_funcs.hpp"
 
 using namespace liborangepower::printout_etc;
 using namespace liborangepower::misc_input;
@@ -36,6 +37,7 @@ using namespace liborangepower::integer_types;
 using namespace liborangepower::misc_util;
 using namespace liborangepower::bitwise;
 using namespace liborangepower::json;
+using namespace liborangepower::range;
 
 using liborangepower::bignum::BigNum;
 

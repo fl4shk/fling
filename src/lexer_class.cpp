@@ -16,7 +16,11 @@ Lexer::~Lexer()
 
 Tok Lexer::next_tok()
 {
-	while (_inner_next_tok() == Tok::Comment);
+	do
+	{
+		_inner_next_tok();
+	} while (tok() == Tok::Comment);
+
 	return tok();
 }
 
@@ -195,7 +199,7 @@ void Lexer::_inner_next_tok()
 		}
 		else
 		{
-			_set_tok(Tok::ContAssign, false);
+			_set_tok(Tok::Unknown, false);
 		}
 	}
 	else if (c() == '!')
@@ -204,10 +208,110 @@ void Lexer::_inner_next_tok()
 
 		if (c() == '=')
 		{
-			_set_tok
+			_set_tok(Tok::CmpNe, true);
 		}
 		else
 		{
+			_set_tok(Tok::LogNot, false);
+		}
+	}
+	else if (c() == '.')
+	{
+		_next_char();
+
+		if (c() == '.')
+		{
+			_set_tok(Tok::PrevScope, true);
+		}
+		else
+		{
+			_set_tok(Tok::NextScope, true);
+		}
+	}
+	else if (c() == '$')
+	{
+		_set_tok(Tok::DollarIdent, false);
+		_s = static_cast<char>(c());
+		_next_char();
+
+		for (; isalnum(c()) || (c() == '_'); _next_char())
+		{
+			_s += static_cast<char>(c());
+		}
+	}
+	else if (isalpha(c()) || (c() == '_'))
+	{
+		_set_tok(Tok::Ident, false);
+		_s = static_cast<char>(c());
+		_next_char();
+
+		for (; isalnum(c()) || (c() == '_'); _next_char())
+		{
+			_s += static_cast<char>(c());
+		}
+	}
+	else if (isdigit(c()))
+	{
+		_set_tok(Tok::Num, false);
+		_n = static_cast<BigNum>(0);
+
+		auto get_dec_num = [&]() -> void
+		{
+			for (; isdigit(c()); _next_char())
+			{
+				_n = (_n * 10) + (c() - '0');
+			}
+		};
+
+		if (c() == '0')
+		{
+			_next_char();
+			if (c() == 'x')
+			{
+				_next_char();
+
+				for (; isxdigit(c()); _next_char())
+				{
+					if (in_range_inclusive('A', 'F', c())
+					{
+						_n = (_n * 16) + (c() - 'A');
+					}
+					else if (in_range_inclusive('a', 'f', c()))
+					{
+						_n = (_n * 16) + (c() - 'a');
+					}
+					else // if (isdigit(c()))
+					{
+						_n = (_n * 16) + (c() - '0');
+					}
+				}
+			}
+			else if (c() == 'o')
+			{
+				_next_char();
+
+				for (; in_range_inclusive('0', '7', c()); _next_char())
+				{
+					_n = (_n * 8) + (c() - '0');
+				}
+			}
+			else if (c() == 'b')
+			{
+				_next_char();
+
+				for (; in_range_inclusive('0', '1', c()); _next_char())
+				{
+					_n = (_n * 2) + (c() - '0');
+				}
+			}
+			else
+			{
+				get_dec_num();
+			}
+		}
+		else
+		{
+			get_dec_num();
 		}
 	}
 
