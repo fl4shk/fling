@@ -14,22 +14,21 @@ syn case match
 syn match frost_hdl_comment		"//.*"
 
 "syn keyword frost_hdl_keyword		wire logic unsigned signed
-syn keyword frost_hdl_keyword		param localparam type
+syn keyword frost_hdl_keyword		const type
 syn keyword frost_hdl_keyword		typeof
-syn keyword frost_hdl_keyword		struct class enum typedef 
-syn keyword frost_hdl_keyword		deffunc deftask 
+syn keyword frost_hdl_keyword		struct class union enum typedef 
+syn keyword frost_hdl_keyword		func task 
 syn keyword frost_hdl_keyword		package module 
 syn keyword frost_hdl_keyword		input output inout 
 syn keyword frost_hdl_keyword		if else switch case default 
-"syn keyword frost_hdl_keyword		for while do range
-syn keyword frost_hdl_keyword		for while
+syn keyword frost_hdl_keyword		for while do range
 syn keyword frost_hdl_keyword		assign initial always_comb always_seq
 syn keyword frost_hdl_keyword		posedge negedge
-syn keyword frost_hdl_keyword		generate genvar range
+syn keyword frost_hdl_keyword		generate genvar
 syn keyword frost_hdl_keyword		concat repl
 
 
-syn keyword frost_hdl_builtin_type		wire logic unsigned signed
+syn keyword frost_hdl_builtin_type		wireu wires logicu logics
 syn keyword frost_hdl_builtin_type		byteu bytes shortintu shortints
 syn keyword frost_hdl_builtin_type		intu ints longintu longints
 

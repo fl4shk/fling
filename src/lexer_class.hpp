@@ -12,15 +12,15 @@ namespace frost_hdl
 class Lexer final
 {
 private:		// variables
-	std::string* _text = nullptr;
+	string* _text = nullptr;
 	Tok _tok = Tok::Comment;
-	std::string _s;
+	string _s;
 	int _c;
 	BigNum _n;
 	size_t _x = 0, _line_num = 1, _pos_in_line = 0;
 
 public:		// functions
-	Lexer(std::string* s_text);
+	Lexer(string* s_text);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Lexer)
 	~Lexer();
 
@@ -41,6 +41,22 @@ private:		// functions
 	int _next_char(); 
 	void _eat_whitespace();
 	void _inner_next_tok();
+
+	template<typename... RemArgTypes>
+	bool _set_kw_tok(Tok n_tok, const string& to_check,
+		RemArgTypes&&...  rem_args)
+	{
+		if (s() == to_check)
+		{
+			_set_tok(n_tok, false);
+			return true;
+		}
+		else if constexpr (sizeof...(rem_args) > 0)
+		{
+			return _set_kw_tok(rem_args...);
+		}
+		return false;
+	}
 };
 
 } // namespace frost_hdl

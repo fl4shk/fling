@@ -47,13 +47,96 @@ enum class Tok
 	//--------
 
 	//--------
+	// `.`
 	NextScope,
+
+	// `..`
 	PrevScope,
 	//--------
 
+	//--------
+	KwDollarUnsgn,
+	KwDollarSgn,
+	KwDollarIsUnsgn,
+	KwDollarIsSgn,
+	KwDollarRange,
+	KwDollarSize,
+	KwDollarMsbpos,
+	KwDollarFirst,
+	KwDollarLast,
+	KwDollarHigh,
+	KwDollarLow,
+	KwDollarClog2,
+	KwDollarPow,
+	//--------
 
 	//--------
-	DollarIdent,
+	KwConst,
+	KwType,
+	KwTypeof,
+
+	KwStruct,
+	KwClass,
+	KwUnion,
+	KwEnum,
+	KwTypedef,
+
+	KwFunc,
+	KwTask,
+
+	KwPackage,
+	KwModule,
+
+	KwInput,
+	KwOutput,
+	KwInout,
+
+	KwIf,
+	KwElse,
+	KwSwitch,
+	KwCase,
+	KwDefault,
+
+	KwFor,
+	KwWhile,
+	//KwDo,
+
+	KwRange,
+
+	KwAssign,
+	KwInitial,
+	KwAlwaysComb,
+	KwAlwaysSeq,
+
+	KwPosedge,
+	KwNegedge,
+
+	KwGenerate,
+	KwGenvar,
+
+	KwConcat,
+	KwRepl,
+
+	KwWireu,
+	KwWires,
+
+	KwLogicu,
+	KwLogics,
+
+	KwByteu,
+	KwBytes,
+
+	KwShortintu,
+	KwShortints,
+
+	KwIntu,
+	KwInts,
+
+	KwLongintu,
+	KwLongints,
+	//--------
+
+	//--------
 	Ident,
 	Num,
 

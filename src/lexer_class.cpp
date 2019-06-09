@@ -5,7 +5,7 @@
 namespace frost_hdl
 {
 
-Lexer::Lexer(std::string* s_text)
+Lexer::Lexer(string* s_text)
 	: _text(s_text)
 {
 	next_tok();
@@ -230,13 +230,30 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == '$')
 	{
-		_set_tok(Tok::DollarIdent, false);
-		_s = static_cast<char>(c());
+		//_set_tok(Tok::DollarIdent, false);
+		//_s = static_cast<char>(c());
 		_next_char();
 
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
 			_s += static_cast<char>(c());
+		}
+
+		if (!_set_kw_tok(Tok::KwDollarUnsgn, "unsgn",
+			Tok::KwDollarSgn, "sgn",
+			Tok::KwDollarIsUnsgn, "is_unsgn",
+			Tok::KwDollarIsSgn, "is_sgn",
+			Tok::KwDollarRange, "range",
+			Tok::KwDollarSize, "size",
+			Tok::KwDollarMsbpos, "msbpos",
+			Tok::KwDollarFirst, "first",
+			Tok::KwDollarLast, "last",
+			Tok::KwDollarHigh, "high",
+			Tok::KwDollarLow, "low",
+			Tok::KwDollarClog2, "clog2",
+			Tok::KwDollarPow, "pow"))
+		{
+			_set_tok(Tok::Unknown, false);
 		}
 	}
 	else if (isalpha(c()) || (c() == '_'))
@@ -248,6 +265,72 @@ void Lexer::_inner_next_tok()
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
 			_s += static_cast<char>(c());
+		}
+
+		if (!_set_kw_tok(Tok::KwConst, "const",
+			Tok::KwType, "type",
+			Tok::KwTypeof, "typeof",
+
+			Tok::KwStruct, "struct",
+			Tok::KwClass, "class",
+			Tok::KwUnion, "union",
+			Tok::KwEnum, "enum",
+			Tok::KwTypedef, "typedef",
+
+			Tok::KwFunc, "func",
+			Tok::KwTask, "task",
+
+			Tok::KwPackage, "package",
+			Tok::KwModule, "module",
+
+			Tok::KwInput, "input",
+			Tok::KwOutput, "output",
+			Tok::KwInout, "inout",
+
+			Tok::KwIf, "if",
+			Tok::KwElse, "else",
+			Tok::KwSwitch, "switch",
+			Tok::KwCase, "case",
+			Tok::KwDefault, "default",
+
+			Tok::KwFor, "for",
+			Tok::KwWhile, "while",
+			//Tok::KwDo, "do",
+			Tok::KwRange, "range",
+
+			Tok::KwAssign, "assign",
+			Tok::KwInitial, "initial",
+			Tok::KwAlwaysComb, "always_comb",
+			Tok::KwAlwaysSeq, "always_seq",
+
+			Tok::KwPosedge, "posedge",
+			Tok::KwNegedge, "negedge",
+
+			Tok::KwGenerate, "generate",
+			Tok::KwGenvar, "genvar",
+
+			Tok::KwConcat, "concat",
+			Tok::KwRepl, "repl",
+
+			Tok::KwWireu, "wireu",
+			Tok::KwWires, "wires",
+
+			Tok::KwLogicu, "logicu",
+			Tok::KwLogics, "logics",
+
+			Tok::KwByteu, "byteu",
+			Tok::KwBytes, "bytes",
+
+			Tok::KwShortintu, "shortintu",
+			Tok::KwShortints, "shortints",
+
+			Tok::KwIntu, "intu",
+			Tok::KwInts, "ints",
+
+			Tok::KwLongintu, "longintu",
+			Tok::KwLongints, "longints"))
+		{
+			_set_tok(Tok::Ident, false);
 		}
 	}
 	else if (isdigit(c()))
@@ -272,7 +355,7 @@ void Lexer::_inner_next_tok()
 
 				for (; isxdigit(c()); _next_char())
 				{
-					if (in_range_inclusive('A', 'F', c())
+					if (in_range_inclusive('A', 'F', c()))
 					{
 						_n = (_n * 16) + (c() - 'A');
 					}
