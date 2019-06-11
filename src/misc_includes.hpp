@@ -46,7 +46,8 @@ using liborangepower::containers::CircLinkedList;
 
 //#include <boost/mp11.hpp>
 //using namespace boost::mp11;
-using std::string;
+using string = std::string;
+using unique_ptr = std::unique_ptr;
 
 
 #endif		// src_misc_includes_hpp

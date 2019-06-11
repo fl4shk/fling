@@ -8,6 +8,7 @@
 namespace frost_hdl
 {
 
+
 enum class Tok
 {
 	// Built in type expression tokens
@@ -52,6 +53,23 @@ enum class Tok
 
 	// `..`
 	PrevScope,
+
+	Pound,
+	Comma,
+	Semicolon,
+	Colon,
+
+	Quote,
+	Apostrophe,
+
+	LParen,
+	RParen,
+
+	LBracket,
+	RBracket,
+
+	LBrace,
+	RBrace,
 	//--------
 
 	//--------
@@ -79,13 +97,19 @@ enum class Tok
 	KwClass,
 	KwUnion,
 	KwEnum,
-	KwTypedef,
+	KwUsing,
 
 	KwFunc,
 	KwTask,
+	KwVirtual,
+
+	KwPublic,
+	KwProtected,
+	KwPrivate,
 
 	KwPackage,
 	KwModule,
+	KwInterface,
 
 	KwInput,
 	KwOutput,

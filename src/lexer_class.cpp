@@ -225,8 +225,56 @@ void Lexer::_inner_next_tok()
 		}
 		else
 		{
-			_set_tok(Tok::NextScope, true);
+			_set_tok(Tok::NextScope, false);
 		}
+	}
+	else if (c() == '#')
+	{
+		_set_tok(Tok::Pound, true);
+	}
+	else if (c() == ',')
+	{
+		_set_tok(Tok::Comma, true);
+	}
+	else if (c() == ';')
+	{
+		_set_tok(Tok::Semicolon, true);
+	}
+	else if (c() == ':')
+	{
+		_set_tok(Tok::Colon, true);
+	}
+	else if (c() == '"')
+	{
+		_set_tok(Tok::Quote, true);
+	}
+	else if (c() == '\'')
+	{
+		_set_tok(Tok::Apostrophe, true);
+	}
+	else if (c() == '(')
+	{
+		_set_tok(Tok::LParen, true);
+	}
+	else if (c() == ')')
+	{
+		_set_tok(Tok::RParen, true);
+	}
+	else if (c() == '[')
+	{
+		_set_tok(Tok::LBracket, true);
+	}
+	else if (c() == ']')
+	{
+		_set_tok(Tok::RBracket, true);
+	}
+	else if (c() == '{')
+	{
+		_set_tok(Tok::LBrace, true);
+	}
+	else if (c() == '}')
+	{
+		_set_tok(Tok::RBrace, true);
 	}
 	else if (c() == '$')
 	{
@@ -275,13 +323,19 @@ void Lexer::_inner_next_tok()
 			Tok::KwClass, "class",
 			Tok::KwUnion, "union",
 			Tok::KwEnum, "enum",
-			Tok::KwTypedef, "typedef",
+			Tok::KwUsing, "using",
 
 			Tok::KwFunc, "func",
 			Tok::KwTask, "task",
+			Tok::KwVirtual, "virtual",
+
+			Tok::KwPublic, "public",
+			Tok::KwProtected, "protected",
+			Tok::KwPrivate, "private",
 
 			Tok::KwPackage, "package",
 			Tok::KwModule, "module",
+			Tok::KwInterface, "interface"
 
 			Tok::KwInput, "input",
 			Tok::KwOutput, "output",
@@ -397,7 +451,6 @@ void Lexer::_inner_next_tok()
 			get_dec_num();
 		}
 	}
-
 }
 
 } // namespace frost_hdl
