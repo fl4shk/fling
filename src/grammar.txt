@@ -1,65 +1,54 @@
-// This is almost correct ANTLR4 syntax
 program:
 	(
-		decl_module
-		| decl_package
+		decl_package
+		| decl_module
 	)*
+	EOF
 	;
 
+decl_package:
+	TokKwPackage ident
+	'{'
+		(list_decl_const ';'
+		| decl_range
+		| decl_using
+		| decl_func_task
+		| decl_class
+		| decl_union
+		| decl_enum
+		| decl_package)*
+	'}'
+	;
 
 decl_module:
-	'module' ident
-	('#' '(' list_module_decl_param_type ')')?
-	('(' list_module_decl_port ')')?
+	TokKwModule ident
+	('#' '('
+		decl_using*
+	')')?
+	'('
+		arg_list?
+	')'
 	'{'
 		inside_module
 	'}'
 	;
 
-list_module_decl_param_type:
-	(list_module_decl_just_param
-		| list_module_decl_just_type)
-	(',' (list_module_decl_just_param
-		| list_module_decl_just_type))*
+arg_list:
+	(list_decl_const ',')
+
+	(',')?
 	;
 
-list_module_decl_just_param:
-	// Not having a `typename` means a built-in non-array type will be
-	// used.
-	'param'? typename?
-	ident (TokBlkAssign expr)?
-	(',' ident (TokBlkAssign expr)?)*
+list_decl_const:
+	TokKwConst typename (post_typename_ident ('=' expr)?)
+		(',' post_typename_ident ('=' expr)?)*
 	;
-
-list_module_decl_just_type:
-	'type'
-	ident (TokBlkAssign typename)?
-	(',' ident (TokBlkAssign typename)?)*
-	;
-
 
 typename:
-	(ident '.')? ident
-	('#' '(' (list_inst_positional_param_type
-		| list_inst_named_param_type) ')')?
 	;
 
-list_inst_positional_param_type:
-	(expr | typename)
-	(',' (expr | typename))*
+post_typename_ident:
+	ident ('[' expr (':' expr)? ']')?
 	;
 
-list_inst_named_param_type:
-	('.' '(' (expr | typename) ')')
-	(',' '.' '(' (expr | typename) ')')*
-	;
-
-
-decl_package:
-	'package' ident
-	'{'
-		inside_package
-	'}'
-	;
-
-TokBlkAssign: '=:' ;
+inside_module:

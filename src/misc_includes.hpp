@@ -7,6 +7,8 @@
 #include <stack>
 #include <map>
 #include <set>
+#include <functional>
+#include <memory>
 
 //#include <list>
 //#include <forward_list>
@@ -47,7 +49,8 @@ using liborangepower::containers::CircLinkedList;
 //#include <boost/mp11.hpp>
 //using namespace boost::mp11;
 using string = std::string;
-using unique_ptr = std::unique_ptr;
+template<typename Type>
+using unique_ptr = std::unique_ptr<Type>;
 
 
 #endif		// src_misc_includes_hpp

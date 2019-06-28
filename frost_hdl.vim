@@ -16,40 +16,40 @@ syn match frost_hdl_comment		"//.*"
 "syn keyword frost_hdl_keyword		wire logic unsigned signed
 syn keyword frost_hdl_keyword		const type
 syn keyword frost_hdl_keyword		typeof
-syn keyword frost_hdl_keyword		struct class union enum typedef 
-syn keyword frost_hdl_keyword		func task 
-syn keyword frost_hdl_keyword		package module 
-syn keyword frost_hdl_keyword		input output inout 
-syn keyword frost_hdl_keyword		if else switch case default 
+"syn keyword frost_hdl_keyword		struct
+syn keyword frost_hdl_keyword		class self union enum using
+syn keyword frost_hdl_keyword		public protected private extends
+syn keyword frost_hdl_keyword		packed
+syn keyword frost_hdl_keyword		func task return virtual static
+syn keyword frost_hdl_keyword		package module interface
+syn keyword frost_hdl_keyword		input output inout
+syn keyword frost_hdl_keyword		if else switch switchz case default 
 syn keyword frost_hdl_keyword		for while do range
-syn keyword frost_hdl_keyword		assign initial always_comb always_seq
+syn keyword frost_hdl_keyword		assign initial
+syn keyword frost_hdl_keyword		always_comb always_seq always_ff
+syn keyword frost_hdl_keyword		assert assume cover
+syn keyword frost_hdl_keyword		static_assert
 syn keyword frost_hdl_keyword		posedge negedge
-syn keyword frost_hdl_keyword		generate genvar
-syn keyword frost_hdl_keyword		concat repl
+syn keyword frost_hdl_keyword		generate genvar var
+syn keyword frost_hdl_keyword		cat repl
 
 
-syn keyword frost_hdl_builtin_type		wireu wires logicu logics
+syn keyword frost_hdl_builtin_type		wireu wires bitu bits
 syn keyword frost_hdl_builtin_type		byteu bytes shortintu shortints
 syn keyword frost_hdl_builtin_type		intu ints longintu longints
+syn keyword frost_hdl_builtin_type		void auto
+
 
 "syn match frost_hdl_dollar_func		"\$[a-zA-Z_0-9]\+"
 "syn match frost_hdl_dollar_func		"\$concat"
 "syn match frost_hdl_dollar_func		"\$repl"
 
-"syn match frost_hdl_dollar_func		"\$unsgn"
-"syn match frost_hdl_dollar_func		"\$sgn"
-"syn match frost_hdl_dollar_func		"\$is_unsgn"
-"syn match frost_hdl_dollar_func		"\$is_sgn"
-"syn match frost_hdl_dollar_func		"\$sizeof"
-"syn match frost_hdl_dollar_func		"\$arrsize"
-"syn match frost_hdl_dollar_func		"\$lastindex"
-"syn match frost_hdl_dollar_func		"\$clog2"
-"syn match frost_hdl_dollar_func		"\$pow"
 
 syn match frost_hdl_dollar_func		"\$unsgn"
 syn match frost_hdl_dollar_func		"\$sgn"
 syn match frost_hdl_dollar_func		"\$is_unsgn"
 syn match frost_hdl_dollar_func		"\$is_sgn"
+syn match frost_hdl_dollar_func		"\$range"
 syn match frost_hdl_dollar_func		"\$size"
 syn match frost_hdl_dollar_func		"\$msbpos"
 syn match frost_hdl_dollar_func		"\$low"
@@ -64,6 +64,8 @@ syn match frost_hdl_number		"\<0x[a-fA-F0-9]\+\>"
 syn match frost_hdl_number		"\<0b[01]\+\>"
 syn match frost_hdl_number		"\<0o[0-7]\+\>"
 
+syn match frost_hdl_string		"\"[^"]*\""
+
 syn match frost_hdl_uppercase_ident		"\<[A-Z_][A-Z_0-9]\+\>"
 
 hi def link frost_hdl_comment		Comment
@@ -72,4 +74,5 @@ hi def link frost_hdl_dollar_func		SpecialComment
 hi def link frost_hdl_number		Number
 hi def link frost_hdl_uppercase_ident		Constant
 hi def link frost_hdl_builtin_type		Type
+hi def link frost_hdl_string		Constant
 "hi frost_hdl_uppercase_ident	ctermfg=Green guifg=Green

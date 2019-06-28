@@ -37,7 +37,7 @@ OBJDUMP:=$(PREFIX)objdump
 LD:=$(CXX)
 
 # Initial linker flags
-LD_FLAGS:=$(LD_FLAGS) -lm -lgmpxx -lgmp
+LD_FLAGS:=$(LD_FLAGS) -lm -lgmp -lgmpxx
 
 
 

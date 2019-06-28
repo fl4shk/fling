@@ -20,6 +20,12 @@ DEBUG_OPTIMIZATION_LEVEL:=-O0
 REGULAR_OPTIMIZATION_LEVEL:=-O2
 
 GRAMMAR_PREFIX:=FrostHdlGrammar
+ALL_GRAMMARS:=src/$(GRAMMAR_PREFIX).g4
+	src/FrostHdlModuleGrammar.g4 \
+	src/FrostHdlPackageGrammar.g4 \
+	src/FrostHdlBehavGrammar.g4 \
+	src/FrostHdlTypeGrammar.g4 \
+	src/FrostHdlFuncTaskGrammar.g4
 
 ALWAYS_DEBUG_SUFFIX:=_debug
 ifdef DEBUG
@@ -158,7 +164,8 @@ all_pre_asmout :
 grammar_stuff : src/gen_src/$(GRAMMAR_PREFIX)Parser.h \
 	@#
 
-src/gen_src/$(GRAMMAR_PREFIX)Parser.h : src/$(GRAMMAR_PREFIX).g4
+#src/gen_src/$(GRAMMAR_PREFIX)Parser.h : src/$(GRAMMAR_PREFIX).g4
+src/gen_src/$(GRAMMAR_PREFIX)Parser.h : $(ALL_GRAMMARS)
 	if [ ! -d src/gen_src ]; then make all_pre; fi; \
 	cp src/$(GRAMMAR_PREFIX).g4 src/gen_src && cd src/gen_src \
 	&& antlr4 -no-listener -visitor -Dlanguage=Cpp $(GRAMMAR_PREFIX).g4 \

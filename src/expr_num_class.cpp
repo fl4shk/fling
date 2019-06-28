@@ -109,9 +109,9 @@ BigNum ExprNum::convert_to_bignum() const
 
 	return ret;
 }
-Ident ExprNum::convert_to_verilog_literal() const
+string ExprNum::convert_to_verilog_literal() const
 {
-	Ident ret;
+	string ret;
 
 	if (is_negative())
 	{

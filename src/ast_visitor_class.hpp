@@ -17,7 +17,7 @@ public:		// functions
 	AstVisitor();
 	virtual ~AstVisitor();
 
-	virtual void visit_plus(AstNodePlus* node) = 0;
+	//virtual void visit_plus(AstNodePlus* node) = 0;
 };
 
 } // namespace frost_hdl

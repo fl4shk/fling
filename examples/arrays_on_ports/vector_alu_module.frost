@@ -1,0 +1,163 @@
+package PkgAlu
+{
+	//enum bitu [3] Opcode
+	// This syntax indicates that this `enum` is as small as it can be
+	// while still fitting everything.
+	enum Opcode
+	{
+		Add,
+		Adc
+		Sub,
+		Sbc,
+
+		And,
+		Or,
+		Xor,
+		Nor,
+	};
+
+	class AluPorts#(const intu WIDTH)
+		//extends AluPorts#(.WIDTH(WIDTH))
+	{
+		using DataInout = bitu [WIDTH];
+		//using DataInout = bitu [WIDTH - 1:0];
+
+		class In
+		{
+			DataInout a, b;
+			bitu carry;
+			Opcode opcode;
+		} in;
+
+		class Out
+		{
+			DataInout data;
+			bitu carry;
+		} out;
+
+		// Function object
+		// Operator overloading syntax is similar to that of VHDL.
+		const func bitu [WIDTH + 1] "()" ()
+		{
+			using Opcode;
+
+			switch (in.opcode)
+			{
+			case Add:
+				return cat(1'0b0, in.a) + cat(1'0b0, in.b);
+			case Adc:
+				return cat(1'0b0, in.a) + cat(1'0b0, in.b) + in.carry;
+			case Sub:
+				return cat(1'0b0, in.a) + cat(1'0b0, ~in.b) + 1'0b1;
+			case Sbc:
+				return cat(1'0b0, in.a) + cat(1'0b0, ~in.b) + in.carry;
+
+			case And:
+				return cat(1'0b0, (in.a & in.b));
+			case Or:
+				return cat(1'0b0, (in.a | in.b));
+			case Xor:
+				return cat(1'0b0, (in.a ^ in.b));
+			case Nor:
+				return cat(1'0b0, ~(in.a | in.b));
+			}
+		}
+	};
+}
+
+module Alu
+[
+	using PkgAlu;
+]
+#(
+	const intu WIDTH
+)
+(
+	input bitu [WIDTH] i_a, i_b,
+	input bitu i_carry,
+	input Opcode i_opcode,
+
+	output bitu [WIDTH] o_data,
+	output bitu o_carry,
+)
+{
+	//AluPorts ports(.WIDTH(WIDTH));
+	AluPorts#(.WIDTH) ports;
+	assign cat(ports.in.a, ports.in.b, ports.in.carry, ports.in.opcode)
+		= cat(i_a, i_b, i_carry, i_opcode);
+	assign cat(o_data, o_carry) = cat(ports.out.data, ports.out.carry);
+	//Alu alu(.ports(ports));
+	Alu alu(.ports);
+}
+
+module Alu
+#(
+	const intu WIDTH
+)
+(
+	inout PkgAlu::AluPorts#(.WIDTH) ports,
+)
+{
+	assign cat(ports.out.carry, ports.out.data) = ports();
+}
+
+module Alu
+(
+	// This syntax means that the `class` placed on the ports of an
+	// instance of this `Alu` can be determined by the instantiation of
+	// this `Alu`.
+	inout PkgAlu::AluPorts#() ports
+)
+{
+	assign cat(ports.out.carry, ports.out.data) = ports();
+}
+
+module VectorAlu
+[
+	using DataInout = bitu[ALU_WIDTH];
+]
+#(
+	const intu ALU_WIDTH, ARR_SIZE,
+)
+(
+	input DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
+	input bitu i_carry_arr[ARR_SIZE],
+	input PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
+
+	output DataInout o_data_arr[ARR_SIZE],
+	output bitu o_carry_arr[ARR_SIZE],
+)
+{
+	//generate lab for (i : ports_arr$range)
+	// The label is optional, but you won't be able to access the insides
+	// from outside without it.
+	generate for (i : range(ARR_SIZE))
+	{
+		Alu
+		#(
+			.WIDTH(ALU_WIDTH)
+		)
+		alu
+		(
+			.i_a(i_a_arr[i]), .i_b(i_b_arr[i]),
+			.i_carry(i_carry_arr[i]),
+			.i_opcode(i_opcode_arr[i]),
+
+			.o_data(o_data_arr[i]),
+			.o_carry(o_carry_arr[i]),
+		);
+	}
+}
+
+module VectorAlu
+(
+	inout PkgAlu::AluPorts#() ports_arr[],
+)
+{
+	//generate lab for (i : ports_arr$range)
+	generate lab for (ports : ports_arr)
+	{
+		//Alu alu(.ports(ports_arr[i]));
+		Alu alu(.ports(ports));
+	}
+}

@@ -75,20 +75,20 @@ public:		// functions
 	{
 		return BigNum(ExprNum(*this, size(), false));
 	}
-	inline Ident convert_to_string() const
+	inline string convert_to_string() const
 	{
 		return liborangepower::bignum::convert_bignum_to_str
 			(convert_to_bignum());
 	}
 
-	Ident convert_to_verilog_literal() const;
+	string convert_to_verilog_literal() const;
 
 	inline operator BigNum() const
 	{
 		return convert_to_bignum();
 	}
 
-	explicit inline operator Ident() const
+	explicit inline operator string() const
 	{
 		return convert_to_string();
 	}

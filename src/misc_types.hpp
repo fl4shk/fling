@@ -4,7 +4,7 @@
 // src/misc_types.hpp
 
 #include "misc_includes.hpp"
-#include "ident_table_classes.hpp"
+//#include "ident_table_classes.hpp"
 //#include "scoped_table_classes.hpp"
 
 namespace frost_hdl

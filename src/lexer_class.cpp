@@ -5,74 +5,29 @@
 namespace frost_hdl
 {
 
-Lexer::Lexer(string* s_text)
-	: _text(s_text)
+Lexer::Lexer(const string& s_filename, string* s_text)
+	: LexerBase<Tok>(s_filename, s_text, Tok::Done, Tok::Comment)
 {
-	next_tok();
 }
 Lexer::~Lexer()
 {
 }
 
-Tok Lexer::next_tok()
+Tok Lexer::next_tok(bool just_test)
 {
-	do
+	if (!just_test)
 	{
-		_inner_next_tok();
-	} while (tok() == Tok::Comment);
-
-	return tok();
-}
-
-int Lexer::_next_char()
-{
-	if (x() < text()->size())
-	{
-		_c = text()->at(_x++);
-
-		++_pos_in_line;
-
-		if (c() == '\n')
-		{
-			++_line_num;
-			_pos_in_line = 1;
-		}
-
-		return c();
+		return _next_tok_no_test(Tok::Done, Tok::Comment);
 	}
-	else
+	else // if (just_test)
 	{
-		return EOF;
+		return Lexer(*this).next_tok(false);
 	}
 }
 
-void Lexer::_eat_whitespace()
-{
-	while (isspace(c()))
-	{
-		_next_char();
-	}
-}
-
-void Lexer::_set_tok(Tok n_tok, bool perf_next_char)
-{
-	_tok = n_tok;
-
-	if (perf_next_char)
-	{
-		_next_char();
-	}
-}
 void Lexer::_inner_next_tok()
 {
-	_eat_whitespace();
-
-	if (c() == EOF)
-	{
-		_set_tok(Tok::Done, false);
-	}
-
-	else if (c() == '+')
+	if (c() == '+')
 	{
 		_set_tok(Tok::Plus, true);
 	}
@@ -189,17 +144,9 @@ void Lexer::_inner_next_tok()
 		{
 			_set_tok(Tok::CmpEq, true);
 		}
-		else if (c() == ':')
-		{
-			_set_tok(Tok::BlkAssign, true);
-		}
-		else if (c() == '<')
-		{
-			_set_tok(Tok::NonblkAssign, true);
-		}
 		else
 		{
-			_set_tok(Tok::Unknown, false);
+			_set_tok(Tok::Assign, false);
 		}
 	}
 	else if (c() == '!')
@@ -225,7 +172,7 @@ void Lexer::_inner_next_tok()
 		}
 		else
 		{
-			_set_tok(Tok::NextScope, false);
+			_set_tok(Tok::Period, false);
 		}
 	}
 	else if (c() == '#')
@@ -242,11 +189,72 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == ':')
 	{
-		_set_tok(Tok::Colon, true);
+		//_set_tok(Tok::Colon, true);
+		_next_char();
+
+		if (c() == ':')
+		{
+			_set_tok(Tok::NextScope, true);
+		}
+		else
+		{
+			_set_tok(Tok::Colon, false);
+		}
 	}
 	else if (c() == '"')
 	{
-		_set_tok(Tok::Quote, true);
+		//_set_tok(Tok::Quote, true);
+		_set_tok(Tok::String, true);
+		_state.s = "";
+		for (;;)
+		{
+			if (c() == '\\')
+			{
+				_next_char();
+				if (c() == 'n')
+				{
+					_state.s += '\n';
+				}
+				else if (c() == 'r')
+				{
+					_state.s += '\r';
+				}
+				else if (c() == 't')
+				{
+					_state.s += '\t';
+				}
+				else if (c() == 'a')
+				{
+					_state.s += '\a';
+				}
+				else if (c() == 'f')
+				{
+					_state.s += '\f';
+				}
+				else if (c() == '\\')
+				{
+					_state.s += '\\';
+				}
+				else if (c() == '"')
+				{
+					_state.s += '\"';
+				}
+				else
+				{
+					// Last resort for a language that doesn't really have
+					// good string support.
+					_state.s += '?';
+				}
+			}
+			else if (c() == '"')
+			{
+				break;
+			}
+			else
+			{
+				_state.s += static_cast<char>(c());
+			}
+		}
 	}
 	else if (c() == '\'')
 	{
@@ -278,111 +286,31 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == '$')
 	{
-		//_set_tok(Tok::DollarIdent, false);
-		//_s = static_cast<char>(c());
+		_state.s = static_cast<char>(c());
 		_next_char();
 
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
-			_s += static_cast<char>(c());
+			_state.s += static_cast<char>(c());
 		}
 
-		if (!_set_kw_tok(Tok::KwDollarUnsgn, "unsgn",
-			Tok::KwDollarSgn, "sgn",
-			Tok::KwDollarIsUnsgn, "is_unsgn",
-			Tok::KwDollarIsSgn, "is_sgn",
-			Tok::KwDollarRange, "range",
-			Tok::KwDollarSize, "size",
-			Tok::KwDollarMsbpos, "msbpos",
-			Tok::KwDollarFirst, "first",
-			Tok::KwDollarLast, "last",
-			Tok::KwDollarHigh, "high",
-			Tok::KwDollarLow, "low",
-			Tok::KwDollarClog2, "clog2",
-			Tok::KwDollarPow, "pow"))
+		if (!_set_kw_tok(kw_dollar_tok_ident_map))
 		{
 			_set_tok(Tok::Unknown, false);
 		}
+
 	}
 	else if (isalpha(c()) || (c() == '_'))
 	{
-		_set_tok(Tok::Ident, false);
-		_s = static_cast<char>(c());
+		_state.s = static_cast<char>(c());
 		_next_char();
 
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
-			_s += static_cast<char>(c());
+			_state.s += static_cast<char>(c());
 		}
 
-		if (!_set_kw_tok(Tok::KwConst, "const",
-			Tok::KwType, "type",
-			Tok::KwTypeof, "typeof",
-
-			Tok::KwStruct, "struct",
-			Tok::KwClass, "class",
-			Tok::KwUnion, "union",
-			Tok::KwEnum, "enum",
-			Tok::KwUsing, "using",
-
-			Tok::KwFunc, "func",
-			Tok::KwTask, "task",
-			Tok::KwVirtual, "virtual",
-
-			Tok::KwPublic, "public",
-			Tok::KwProtected, "protected",
-			Tok::KwPrivate, "private",
-
-			Tok::KwPackage, "package",
-			Tok::KwModule, "module",
-			Tok::KwInterface, "interface"
-
-			Tok::KwInput, "input",
-			Tok::KwOutput, "output",
-			Tok::KwInout, "inout",
-
-			Tok::KwIf, "if",
-			Tok::KwElse, "else",
-			Tok::KwSwitch, "switch",
-			Tok::KwCase, "case",
-			Tok::KwDefault, "default",
-
-			Tok::KwFor, "for",
-			Tok::KwWhile, "while",
-			//Tok::KwDo, "do",
-			Tok::KwRange, "range",
-
-			Tok::KwAssign, "assign",
-			Tok::KwInitial, "initial",
-			Tok::KwAlwaysComb, "always_comb",
-			Tok::KwAlwaysSeq, "always_seq",
-
-			Tok::KwPosedge, "posedge",
-			Tok::KwNegedge, "negedge",
-
-			Tok::KwGenerate, "generate",
-			Tok::KwGenvar, "genvar",
-
-			Tok::KwConcat, "concat",
-			Tok::KwRepl, "repl",
-
-			Tok::KwWireu, "wireu",
-			Tok::KwWires, "wires",
-
-			Tok::KwLogicu, "logicu",
-			Tok::KwLogics, "logics",
-
-			Tok::KwByteu, "byteu",
-			Tok::KwBytes, "bytes",
-
-			Tok::KwShortintu, "shortintu",
-			Tok::KwShortints, "shortints",
-
-			Tok::KwIntu, "intu",
-			Tok::KwInts, "ints",
-
-			Tok::KwLongintu, "longintu",
-			Tok::KwLongints, "longints"))
+		if (!_set_kw_tok(kw_tok_ident_map))
 		{
 			_set_tok(Tok::Ident, false);
 		}
@@ -390,13 +318,13 @@ void Lexer::_inner_next_tok()
 	else if (isdigit(c()))
 	{
 		_set_tok(Tok::Num, false);
-		_n = static_cast<BigNum>(0);
+		_state.n = static_cast<BigNum>(0);
 
 		auto get_dec_num = [&]() -> void
 		{
 			for (; isdigit(c()); _next_char())
 			{
-				_n = (_n * 10) + (c() - '0');
+				_state.n = (_state.n * 10) + (c() - '0');
 			}
 		};
 
@@ -411,15 +339,15 @@ void Lexer::_inner_next_tok()
 				{
 					if (in_range_inclusive('A', 'F', c()))
 					{
-						_n = (_n * 16) + (c() - 'A');
+						_state.n = (_state.n * 16) + (c() - 'A');
 					}
 					else if (in_range_inclusive('a', 'f', c()))
 					{
-						_n = (_n * 16) + (c() - 'a');
+						_state.n = (_state.n * 16) + (c() - 'a');
 					}
 					else // if (isdigit(c()))
 					{
-						_n = (_n * 16) + (c() - '0');
+						_state.n = (_state.n * 16) + (c() - '0');
 					}
 				}
 			}
@@ -429,7 +357,7 @@ void Lexer::_inner_next_tok()
 
 				for (; in_range_inclusive('0', '7', c()); _next_char())
 				{
-					_n = (_n * 8) + (c() - '0');
+					_state.n = (_state.n * 8) + (c() - '0');
 				}
 			}
 			else if (c() == 'b')
@@ -438,7 +366,7 @@ void Lexer::_inner_next_tok()
 
 				for (; in_range_inclusive('0', '1', c()); _next_char())
 				{
-					_n = (_n * 2) + (c() - '0');
+					_state.n = (_state.n * 2) + (c() - '0');
 				}
 			}
 			else
