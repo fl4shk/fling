@@ -40,8 +40,8 @@ disassembly*.armasm
 */tags
 */types_*.taghl
 *.txt.ignore
-frost_hdl_compiler
-frost_hdl_compiler_debug
+frost_hdl
+frost_hdl_debug
 *.elf
 docs/*.log
 docs/*.aux
