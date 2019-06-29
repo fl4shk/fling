@@ -114,7 +114,7 @@ module Alu
 
 module VectorAlu
 [
-	using DataInout = bitu[ALU_WIDTH];
+	using DataInout = bitu [ALU_WIDTH];
 ]
 #(
 	const intu ALU_WIDTH, ARR_SIZE,

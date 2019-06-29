@@ -6,6 +6,7 @@
 #include "misc_includes.hpp"
 #include "src_code_chunk_class.hpp"
 #include "expr_value_class.hpp"
+#include "lexer_class.hpp"
 
 
 namespace frost_hdl
@@ -36,6 +37,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
 	GEN_GETTER_BY_CON_REF(children)
 };
+
 
 class AstNodeExprBase : public AstNodeBase
 {

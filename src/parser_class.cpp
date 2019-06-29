@@ -27,9 +27,11 @@ bool Parser::_parse_decl_module()
 {
 	if (just_test())
 	{
+		return cmp_lex_tok(Tok::KwModule);
 	}
 	else // if (!just_test())
 	{
+		_next_tok();
 	}
 	return true;
 }
@@ -37,9 +39,11 @@ bool Parser::_parse_decl_enum()
 {
 	if (just_test())
 	{
+		return cmp_lex_tok(Tok::KwEnum);
 	}
 	else // if (!just_test())
 	{
+		_next_tok();
 	}
 	return true;
 }
@@ -47,6 +51,7 @@ bool Parser::_parse_decl_class()
 {
 	if (just_test())
 	{
+		return 
 	}
 	else // if (!just_test())
 	{
