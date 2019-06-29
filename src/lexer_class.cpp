@@ -205,7 +205,7 @@ void Lexer::_inner_next_tok()
 	{
 		//_set_tok(Tok::Quote, true);
 		_set_tok(Tok::String, true);
-		_state.s = "";
+		_state._s = "";
 		for (;;)
 		{
 			if (c() == '\\')
@@ -213,37 +213,37 @@ void Lexer::_inner_next_tok()
 				_next_char();
 				if (c() == 'n')
 				{
-					_state.s += '\n';
+					_state._s += '\n';
 				}
 				else if (c() == 'r')
 				{
-					_state.s += '\r';
+					_state._s += '\r';
 				}
 				else if (c() == 't')
 				{
-					_state.s += '\t';
+					_state._s += '\t';
 				}
 				else if (c() == 'a')
 				{
-					_state.s += '\a';
+					_state._s += '\a';
 				}
 				else if (c() == 'f')
 				{
-					_state.s += '\f';
+					_state._s += '\f';
 				}
 				else if (c() == '\\')
 				{
-					_state.s += '\\';
+					_state._s += '\\';
 				}
 				else if (c() == '"')
 				{
-					_state.s += '\"';
+					_state._s += '\"';
 				}
 				else
 				{
 					// Last resort for a language that doesn't really have
 					// good string support.
-					_state.s += '?';
+					_state._s += '?';
 				}
 			}
 			else if (c() == '"')
@@ -252,7 +252,7 @@ void Lexer::_inner_next_tok()
 			}
 			else
 			{
-				_state.s += static_cast<char>(c());
+				_state._s += static_cast<char>(c());
 			}
 		}
 	}
@@ -286,12 +286,12 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == '$')
 	{
-		_state.s = static_cast<char>(c());
+		_state._s = static_cast<char>(c());
 		_next_char();
 
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
-			_state.s += static_cast<char>(c());
+			_state._s += static_cast<char>(c());
 		}
 
 		if (!_set_kw_tok(kw_dollar_tok_ident_map))
@@ -302,12 +302,12 @@ void Lexer::_inner_next_tok()
 	}
 	else if (isalpha(c()) || (c() == '_'))
 	{
-		_state.s = static_cast<char>(c());
+		_state._s = static_cast<char>(c());
 		_next_char();
 
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
-			_state.s += static_cast<char>(c());
+			_state._s += static_cast<char>(c());
 		}
 
 		if (!_set_kw_tok(kw_tok_ident_map))
@@ -318,13 +318,13 @@ void Lexer::_inner_next_tok()
 	else if (isdigit(c()))
 	{
 		_set_tok(Tok::Num, false);
-		_state.n = static_cast<BigNum>(0);
+		_state._n = static_cast<BigNum>(0);
 
 		auto get_dec_num = [&]() -> void
 		{
 			for (; isdigit(c()); _next_char())
 			{
-				_state.n = (_state.n * 10) + (c() - '0');
+				_state._n = (n() * 10) + (c() - '0');
 			}
 		};
 
@@ -339,15 +339,15 @@ void Lexer::_inner_next_tok()
 				{
 					if (in_range_inclusive('A', 'F', c()))
 					{
-						_state.n = (_state.n * 16) + (c() - 'A');
+						_state._n = (n() * 16) + (c() - 'A');
 					}
 					else if (in_range_inclusive('a', 'f', c()))
 					{
-						_state.n = (_state.n * 16) + (c() - 'a');
+						_state._n = (n() * 16) + (c() - 'a');
 					}
 					else // if (isdigit(c()))
 					{
-						_state.n = (_state.n * 16) + (c() - '0');
+						_state._n = (n() * 16) + (c() - '0');
 					}
 				}
 			}
@@ -357,7 +357,7 @@ void Lexer::_inner_next_tok()
 
 				for (; in_range_inclusive('0', '7', c()); _next_char())
 				{
-					_state.n = (_state.n * 8) + (c() - '0');
+					_state._n = (n() * 8) + (c() - '0');
 				}
 			}
 			else if (c() == 'b')
@@ -366,7 +366,7 @@ void Lexer::_inner_next_tok()
 
 				for (; in_range_inclusive('0', '1', c()); _next_char())
 				{
-					_state.n = (_state.n * 2) + (c() - '0');
+					_state._n = (n() * 2) + (c() - '0');
 				}
 			}
 			else
