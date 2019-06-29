@@ -5,7 +5,6 @@
 
 #include "misc_includes.hpp"
 #include "lexer_class.hpp"
-#include "parser_base_class.hpp"
 #include "err_warn_base_class.hpp"
 
 namespace frost_hdl

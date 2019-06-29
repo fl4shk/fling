@@ -6,7 +6,6 @@
 #include "misc_includes.hpp"
 #include "tok_enum.hpp"
 #include "src_code_chunk_class.hpp"
-#include "lexer_base_class.hpp"
 
 namespace frost_hdl
 {
