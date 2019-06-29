@@ -55,6 +55,10 @@ bool Parser::_parse_decl_class()
 	}
 	else // if (!just_test())
 	{
+		if (!lss().valid())
+		{
+		}
+		_next_lss_tokens();
 	}
 	return true;
 }
