@@ -2,6 +2,7 @@
 
 namespace frost_hdl
 {
+using namespace ast;
 
 Parser::Parser(std::vector<string>&& s_filename_vec)
 	: ParserBase<Lexer>(std::move(s_filename_vec))
@@ -15,11 +16,11 @@ bool Parser::_parse_decl_package()
 {
 	if (just_test())
 	{
-		return cmp_lex_tok(Tok::KwPackage);
+		return _check_prefixed_tok_seq<NodePackage>();
 	}
 	else // if (!just_test())
 	{
-		_next_tok();
+		_next_lss_tokens();
 	}
 
 	return true;
@@ -28,12 +29,13 @@ bool Parser::_parse_decl_module()
 {
 	if (just_test())
 	{
-		return cmp_lex_tok(Tok::KwModule);
+		return _check_prefixed_tok_seq<NodeModule>();
 	}
 	else // if (!just_test())
 	{
-		_next_tok();
+		_next_lss_tokens();
 	}
+
 	return true;
 }
 bool Parser::_parse_decl_enum()

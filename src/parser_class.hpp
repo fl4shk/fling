@@ -45,6 +45,13 @@ private:		// functions
 	{
 		Base::_next_lss_tokens(tok_ident_map);
 	}
+	template<typename AstNodeType>
+	bool _check_prefixed_tok_seq()
+	{
+		return Base::_check_prefixed_tok_seq(AstNodeType::tok_prefix_set,
+			AstNodeType::end_tok);
+	}
+
 	bool _parse_decl_package();
 	bool _parse_decl_module();
 	bool _parse_decl_enum();

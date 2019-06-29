@@ -25,7 +25,7 @@ protected:		// variables
 	//string _s;
 	//ExprNum _n;
 	SrcCodeChunk _src_code_chunk;
-	CircLinkedList<NodeBase> _children;
+	CircLinkedList<unique_ptr<NodeBase>> _children;
 
 public:		// functions
 	inline NodeBase(const SrcCodeChunk& s_src_code_chunk)
@@ -43,20 +43,11 @@ public:		// functions
 	inline void append_children(NodeBase&& first_child,
 		RemArgTypes&&... rem_children)
 	{
-		_children.push_back(std::move(first_child));
+		_children.push_back(new NodeBase(std::move(first_child)));
 		if constexpr (sizeof...(rem_children) != 0)
 		{
 			append_children(rem_children);
 		}
-	}
-
-	virtual const TokSet prefix_tok_set() const
-	{
-		return TokSet();
-	}
-	virtual Tok end_tok() const
-	{
-		return Tok::Comment;
 	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
@@ -87,7 +78,7 @@ public:		// functions
 		NodeBase&& s_right)
 		: NodeExprBase(s_src_code_chunk)
 	{
-		append_children(s_left, s_right);
+		append_children(std::move(s_left), std::move(s_right));
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBinopBase);
 	virtual ~NodeBinopBase() = default;
@@ -105,14 +96,14 @@ public:		// functions
 class NodeUnopBase : public NodeExprBase
 {
 private:		// variables
-	using NodeIterator = typename _children.NodeIterator;
+	//using NodeIterator = typename _children.NodeIterator;
 
 public:		// functions
 	inline NodeUnopBase(const SrcCodeChunk& s_src_code_chunk,
 		NodeBase&& s_only_child)
-		: NodeBase(s_src_code_chunk)
+		: NodeExprBase(s_src_code_chunk)
 	{
-		append_children(s_only_child);
+		append_children(std::move(s_only_child));
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeUnopBase);
 	virtual ~NodeUnopBase() = default;
@@ -126,15 +117,45 @@ public:		// functions
 
 class NodePackage : public NodeBase
 {
+public:		// constants
+	static const inline TokSet tok_prefix_set = TokSet();
+	static const inline Tok end_tok = Tok::KwPackage;
+
 public:		// functions
-	NodePackage(const SrcCodeChunk& s_src_code_chunk,
-		NodeBase&& s_ident, NodeBase&& s_scope)
+	NodePackage(const SrcCodeChunk& s_src_code_chunk, NodeBase&& s_ident,
+		NodeBase&& s_scope)
 		: NodeBase(s_src_code_chunk)
 		{
-			append_children(s_ident, s_scope);
+			append_children(std::move(s_ident), std::move(s_scope));
 		}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePackage);
 	virtual ~NodePackage() = default;
+
+	inline auto ident()
+	{
+		return _children.front();
+	}
+	inline auto scope()
+	{
+		return _children.back();
+	}
+};
+
+class NodeModule : public NodeBase
+{
+public:		// constants
+	static const inline TokSet tok_prefix_set = TokSet();
+	static const inline Tok end_tok = Tok::KwModule;
+
+public:		// functions
+	NodeModule(const SrcCodeChunk& s_src_code_chunk, NodeBase&& s_ident,
+		NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+		{
+			append_children(std::move(s_ident), std::move(s_scope));
+		}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeModule);
+	virtual ~NodeModule() = default;
 
 	inline auto ident()
 	{
