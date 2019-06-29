@@ -19,6 +19,10 @@ public:		// functions
 	~Lexer();
 
 	Tok next_tok(bool just_test);
+	inline auto src_code_chunk(State* state=nullptr) const
+	{
+		return LexerBase<Tok>::src_code_chunk<SrcCodeChunk>(state);
+	}
 
 private:		// functions
 	void _inner_next_tok();
