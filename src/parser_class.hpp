@@ -16,7 +16,7 @@ public:		// types
 	using Base = ParserBase<Lexer>;
 
 private:		// variables
-	AstNodeBase _ast;
+	ast::NodeBase _ast;
 
 public:		// functions
 	Parser(std::vector<string>&& s_filename_vec);

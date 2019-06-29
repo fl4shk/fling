@@ -39,14 +39,15 @@ public:		// functions
 	{
 	}
 
-	template<typename... RemArgTypes>
-	inline void append_children(NodeBase&& first_child,
+	template<typename FirstType, typename... RemArgTypes>
+	inline void append_children(FirstType&& first_child,
 		RemArgTypes&&... rem_children)
 	{
-		_children.push_back(new NodeBase(std::move(first_child)));
+		_children.push_back(unique_ptr<NodeBase>(new NodeBase(std::move
+			(first_child))));
 		if constexpr (sizeof...(rem_children) != 0)
 		{
-			append_children(rem_children);
+			append_children(rem_children...);
 		}
 	}
 
