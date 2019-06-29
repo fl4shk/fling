@@ -123,7 +123,7 @@ bool Parser::_parse_decl_task()
 	return true;
 }
 
-bool Parser::_parse_list_module_prefix()
+bool Parser::_parse_module_prolog()
 {
 	if (just_test())
 	{
@@ -154,5 +154,15 @@ bool Parser::_parse_list_port()
 	return true;
 }
 
+bool Parser::_parse_expr()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
 
 } // namespace frost_hdl

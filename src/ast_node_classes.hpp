@@ -12,9 +12,11 @@
 namespace frost_hdl
 {
 
-class AstVisitor;
+namespace ast
+{
+class Visitor;
 
-class AstNodeBase
+class NodeBase
 {
 public:		// types
 	typedef std::set<Tok> TokSet;
@@ -23,22 +25,30 @@ protected:		// variables
 	//string _s;
 	//ExprNum _n;
 	SrcCodeChunk _src_code_chunk;
-	//std::vector<unique_ptr<AstNodeBase>> _children;
-
-public:		// variables
-	CircLinkedList<AstNodeBase> children;
+	CircLinkedList<NodeBase> _children;
 
 public:		// functions
-	AstNodeBase(const SrcCodeChunk& s_src_code_chunk);
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeBase);
-	virtual ~AstNodeBase() = default;
+	inline NodeBase(const SrcCodeChunk& s_src_code_chunk)
+		: _src_code_chunk(s_src_code_chunk)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBase);
+	virtual ~NodeBase() = default;
 
-	virtual void accept(AstVisitor& visitor);
+	virtual inline void accept(Visitor& visitor)
+	{
+	}
 
-	//inline void append_child(unique_ptr<AstNodeBase>&& child)
-	//{
-	//	_children.push_back(std::move(child));
-	//}
+	template<typename... RemArgTypes>
+	inline void append_children(NodeBase&& first_child,
+		RemArgTypes&&... rem_children)
+	{
+		_children.push_back(std::move(first_child));
+		if constexpr (sizeof...(rem_children) != 0)
+		{
+			append_children(rem_children);
+		}
+	}
 
 	virtual const TokSet prefix_tok_set() const
 	{
@@ -50,70 +60,93 @@ public:		// functions
 	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
-	//GEN_GETTER_BY_CON_REF(children)
+	GEN_GETTER_BY_CON_REF(children)
 };
 
 
-class AstNodeExprBase : public AstNodeBase
+class NodeExprBase : public NodeBase
 {
 protected:		// variables
 	ExprValue _n;
 
 public:		// functions
-	AstNodeExprBase(const SrcCodeChunk& s_src_code_chunk);
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeExprBase);
-	virtual ~AstNodeExprBase() = default;
-
-	virtual void eval();
+	inline NodeExprBase(const SrcCodeChunk& s_src_code_chunk)
+		: NodeBase(s_src_code_chunk)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeExprBase);
+	virtual ~NodeExprBase() = default;
 
 	GEN_GETTER_AND_SETTER_BY_CON_REF(n)
 };
 
-class AstNodeBinopBase : public AstNodeExprBase
+class NodeBinopBase : public NodeExprBase
 {
 public:		// functions
-	AstNodeBinopBase(const SrcCodeChunk& s_src_code_chunk,
-		unique_ptr<AstNodeBase>&& s_left,
-		unique_ptr<AstNodeBase>&& s_right);
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeBinopBase);
-	virtual ~AstNodeBinopBase() = default;
+	NodeBinopBase(const SrcCodeChunk& s_src_code_chunk, NodeBase&& s_left,
+		NodeBase&& s_right)
+		: NodeExprBase(s_src_code_chunk)
+	{
+		append_children(s_left, s_right);
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBinopBase);
+	virtual ~NodeBinopBase() = default;
 
-	inline auto& left()
+	inline auto left()
 	{
-		return _children.at(0);
+		return _children.front();
 	}
-	inline const auto& left() const
+	inline auto right()
 	{
-		return children().at(0);
-	}
-	inline auto& right()
-	{
-		return _children.at(1);
-	}
-	inline const auto& right() const
-	{
-		return children().at(1);
+		return _children.back();
 	}
 };
 
-class AstNodeUnopBase : public AstNodeExprBase
+class NodeUnopBase : public NodeExprBase
 {
-public:		// functions
-	AstNodeUnopBase(const SrcCodeChunk& s_src_code_chunk,
-		unique_ptr<AstNodeBase>&& s_only_child);
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeUnopBase);
-	virtual ~AstNodeUnopBase() = default;
+private:		// variables
+	using NodeIterator = typename _children.NodeIterator;
 
-	inline auto& only_child()
+public:		// functions
+	inline NodeUnopBase(const SrcCodeChunk& s_src_code_chunk,
+		NodeBase&& s_only_child)
+		: NodeBase(s_src_code_chunk)
 	{
-		return children().at(0);
+		append_children(s_only_child);
 	}
-	inline const auto& only_child() const
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeUnopBase);
+	virtual ~NodeUnopBase() = default;
+
+	inline auto only_child()
 	{
-		return _children.at(0);
+		return _children.front();
 	}
 };
 
+
+class NodePackage : public NodeBase
+{
+public:		// functions
+	NodePackage(const SrcCodeChunk& s_src_code_chunk,
+		NodeBase&& s_ident, NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+		{
+			append_children(s_ident, s_scope);
+		}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePackage);
+	virtual ~NodePackage() = default;
+
+	inline auto ident()
+	{
+		return _children.front();
+	}
+	inline auto scope()
+	{
+		return _children.back();
+	}
+};
+
+} // namespace ast
 
 
 } // namespace frost_hdl

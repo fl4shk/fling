@@ -3,13 +3,18 @@
 namespace frost_hdl
 {
 
-AstVisitor::AstVisitor()
+namespace ast
+{
+
+Visitor::Visitor()
 {
 }
 
-AstVisitor::~AstVisitor()
+Visitor::~Visitor()
 {
 }
+
+} // namespace ast
 
 
 } // namespace frost_hdl

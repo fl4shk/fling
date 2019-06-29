@@ -59,9 +59,11 @@ private:		// functions
 	bool _parse_decl_member_task();
 	bool _parse_decl_task();
 
-	bool _parse_list_module_prefix();
+	bool _parse_module_prolog();
 	bool _parse_list_param();
 	bool _parse_list_port();
+
+	bool _parse_expr();
 };
 
 } // namespace frost_hdl

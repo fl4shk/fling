@@ -10,15 +10,20 @@
 namespace frost_hdl
 {
 
+namespace ast
+{
+
 // Base class for a visitor of the abstract syntax tree
-class AstVisitor
+class Visitor
 {
 public:		// functions
-	AstVisitor();
-	virtual ~AstVisitor();
+	Visitor();
+	virtual ~Visitor();
 
-	//virtual void visit_plus(AstNodePlus* node) = 0;
+	//virtual void visit_plus(NodePlus* node) = 0;
 };
+
+} // namespace ast
 
 } // namespace frost_hdl
 

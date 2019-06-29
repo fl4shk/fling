@@ -15,9 +15,11 @@ class ExprValue final
 public:		// types
 	using NumVec = std::vector<ExprNum>;
 	using ValVec = std::vector<ExprValue>;
+	//using FrostTypeVec = std::vector<FrostType>;
 
 private:		// variables
 	string _ident;
+	//std::variant<ExprNum, NumVec, ValVec, FrostType, FrostTypeVec> _data;
 	std::variant<ExprNum, NumVec, ValVec> _data;
 
 public:		// functions
