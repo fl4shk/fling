@@ -51,7 +51,7 @@ bool Parser::_parse_decl_class()
 {
 	if (just_test())
 	{
-		return 
+		return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
 	}
 	else // if (!just_test())
 	{
