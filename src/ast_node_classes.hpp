@@ -16,11 +16,17 @@ class AstVisitor;
 
 class AstNodeBase
 {
+public:		// types
+	typedef std::set<Tok> TokSet;
+
 protected:		// variables
 	//string _s;
 	//ExprNum _n;
 	SrcCodeChunk _src_code_chunk;
-	std::vector<unique_ptr<AstNodeBase>> _children;
+	//std::vector<unique_ptr<AstNodeBase>> _children;
+
+public:		// variables
+	CircLinkedList<AstNodeBase> children;
 
 public:		// functions
 	AstNodeBase(const SrcCodeChunk& s_src_code_chunk);
@@ -29,13 +35,22 @@ public:		// functions
 
 	virtual void accept(AstVisitor& visitor);
 
-	inline void append_child(unique_ptr<AstNodeBase>&& child)
+	//inline void append_child(unique_ptr<AstNodeBase>&& child)
+	//{
+	//	_children.push_back(std::move(child));
+	//}
+
+	virtual const TokSet prefix_tok_set() const
 	{
-		_children.push_back(std::move(child));
+		return TokSet();
+	}
+	virtual Tok end_tok() const
+	{
+		return Tok::Comment;
 	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
-	GEN_GETTER_BY_CON_REF(children)
+	//GEN_GETTER_BY_CON_REF(children)
 };
 
 

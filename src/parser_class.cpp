@@ -21,6 +21,7 @@ bool Parser::_parse_decl_package()
 	{
 		_next_tok();
 	}
+
 	return true;
 }
 bool Parser::_parse_decl_module()
@@ -55,9 +56,6 @@ bool Parser::_parse_decl_class()
 	}
 	else // if (!just_test())
 	{
-		if (!lss().valid())
-		{
-		}
 		_next_lss_tokens();
 	}
 	return true;

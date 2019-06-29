@@ -24,23 +24,26 @@ public:		// functions
 	~Parser();
 
 private:		// functions
-	std::string _msg_for_expect(TokType tok,
+	inline std::string _msg_for_expect(TokType tok,
 		const LexerState* lex_state=nullptr) const
 	{
 		return Base::_msg_for_expect(tok, tok_ident_map, lex_state);
 	}
-	void _expect(TokType tok, const LexerState* lex_state=nullptr)
+	inline void _expect(TokType tok, const LexerState* lex_state=nullptr)
 	{
 		Base::_expect(tok, tok_ident_map, lex_state);
 	}
-	void _unexpected(const LexerState* lex_state=nullptr)
+	inline void _unexpected(const LexerState* lex_state=nullptr)
 	{
 		Base::_unexpected(tok_ident_map, lex_state);
 	}
-	bool _to_next_in_list(TokType end, TokType separator=Tok::Comma)
+	inline bool _to_next_in_list(TokType end, TokType separator=Tok::Comma)
 	{
-		return Base::_to_next_in_list(end, separator,
-			tok_ident_map);
+		return Base::_to_next_in_list(end, separator, tok_ident_map);
+	}
+	inline void _next_lss_tokens()
+	{
+		Base::_next_lss_tokens(tok_ident_map);
 	}
 	bool _parse_decl_package();
 	bool _parse_decl_module();
