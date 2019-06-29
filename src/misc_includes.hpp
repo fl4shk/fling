@@ -32,6 +32,8 @@
 #include "liborangepower_src/with_defines.hpp"
 #include "liborangepower_src/linked_list_classes.hpp"
 #include "liborangepower_src/range_funcs.hpp"
+#include "liborangepower_src/lexer_base_class.hpp"
+#include "liborangepower_src/parser_base_class.hpp"
 
 using namespace liborangepower::printout_etc;
 using namespace liborangepower::misc_input;
@@ -40,6 +42,7 @@ using namespace liborangepower::misc_util;
 using namespace liborangepower::bitwise;
 using namespace liborangepower::json;
 using namespace liborangepower::range;
+using namespace liborangepower::lang;
 
 using liborangepower::bignum::BigNum;
 
