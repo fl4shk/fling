@@ -13,26 +13,26 @@ namespace frost_hdl
 
 class Parser final : public ParserBase<Lexer>
 {
-private:		// variables
-	//string* _text = nullptr;
-
 public:		// functions
 	Parser(std::vector<string>&& s_filename_vec);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Parser)
 	~Parser();
 
 private:		// functions
-
-
-
 	bool _parse_decl_package();
 	bool _parse_decl_module();
 	bool _parse_decl_enum();
 	bool _parse_decl_class();
 	bool _parse_generate();
-	bool _parse_func();
-	bool _parse_task();
-	bool _parse_module_prefix();
+
+	bool _parse_member_access_label();
+
+	bool _parse_decl_member_func();
+	bool _parse_decl_func();
+	bool _parse_decl_member_task();
+	bool _parse_decl_task();
+
+	bool _parse_list_module_prefix();
 	bool _parse_list_param();
 	bool _parse_list_port();
 };

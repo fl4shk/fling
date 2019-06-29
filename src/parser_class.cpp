@@ -11,24 +11,141 @@ Parser::~Parser()
 {
 }
 
+bool Parser::_parse_decl_package()
+{
+	if (just_test())
+	{
+		return cmp_lex_tok(Tok::KwPackage);
+	}
+	else // if (!just_test())
+	{
+		_next_tok();
+	}
+	return true;
+}
+bool Parser::_parse_decl_module()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_decl_enum()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_decl_class()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_generate()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
 
+bool Parser::_parse_member_access_label()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
 
-//std::vector<Lexer> Parser::_next_n_tokens(bool affect_lexer, size_t n)
-//{
-//	std::vector<Lexer> ret;
-//
-//	Lexer temp_lexer(_lexer());
-//
-//	auto* lexer = (!affect_lexer) ? &_lexer() : &temp_lexer;
-//
-//	for (size_t i=0; i<n; ++i)
-//	{
-//		_next_tok(lexer);
-//		ret.push_back(*lexer);
-//	}
-//
-//	return ret;
-//}
+bool Parser::_parse_decl_member_func()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_decl_func()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_decl_member_task()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_decl_task()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+
+bool Parser::_parse_list_module_prefix()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_list_param()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_list_port()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
 
 
 } // namespace frost_hdl
