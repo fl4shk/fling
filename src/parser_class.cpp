@@ -7,6 +7,7 @@ using namespace ast;
 Parser::Parser(std::vector<string>&& s_filename_vec)
 	: ParserBase<Lexer>(std::move(s_filename_vec))
 {
+	_ast.reset(new NodeBase(SrcCodeChunk()));
 }
 Parser::~Parser()
 {
@@ -42,11 +43,11 @@ bool Parser::_parse_decl_enum()
 {
 	if (just_test())
 	{
-		return cmp_lex_tok(Tok::KwEnum);
+		return _check_prefixed_tok_seq<NodeEnum>();
 	}
 	else // if (!just_test())
 	{
-		_next_tok();
+		_next_lss_tokens();
 	}
 	return true;
 }
@@ -54,7 +55,7 @@ bool Parser::_parse_decl_class()
 {
 	if (just_test())
 	{
-		return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
+		//return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
 	}
 	else // if (!just_test())
 	{

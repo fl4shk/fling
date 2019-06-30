@@ -6,6 +6,8 @@
 #include "misc_includes.hpp"
 #include "lexer_class.hpp"
 #include "err_warn_base_class.hpp"
+#include "ast_node_classes.hpp"
+#include "parser_base_class.hpp"
 
 namespace frost_hdl
 {
@@ -16,7 +18,7 @@ public:		// types
 	using Base = ParserBase<Lexer>;
 
 private:		// variables
-	ast::NodeBase _ast;
+	unique_ptr<ast::NodeBase> _ast;
 
 public:		// functions
 	Parser(std::vector<string>&& s_filename_vec);
@@ -25,17 +27,21 @@ public:		// functions
 
 private:		// functions
 	inline std::string _msg_for_expect(TokType tok,
-		const LexerState* lex_state=nullptr) const
+		const LexerState& lex_state) const
 	{
 		return Base::_msg_for_expect(tok, tok_ident_map, lex_state);
 	}
-	inline void _expect(TokType tok, const LexerState* lex_state=nullptr)
+	inline void _expect(TokType tok, const LexerState& lex_state)
 	{
 		Base::_expect(tok, tok_ident_map, lex_state);
 	}
-	inline void _unexpected(const LexerState* lex_state=nullptr)
+	inline void _unexpected(const LexerState& lex_state)
 	{
 		Base::_unexpected(tok_ident_map, lex_state);
+	}
+	inline void _unexpected(Lexer* lexer)
+	{
+		Base::_unexpected(tok_ident_map, lexer);
 	}
 	inline bool _to_next_in_list(TokType end, TokType separator=Tok::Comma)
 	{

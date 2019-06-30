@@ -33,6 +33,7 @@
 	X(KwTask, "task") \
 	X(KwVirtual, "virtual") \
 	X(KwStatic, "static") \
+	X(KwProcess, "process") \
 	\
 	X(KwPublic, "public") \
 	X(KwProtected, "protected") \
@@ -42,6 +43,7 @@
 	X(KwPackage, "package") \
 	X(KwModule, "module") \
 	X(KwInterface, "interface") \
+	X(KwInstance, "instance") \
 	\
 	X(KwInput, "input") \
 	X(KwOutput, "output") \

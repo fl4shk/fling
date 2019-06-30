@@ -14,20 +14,36 @@ namespace frost_hdl
 
 namespace ast
 {
+
+#define GEN_ACCEPT \
+	virtual void accept(Visitor& visitor)
+
+#define BLANK_TOK_PREFIX_SET(some_end_tok) \
+public:		/* constants */ \
+	static const inline auto tok_prefix_set = TokSet(); \
+	static const inline auto end_tok = some_end_tok
+#define TOK_PREFIX_SET(args, some_end_tok) \
+public:		/* constants */ \
+	static const inline auto tok_prefix_set = TokSet(args); \
+	static const inline auto end_tok = some_end_tok
+
+
 class Visitor;
 
 class NodeBase
 {
 public:		// types
-	typedef std::set<Tok> TokSet;
+	using TokSet = std::set<Tok>;
+	using Children = std::map<string, std::vector<unique_ptr<NodeBase>>>;
 
 protected:		// variables
-	//string _s;
-	//ExprNum _n;
 	SrcCodeChunk _src_code_chunk;
-	CircLinkedList<unique_ptr<NodeBase>> _children;
+	Children _children;
 
 public:		// functions
+	inline NodeBase()
+	{
+	}
 	inline NodeBase(const SrcCodeChunk& s_src_code_chunk)
 		: _src_code_chunk(s_src_code_chunk)
 	{
@@ -35,26 +51,215 @@ public:		// functions
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBase);
 	virtual ~NodeBase() = default;
 
-	virtual inline void accept(Visitor& visitor)
+	GEN_ACCEPT;
+
+	inline bool has(const string& ident) const
 	{
+		return (children().count(ident) != 0);
 	}
 
-	template<typename FirstType, typename... RemArgTypes>
-	inline void append_children(FirstType&& first_child,
-		RemArgTypes&&... rem_children)
+	//template<typename FirstType, typename... RemArgTypes>
+	//inline void append_children(ChildNode*& ret_node,
+	//	FirstType&& first_child, RemArgTypes&&... rem_children)
+	//{
+	//	ret_node = _children.push_back(unique_ptr<NodeBase>(new NodeBase
+	//		(move(first_child))));
+
+	//	if constexpr (sizeof...(rem_children) != 0)
+	//	{
+	//		append_children(rem_children...);
+	//	}
+	//}
+	inline const Children& children() const
 	{
-		_children.push_back(unique_ptr<NodeBase>(new NodeBase(std::move
-			(first_child))));
-		if constexpr (sizeof...(rem_children) != 0)
-		{
-			append_children(rem_children...);
-		}
+		return _children;
 	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
-	GEN_GETTER_BY_CON_REF(children)
+
+protected:		// variables
+	template<typename FirstType, typename... RemArgTypes>
+	inline void _add_indiv_children(const string& first_ident,
+		FirstType&& first_child, RemArgTypes&&... rem_children)
+	{
+		_insert_children_list(first_ident);
+		_children[first_ident].push_back(unique_ptr<NodeBase>(new NodeBase
+			(move(first_child))));
+		if constexpr (sizeof...(rem_children) != 0)
+		{
+			_add_indiv_children(rem_children...);
+		}
+	}
+	inline void _insert_children_list(const string& ident)
+	{
+		_children[ident] = std::vector<unique_ptr<NodeBase>>();
+	}
+	template<typename FirstType, typename... RemArgTypes>
+	inline void _append_children(const string& ident,
+		FirstType&& first_child, RemArgTypes&&... rem_children)
+	{
+		if (_children.count(ident) == 0)
+		{
+			_insert_children_list(ident);
+		}
+		_children[ident].push_back(unique_ptr<NodeBase>(new NodeBase
+			(move(first_child))));
+
+		if constexpr (sizeof...(rem_children) != 0)
+		{
+			_append_children(ident, rem_children...);
+		}
+	}
 };
 
+
+
+class NodeScopeBase : public NodeBase
+{
+public:		// functions
+	inline NodeScopeBase(const SrcCodeChunk& s_src_code_chunk)
+		: NodeBase(s_src_code_chunk)
+	{
+		_insert_children_list("scope");
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeScopeBase);
+	virtual ~NodeScopeBase() = default;
+
+	GEN_ACCEPT;
+
+	inline void append_child(NodeBase&& child)
+	{
+		_append_children("scope", move(child));
+	}
+};
+
+class NodePackage : public NodeBase
+{
+	BLANK_TOK_PREFIX_SET(Tok::KwPackage);
+
+public:		// functions
+	inline NodePackage(const SrcCodeChunk& s_src_code_chunk,
+		NodeBase&& s_ident, NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+		{
+			_add_indiv_children("ident", move(s_ident),
+				"scope", move(s_scope));
+		}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePackage);
+	virtual ~NodePackage() = default;
+
+	GEN_ACCEPT;
+
+};
+
+#define GEN_SCOPE(AstNodeScopeName) \
+class AstNodeScopeName : public NodeScopeBase \
+{ \
+public:		/* functions */ \
+	inline AstNodeScopeName(const SrcCodeChunk& s_src_code_chunk) \
+		: NodeScopeBase(s_src_code_chunk) \
+	{ \
+	} \
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeScopeName); \
+	virtual ~AstNodeScopeName() = default; \
+	\
+	GEN_ACCEPT; \
+};
+
+GEN_SCOPE(NodeScopePackage)
+
+class NodeModule : public NodeBase
+{
+	BLANK_TOK_PREFIX_SET(Tok::KwModule);
+
+public:		// functions
+	inline NodeModule(const SrcCodeChunk& s_src_code_chunk,
+		NodeBase&& s_ident, NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+		{
+			_add_indiv_children("ident", move(s_ident),
+				"scope", move(s_scope));
+		}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeModule);
+	virtual ~NodeModule() = default;
+
+	GEN_ACCEPT;
+};
+
+class NodeScopeModule : public NodeScopeBase
+{
+public:		// functions
+	inline NodeScopeModule(const SrcCodeChunk& s_src_code_chunk)
+		: NodeScopeBase(s_src_code_chunk)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeScopeModule);
+	virtual ~NodeScopeModule() = default;
+
+	GEN_ACCEPT;
+};
+
+class NodeEnum : public NodeBase
+{
+	BLANK_TOK_PREFIX_SET(Tok::KwEnum);
+
+public:		// functions
+	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
+		NodeBase&& s_ident, NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+	{
+		_add_indiv_children("ident", move(s_ident),
+			"scope", move(s_scope));
+	}
+	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
+		NodeBase&& s_type_name, NodeBase&& s_ident, NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+	{
+		_add_indiv_children("type_name", move(s_type_name),
+			"ident", move(s_ident),
+			"scope", move(s_scope));
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeEnum);
+	virtual ~NodeEnum() = default;
+
+	GEN_ACCEPT;
+};
+
+class NodeClass : public NodeBase
+{
+	TOK_PREFIX_SET({Tok::KwPacked}, Tok::KwClass);
+
+private:		// variables
+	bool _packed = false;
+
+public:		// functions
+	inline NodeClass(const SrcCodeChunk& s_src_code_chunk,
+		bool s_packed, NodeBase&& s_ident, NodeBase&& s_scope)
+		: NodeBase(s_src_code_chunk)
+	{
+		_packed = s_packed;
+		_add_indiv_children("ident", move(s_ident),
+			"scope", move(s_scope));
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeClass);
+	virtual ~NodeClass() = default;
+
+	GEN_ACCEPT;
+};
+
+
+class NodeScopeClass : public NodeScopeBase
+{
+public:		// functions
+	inline NodeScopeClass(const SrcCodeChunk& s_src_code_chunk)
+		: NodeScopeBase(s_src_code_chunk)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeScopeClass);
+	virtual ~NodeScopeClass() = default;
+
+	GEN_ACCEPT;
+};
 
 class NodeExprBase : public NodeBase
 {
@@ -69,6 +274,8 @@ public:		// functions
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeExprBase);
 	virtual ~NodeExprBase() = default;
 
+	GEN_ACCEPT;
+
 	GEN_GETTER_AND_SETTER_BY_CON_REF(n)
 };
 
@@ -79,94 +286,35 @@ public:		// functions
 		NodeBase&& s_right)
 		: NodeExprBase(s_src_code_chunk)
 	{
-		append_children(std::move(s_left), std::move(s_right));
+		_add_indiv_children("left", move(s_left),
+			"right", move(s_right));
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBinopBase);
 	virtual ~NodeBinopBase() = default;
 
-	inline auto left()
-	{
-		return _children.front();
-	}
-	inline auto right()
-	{
-		return _children.back();
-	}
+	GEN_ACCEPT;
 };
 
 class NodeUnopBase : public NodeExprBase
 {
-private:		// variables
-	//using NodeIterator = typename _children.NodeIterator;
-
 public:		// functions
 	inline NodeUnopBase(const SrcCodeChunk& s_src_code_chunk,
 		NodeBase&& s_only_child)
 		: NodeExprBase(s_src_code_chunk)
 	{
-		append_children(std::move(s_only_child));
+		_add_indiv_children("only_child", move(s_only_child));
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeUnopBase);
 	virtual ~NodeUnopBase() = default;
 
-	inline auto only_child()
-	{
-		return _children.front();
-	}
+	GEN_ACCEPT;
 };
 
 
-class NodePackage : public NodeBase
-{
-public:		// constants
-	static const inline TokSet tok_prefix_set = TokSet();
-	static const inline Tok end_tok = Tok::KwPackage;
-
-public:		// functions
-	NodePackage(const SrcCodeChunk& s_src_code_chunk, NodeBase&& s_ident,
-		NodeBase&& s_scope)
-		: NodeBase(s_src_code_chunk)
-		{
-			append_children(std::move(s_ident), std::move(s_scope));
-		}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePackage);
-	virtual ~NodePackage() = default;
-
-	inline auto ident()
-	{
-		return _children.front();
-	}
-	inline auto scope()
-	{
-		return _children.back();
-	}
-};
-
-class NodeModule : public NodeBase
-{
-public:		// constants
-	static const inline TokSet tok_prefix_set = TokSet();
-	static const inline Tok end_tok = Tok::KwModule;
-
-public:		// functions
-	NodeModule(const SrcCodeChunk& s_src_code_chunk, NodeBase&& s_ident,
-		NodeBase&& s_scope)
-		: NodeBase(s_src_code_chunk)
-		{
-			append_children(std::move(s_ident), std::move(s_scope));
-		}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeModule);
-	virtual ~NodeModule() = default;
-
-	inline auto ident()
-	{
-		return _children.front();
-	}
-	inline auto scope()
-	{
-		return _children.back();
-	}
-};
+#undef GEN_ACCEPT
+#undef BLANK_TOK_PREFIX_SET
+#undef TOK_PREFIX_SET
+#undef GEN_SCOPE
 
 } // namespace ast
 

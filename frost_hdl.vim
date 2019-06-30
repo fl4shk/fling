@@ -20,13 +20,13 @@ syn keyword frost_hdl_keyword		typeof
 syn keyword frost_hdl_keyword		class self union enum using
 syn keyword frost_hdl_keyword		public protected private extends
 syn keyword frost_hdl_keyword		packed
-syn keyword frost_hdl_keyword		func task return virtual static
-syn keyword frost_hdl_keyword		package module interface
+syn keyword frost_hdl_keyword		func task return virtual static process
+syn keyword frost_hdl_keyword		package module interface inst
 syn keyword frost_hdl_keyword		input output inout
 syn keyword frost_hdl_keyword		if else switch switchz case default 
 syn keyword frost_hdl_keyword		for while do range
 syn keyword frost_hdl_keyword		assign initial
-syn keyword frost_hdl_keyword		always_comb always_seq always_ff
+syn keyword frost_hdl_keyword		always_comb always_blk always_ff
 syn keyword frost_hdl_keyword		assert assume cover
 syn keyword frost_hdl_keyword		static_assert
 syn keyword frost_hdl_keyword		posedge negedge

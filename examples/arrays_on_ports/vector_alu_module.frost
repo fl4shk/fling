@@ -87,7 +87,7 @@ module Alu
 		= cat(i_a, i_b, i_carry, i_opcode);
 	assign cat(o_data, o_carry) = cat(ports.out.data, ports.out.carry);
 	//Alu alu(.ports(ports));
-	Alu alu(.ports);
+	inst Alu alu(.ports);
 }
 
 module Alu
@@ -133,10 +133,14 @@ module VectorAlu
 	// from outside without it.
 	generate for (i : range(ARR_SIZE))
 	{
-		Alu
+		inst Alu
 		#(
 			.WIDTH(ALU_WIDTH)
 		)
+
+		// This identifier is optional because it is totally unnecessary in
+		// most cases.  Of course, a name is required in the generated
+		// Verilog.
 		alu
 		(
 			.i_a(i_a_arr[i]), .i_b(i_b_arr[i]),
@@ -157,7 +161,7 @@ module VectorAlu
 	//generate lab for (i : ports_arr$range)
 	generate lab for (ports : ports_arr)
 	{
-		//Alu alu(.ports(ports_arr[i]));
-		Alu alu(.ports(ports));
+		//inst Alu alu(.ports(ports_arr[i]));
+		inst Alu alu(.ports(ports));
 	}
 }

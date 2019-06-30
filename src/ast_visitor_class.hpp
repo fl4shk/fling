@@ -13,6 +13,8 @@ namespace frost_hdl
 namespace ast
 {
 
+#include "list_of_ast_node_classes_define.hpp"
+
 // Base class for a visitor of the abstract syntax tree
 class Visitor
 {
@@ -20,8 +22,14 @@ public:		// functions
 	Visitor();
 	virtual ~Visitor();
 
-	//virtual void visit_plus(NodePlus* node) = 0;
+	#define GEN_VISIT(AstNodeType) \
+		virtual void visit##AstNodeType(AstNodeType& node) = 0;
+	LIST_OF_AST_NODE_CLASSES(GEN_VISIT)
+	#undef GEN_VISIT
+
 };
+
+#undef LIST_OF_AST_NODE_CLASSES
 
 } // namespace ast
 

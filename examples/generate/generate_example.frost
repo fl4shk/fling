@@ -1,0 +1,43 @@
+module GenerateExample
+[
+	// This scope is externally visible without having an instance and is
+	// very similar to a package.  It does not permit creation of
+	// variables, but it does permit creation of new types, constants,
+	// functions, and tasks.  Packages can nest, however.  These can't.
+	// Also, this scope is referred to as a module prolog.  It is defined
+	// by the parameter list.
+	using DataInout = bitu [WIDTH];
+	class PortIn
+	{
+		DataInout a[ARR_SIZE], b[ARR_SIZE];
+	};
+	class PortOut
+	{
+		DataInout data[ARR_SIZE];
+	};
+]
+#(
+	const intu WIDTH, ARR_SIZE
+)
+(
+	input PortIn in,
+	output PortOut out
+)
+{
+	generate lab_0 for (i : range(ARR_SIZE))
+	{
+		// Dependency scanning is going to be a must.
+		assign out.data[i] = lab_1[i].f(in.a[i], in.b[i]);
+	}
+
+	// `i` is automatically an integer `genvar` of whatever smallest size
+	// it needs to be to contain `ARR_SIZE - 1`.
+	generate lab_1 for (i : range(ARR_SIZE))
+	{
+		func DataInout f(input DataInout a, b)
+		{
+			// `i` becomes a constant at runtime.
+			return (a + b) * i;
+		}
+	}
+}
