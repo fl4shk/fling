@@ -7,7 +7,6 @@
 #include "lexer_class.hpp"
 #include "err_warn_base_class.hpp"
 #include "ast_node_classes.hpp"
-#include "parser_base_class.hpp"
 
 namespace frost_hdl
 {
