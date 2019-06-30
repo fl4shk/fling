@@ -1,7 +1,7 @@
 package PkgAlu
 {
 	//--------
-	func DataInout add #(type DataInout)(input DataInout a, b)
+	func DataInout add [type DataInout](input DataInout a, b)
 	{
 		return a + b;
 	}
@@ -11,7 +11,7 @@ package PkgAlu
 	// If you call `add(intu, a, b)` where `a` and `b` are both of type
 	// `intu`, this `func`tion will NOT be called, and instead the first
 	// one will be.
-	func DataOut add #(type DataOut)(input auto a, input auto b)
+	func DataOut add[type DataOut](input auto a, input auto b)
 	{
 		return a + b;
 	}

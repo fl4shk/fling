@@ -31,9 +31,9 @@
 	\
 	X(KwFunc, "func") \
 	X(KwTask, "task") \
+	X(KwProc, "proc") \
 	X(KwVirtual, "virtual") \
 	X(KwStatic, "static") \
-	X(KwProc, "proc") \
 	\
 	X(KwPublic, "public") \
 	X(KwProtected, "protected") \
@@ -42,12 +42,11 @@
 	\
 	X(KwPackage, "package") \
 	X(KwModule, "module") \
-	X(KwInterface, "interface") \
-	X(KwInstance, "instance") \
+	X(KwInst, "inst") \
 	\
 	X(KwInput, "input") \
 	X(KwOutput, "output") \
-	X(KwInout, "inout") \
+	X(KwBidir, "bidir") \
 	\
 	X(KwIf, "if") \
 	X(KwElse, "else") \

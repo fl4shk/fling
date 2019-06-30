@@ -1,12 +1,11 @@
-module GenerateExample
-[
-	// This scope is externally visible without having an instance and is
-	// very similar to a package.  It does not permit creation of
-	// variables, but it does permit creation of new types, constants,
-	// functions, and tasks.  Packages can nest, however.  These can't.
-	// Also, this scope is referred to as a module prolog.  It is defined
-	// by the parameter list.
-	using DataInout = bitu [WIDTH];
+module GenerateExample[intu WIDTH, ARR_SIZE]
+(
+	input PortIn in,
+	output PortOut out,
+)
+{
+	//--------
+	using DataInout = bitu[WIDTH];
 	class PortIn
 	{
 		DataInout a[ARR_SIZE], b[ARR_SIZE];
@@ -15,15 +14,9 @@ module GenerateExample
 	{
 		DataInout data[ARR_SIZE];
 	};
-]
-#(
-	const intu WIDTH, ARR_SIZE
-)
-(
-	input PortIn in,
-	output PortOut out
-)
-{
+	//--------
+
+	//--------
 	generate lab_0 for (i : range(ARR_SIZE))
 	{
 		// Dependency scanning is going to be a must.
@@ -40,4 +33,5 @@ module GenerateExample
 			return (a + b) * i;
 		}
 	}
+	//--------
 }

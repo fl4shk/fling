@@ -1,16 +1,26 @@
 package PkgAlu
 {
-	module Adder(type DataInout,
-		input DataInout i_a, i_b,
-		output DataInout o_sum)
+	module Adder
+	(
+		type DataInout,
+		input
+			DataInout i_a, i_b,
+		output
+			DataInout o_sum
+	)
 	{
 		assign o_sum = i_a + i_b;
 	}
 
 	// This version of the `module` 
-	module Adder(type DataOut,
-		input any i_a, i_b,
-		output DataInout o_sum)
+	module Adder
+	(
+		type DataOut,
+		input
+			auto i_a, i_b,
+		output
+			DataInout o_sum,
+	)
 	{
 		assign o_sum = i_a + i_b;
 	}

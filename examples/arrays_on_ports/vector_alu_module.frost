@@ -16,28 +16,29 @@ package PkgAlu
 		Nor,
 	};
 
-	class AluPorts#(const intu WIDTH)
-		//extends AluPorts#(.WIDTH(WIDTH))
+	class Bus[intu WIDTH]
+		//extends AluPorts[.WIDTH(WIDTH)]
 	{
-		using DataInout = bitu [WIDTH];
-		//using DataInout = bitu [WIDTH - 1:0];
+		using DataInout = bitu[WIDTH];
+		//using DataInout = bitu[WIDTH - 1:0];
 
-		class PortIn
+		packed class BusIn
 		{
-			DataInout a, b;
 			bitu carry;
+			DataInout a, b;
 			Opcode opcode;
 		} in;
 
-		class PortOut
+		packed class BusOut
 		{
-			DataInout data;
 			bitu carry;
+			DataInout data;
 		} out;
 
 		// Function object
-		// Operator overloading syntax is similar to that of VHDL.
-		const func bitu [WIDTH + 1] "()" ()
+		// Operator overloading syntax is similar to that of VHDL, so that
+		// means that "()" is the operator being overloaded.
+		const func BusOut "()" ()
 		{
 			using Opcode;
 
@@ -63,87 +64,102 @@ package PkgAlu
 			}
 		}
 
-		process compute()
+		// These are processes
+		proc compute()
 		{
-			assign cat(out.carry, out.data) = self();
+			assign out = self();
+		}
+
+		proc to_extern
+		(
+			input
+				bitu i_carry,
+				DataInout i_a, i_b,
+				Opcode i_opcode,
+
+			output
+				bitu o_carry,
+				DataInout o_data,
+		)
+		{
+			// How this will be compiled is as follows.
+			// `input` ports cannot be written to.
+			// `output` ports can be read from and written to.
+			// `bidir` ports can be read from and written to.
+			// The semantics are identical to `module` ports, but in the
+			// generated Verilog, everything will be inlined without
+			// creation of any new `module`s.
+			// Recursion is possible, but must have a depth that is
+			// identified at compile time.
+			// There are not really any other constraints.
+			assign in = cat(i_carry, i_a, i_b, i_opcode);
+			assign cat(o_carry, o_data) = out;
 		}
 	};
 }
 
-module Alu
-[
+module Alu[intu WIDTH]
+(
+	input
+		bitu i_carry,
+		bitu[WIDTH] i_a, i_b,
+		Opcode i_opcode,
+
+	output
+		bitu o_carry,
+		bitu[WIDTH] o_data,
+)
+{
 	using PkgAlu;
-]
-#(
-	const intu WIDTH
-)
-(
-	input bitu [WIDTH] i_a, i_b,
-	input bitu i_carry,
-	input Opcode i_opcode,
+	Bus[.WIDTH] bus;
 
-	output bitu [WIDTH] o_data,
-	output bitu o_carry,
-)
-{
-	AluPorts#(.WIDTH) ports;
+	bus.to_extern(.i_carry, .i_a, .i_b, .i_opcode,
+		.o_carry, .o_data);
 
-	assign cat(ports.in.a, ports.in.b, ports.in.carry, ports.in.opcode)
-		= cat(i_a, i_b, i_carry, i_opcode);
-
-	assign cat(o_data, o_carry) = cat(ports.out.data, ports.out.carry);
-
-	inst Alu alu(.ports);
+	inst Alu(.bus);
+	// Alternatively, one can do this to get the same result:
+	// bus.compute();
 }
 
-module Alu
-#(
-	const intu WIDTH
-)
+module Alu[intu WIDTH]
 (
-	inout PkgAlu::AluPorts#(.WIDTH) ports,
+	bidir PkgAlu::Bus[.WIDTH] bus,
 )
 {
-	//assign cat(ports.out.carry, ports.out.data) = ports();
-	ports.compute();
+	bus.compute();
 }
 
 module Alu
 (
-	// This syntax means that the `class` placed on the ports of an
+	// This syntax means that the `class` placed on the bus of an
 	// instance of this `Alu` can be determined by the instantiation of
 	// this `Alu`.
-	inout PkgAlu::AluPorts#() ports
+	bidir PkgAlu::Bus[] bus,
 )
 {
-	assign cat(ports.out.carry, ports.out.data) = ports();
+	//assign cat(bus.out.carry, bus.out.data) = bus();
+	bus.compute();
 }
 
-module VectorAlu
-[
-	using DataInout = bitu [ALU_WIDTH];
-]
-#(
-	const intu ALU_WIDTH, ARR_SIZE,
-)
+module VectorAlu[intu ALU_WIDTH, ARR_SIZE]
 (
-	input DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
-	input bitu i_carry_arr[ARR_SIZE],
-	input PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
+	input
+		DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
+		bitu i_carry_arr[ARR_SIZE],
+		PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
 
-	output DataInout o_data_arr[ARR_SIZE],
-	output bitu o_carry_arr[ARR_SIZE],
+	output
+		DataInout o_data_arr[ARR_SIZE],
+		bitu o_carry_arr[ARR_SIZE],
 )
 {
+	using DataInout = bitu[ALU_WIDTH];
 	//generate lab for (i : ports_arr$range)
 	// The label is optional, but you won't be able to access the insides
 	// from outside without it.
 	generate for (i : range(ARR_SIZE))
 	{
-		inst Alu
-		#(
-			.WIDTH(ALU_WIDTH)
-		)
+		inst Alu[.WIDTH(ALU_WIDTH)]
 
 		// This identifier is optional because it is totally unnecessary in
 		// most cases.  Of course, a name is required in the generated
@@ -162,13 +178,13 @@ module VectorAlu
 
 module VectorAlu
 (
-	inout PkgAlu::AluPorts#() ports_arr[],
+	bidir PkgAlu::Bus[] bus_arr[],
 )
 {
-	//generate lab for (i : ports_arr$range)
-	generate lab for (ports : ports_arr)
+	//generate lab for (i : bus_arr$range)
+	generate lab for (bus : bus_arr)
 	{
-		//inst Alu alu(.ports(ports_arr[i]));
-		inst Alu alu(.ports(ports));
+		//inst Alu alu(.bus(bus_arr[i]));
+		inst Alu(.bus(bus));
 	}
 }
