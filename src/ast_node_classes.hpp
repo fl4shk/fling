@@ -112,15 +112,13 @@ protected:		// variables
 	}
 };
 
-
-
 class NodeScopeBase : public NodeBase
 {
 public:		// functions
 	inline NodeScopeBase(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
-		_insert_children_list("scope");
+		_insert_children_list("list");
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeScopeBase);
 	virtual ~NodeScopeBase() = default;
@@ -129,7 +127,7 @@ public:		// functions
 
 	inline void append_child(NodeBase&& child)
 	{
-		_append_children("scope", move(child));
+		_append_children("list", move(child));
 	}
 };
 
@@ -186,18 +184,7 @@ public:		// functions
 	GEN_ACCEPT;
 };
 
-class NodeScopeModule : public NodeScopeBase
-{
-public:		// functions
-	inline NodeScopeModule(const SrcCodeChunk& s_src_code_chunk)
-		: NodeScopeBase(s_src_code_chunk)
-	{
-	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeScopeModule);
-	virtual ~NodeScopeModule() = default;
-
-	GEN_ACCEPT;
-};
+GEN_SCOPE(NodeScopeModule)
 
 class NodeEnum : public NodeBase
 {
@@ -212,10 +199,10 @@ public:		// functions
 			"scope", move(s_scope));
 	}
 	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
-		NodeBase&& s_type_name, NodeBase&& s_ident, NodeBase&& s_scope)
+		NodeBase&& s_typename, NodeBase&& s_ident, NodeBase&& s_scope)
 		: NodeBase(s_src_code_chunk)
 	{
-		_add_indiv_children("type_name", move(s_type_name),
+		_add_indiv_children("typename", move(s_typename),
 			"ident", move(s_ident),
 			"scope", move(s_scope));
 	}
@@ -224,6 +211,8 @@ public:		// functions
 
 	GEN_ACCEPT;
 };
+
+GEN_SCOPE(NodeScopeEnum)
 
 class NodeClass : public NodeBase
 {
@@ -247,24 +236,12 @@ public:		// functions
 	GEN_ACCEPT;
 };
 
-
-class NodeScopeClass : public NodeScopeBase
-{
-public:		// functions
-	inline NodeScopeClass(const SrcCodeChunk& s_src_code_chunk)
-		: NodeScopeBase(s_src_code_chunk)
-	{
-	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeScopeClass);
-	virtual ~NodeScopeClass() = default;
-
-	GEN_ACCEPT;
-};
+GEN_SCOPE(NodeScopeClass)
 
 class NodeExprBase : public NodeBase
 {
-protected:		// variables
-	ExprValue _n;
+public:		// variables
+	ExprValue value;
 
 public:		// functions
 	inline NodeExprBase(const SrcCodeChunk& s_src_code_chunk)
@@ -275,8 +252,6 @@ public:		// functions
 	virtual ~NodeExprBase() = default;
 
 	GEN_ACCEPT;
-
-	GEN_GETTER_AND_SETTER_BY_CON_REF(n)
 };
 
 class NodeBinopBase : public NodeExprBase
@@ -299,10 +274,10 @@ class NodeUnopBase : public NodeExprBase
 {
 public:		// functions
 	inline NodeUnopBase(const SrcCodeChunk& s_src_code_chunk,
-		NodeBase&& s_only_child)
+		NodeBase&& s_child)
 		: NodeExprBase(s_src_code_chunk)
 	{
-		_add_indiv_children("only_child", move(s_only_child));
+		_add_indiv_children("child", move(s_child));
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeUnopBase);
 	virtual ~NodeUnopBase() = default;

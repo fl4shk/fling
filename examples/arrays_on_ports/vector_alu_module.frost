@@ -22,14 +22,14 @@ package PkgAlu
 		using DataInout = bitu [WIDTH];
 		//using DataInout = bitu [WIDTH - 1:0];
 
-		class In
+		class PortIn
 		{
 			DataInout a, b;
 			bitu carry;
 			Opcode opcode;
 		} in;
 
-		class Out
+		class PortOut
 		{
 			DataInout data;
 			bitu carry;
@@ -61,6 +61,11 @@ package PkgAlu
 			case Nor:
 				return cat(1'0b0, ~(in.a | in.b));
 			}
+		}
+
+		process compute()
+		{
+			assign cat(out.carry, out.data) = self();
 		}
 	};
 }
@@ -98,7 +103,8 @@ module Alu
 	inout PkgAlu::AluPorts#(.WIDTH) ports,
 )
 {
-	assign cat(ports.out.carry, ports.out.data) = ports();
+	//assign cat(ports.out.carry, ports.out.data) = ports();
+	ports.compute();
 }
 
 module Alu

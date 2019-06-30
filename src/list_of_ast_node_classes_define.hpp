@@ -7,9 +7,11 @@
 	X(NodeBase) \
 	X(NodeScopeBase) \
 	X(NodePackage) \
+	X(NodeScopePackage) \
 	X(NodeModule) \
 	X(NodeScopeModule) \
 	X(NodeEnum) \
+	X(NodeScopeEnum) \
 	X(NodeClass) \
 	X(NodeScopeClass) \
 	X(NodeExprBase) \
