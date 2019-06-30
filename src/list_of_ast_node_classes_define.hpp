@@ -14,6 +14,7 @@
 	X(NodeScopeEnum) \
 	X(NodeClass) \
 	X(NodeScopeClass) \
+	X(NodeClassExtras) \
 	X(NodeExprBase) \
 	X(NodeBinopBase) \
 	X(NodeUnopBase) \

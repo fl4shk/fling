@@ -125,8 +125,28 @@ bool Parser::_parse_decl_task()
 	}
 	return true;
 }
+bool Parser::_parse_decl_member_proc()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
+bool Parser::_parse_decl_proc()
+{
+	if (just_test())
+	{
+	}
+	else // if (!just_test())
+	{
+	}
+	return true;
+}
 
-bool Parser::_parse_module_prolog()
+bool Parser::_parse_param_list()
 {
 	if (just_test())
 	{
@@ -136,17 +156,7 @@ bool Parser::_parse_module_prolog()
 	}
 	return true;
 }
-bool Parser::_parse_list_param()
-{
-	if (just_test())
-	{
-	}
-	else // if (!just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_list_port()
+bool Parser::_parse_port_list()
 {
 	if (just_test())
 	{
