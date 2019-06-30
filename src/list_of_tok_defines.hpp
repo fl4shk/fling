@@ -33,7 +33,7 @@
 	X(KwTask, "task") \
 	X(KwVirtual, "virtual") \
 	X(KwStatic, "static") \
-	X(KwProcess, "process") \
+	X(KwProc, "proc") \
 	\
 	X(KwPublic, "public") \
 	X(KwProtected, "protected") \

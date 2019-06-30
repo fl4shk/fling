@@ -6,7 +6,7 @@ package PkgAlu
 	enum Opcode
 	{
 		Add,
-		Adc
+		Adc,
 		Sub,
 		Sbc,
 
@@ -86,12 +86,13 @@ module Alu
 	output bitu o_carry,
 )
 {
-	//AluPorts ports(.WIDTH(WIDTH));
 	AluPorts#(.WIDTH) ports;
+
 	assign cat(ports.in.a, ports.in.b, ports.in.carry, ports.in.opcode)
 		= cat(i_a, i_b, i_carry, i_opcode);
+
 	assign cat(o_data, o_carry) = cat(ports.out.data, ports.out.carry);
-	//Alu alu(.ports(ports));
+
 	inst Alu alu(.ports);
 }
 
