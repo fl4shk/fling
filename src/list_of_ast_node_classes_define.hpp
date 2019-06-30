@@ -5,16 +5,15 @@
 
 #define LIST_OF_AST_NODE_CLASSES(X) \
 	X(NodeBase) \
-	X(NodeScopeBase) \
+	X(NodeList) \
 	X(NodePackage) \
-	X(NodeScopePackage) \
 	X(NodeModule) \
-	X(NodeScopeModule) \
+	\
 	X(NodeEnum) \
-	X(NodeScopeEnum) \
+	\
 	X(NodeClass) \
-	X(NodeScopeClass) \
 	X(NodeClassExtras) \
+	\
 	X(NodeExprBase) \
 	X(NodeBinopBase) \
 	X(NodeUnopBase) \
