@@ -12,6 +12,7 @@
 	X(NodeOutputPortList) \
 	X(NodeBidirPortList) \
 	X(NodeSubParamList) \
+	X(NodeIdent) \
 	\
 	X(NodeEnum) \
 	\

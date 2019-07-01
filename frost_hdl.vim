@@ -34,9 +34,9 @@ syn keyword frost_hdl_keyword		generate genvar var
 syn keyword frost_hdl_keyword		cat repl
 
 
-syn keyword frost_hdl_builtin_type		wireu wires bitu bits
-syn keyword frost_hdl_builtin_type		byteu bytes shortintu shortints
-syn keyword frost_hdl_builtin_type		intu ints longintu longints
+syn keyword frost_hdl_builtin_type		uwire swire ubit sbit
+syn keyword frost_hdl_builtin_type		ubyte sbyte ushortint sshortint
+syn keyword frost_hdl_builtin_type		uint sint ulongint slongint
 syn keyword frost_hdl_builtin_type		void auto
 
 

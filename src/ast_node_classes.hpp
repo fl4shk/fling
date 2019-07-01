@@ -253,7 +253,7 @@ public:		// functions
 
 	GEN_ACCEPT;
 
-	GEN_GETTER_BY_CON_REF(s)
+	GEN_GETTER_AND_SETTER_BY_CON_REF(s)
 };
 
 

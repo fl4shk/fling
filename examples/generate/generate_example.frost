@@ -1,8 +1,8 @@
-module GenerateExample[intu WIDTH, ARR_SIZE]
+module GenerateExample[uint WIDTH, ARR_SIZE]
 	(input PortIn in, output PortOut out)
 {
 	//--------
-	using DataInout = bitu[WIDTH];
+	using DataInout = ubit[WIDTH];
 	class PortIn
 	{
 		DataInout a[ARR_SIZE], b[ARR_SIZE];

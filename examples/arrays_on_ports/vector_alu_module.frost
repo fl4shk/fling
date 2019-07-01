@@ -1,6 +1,6 @@
 package PkgAlu
 {
-	//enum bitu [3] Opcode
+	//enum ubit [3] Opcode
 	// This syntax indicates that this `enum` is as small as it can be
 	// while still fitting everything.
 	enum Opcode
@@ -18,22 +18,22 @@ package PkgAlu
 
 	// Classes define behavior, but not connections.  Modules are still
 	// necessary.  They are my answer to SystemVerilog's interfaces.
-	class Bus[intu WIDTH]
+	class Bus[uint WIDTH]
 		//extends AluPorts[.WIDTH(WIDTH)]
 	{
-		using DataInout = bitu[WIDTH];
-		//using DataInout = bitu[WIDTH - 1:0];
+		using DataInout = ubit[WIDTH];
+		//using DataInout = ubit[WIDTH - 1:0];
 
 		packed class BusIn
 		{
-			bitu carry;
+			ubit carry;
 			DataInout a, b;
 			Opcode opcode;
 		} in;
 
 		packed class BusOut
 		{
-			bitu carry;
+			ubit carry;
 			DataInout data;
 		} out;
 
@@ -75,12 +75,12 @@ package PkgAlu
 		proc to_extern
 		(
 			input
-				bitu i_carry,
+				ubit i_carry,
 				DataInout i_a, i_b,
 				Opcode i_opcode,
 
 			output
-				bitu o_carry,
+				ubit o_carry,
 				DataInout o_data,
 		)
 		{
@@ -100,22 +100,22 @@ package PkgAlu
 	};
 }
 
-module Alu[intu ALU_WIDTH]
+module Alu[uint ALU_WIDTH]
 (
 	input
-		bitu i_carry,
-		// Built-in types (`bitu`, `bits`, `wireu`, and `wires`) have a
+		ubit i_carry,
+		// Built-in types (`ubit`, `bits`, `wireu`, and `wires`) have a
 		// parameter defined for them already called `WIDTH` with a default
-		// value of `1` and type `intu`.  Other parameters of these types
+		// value of `1` and type `uint`.  Other parameters of these types
 		// include `HIGH` and `LOW` as well as `D_OR_A`, but they are not
 		// available to be set with the generics syntax.  Instead, use
 		// Verilog-style syntax.
-		bitu[.WIDTH(ALU_WIDTH)] i_a, i_b,
+		ubit[.WIDTH(ALU_WIDTH)] i_a, i_b,
 		Opcode i_opcode,
 
 	output
-		bitu o_carry,
-		bitu[ALU_WIDTH] o_data,
+		ubit o_carry,
+		ubit[ALU_WIDTH] o_data,
 )
 {
 	using PkgAlu;
@@ -129,7 +129,7 @@ module Alu[intu ALU_WIDTH]
 	// bus.compute();
 }
 
-module Alu[intu WIDTH](bidir PkgAlu::Bus[.WIDTH] bus)
+module Alu[uint WIDTH](bidir PkgAlu::Bus[.WIDTH] bus)
 {
 	bus.compute();
 }
@@ -146,19 +146,19 @@ module Alu
 	bus.compute();
 }
 
-module VectorAlu[intu ALU_WIDTH, ARR_SIZE]
+module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 (
 	input
 		DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
-		bitu i_carry_arr[ARR_SIZE],
+		ubit i_carry_arr[ARR_SIZE],
 		PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
 
 	output
 		DataInout o_data_arr[ARR_SIZE],
-		bitu o_carry_arr[ARR_SIZE],
+		ubit o_carry_arr[ARR_SIZE],
 )
 {
-	using DataInout = bitu[.WIDTH(ALU_WIDTH)];
+	using DataInout = ubit[.WIDTH(ALU_WIDTH)];
 	//generate lab for (i : ports_arr$range)
 	// The label is optional, but you won't be able to access the insides
 	// from outside without it.
