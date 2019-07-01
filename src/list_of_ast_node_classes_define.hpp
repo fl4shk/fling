@@ -8,14 +8,17 @@
 	X(NodeList) \
 	X(NodePackage) \
 	X(NodeModule) \
+	X(NodeInputPortList) \
+	X(NodeOutputPortList) \
+	X(NodeBidirPortList) \
+	X(NodeSubParamList) \
 	\
 	X(NodeEnum) \
 	\
 	X(NodeClass) \
-	X(NodeClassExtras) \
 	\
 	X(NodeExprBase) \
-	X(NodeBinopBase) \
-	X(NodeUnopBase) \
+	X(NodeExprBinopBase) \
+	X(NodeExprUnopBase) \
 
 //#endif		// src_list_of_ast_node_classes_define_hpp

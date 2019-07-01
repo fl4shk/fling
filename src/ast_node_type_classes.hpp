@@ -4,13 +4,6 @@ class NodeEnum : public NodeBase
 
 public:		// functions
 	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident, Child&& s_scope)
-		: NodeBase(s_src_code_chunk)
-	{
-		_add_indiv_children("ident", move(s_ident),
-			"scope", move(s_scope));
-	}
-	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_typename, Child&& s_ident, Child&& s_scope)
 		: NodeBase(s_src_code_chunk)
 	{
@@ -33,13 +26,14 @@ private:		// variables
 
 public:		// functions
 	inline NodeClass(const SrcCodeChunk& s_src_code_chunk,
-		bool s_packed, Child&& s_ident, Child&& s_class_extras,
-		Child&& s_scope)
+		bool s_packed, Child&& s_ident, Child&& s_param_list,
+		Child&& s_extends, Child&& s_scope)
 		: NodeBase(s_src_code_chunk)
 	{
 		_packed = s_packed;
 		_add_indiv_children("ident", move(s_ident),
-			"class_extras", move(s_class_extras),
+			"param_list", move(s_param_list),
+			"extends", move(s_extends),
 			"scope", move(s_scope));
 	}
 
@@ -49,36 +43,17 @@ public:		// functions
 	GEN_ACCEPT;
 };
 
-class NodeClassExtras : public NodeBase
+class NodePostTypenameIdent : public NodeList
 {
 public:		// functions
-	inline NodeClassExtras(const SrcCodeChunk& s_src_code_chunk)
-		: NodeBase(s_src_code_chunk)
+	inline NodePostTypenameIdent(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_ident)
+		: NodeList(s_src_code_chunk)
 	{
+		_add_indiv_children("ident", move(s_ident));
 	}
-	inline NodeClassExtras(const SrcCodeChunk& s_src_code_chunk,
-		const string& which, Child&& s_child)
-		: NodeBase(s_src_code_chunk)
-	{
-		//if (!which)
-		//{
-		//	_add_indiv_children("param_list", move(s_child));
-		//}
-		//else // if (which)
-		//{
-		//	_add_indiv_children("extends", move(s_child));
-		//}
-		_add_indiv_children(which, move(s_child));
-	}
-	inline NodeClassExtras(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_param_list, Child&& s_extends)
-		: NodeBase(s_src_code_chunk)
-	{
-		_add_indiv_children("param_list", move(s_param_list),
-			"extends", move(s_extends));
-	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeClassExtras);
-	virtual ~NodeClassExtras() = default;
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePostTypenameIdent);
+	virtual ~NodePostTypenameIdent() = default;
 
 	GEN_ACCEPT;
 };

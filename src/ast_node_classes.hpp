@@ -62,7 +62,9 @@ public:		// functions
 
 	inline bool has(const string& ident) const
 	{
-		return (children().count(ident) != 0);
+		//return ((children().count(ident) != 0)
+		//	&& (children().at(ident).front().get() != nullptr));
+		return (children().at(ident).front().get() != nullptr);
 	}
 
 	//template<typename FirstType, typename... RemArgTypes>
@@ -130,7 +132,7 @@ public:		// functions
 
 	GEN_ACCEPT;
 
-	inline void append_child(Child&& child)
+	inline void append_list_child(Child&& child)
 	{
 		_append_children("list", move(child));
 	}
@@ -152,7 +154,6 @@ public:		// functions
 	virtual ~NodePackage() = default;
 
 	GEN_ACCEPT;
-
 };
 
 
@@ -162,24 +163,97 @@ class NodeModule : public NodeBase
 
 public:		// functions
 	inline NodeModule(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident, Child&& s_scope)
-		: NodeBase(s_src_code_chunk)
-		{
-			_add_indiv_children("ident", move(s_ident),
-				"scope", move(s_scope));
-		}
-	inline NodeModule(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident, Child&& s_param_list, Child&& s_scope)
+		Child&& s_ident, Child&& s_param_list, Child&& s_port_list,
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk)
 		{
 			_add_indiv_children("ident", move(s_ident),
 				"param_list", move(s_param_list),
+				"port_list", move(s_port_list),
 				"scope", move(s_scope));
 		}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeModule);
 	virtual ~NodeModule() = default;
 
 	GEN_ACCEPT;
+};
+
+class NodeInputPortList : public NodeList
+{
+public:		// functions
+	inline NodeInputPortList(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_typename)
+		: NodeList(s_src_code_chunk)
+	{
+		_add_indiv_children("typename", move(s_typename));
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeInputPortList);
+	virtual ~NodeInputPortList() = default;
+
+	GEN_ACCEPT;
+};
+class NodeOutputPortList : public NodeList
+{
+public:		// functions
+	inline NodeOutputPortList(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_typename)
+		: NodeList(s_src_code_chunk)
+	{
+		_add_indiv_children("typename", move(s_typename));
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeOutputPortList);
+	virtual ~NodeOutputPortList() = default;
+
+	GEN_ACCEPT;
+};
+class NodeBidirPortList : public NodeList
+{
+public:		// functions
+	inline NodeBidirPortList(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_typename)
+		: NodeList(s_src_code_chunk)
+	{
+		_add_indiv_children("typename", move(s_typename));
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBidirPortList);
+	virtual ~NodeBidirPortList() = default;
+
+	GEN_ACCEPT;
+};
+
+class NodeSubParamList : public NodeList
+{
+public:		// functions
+	inline NodeSubParamList(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_primary)
+		: NodeList(s_src_code_chunk)
+	{
+		_add_indiv_children("primary", move(s_primary));
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeSubParamList);
+	virtual ~NodeSubParamList() = default;
+
+	GEN_ACCEPT;
+};
+
+
+class NodeIdent : public NodeBase
+{
+protected:		// variables
+	string _s;
+
+public:		// functions
+	inline NodeIdent(const SrcCodeChunk& s_src_code_chunk,
+		const string& s_s)
+		: NodeBase(s_src_code_chunk), _s(s_s)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeIdent);
+	virtual ~NodeIdent() = default;
+
+	GEN_ACCEPT;
+
+	GEN_GETTER_BY_CON_REF(s)
 };
 
 

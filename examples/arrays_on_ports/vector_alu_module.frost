@@ -16,6 +16,8 @@ package PkgAlu
 		Nor,
 	};
 
+	// Classes define behavior, but not connections.  Modules are still
+	// necessary.  They are my answer to SystemVerilog's interfaces.
 	class Bus[intu WIDTH]
 		//extends AluPorts[.WIDTH(WIDTH)]
 	{
@@ -36,7 +38,7 @@ package PkgAlu
 		} out;
 
 		// Function object
-		// Operator overloading syntax is similar to that of VHDL, so that
+		// Operator overloading syntax is similar to that of VHDL; that
 		// means that "()" is the operator being overloaded.
 		const func BusOut "()" ()
 		{
@@ -98,20 +100,26 @@ package PkgAlu
 	};
 }
 
-module Alu[intu WIDTH]
+module Alu[intu ALU_WIDTH]
 (
 	input
 		bitu i_carry,
-		bitu[WIDTH] i_a, i_b,
+		// Built-in types (`bitu`, `bits`, `wireu`, and `wires`) have a
+		// parameter defined for them already called `WIDTH` with a default
+		// value of `1` and type `intu`.  Other parameters of these types
+		// include `HIGH` and `LOW` as well as `D_OR_A`, but they are not
+		// available to be set with the generics syntax.  Instead, use
+		// Verilog-style syntax.
+		bitu[.WIDTH(ALU_WIDTH)] i_a, i_b,
 		Opcode i_opcode,
 
 	output
 		bitu o_carry,
-		bitu[WIDTH] o_data,
+		bitu[ALU_WIDTH] o_data,
 )
 {
 	using PkgAlu;
-	Bus[.WIDTH] bus;
+	Bus[.WIDTH(ALU_WIDTH)] bus;
 
 	bus.to_extern(.i_carry, .i_a, .i_b, .i_opcode,
 		.o_carry, .o_data);
@@ -121,10 +129,7 @@ module Alu[intu WIDTH]
 	// bus.compute();
 }
 
-module Alu[intu WIDTH]
-(
-	bidir PkgAlu::Bus[.WIDTH] bus,
-)
+module Alu[intu WIDTH](bidir PkgAlu::Bus[.WIDTH] bus)
 {
 	bus.compute();
 }
@@ -133,7 +138,7 @@ module Alu
 (
 	// This syntax means that the `class` placed on the bus of an
 	// instance of this `Alu` can be determined by the instantiation of
-	// this `Alu`.
+	// this `Alu`.  Note that this syntax can only be used with ports.
 	bidir PkgAlu::Bus[] bus,
 )
 {
@@ -153,7 +158,7 @@ module VectorAlu[intu ALU_WIDTH, ARR_SIZE]
 		bitu o_carry_arr[ARR_SIZE],
 )
 {
-	using DataInout = bitu[ALU_WIDTH];
+	using DataInout = bitu[.WIDTH(ALU_WIDTH)];
 	//generate lab for (i : ports_arr$range)
 	// The label is optional, but you won't be able to access the insides
 	// from outside without it.
@@ -176,10 +181,7 @@ module VectorAlu[intu ALU_WIDTH, ARR_SIZE]
 	}
 }
 
-module VectorAlu
-(
-	bidir PkgAlu::Bus[] bus_arr[],
-)
+module VectorAlu(bidir PkgAlu::Bus[] bus_arr[])
 {
 	//generate lab for (i : bus_arr$range)
 	generate lab for (bus : bus_arr)

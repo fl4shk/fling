@@ -1,8 +1,5 @@
 module GenerateExample[intu WIDTH, ARR_SIZE]
-(
-	input PortIn in,
-	output PortOut out,
-)
+	(input PortIn in, output PortOut out)
 {
 	//--------
 	using DataInout = bitu[WIDTH];
