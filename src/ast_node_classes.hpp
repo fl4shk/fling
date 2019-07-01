@@ -119,6 +119,20 @@ protected:		// variables
 	}
 };
 
+#define GEN_BASIC(AstNodeType) \
+class AstNodeType : public NodeBase \
+{ \
+public:		/* functions */ \
+	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk) \
+		: NodeBase(s_src_code_chunk) \
+	{ \
+	} \
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
+	virtual ~AstNodeType() = default; \
+	\
+	GEN_ACCEPT; \
+};
+
 class NodeList : public NodeBase
 {
 public:		// functions
@@ -136,6 +150,36 @@ public:		// functions
 	{
 		_append_children("list", move(child));
 	}
+};
+
+#define GEN_LIST_BASIC(AstNodeType) \
+class AstNodeType : public NodeList \
+{ \
+public:		/* functions */ \
+	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk) \
+		: NodeList(s_src_code_chunk) \
+	{ \
+	} \
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
+	virtual ~AstNodeType() = default; \
+	\
+	GEN_ACCEPT; \
+};
+
+#define GEN_LIST_W_ONE_C(AstNodeType, child) \
+class AstNodeType : public NodeList \
+{ \
+public:		/* functions */ \
+	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk, \
+		Child&& s_##child) \
+		: NodeList(s_src_code_chunk) \
+	{ \
+		_add_indiv_children(#child, move(s_##child)); \
+	} \
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
+	virtual ~AstNodeType() = default; \
+	\
+	GEN_ACCEPT; \
 };
 
 class NodePackage : public NodeBase
@@ -156,6 +200,7 @@ public:		// functions
 	GEN_ACCEPT;
 };
 
+GEN_LIST_BASIC(NodeScopePackage)
 
 class NodeModule : public NodeBase
 {
@@ -178,89 +223,110 @@ public:		// functions
 	GEN_ACCEPT;
 };
 
-class NodeInputPortList : public NodeList
+GEN_LIST_BASIC(NodeScopeModule)
+
+class NodeInputSubPortList : public NodeList
 {
 public:		// functions
-	inline NodeInputPortList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeInputSubPortList(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_typename)
 		: NodeList(s_src_code_chunk)
 	{
 		_add_indiv_children("typename", move(s_typename));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeInputPortList);
-	virtual ~NodeInputPortList() = default;
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeInputSubPortList);
+	virtual ~NodeInputSubPortList() = default;
 
 	GEN_ACCEPT;
 };
-class NodeOutputPortList : public NodeList
+class NodeOutputSubPortList : public NodeList
 {
 public:		// functions
-	inline NodeOutputPortList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeOutputSubPortList(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_typename)
 		: NodeList(s_src_code_chunk)
 	{
 		_add_indiv_children("typename", move(s_typename));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeOutputPortList);
-	virtual ~NodeOutputPortList() = default;
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeOutputSubPortList);
+	virtual ~NodeOutputSubPortList() = default;
 
 	GEN_ACCEPT;
 };
-class NodeBidirPortList : public NodeList
+class NodeBidirSubPortList : public NodeList
 {
 public:		// functions
-	inline NodeBidirPortList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBidirSubPortList(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_typename)
 		: NodeList(s_src_code_chunk)
 	{
 		_add_indiv_children("typename", move(s_typename));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBidirPortList);
-	virtual ~NodeBidirPortList() = default;
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBidirSubPortList);
+	virtual ~NodeBidirSubPortList() = default;
 
 	GEN_ACCEPT;
 };
 
-class NodeSubParamList : public NodeList
-{
-public:		// functions
-	inline NodeSubParamList(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_primary)
-		: NodeList(s_src_code_chunk)
-	{
-		_add_indiv_children("primary", move(s_primary));
-	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeSubParamList);
-	virtual ~NodeSubParamList() = default;
+GEN_LIST_W_ONE_C(NodeSubParamList, primary)
+GEN_LIST_W_ONE_C(NodePostTypenameIdent, ident)
 
-	GEN_ACCEPT;
-};
-
-
-class NodeIdent : public NodeBase
+class NodeHasString : public NodeBase
 {
 protected:		// variables
 	string _s;
 
 public:		// functions
-	inline NodeIdent(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeHasString(const SrcCodeChunk& s_src_code_chunk,
 		const string& s_s)
 		: NodeBase(s_src_code_chunk), _s(s_s)
 	{
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeIdent);
-	virtual ~NodeIdent() = default;
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeHasString);
+	virtual ~NodeHasString() = default;
 
 	GEN_ACCEPT;
 
 	GEN_GETTER_AND_SETTER_BY_CON_REF(s)
 };
 
+class NodeIdent : public NodeHasString
+{
+public:		// functions
+	inline NodeIdent(const SrcCodeChunk& s_src_code_chunk,
+		const string& s_s)
+		: NodeHasString(s_src_code_chunk, s_s)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeIdent);
+	virtual ~NodeIdent() = default;
+
+	GEN_ACCEPT;
+};
+
+class NodeConstString : public NodeHasString
+{
+public:		// functions
+	inline NodeConstString(const SrcCodeChunk& s_src_code_chunk,
+		const string& s_s)
+		: NodeHasString(s_src_code_chunk, s_s)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeConstString);
+	virtual ~NodeConstString() = default;
+
+	GEN_ACCEPT;
+};
+
+
 
 #include "ast_node_type_classes.hpp"
 #include "ast_node_expr_classes.hpp"
 
 #undef GEN_ACCEPT
+#undef GEN_BASIC
+#undef GEN_LIST_BASIC
+#undef GEN_LIST_W_ONE_C
 #undef BLANK_TOK_PREFIX_SET
 #undef TOK_PREFIX_SET
 

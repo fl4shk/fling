@@ -86,23 +86,23 @@
 	X(KwVoid, "void") \
 	X(KwAuto, "auto") \
 	\
-	X(KwWireu, "uwire") \
-	X(KwWires, "swire") \
+	X(KwUwire, "uwire") \
+	X(KwSwire, "swire") \
 	\
-	X(KwBitu, "ubit") \
-	X(KwBits, "sbit") \
+	X(KwUbit, "ubit") \
+	X(KwSbit, "sbit") \
 	\
-	X(KwByteu, "ubyte") \
-	X(KwBytes, "sbyte") \
+	X(KwUbyte, "ubyte") \
+	X(KwSbyte, "sbyte") \
 	\
-	X(KwShortintu, "ushortint") \
-	X(KwShortints, "sshortint") \
+	X(KwUshortint, "ushortint") \
+	X(KwSshortint, "sshortint") \
 	\
-	X(KwIntu, "uint") \
-	X(KwInts, "sint") \
+	X(KwUint, "uint") \
+	X(KwSint, "sint") \
 	\
-	X(KwLongintu, "ulongint") \
-	X(KwLongints, "slongint") \
+	X(KwUlongint, "ulongint") \
+	X(KwSlongint, "slongint") \
 
 #define LIST_OF_TOK(X) \
 /* Built in type expression tokens */ \

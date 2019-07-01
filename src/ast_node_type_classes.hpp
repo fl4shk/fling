@@ -17,11 +17,13 @@ public:		// functions
 	GEN_ACCEPT;
 };
 
+GEN_LIST_BASIC(NodeScopeEnum)
+
 class NodeClass : public NodeBase
 {
 	TOK_PREFIX_SET({Tok::KwPacked}, Tok::KwClass);
 
-private:		// variables
+protected:		// variables
 	bool _packed = false;
 
 public:		// functions
@@ -41,19 +43,8 @@ public:		// functions
 	virtual ~NodeClass() = default;
 
 	GEN_ACCEPT;
+	GEN_GETTER_BY_VAL(packed)
 };
 
-class NodePostTypenameIdent : public NodeList
-{
-public:		// functions
-	inline NodePostTypenameIdent(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident)
-		: NodeList(s_src_code_chunk)
-	{
-		_add_indiv_children("ident", move(s_ident));
-	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePostTypenameIdent);
-	virtual ~NodePostTypenameIdent() = default;
-
-	GEN_ACCEPT;
-};
+GEN_LIST_BASIC(NodeScopeClass)
+GEN_LIST_W_ONE_C(NodeTypename, param_inst_list)

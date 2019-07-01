@@ -19,7 +19,7 @@ package PkgAlu
 	// Classes define behavior, but not connections.  Modules are still
 	// necessary.  They are my answer to SystemVerilog's interfaces.
 	class Bus[uint WIDTH]
-		//extends AluPorts[.WIDTH(WIDTH)]
+		//extends AluPorts[WIDTH=WIDTH]
 	{
 		using DataInout = ubit[WIDTH];
 		//using DataInout = ubit[WIDTH - 1:0];
@@ -110,7 +110,7 @@ module Alu[uint ALU_WIDTH]
 		// include `HIGH` and `LOW` as well as `D_OR_A`, but they are not
 		// available to be set with the generics syntax.  Instead, use
 		// Verilog-style syntax.
-		ubit[.WIDTH(ALU_WIDTH)] i_a, i_b,
+		ubit[WIDTH=ALU_WIDTH] i_a, i_b,
 		Opcode i_opcode,
 
 	output
@@ -119,17 +119,17 @@ module Alu[uint ALU_WIDTH]
 )
 {
 	using PkgAlu;
-	Bus[.WIDTH(ALU_WIDTH)] bus;
+	Bus[WIDTH=ALU_WIDTH] bus;
 
 	bus.to_extern(.i_carry, .i_a, .i_b, .i_opcode,
 		.o_carry, .o_data);
 
-	inst Alu(.bus);
+	inst Alu(bus=bus);
 	// Alternatively, one can do this to get the same result:
 	// bus.compute();
 }
 
-module Alu[uint WIDTH](bidir PkgAlu::Bus[.WIDTH] bus)
+module Alu[uint WIDTH](bidir PkgAlu::Bus[WIDTH=WIDTH] bus)
 {
 	bus.compute();
 }
@@ -158,25 +158,25 @@ module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 		ubit o_carry_arr[ARR_SIZE],
 )
 {
-	using DataInout = ubit[.WIDTH(ALU_WIDTH)];
+	using DataInout = ubit[WIDTH=ALU_WIDTH];
 	//generate lab for (i : ports_arr$range)
 	// The label is optional, but you won't be able to access the insides
 	// from outside without it.
 	generate for (i : range(ARR_SIZE))
 	{
-		inst Alu[.WIDTH(ALU_WIDTH)]
+		inst Alu[WIDTH=ALU_WIDTH]
 
 		// This identifier is optional because it is totally unnecessary in
 		// most cases.  Of course, a name is required in the generated
 		// Verilog.
 		alu
 		(
-			.i_a(i_a_arr[i]), .i_b(i_b_arr[i]),
-			.i_carry(i_carry_arr[i]),
-			.i_opcode(i_opcode_arr[i]),
+			i_a=i_a_arr[i], i_b=i_b_arr[i],
+			i_carry=i_carry_arr[i],
+			i_opcodei_opcode_arr[i],
 
-			.o_data(o_data_arr[i]),
-			.o_carry(o_carry_arr[i]),
+			o_data=o_data_arr[i],
+			o_carry=o_carry_arr[i],
 		);
 	}
 }
@@ -186,7 +186,7 @@ module VectorAlu(bidir PkgAlu::Bus[] bus_arr[])
 	//generate lab for (i : bus_arr$range)
 	generate lab for (bus : bus_arr)
 	{
-		//inst Alu alu(.bus(bus_arr[i]));
-		inst Alu(.bus(bus));
+		//inst Alu alu(bus=bus_arr[i]);
+		inst Alu(bus=bus);
 	}
 }
