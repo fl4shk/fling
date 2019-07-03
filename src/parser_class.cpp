@@ -17,7 +17,8 @@ bool Parser::_parse_decl_package()
 {
 	if (just_test())
 	{
-		return _check_prefixed_tok_seq<NodePackage>();
+		//return _check_prefixed_tok_seq<NodePackage>();
+		return _check_prefixed_tok_seq(TokSet(), Tok::KwPackage);
 	}
 	else // if (!just_test())
 	{
@@ -30,7 +31,7 @@ bool Parser::_parse_decl_module()
 {
 	if (just_test())
 	{
-		return _check_prefixed_tok_seq<NodeModule>();
+		return _check_prefixed_tok_seq(TokSet(), Tok::KwModule);
 	}
 	else // if (!just_test())
 	{
@@ -43,7 +44,7 @@ bool Parser::_parse_decl_enum()
 {
 	if (just_test())
 	{
-		return _check_prefixed_tok_seq<NodeEnum>();
+		return _check_prefixed_tok_seq(TokSet(), Tok::KwEnum);
 	}
 	else // if (!just_test())
 	{
@@ -56,6 +57,7 @@ bool Parser::_parse_decl_class()
 	if (just_test())
 	{
 		//return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
+		return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
 	}
 	else // if (!just_test())
 	{

@@ -15,6 +15,7 @@ class Parser final : public ParserBase<Lexer>
 {
 public:		// types
 	using Base = ParserBase<Lexer>;
+	using TokSet = ast::NodeBase::TokSet;
 
 private:		// variables
 	unique_ptr<ast::NodeBase> _ast;
@@ -25,12 +26,12 @@ public:		// functions
 	~Parser();
 
 private:		// functions
-	inline std::string _msg_for_expect(TokType tok,
+	inline std::string _msg_for_expect(Tok tok,
 		const LexerState& lex_state) const
 	{
 		return Base::_msg_for_expect(tok, tok_ident_map, lex_state);
 	}
-	inline void _expect(TokType tok, const LexerState& lex_state)
+	inline void _expect(Tok tok, const LexerState& lex_state)
 	{
 		Base::_expect(tok, tok_ident_map, lex_state);
 	}
@@ -42,7 +43,7 @@ private:		// functions
 	{
 		Base::_unexpected(tok_ident_map, lexer);
 	}
-	inline bool _to_next_in_list(TokType end, TokType separator=Tok::Comma)
+	inline bool _to_next_in_list(Tok end, Tok separator=Tok::Comma)
 	{
 		return Base::_to_next_in_list(end, separator, tok_ident_map);
 	}
@@ -50,11 +51,9 @@ private:		// functions
 	{
 		Base::_next_lss_tokens(tok_ident_map);
 	}
-	template<typename AstNodeType>
-	bool _check_prefixed_tok_seq()
+	bool _check_prefixed_tok_seq(const TokSet& prefix_set, Tok end)
 	{
-		return Base::_check_prefixed_tok_seq(AstNodeType::tok_prefix_set,
-			AstNodeType::end_tok);
+		return Base::_check_prefixed_tok_seq(prefix_set, end);
 	}
 
 	bool _parse_decl_package();

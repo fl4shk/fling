@@ -16,6 +16,7 @@
 	X(NodeBidirSubPortList) \
 	X(NodeSubParamList) \
 	X(NodePostTypenameIdent) \
+	X(NodeBracketPair) \
 	X(NodeHasString) \
 	X(NodeIdent) \
 	X(NodeConstString) \
@@ -25,6 +26,9 @@
 	X(NodeClass) \
 	X(NodeScopeClass) \
 	X(NodeTypename) \
+	X(NodePosParamArgInstList) \
+	X(NodeNamedParamArgInstList) \
+	X(NodeOneParamArgInst) \
 	\
 	X(NodeExprBase) \
 	X(NodeExprBinopBase) \

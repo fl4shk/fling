@@ -23,6 +23,8 @@ package PkgAlu
 	{
 		using DataInout = ubit[WIDTH];
 		//using DataInout = ubit[WIDTH - 1:0];
+		//using DataInout = ubit[HIGH=WIDTH - 1, LOW=0];
+		//using DataInout = ubit[HIGH=WIDTH - 1, LOW=0, ASC=0];
 
 		packed class BusIn
 		{
@@ -121,8 +123,8 @@ module Alu[uint ALU_WIDTH]
 	using PkgAlu;
 	Bus[WIDTH=ALU_WIDTH] bus;
 
-	bus.to_extern(.i_carry, .i_a, .i_b, .i_opcode,
-		.o_carry, .o_data);
+	bus.to_extern(i_carry=i_carry, i_a=i_a, i_b=i_b, i_opcode=i_opcode,
+		o_carry=o_carry, o_data=o_data);
 
 	inst Alu(bus=bus);
 	// Alternatively, one can do this to get the same result:
