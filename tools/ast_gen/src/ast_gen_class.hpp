@@ -137,16 +137,16 @@ private:		// functions
 		_lexer().next_tok();
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
-	bool _inner_do_parse(FirstFuncType&& first_func,
+	bool _opt_do_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
-		return Base::_inner_do_parse(this, first_func, rem_funcs...);
+		return Base::_opt_do_parse(this, first_func, rem_funcs...);
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
-	void _do_parse(FirstFuncType&& first_func,
+	void _force_do_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
-		Base::_do_parse(this, first_func, rem_funcs...);
+		Base::_force_do_parse(this, first_func, rem_funcs...);
 	}
 
 	bool _parse_node();

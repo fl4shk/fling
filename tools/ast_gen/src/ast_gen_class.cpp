@@ -190,12 +190,12 @@ bool AstGen::_parse_node()
 	_node_vec.back().ident = _lss.find_found().s();
 	//printout(_node_vec.back().ident, "\n");
 
-	_inner_do_parse(&AstGen::_parse_extends);
+	_opt_do_parse(&AstGen::_parse_extends);
 	//printout(_lexer().s(), " ", static_cast<size_t>(_lexer().tok()), "\n");
 
 	_expect(Tok::Colon);
 
-	_do_parse(&AstGen::_parse_var, &AstGen::_parse_child);
+	_force_do_parse(&AstGen::_parse_var, &AstGen::_parse_child);
 	return false;
 }
 bool AstGen::_parse_extends()
