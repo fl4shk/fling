@@ -130,6 +130,12 @@ private:		// functions
 	{
 		_lexer().next_tok(just_test());
 	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	bool _do_one_level_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		return Base::_do_one_level_parse(this, first_func, rem_funcs...);
+	}
 
 	bool _parse_node();
 	bool _parse_extends();
