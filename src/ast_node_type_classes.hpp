@@ -9,10 +9,7 @@ public:		// functions
 			APPEND_CHILD(ident),
 			APPEND_CHILD(scope));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeEnum);
-	virtual ~NodeEnum() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeEnum);
 };
 
 GEN_LIST_BASIC(NodeScopeEnum)
@@ -20,7 +17,7 @@ GEN_LIST_BASIC(NodeScopeEnum)
 class NodeClass : public NodeBase
 {
 protected:		// variables
-	bool _packed = false;
+	bool _packed;
 
 public:		// functions
 	inline NodeClass(const SrcCodeChunk& s_src_code_chunk,
@@ -35,15 +32,13 @@ public:		// functions
 			APPEND_CHILD(scope),
 			APPEND_CHILD(var_list));
 	}
+	GEN_POST_CONSTRUCTOR(NodeClass);
 
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeClass);
-	virtual ~NodeClass() = default;
-
-	GEN_ACCEPT;
 	GEN_GETTER_BY_VAL(packed)
 };
 
 GEN_LIST_BASIC(NodeScopeClass)
+
 class NodeTypename : public NodeBase
 {
 public:		// functions
@@ -55,10 +50,7 @@ public:		// functions
 			APPEND_CHILD(ident),
 			APPEND_CHILD(param_inst_list));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeTypename);
-	virtual ~NodeTypename() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeTypename);
 };
 GEN_LIST_BASIC(NodePosParamArgInstList)
 GEN_LIST_BASIC(NodeNamedParamArgInstList)
@@ -73,8 +65,5 @@ public:		// functions
 		_add_indiv_children(APPEND_CHILD(left),
 			APPEND_CHILD(right));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeOneParamArgInst);
-	virtual ~NodeOneParamArgInst() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeOneParamArgInst);
 };

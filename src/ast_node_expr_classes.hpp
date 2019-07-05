@@ -8,10 +8,7 @@ public:		// functions
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeExprBase);
-	virtual ~NodeExprBase() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeExprBase);
 };
 
 class NodeExprBinopBase : public NodeExprBase
@@ -21,13 +18,10 @@ public:		// functions
 		Child&& s_right)
 		: NodeExprBase(s_src_code_chunk)
 	{
-		_add_indiv_children("left", move(s_left),
-			"right", move(s_right));
+		_add_indiv_children(APPEND_CHILD(left)
+			APPEND_CHILD(right));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeExprBinopBase);
-	virtual ~NodeExprBinopBase() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeExprBinopBase);
 };
 
 class NodeExprUnopBase : public NodeExprBase
@@ -37,11 +31,8 @@ public:		// functions
 		Child&& s_child)
 		: NodeExprBase(s_src_code_chunk)
 	{
-		_add_indiv_children("child", move(s_child));
+		_add_indiv_children(APPEND_CHILD(child));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeExprUnopBase);
-	virtual ~NodeExprUnopBase() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeExprUnopBase);
 };
 

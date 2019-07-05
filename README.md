@@ -6,8 +6,8 @@ It will serve as a way to get access to higher level language features in
 tools that only support Verilog (and not SystemVerilog).
 
 In addition to solving the tool support problems I've run into, the
-language is intended to be comparable to synthesizeable SystemVerilog.
-
+language is intended to be comparable to synthesizeable SystemVerilog,
+perhaps even surpassing it in some ways.
 
 ## Code Generation
 Code generation is currently being limited to Verilog-2001, and this is
@@ -26,7 +26,6 @@ language implemention, but because it was deemed necessary for expressions
 to work the same at compile time as they do at run-time, compile time
 expression evaluation that is compatible with Verilog-2001 was developed.
 
-
 Code generation that outputs VHDL is not considered necessary at this time,
 but it may eventually come, perhaps with some caveats.
 
@@ -37,7 +36,7 @@ formal verification.  This is a "must have" feature.
 
 Since this isn't a compiler for an existing HDL, there is freedom in
 what the language features will be.  As such, object oriented programming
-is being heavily considered for inclusion in the language.
+is being included in the language.
 
 Support for Verilog's `x` and `z` constructs will be limited, except
 perhaps for some very specific things, which are primarily `casez` and
@@ -50,6 +49,4 @@ possibly better way to be done) for FPGA development is fair game to not be
 supported in this language.
 
 ## Miscellaneous
-ANTLR is used for a parser generator.  ANTLR is awesome!
-
 Tabs are 4 spaces, and lines are at most 75 characters long.

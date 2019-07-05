@@ -1,0 +1,56 @@
+//NodeBase
+//	var SrcCodeChunk _src_code_chunk
+//	var Children _children
+//
+//NodeList
+//	list list
+
+NodePackage
+	child ident, scope
+
+NodeScopePackage(NodeList)
+
+NodeModule
+	child ident, param_list, port_list, scope
+
+NodeScopeModule(NodeList)
+
+NodeInputSubPortList(NodeList)
+	child typename
+NodeOutputSubPortList(NodeList)
+	child typename
+NodeBidirSubPortList(NodeList)
+	child typename
+
+NodeSubParamList(NodeList)
+	child primary
+NodePostTypenameIdent(NodeList)
+	child ident
+NodeBracketPair
+	child expr
+NodeHasString
+	var string _s
+NodeIdent(NodeHasString)
+NodeConstString(NodeHasString)
+
+NodeEnum
+	child typename, ident, scope
+NodeScopeEnum(NodeList)
+
+NodeClass
+	var bool _packed
+	child ident, param_list, extends, scope, var_list
+NodeTypename
+	child bracket_pair, ident, param_inst_list
+NodePosParamArgInstList(NodeList)
+NodeNameParamArgInstList(NodeList)
+NodeOneParamArgInst
+	child left, right
+
+NodeExprBase
+	var ExprValue _value
+NodeBinopExprBase(NodeExprBase)
+	child left, right
+NodeUnopExprBase(NodeExprBase)
+	child child
+

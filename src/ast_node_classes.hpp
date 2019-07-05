@@ -27,6 +27,12 @@ LIST_OF_AST_NODE_CLASSES(X)
 
 class Visitor;
 
+#define GEN_POST_CONSTRUCTOR(AstNodeType) \
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
+	virtual ~AstNodeType() = default; \
+	\
+	GEN_ACCEPT
+
 class NodeBase
 {
 public:		// types
@@ -46,10 +52,7 @@ public:		// functions
 		: _src_code_chunk(s_src_code_chunk)
 	{
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBase);
-	virtual ~NodeBase() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeBase);
 
 	inline bool has(const string& ident) const
 	{
@@ -77,7 +80,7 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
 
-protected:		// variables
+protected:		// functions
 	template<typename FirstType, typename... RemArgTypes>
 	inline void _add_indiv_children(const string& first_ident,
 		FirstType&& first_child, RemArgTypes&&... rem_children)
@@ -110,6 +113,7 @@ protected:		// variables
 	}
 };
 
+
 #define GEN_BASIC(AstNodeType) \
 class AstNodeType : public NodeBase \
 { \
@@ -118,10 +122,7 @@ public:		/* functions */ \
 		: NodeBase(s_src_code_chunk) \
 	{ \
 	} \
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
-	virtual ~AstNodeType() = default; \
-	\
-	GEN_ACCEPT; \
+	GEN_POST_CONSTRUCTOR(AstNodeType);
 };
 
 #define APPEND_CHILD(child) \
@@ -135,10 +136,7 @@ public:		// functions
 	{
 		_insert_children_list("list");
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeList);
-	virtual ~NodeList() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeList);
 
 	inline void append_list_child(Child&& child)
 	{
@@ -154,10 +152,7 @@ public:		/* functions */ \
 		: NodeList(s_src_code_chunk) \
 	{ \
 	} \
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
-	virtual ~AstNodeType() = default; \
-	\
-	GEN_ACCEPT; \
+	GEN_POST_CONSTRUCTOR(AstNodeType); \
 };
 
 #define GEN_LIST_W_ONE_C(AstNodeType, child) \
@@ -170,10 +165,7 @@ public:		/* functions */ \
 	{ \
 		_add_indiv_children(APPEND_CHILD(child)); \
 	} \
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
-	virtual ~AstNodeType() = default; \
-	\
-	GEN_ACCEPT; \
+	GEN_POST_CONSTRUCTOR(AstNodeType); \
 };
 
 class NodePackage : public NodeBase
@@ -186,10 +178,7 @@ public:		// functions
 			_add_indiv_children(APPEND_CHILD(ident),
 				APPEND_CHILD(scope));
 		}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodePackage);
-	virtual ~NodePackage() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodePackage);
 };
 
 GEN_LIST_BASIC(NodeScopePackage)
@@ -207,10 +196,7 @@ public:		// functions
 				APPEND_CHILD(port_list),
 				APPEND_CHILD(scope));
 		}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeModule);
-	virtual ~NodeModule() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeModule);
 };
 
 GEN_LIST_BASIC(NodeScopeModule)
@@ -220,6 +206,7 @@ GEN_LIST_W_ONE_C(NodeBidirSubPortList, typename)
 
 GEN_LIST_W_ONE_C(NodeSubParamList, primary)
 GEN_LIST_W_ONE_C(NodePostTypenameIdent, ident)
+
 class NodeBracketPair : public NodeBase
 {
 public:		// functions
@@ -238,10 +225,7 @@ public:		// functions
 	{
 		_add_indiv_children(APPEND_CHILD(expr));
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeBracketPair);
-	virtual ~NodeBracketPair() = default;
-
-	GEN_ACCEPT;
+	GEN_POST_CONSTRUCTOR(NodeBracketPair);
 };
 
 class NodeHasString : public NodeBase
@@ -255,10 +239,8 @@ public:		// functions
 		: NodeBase(s_src_code_chunk), _s(s_s)
 	{
 	}
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(NodeHasString);
-	virtual ~NodeHasString() = default;
+	GEN_POST_CONSTRUCTOR(NodeHasString);
 
-	GEN_ACCEPT;
 	GEN_GETTER_AND_SETTER_BY_CON_REF(s)
 };
 
@@ -271,10 +253,7 @@ public:		/* functions */ \
 		: NodeHasString(s_src_code_chunk, s_s) \
 	{ \
 	} \
-	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(AstNodeType); \
-	virtual ~AstNodeType() = default; \
-	\
-	GEN_ACCEPT; \
+	GEN_POST_CONSTRUCTOR(AstNodeType); \
 };
 
 GEN_HAS_STRING_BASIC(NodeIdent)
@@ -289,6 +268,7 @@ GEN_HAS_STRING_BASIC(NodeConstString)
 #undef GEN_LIST_BASIC
 #undef GEN_LIST_W_ONE_C
 #undef GEN_HAS_STRING
+#undef GEN_POST_CONSTRUCTOR
 #undef APPEND_CHILD
 
 } // namespace ast

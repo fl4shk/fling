@@ -16,8 +16,6 @@ package PkgAlu
 		Nor,
 	};
 
-	// Classes define behavior, but not connections.  Modules are still
-	// necessary.  They are my answer to SystemVerilog's interfaces.
 	class Bus[uint WIDTH]
 		//extends AluPorts[WIDTH=WIDTH]
 	{
@@ -38,6 +36,40 @@ package PkgAlu
 			ubit carry;
 			DataInout data;
 		} out;
+
+		// This is like a constructor, but it's optional.  It's just a
+		// process.
+		proc port
+		(
+			input
+				ubit i_carry,
+				DataInout i_a, i_b,
+				Opcode i_opcode,
+
+			output
+				ubit o_carry,
+				DataInout o_data,
+		)
+		{
+			// How this will be compiled is as follows.
+			// `input` ports cannot be written to.
+			// `output` ports can be read from and written to.
+			// `bidir` ports can be read from and written to.
+			// The semantics are identical to `module` ports, but in the
+			// generated Verilog, everything will be inlined without
+			// creation of any new `module`s.
+			// Recursion is possible, but must have a depth that is
+			// identified at compile time.
+			// There are not really any other constraints.
+			assign in = cat(i_carry, i_a, i_b, i_opcode);
+			assign cat(o_carry, o_data) = out;
+		}
+
+		// This is a process.
+		proc "()" ()
+		{
+			assign out = self();
+		}
 
 		// Function object
 		// Operator overloading syntax is similar to that of VHDL; that
@@ -67,38 +99,6 @@ package PkgAlu
 				return cat(1'0b0, ~(in.a | in.b));
 			}
 		}
-
-		// These are processes
-		proc compute()
-		{
-			assign out = self();
-		}
-
-		proc to_extern
-		(
-			input
-				ubit i_carry,
-				DataInout i_a, i_b,
-				Opcode i_opcode,
-
-			output
-				ubit o_carry,
-				DataInout o_data,
-		)
-		{
-			// How this will be compiled is as follows.
-			// `input` ports cannot be written to.
-			// `output` ports can be read from and written to.
-			// `bidir` ports can be read from and written to.
-			// The semantics are identical to `module` ports, but in the
-			// generated Verilog, everything will be inlined without
-			// creation of any new `module`s.
-			// Recursion is possible, but must have a depth that is
-			// identified at compile time.
-			// There are not really any other constraints.
-			assign in = cat(i_carry, i_a, i_b, i_opcode);
-			assign cat(o_carry, o_data) = out;
-		}
 	};
 }
 
@@ -121,19 +121,22 @@ module Alu[uint ALU_WIDTH]
 )
 {
 	using PkgAlu;
-	Bus[WIDTH=ALU_WIDTH] bus;
-
-	bus.to_extern(i_carry=i_carry, i_a=i_a, i_b=i_b, i_opcode=i_opcode,
-		o_carry=o_carry, o_data=o_data);
+	Bus[WIDTH=ALU_WIDTH] bus(i_carry=i_carry, i_a=i_a, i_b=i_b,
+		i_opcode=i_opcode, o_carry=o_carry, o_data=o_data);
+	// Alternatively, the ports can be connected later (for example, with a
+	// generate loop).
+	// Bus[WIDTH=ALU_WIDTH] bus;
+	// bus.port(i_carry=i_carry, i_a=i_a, i_b=i_b,
+	// 	i_opcode=i_opcode, o_carry=o_carry, o_data=o_data);
 
 	inst Alu(bus=bus);
 	// Alternatively, one can do this to get the same result:
-	// bus.compute();
+	// bus();
 }
 
 module Alu[uint WIDTH](bidir PkgAlu::Bus[WIDTH=WIDTH] bus)
 {
-	bus.compute();
+	bus();
 }
 
 module Alu
@@ -145,7 +148,7 @@ module Alu
 )
 {
 	//assign cat(bus.out.carry, bus.out.data) = bus();
-	bus.compute();
+	bus();
 }
 
 module VectorAlu[uint ALU_WIDTH, ARR_SIZE]

@@ -1,0 +1,60 @@
+Package:
+	child ident, scope;
+ScopePackage, List:
+Module:
+	child ident, param_list, port_list, scope;
+ScopeModule, List:
+InputSubPortList, List:
+	child typename;
+OutputSubPortList, List:
+	child typename;
+BidirSubPortList, List:
+	child typename;
+SubParamList, List:
+	child primary;
+PostTypenameIdent, List:
+	child ident;
+
+
+// Blank brackets (`[]`) indicate that (a) this pair is on a port
+// and (b) that this typename's generics or variable's dimensions are
+// determined by what is connected to the port.
+// For generics, it is different from when the brackets are left out
+// entirely, as that indicates use of purely default values for the
+// generics.  For arrays, it is not possible to have them without
+// brackets.
+// When there is no expression, it indicates that this bracket pair is
+// blank.
+BracketPair:
+	child expr;
+
+HasString:
+	var string _s;
+
+Ident, HasString:
+ConstString, HasString:
+
+Enum:
+	child typename, ident, scope;
+ScopeEnum, List:
+
+Class:
+	var bool _packed;
+	child ident, param_list, extends, scope, var_list;
+
+ScopeClass, List:
+
+Typename:
+	child bracket_pair, ident, param_inst_list;
+
+PosParamArgInstList, List:
+NamedParamArgInstList, List:
+OneParamArgInst:
+	child left, right;
+
+ExprBase:
+	var ExprValue value;
+ExprBinopBase, ExprBase:
+	child left, right;
+ExprUnopBase, ExprBase:
+	child child;
