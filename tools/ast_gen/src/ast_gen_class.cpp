@@ -36,6 +36,7 @@ void Lexer::_inner_next_tok()
 {
 	if (c() == '/')
 	{
+		printout("eek!\n");
 		_set_tok(Tok::Unknown, true);
 		if (c() == '/')
 		{
@@ -188,7 +189,6 @@ bool AstGen::_parse_node()
 {
 	if (just_test())
 	{
-		printout("test\n");
 		return _check_prefixed_tok_seq(Tok::Ident);
 	}
 	_next_lss_tokens();
