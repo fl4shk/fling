@@ -2,6 +2,14 @@
 
 #include <ctype.h>
 
+Lexer::Lexer(const string& s_filename, string* s_text)
+	: LexerBase<Tok>(s_filename, s_text, Tok::Done, Tok::Comment)
+{
+}
+Lexer::~Lexer()
+{
+}
+
 const std::map<Tok, string> tok_ident_map
 = {
 	{Tok::Comment, "//"},
