@@ -19,7 +19,7 @@ const std::map<Tok, string> tok_ident_map
 	{Tok::Ident, "ident"},
 	{Tok::Unknown, "unknown"},
 };
-Tok Lexer::next_tok(bool just_test)
+Tok Lexer::next_tok()
 {
 	return _next_tok(Tok::Done, Tok::Comment);
 }
