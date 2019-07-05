@@ -186,13 +186,7 @@ bool AstGen::_parse_node()
 	_next_lss_tokens();
 	_node_vec.push_back(Node());
 
-	for (const auto& iter : _lss.found_set)
-	{
-		if (iter.tok() == _lss.end)
-		{
-			_node_vec.back().ident = iter.s();
-		}
-	}
+	_node_vec.back().ident = _lss.find_found().s();
 
 	_do_one_level_parse(&_parse_extends);
 	while (_do_one_level_parse(&_parse_var, &_parse_child))
@@ -208,13 +202,7 @@ bool AstGen::_parse_extends()
 	}
 	_next_lss_tokens();
 
-	for (const auto& iter : _lss.found_set)
-	{
-		if (iter.tok() == _lss.end)
-		{
-			_node_vec.back().extends = iter.s();
-		}
-	}
+	_node_vec.back().extends = _lss.find_found().s();
 
 	return false;
 }
