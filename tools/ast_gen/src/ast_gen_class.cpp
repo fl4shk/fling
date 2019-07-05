@@ -183,13 +183,15 @@ bool AstGen::_parse_node()
 		return _check_prefixed_tok_seq(Tok::Ident);
 	}
 	_next_lss_tokens();
+
+	_next_tok();
 	_node_vec.push_back(Node());
 
 	_node_vec.back().ident = _lss.find_found().s();
-	printout(_node_vec.back().ident, "\n");
+	//printout(_node_vec.back().ident, "\n");
 
 	_inner_do_parse(&AstGen::_parse_extends);
-	printout(_lexer().s(), " ", static_cast<size_t>(_lexer().tok()), "\n");
+	//printout(_lexer().s(), " ", static_cast<size_t>(_lexer().tok()), "\n");
 
 	_expect(Tok::Colon);
 
