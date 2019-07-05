@@ -4,6 +4,7 @@
 // src/ast_gen_class.hpp
 
 #include "misc_includes.hpp"
+#include "src_code_chunk_class.hpp"
 
 enum class Tok
 {

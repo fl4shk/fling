@@ -4,7 +4,7 @@
 
 const std::map<Tok, string> tok_ident_map
 = {
-	{Tok::Comment, "//"};
+	{Tok::Comment, "//"},
 	{Tok::Colon, ":"},
 	{Tok::Semicolon, ";"},
 	{Tok::Comma, ","},

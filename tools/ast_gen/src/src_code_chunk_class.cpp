@@ -1,8 +1,5 @@
 #include "src_code_chunk_class.hpp"
 
-namespace frost_hdl
-{
-
 SrcCodeChunk::SrcCodeChunk()
 	: _filename(), _text(), _src_line_num(0), _src_pos_in_line(0)
 {
@@ -37,5 +34,3 @@ string SrcCodeChunk::convert_to_errwarn_string() const
 	return sconcat(convert_to_pos_string(), " (near text \"", _text,
 		"\")");
 }
-
-} // namespace frost_hdl

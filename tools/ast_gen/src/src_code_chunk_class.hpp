@@ -7,9 +7,6 @@
 //#include "misc_types.hpp"
 //#include "general_allocator_class.hpp"
 
-namespace frost_hdl
-{
-
 // Used for error reporting during semantic analysis.
 class SrcCodeChunk
 {
@@ -57,8 +54,6 @@ public:		// functions
 	GEN_GETTER_BY_VAL(src_line_num)
 	GEN_GETTER_BY_VAL(src_pos_in_line)
 };
-
-} // namespace frost_hdl
 
 
 #endif		// src_src_code_chunk_class_hpp

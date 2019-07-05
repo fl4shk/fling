@@ -23,6 +23,16 @@ testing/preprocs_debug/*
 testing/testing
 testing/testing_debug
 small_code_testing_things/*
+tools/*/deps/*
+tools/*/objs/*
+tools/*/objs_dis/*
+tools/*/asmouts/*
+tools/*/preprocs/*
+tools/*/deps_debug/*
+tools/*/objs_debug/*
+tools/*/objs_dis_debug/*
+tools/*/asmouts_debug/*
+tools/*/preprocs_debug/*
 tools/*/src/tags
 tools/*/src/types_*.taghl
 tools/ast_gen/ast_gen
