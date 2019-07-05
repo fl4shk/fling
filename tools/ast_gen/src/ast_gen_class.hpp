@@ -116,9 +116,9 @@ private:		// functions
 	{
 		return Base::_to_next_in_list(end, separator, tok_ident_map);
 	}
-	inline void _next_lss_tokens()
+	inline void _next_lss_tokens(bool perf_next_tok)
 	{
-		Base::_next_lss_tokens(tok_ident_map);
+		Base::_next_lss_tokens(tok_ident_map, perf_next_tok);
 	}
 	bool _check_prefixed_tok_seq(const TokSet& prefix_set, Tok end)
 	{
@@ -137,16 +137,16 @@ private:		// functions
 		_lexer().next_tok();
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
-	bool _opt_do_parse(FirstFuncType&& first_func,
+	bool _opt_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
-		return Base::_opt_do_parse(this, first_func, rem_funcs...);
+		return Base::_opt_parse(this, first_func, rem_funcs...);
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
-	void _force_do_parse(FirstFuncType&& first_func,
+	void _req_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
-		Base::_force_do_parse(this, first_func, rem_funcs...);
+		Base::_req_parse(this, first_func, rem_funcs...);
 	}
 
 	bool _parse_node();

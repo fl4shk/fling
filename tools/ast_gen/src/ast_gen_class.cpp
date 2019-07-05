@@ -182,9 +182,8 @@ bool AstGen::_parse_node()
 	{
 		return _check_prefixed_tok_seq(Tok::Ident);
 	}
-	_next_lss_tokens();
+	_next_lss_tokens(true);
 
-	_next_tok();
 	_node_vec.push_back(Node());
 
 	_node_vec.back().ident = _lss.find_found().s();
@@ -204,7 +203,7 @@ bool AstGen::_parse_extends()
 	{
 		return _check_prefixed_tok_seq(Tok::Comma);
 	}
-	_next_lss_tokens();
+	_next_lss_tokens(true);
 
 	_node_vec.back().extends = _lss.find_found().s();
 
@@ -217,7 +216,7 @@ bool AstGen::_parse_var()
 		_check_prefixed_tok_seq(Tok::Ident);
 		return (_lss.find_found().s() == "var");
 	}
-	_next_lss_tokens();
+	_next_lss_tokens(true);
 
 	string type;
 	with(we, _wexpect(Tok::Ident))
