@@ -172,7 +172,7 @@ AstGen::~AstGen()
 
 void AstGen::run()
 {
-	while (_do_one_level_parse(&_parse_node))
+	while (_do_one_level_parse(&AstGen::_parse_node))
 	{
 	}
 }
@@ -188,11 +188,11 @@ bool AstGen::_parse_node()
 
 	_node_vec.back().ident = _lss.find_found().s();
 
-	_do_one_level_parse(&_parse_extends);
+	_do_one_level_parse(&AstGen::_parse_extends);
 
-	_expect(Tok::Colon, _lexer()._state());
+	_expect(Tok::Colon, _lexer().state());
 
-	while (_do_one_level_parse(&_parse_var, &_parse_child))
+	while (_do_one_level_parse(&AstGen::_parse_var, &AstGen::_parse_child))
 	{
 	}
 	return false;

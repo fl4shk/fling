@@ -128,7 +128,7 @@ private:		// functions
 	}
 	inline void _next_tok()
 	{
-		_lexer.next_tok(just_test());
+		_lexer().next_tok(just_test());
 	}
 
 	bool _parse_node();
