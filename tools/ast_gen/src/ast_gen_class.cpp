@@ -189,6 +189,9 @@ bool AstGen::_parse_node()
 	_node_vec.back().ident = _lss.find_found().s();
 
 	_do_one_level_parse(&_parse_extends);
+
+	_expect(Tok::Colon, _lexer()._state());
+
 	while (_do_one_level_parse(&_parse_var, &_parse_child))
 	{
 	}
@@ -208,9 +211,26 @@ bool AstGen::_parse_extends()
 }
 bool AstGen::_parse_var()
 {
+	if (just_test())
+	{
+		_check_prefixed_tok_seq(Tok::Ident);
+		return (_lss.find_found().s() == "var");
+	}
+	_next_lss_tokens();
+
+	string type;
+	_node_vec.back().var_vec.push_back(Var());
+	auto& var = _node_vec.back().var_vec.back();
+
 	return false;
 }
 bool AstGen::_parse_child()
 {
+	if (just_test())
+	{
+		_check_prefixed_tok_seq(Tok::Ident);
+		return (_lss.find_found().s() == "child");
+	}
+
 	return false;
 }

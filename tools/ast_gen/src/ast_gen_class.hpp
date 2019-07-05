@@ -89,9 +89,17 @@ private:		// functions
 	{
 		Base::_expect(tok, tok_ident_map, lex_state);
 	}
+	inline void _expect(Tok tok)
+	{
+		_expect(tok, _lexer().state());
+	}
 	inline void _unexpected(const LexerState& lex_state)
 	{
 		Base::_unexpected(tok_ident_map, lex_state);
+	}
+	inline void _unexpected()
+	{
+		_unexpected(_lexer().state());
 	}
 	inline void _unexpected(Lexer* lexer)
 	{
