@@ -25,7 +25,7 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Lexer)
 	~Lexer();
 
-	Tok next_tok(bool just_test);
+	Tok next_tok();
 	inline auto src_code_chunk(State* state=nullptr) const
 	{
 		return LexerBase<Tok>::src_code_chunk<SrcCodeChunk>(state);
@@ -134,7 +134,7 @@ private:		// functions
 	}
 	inline void _next_tok()
 	{
-		_lexer().next_tok(just_test());
+		_lexer().next_tok();
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	bool _inner_do_parse(FirstFuncType&& first_func,

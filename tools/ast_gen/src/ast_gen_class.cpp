@@ -21,14 +21,7 @@ const std::map<Tok, string> tok_ident_map
 };
 Tok Lexer::next_tok(bool just_test)
 {
-	if (!just_test)
-	{
-		return _next_tok_no_test(Tok::Done, Tok::Comment);
-	}
-	else // if (just_test)
-	{
-		return Lexer(*this).next_tok(false);
-	}
+	return _next_tok(Tok::Done, Tok::Comment);
 }
 
 void Lexer::_inner_next_tok()
