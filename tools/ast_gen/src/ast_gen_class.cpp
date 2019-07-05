@@ -5,7 +5,6 @@
 Lexer::Lexer(const string& s_filename, string* s_text)
 	: LexerBase<Tok>(s_filename, s_text, Tok::Done, Tok::Comment)
 {
-	next_tok(false);
 }
 Lexer::~Lexer()
 {
