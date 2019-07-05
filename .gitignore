@@ -23,6 +23,10 @@ testing/preprocs_debug/*
 testing/testing
 testing/testing_debug
 small_code_testing_things/*
+tools/*/src/tags
+tools/*/src/types_*.taghl
+tools/ast_gen/ast_gen
+tools/ast_gen/ast_gen_debug
 *.o
 *.a
 *.d
