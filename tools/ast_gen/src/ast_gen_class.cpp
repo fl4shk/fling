@@ -35,7 +35,6 @@ void Lexer::_inner_next_tok()
 {
 	if (c() == '/')
 	{
-		printout("eek!\n");
 		_set_tok(Tok::Unknown, true);
 		if (c() == '/')
 		{
@@ -195,9 +194,9 @@ bool AstGen::_parse_node()
 
 	_node_vec.back().ident = _lss.find_found().s();
 
-	_do_parse(&AstGen::_parse_extends);
+	_inner_do_parse(&AstGen::_parse_extends);
 
-	_expect(Tok::Colon, _lexer().state());
+	_expect(Tok::Colon);
 
 	_do_parse(&AstGen::_parse_var, &AstGen::_parse_child);
 	return false;

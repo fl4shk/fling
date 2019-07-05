@@ -137,6 +137,12 @@ private:		// functions
 		_lexer().next_tok(just_test());
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
+	bool _inner_do_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		return Base::_inner_do_parse(this, first_func, rem_funcs...);
+	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
 	void _do_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
