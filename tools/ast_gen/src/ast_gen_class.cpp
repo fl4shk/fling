@@ -5,6 +5,7 @@
 Lexer::Lexer(const string& s_filename, string* s_text)
 	: LexerBase<Tok>(s_filename, s_text, Tok::Done, Tok::Comment)
 {
+	next_tok(false);
 }
 Lexer::~Lexer()
 {
@@ -187,6 +188,7 @@ bool AstGen::_parse_node()
 {
 	if (just_test())
 	{
+		printout("test\n");
 		return _check_prefixed_tok_seq(Tok::Ident);
 	}
 	_next_lss_tokens();

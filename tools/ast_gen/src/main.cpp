@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 		printerr("Usage:  ", argv[0], " filename\n");
 		exit(1);
 	}
-	AstGen(std::vector({string(argv[0])})).run();
+	AstGen(std::vector({string(argv[1])})).run();
 
 
 	return 0;
