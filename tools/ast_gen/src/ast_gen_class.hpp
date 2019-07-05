@@ -94,6 +94,10 @@ private:		// functions
 	{
 		_expect(tok, _lexer().state());
 	}
+	inline auto _wexpect(TokType tok, Lexer* lexer=nullptr)
+	{
+		return Base::_wexpect(tok, tok_ident_map, lexer);
+	}
 	inline void _unexpected(const LexerState& lex_state)
 	{
 		Base::_unexpected(tok_ident_map, lex_state);

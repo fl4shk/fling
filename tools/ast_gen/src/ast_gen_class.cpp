@@ -180,9 +180,7 @@ AstGen::~AstGen()
 
 void AstGen::run()
 {
-	while (_do_one_level_parse(&AstGen::_parse_node))
-	{
-	}
+	_do_parse(&AstGen::_parse_node);
 }
 
 bool AstGen::_parse_node()
@@ -196,13 +194,11 @@ bool AstGen::_parse_node()
 
 	_node_vec.back().ident = _lss.find_found().s();
 
-	_do_one_level_parse(&AstGen::_parse_extends);
+	_do_parse(&AstGen::_parse_extends);
 
 	_expect(Tok::Colon, _lexer().state());
 
-	while (_do_one_level_parse(&AstGen::_parse_var, &AstGen::_parse_child))
-	{
-	}
+	_do_parse(&AstGen::_parse_var, &AstGen::_parse_child);
 	return false;
 }
 bool AstGen::_parse_extends()
@@ -227,8 +223,35 @@ bool AstGen::_parse_var()
 	_next_lss_tokens();
 
 	string type;
-	_node_vec.back().var_vec.push_back(Var());
-	auto& var = _node_vec.back().var_vec.back();
+	with(we, _wexpect(Tok::Ident))
+	{
+		type = _lex_state().s();
+	}
+
+	for (;;)
+	{
+		auto& node = _node_vec.back();
+		node.var_vec.push_back(Var());
+
+		auto& var = node.var_vec.back();
+
+		with(we, _wexpect(Tok::Ident))
+		{
+			var.type = type;
+			var.ident = _lex_state().s();
+
+			if (node.var_ident_set.contains(var.ident))
+			{
+				_err("Duplicate var \"", var.ident, "\"");
+			}
+
+			node.var_ident_set.insert(var.ident);
+		}
+		if (!_to_next_in_list(Tok::Semicolon))
+		{
+			break;
+		}
+	}
 
 	return false;
 }
