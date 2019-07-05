@@ -240,7 +240,7 @@ bool AstGen::_parse_var()
 			var.type = type;
 			var.ident = _lex_state().s();
 
-			if (node.var_ident_set.contains(var.ident))
+			if (node.var_ident_set.count(var.ident))
 			{
 				_err("Duplicate var \"", var.ident, "\"");
 			}
