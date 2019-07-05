@@ -35,7 +35,7 @@
 #include "liborangepower_src/lexer_base_class.hpp"
 #include "liborangepower_src/parser_base_class.hpp"
 
-using namespace liborangepower::printout_etc;
+using namespace liborangepower::misc_output;
 using namespace liborangepower::misc_input;
 using namespace liborangepower::integer_types;
 using namespace liborangepower::misc_util;
