@@ -186,6 +186,7 @@ bool AstGen::_parse_node()
 	_node_vec.push_back(Node());
 
 	_node_vec.back().ident = _lss.find_found().s();
+	printout(_node_vec.back().ident, "\n");
 
 	_inner_do_parse(&AstGen::_parse_extends);
 
