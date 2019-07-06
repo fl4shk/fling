@@ -47,11 +47,35 @@ public:		// types
 	{
 	public:		// variables
 		string type, ident;
+		bool init;
 
 	public:		// functions
 		Var() = default;
-		GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Var);
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Var);
 		~Var() = default;
+		inline bool operator == (const Var& to_cmp) const
+		{
+			return ((type == to_cmp.type) && (ident == to_cmp.ident));
+		}
+		inline bool operator != (const Var& to_cmp) const
+		{
+			return (!((*this) == to_cmp));
+		}
+		inline bool is_protected() const
+		{
+			return (ident.at(0) == '_');
+		}
+		inline string init_ident() const
+		{
+			if (is_protected())
+			{
+				return sconcat("s", ident);
+			}
+			else
+			{
+				return sconcat("s_", ident);
+			}
+		}
 	};
 
 	class Node final
@@ -74,6 +98,7 @@ public:		// types
 private:		// variables
 	std::vector<Node> _node_vec;
 	std::set<string> _node_ident_set;
+	std::map<string, size_t> _node_ident_map;
 
 public:		// functions
 	AstGen(std::vector<string>&& s_filename_vec);
@@ -83,6 +108,7 @@ public:		// functions
 	void run();
 
 private:		// functions
+	std::vector<Var> _extended_var_vec(const Node& node) const;
 	inline std::string _msg_for_expect(Tok tok,
 		const LexerState& lex_state) const
 	{

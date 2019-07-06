@@ -13,7 +13,7 @@ syn case match
 
 syn match ast_gen_comment		"//.*"
 
-syn keyword ast_gen_keyword		child var
+syn keyword ast_gen_keyword		child initvar noinitvar
 
 hi def link ast_gen_comment		Comment
 hi def link ast_gen_keyword		Statement

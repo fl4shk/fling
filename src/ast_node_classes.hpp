@@ -114,17 +114,6 @@ protected:		// functions
 };
 
 
-#define GEN_BASIC(AstNodeType) \
-class AstNodeType : public NodeBase \
-{ \
-public:		/* functions */ \
-	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk) \
-		: NodeBase(s_src_code_chunk) \
-	{ \
-	} \
-	GEN_POST_CONSTRUCTOR(AstNodeType);
-};
-
 #define APPEND_CHILD(child) \
 	#child, move(s_##child)
 
@@ -144,124 +133,8 @@ public:		// functions
 	}
 };
 
-#define GEN_LIST_BASIC(AstNodeType) \
-class AstNodeType : public NodeList \
-{ \
-public:		/* functions */ \
-	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk) \
-		: NodeList(s_src_code_chunk) \
-	{ \
-	} \
-	GEN_POST_CONSTRUCTOR(AstNodeType); \
-};
+#include "ast_node_main_classes.hpp"
 
-#define GEN_LIST_W_ONE_C(AstNodeType, child) \
-class AstNodeType : public NodeList \
-{ \
-public:		/* functions */ \
-	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk, \
-		Child&& s_##child) \
-		: NodeList(s_src_code_chunk) \
-	{ \
-		_add_indiv_children(APPEND_CHILD(child)); \
-	} \
-	GEN_POST_CONSTRUCTOR(AstNodeType); \
-};
-
-class NodePackage : public NodeBase
-{
-public:		// functions
-	inline NodePackage(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident, Child&& s_scope)
-		: NodeBase(s_src_code_chunk)
-		{
-			_add_indiv_children(APPEND_CHILD(ident),
-				APPEND_CHILD(scope));
-		}
-	GEN_POST_CONSTRUCTOR(NodePackage);
-};
-
-GEN_LIST_BASIC(NodeScopePackage)
-
-class NodeModule : public NodeBase
-{
-public:		// functions
-	inline NodeModule(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident, Child&& s_param_list, Child&& s_port_list,
-		Child&& s_scope)
-		: NodeBase(s_src_code_chunk)
-		{
-			_add_indiv_children(APPEND_CHILD(ident),
-				APPEND_CHILD(param_list),
-				APPEND_CHILD(port_list),
-				APPEND_CHILD(scope));
-		}
-	GEN_POST_CONSTRUCTOR(NodeModule);
-};
-
-GEN_LIST_BASIC(NodeScopeModule)
-GEN_LIST_W_ONE_C(NodeInputSubPortList, typename)
-GEN_LIST_W_ONE_C(NodeOutputSubPortList, typename)
-GEN_LIST_W_ONE_C(NodeBidirSubPortList, typename)
-
-GEN_LIST_W_ONE_C(NodeSubParamList, primary)
-GEN_LIST_W_ONE_C(NodePostTypenameIdent, ident)
-
-class NodeBracketPair : public NodeBase
-{
-public:		// functions
-	// Blank brackets (`[]`) indicate that (a) this pair is on a port
-	// and (b) that this typename's generics or variable's dimensions are
-	// determined by what is connected to the port.
-	// For generics, it is different from when the brackets are left out
-	// entirely, as that indicates use of purely default values for the
-	// generics.  For arrays, it is not possible to have them without
-	// brackets.
-	// When there is no expression, it indicates that this bracket pair is
-	// blank.
-	inline NodeBracketPair(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_expr)
-		: NodeBase(s_src_code_chunk)
-	{
-		_add_indiv_children(APPEND_CHILD(expr));
-	}
-	GEN_POST_CONSTRUCTOR(NodeBracketPair);
-};
-
-class NodeHasString : public NodeBase
-{
-protected:		// variables
-	string _s;
-
-public:		// functions
-	inline NodeHasString(const SrcCodeChunk& s_src_code_chunk,
-		const string& s_s)
-		: NodeBase(s_src_code_chunk), _s(s_s)
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeHasString);
-
-	GEN_GETTER_AND_SETTER_BY_CON_REF(s)
-};
-
-#define GEN_HAS_STRING_BASIC(AstNodeType) \
-class AstNodeType : public NodeHasString \
-{ \
-public:		/* functions */ \
-	inline AstNodeType(const SrcCodeChunk& s_src_code_chunk, \
-		const string& s_s) \
-		: NodeHasString(s_src_code_chunk, s_s) \
-	{ \
-	} \
-	GEN_POST_CONSTRUCTOR(AstNodeType); \
-};
-
-GEN_HAS_STRING_BASIC(NodeIdent)
-GEN_HAS_STRING_BASIC(NodeConstString)
-
-
-#include "ast_node_type_classes.hpp"
-#include "ast_node_expr_classes.hpp"
 
 #undef GEN_ACCEPT
 #undef GEN_BASIC

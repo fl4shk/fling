@@ -10,7 +10,6 @@
 	X(NodeScopePackage) \
 	X(NodeModule) \
 	X(NodeScopeModule) \
-	\
 	X(NodeInputSubPortList) \
 	X(NodeOutputSubPortList) \
 	X(NodeBidirSubPortList) \
@@ -20,7 +19,6 @@
 	X(NodeHasString) \
 	X(NodeIdent) \
 	X(NodeConstString) \
-	\
 	X(NodeEnum) \
 	X(NodeScopeEnum) \
 	X(NodeClass) \
@@ -29,7 +27,6 @@
 	X(NodePosParamArgInstList) \
 	X(NodeNamedParamArgInstList) \
 	X(NodeOneParamArgInst) \
-	\
 	X(NodeExprBase) \
 	X(NodeExprBinopBase) \
 	X(NodeExprUnopBase) \

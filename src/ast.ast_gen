@@ -1,56 +1,150 @@
-//NodeBase
-//	var SrcCodeChunk _src_code_chunk
-//	var Children _children
+Package:
+	child ident, scope;
+ScopePackage, List:
+Module:
+	child ident, param_list, port_list, scope;
+ScopeModule, List:
+InputSubPortList, List:
+	child typename;
+OutputSubPortList, List:
+	child typename;
+BidirSubPortList, List:
+	child typename;
+SubParamList, List:
+	child primary;
+PostTypenameIdent, List:
+	child ident;
+
+
+// Blank brackets (`[]`) indicate that (a) this pair is on a port
+// and (b) that this typename's generics or variable's dimensions are
+// determined by what is connected to the port.
+// For generics, it is different from when the brackets are left out
+// entirely, as that indicates use of purely default values for the
+// generics.  For arrays, it is not possible to have them without
+// brackets.
+// When there is no expression, it indicates that this bracket pair is
+// blank.
+BracketPair:
+	child expr;
+
+HasString:
+	initvar string _s;
+
+Ident, HasString:
+ConstString, HasString:
+
+Enum:
+	child typename, ident, scope;
+ScopeEnum, List:
+
+Class:
+	initvar bool _packed;
+	child ident, param_list, extends, scope, var_list;
+
+ScopeClass, List:
+
+Typename:
+	child bracket_pair, ident, param_inst_list;
+
+PosParamArgInstList, List:
+NamedParamArgInstList, List:
+OneParamArgInst:
+	child left, right;
+
+//// Expression parsing
+//expr:
+//	exprLogical
+//	| exprLogical TokOpLogical expr 
+//	;
 //
-//NodeList
-//	list list
+//exprLogical:
+//	exprCompare
+//	| exprCompare TokOpCompare exprLogical 
+//	;
+//
+//exprCompare:
+//	exprAddSub
+//	| exprAddSub TokPlus exprCompare
+//	| exprAddSub TokMinus exprCompare
+//	;
+//
+//exprAddSub:
+//	exprMulDivModEtc
+//	| exprMulDivModEtc TokOpMulDivMod exprAddSub
+//	| exprMulDivModEtc TokOpBitwise exprAddSub
+//	;
+//
+//exprMulDivModEtc:
+//	exprPlusUnary
+//	| exprMinusUnary
+//	| exprLogNot
+//	| exprBitNot
+//	| exprCastUnsgn
+//	| exprCastSgn
+//	| exprClog2
+//	//| exprPow
+//	| numExpr
+//	| identExpr
+//	| '(' expr ')'
+//	;
 
-NodePackage
-	child ident, scope
+//// Expressions
+//TokOpLogical: ('&&' | '||') ;
+//TokOpCompare: ('==' | '!=' | '<' | '>' | '<=' | '>=') ;
+//TokPlus: '+' ;
+//TokMinus: '-' ;
+//TokOpMulDivMod: ('*' | '/' | '%') ;
+//TokOpBitwise: ('&' | '|' | '^' | '<<' | '>>' | '>>>') ;
+//TokBitInvert: '~' ;
 
-NodeScopePackage(NodeList)
+ExprBase:
+	noinitvar ExprValue value;
+ExprBinopBase, ExprBase:
+	child left, right;
+ExprUnopBase, ExprBase:
+	child child;
 
-NodeModule
-	child ident, param_list, port_list, scope
+ExprBinopLogAnd, ExprBinopBase:
+ExprBinopLogOr, ExprBinopBase:
 
-NodeScopeModule(NodeList)
+ExprBinopCmpEq, ExprBinopBase:
+ExprBinopCmpNe, ExprBinopBase:
+ExprBinopCmpLt, ExprBinopBase:
+ExprBinopCmpGt, ExprBinopBase:
+ExprBinopCmpLe, ExprBinopBase:
+ExprBinopCmpGe, ExprBinopBase:
 
-NodeInputSubPortList(NodeList)
-	child typename
-NodeOutputSubPortList(NodeList)
-	child typename
-NodeBidirSubPortList(NodeList)
-	child typename
+ExprBinopPlus, ExprBinopBase:
+ExprBinopMinus, ExprBinopBase:
 
-NodeSubParamList(NodeList)
-	child primary
-NodePostTypenameIdent(NodeList)
-	child ident
-NodeBracketPair
-	child expr
-NodeHasString
-	var string _s
-NodeIdent(NodeHasString)
-NodeConstString(NodeHasString)
+ExprBinopMul, ExprBinopBase:
+ExprBinopDiv, ExprBinopBase:
+ExprBinopMod, ExprBinopBase:
 
-NodeEnum
-	child typename, ident, scope
-NodeScopeEnum(NodeList)
+ExprBinopBitAnd, ExprBinopBase:
+ExprBinopBitOr, ExprBinopBase:
+ExprBinopBitXor, ExprBinopBase:
+ExprBinopBitLsl, ExprBinopBase:
+ExprBinopBitLsr, ExprBinopBase:
+ExprBinopBitAsr, ExprBinopBase:
 
-NodeClass
-	var bool _packed
-	child ident, param_list, extends, scope, var_list
-NodeTypename
-	child bracket_pair, ident, param_inst_list
-NodePosParamArgInstList(NodeList)
-NodeNameParamArgInstList(NodeList)
-NodeOneParamArgInst
-	child left, right
+ExprUnopLogNot, ExprUnopBase:
+ExprUnopBitNot, ExprUnopBase:
+ExprUnopPlus, ExprUnopBase:
+ExprUnopMinus, ExprUnopBase:
 
-NodeExprBase
-	var ExprValue _value
-NodeBinopExprBase(NodeExprBase)
-	child left, right
-NodeUnopExprBase(NodeExprBase)
-	child child
+ExprUnopDollarUnsgn, ExprUnopBase:
+ExprUnopDollarSgn, ExprUnopBase:
+ExprUnopDollarIsUnsgn, ExprUnopBase:
+ExprUnopDollarIsSgn, ExprUnopBase:
+ExprUnopDollarRange, ExprUnopBase:
+ExprUnopDollarSize, ExprUnopBase:
+ExprUnopDollarMsbpos, ExprUnopBase:
+ExprUnopDollarFirst, ExprUnopBase:
+ExprUnopDollarLast, ExprUnopBase:
+ExprUnopDollarHigh, ExprUnopBase:
+ExprUnopDollarLow, ExprUnopBase:
+ExprUnopDollarClog2, ExprUnopBase:
 
+ExprBinopDollarPow, ExprUnopBase:

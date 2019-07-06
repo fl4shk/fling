@@ -35,9 +35,21 @@ private:		// functions
 	{
 		Base::_expect(tok, tok_ident_map, lex_state);
 	}
+	inline void _expect(Tok tok)
+	{
+		_expect(tok, _lexer().state());
+	}
+	inline auto _wexpect(TokType tok, Lexer* lexer=nullptr)
+	{
+		return Base::_wexpect(tok, tok_ident_map, lexer);
+	}
 	inline void _unexpected(const LexerState& lex_state)
 	{
 		Base::_unexpected(tok_ident_map, lex_state);
+	}
+	inline void _unexpected()
+	{
+		_unexpected(_lexer().state());
 	}
 	inline void _unexpected(Lexer* lexer)
 	{
@@ -54,6 +66,30 @@ private:		// functions
 	bool _check_prefixed_tok_seq(const TokSet& prefix_set, Tok end)
 	{
 		return Base::_check_prefixed_tok_seq(prefix_set, end);
+	}
+	bool _check_prefixed_tok_seq(Tok end)
+	{
+		return Base::_check_prefixed_tok_seq(TokSet(), end);
+	}
+	inline auto _lex_tok() const
+	{
+		return _lexer().tok();
+	}
+	inline void _next_tok()
+	{
+		_lexer().next_tok();
+	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	bool _opt_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		return Base::_opt_parse(this, first_func, rem_funcs...);
+	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	void _req_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		Base::_req_parse(this, first_func, rem_funcs...);
 	}
 
 	bool _parse_decl_package();

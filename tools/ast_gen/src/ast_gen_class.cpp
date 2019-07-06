@@ -22,7 +22,7 @@ const std::map<Tok, string> tok_ident_map
 };
 Tok Lexer::next_tok()
 {
-	return _next_tok(Tok::Done, Tok::Comment);
+	return _next_tok(Tok::Comment);
 }
 
 void Lexer::_inner_next_tok()
@@ -72,7 +72,6 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == EOF)
 	{
-		printout("testificate\n");
 		_set_tok(Tok::Done, false);
 	}
 	else
@@ -179,12 +178,261 @@ AstGen::~AstGen()
 
 void AstGen::run()
 {
-	size_t i = 0;
-	while (_opt_parse(&AstGen::_parse_node))
+	while (_opt_parse(&AstGen::_parse_node));
+
+	for (size_t i=0; i<_node_vec.size(); ++i)
 	{
-		printout("Node number ", i, "\n\n");
-		++i;
+		_node_ident_map[_node_vec.at(i).ident] = i;
 	}
+
+	if (auto&& f = std::ofstream("ast_node_main_classes.hpp"); true)
+	{
+		for (const auto& node : _node_vec)
+		{
+			osprintout(f, "class Node", node.ident);
+			if (node.extends.size() != 0)
+			{
+				osprintout(f, " : public Node", node.extends);
+			}
+			else
+			{
+				osprintout(f, " : public NodeBase");
+			}
+			osprintout(f, "\n");
+			osprintout(f, "{\n");
+
+			if (node.var_vec.size() != 0)
+			{
+				bool start = true, was_protected = false,
+					is_protected = false;
+
+				for (const auto& var : node.var_vec)
+				{
+					if (start)
+					{
+						if (var.is_protected())
+						{
+							osprintout(f, "protected:  // variables\n");
+						}
+						else // if (!var.is_protected())
+						{
+							osprintout(f, "public:  // variables\n");
+						}
+						start = false;
+					}
+					else // if (!start)
+					{
+						if (var.is_protected() != was_protected)
+						{
+							if (var.is_protected())
+							{
+								osprintout(f, "protected:  // ",
+									"variables\n");
+							}
+							else // if (!var.is_protected())
+							{
+								osprintout(f, "public:  // variables\n");
+							}
+						}
+					}
+					osprintout(f, "\t", var.type, " ", var.ident, ";\n");
+
+					was_protected = is_protected;
+				}
+			}
+
+			const auto ext_var_vec = _extended_var_vec(node);
+			std::vector<Var> own_init_vec, ext_init_vec, ext_only_init_vec;
+
+			for (const auto& var : node.var_vec)
+			{
+				if (var.init)
+				{
+					own_init_vec.push_back(var);
+				}
+			}
+			for (const auto& var : ext_var_vec)
+			{
+				if (var.init)
+				{
+					ext_init_vec.push_back(var);
+				}
+			}
+			for (size_t i=node.var_vec.size(); i<ext_var_vec.size(); ++i)
+			{
+				const auto& var = ext_var_vec.at(i);
+				if (var.init)
+				{
+					ext_only_init_vec.push_back(var);
+				}
+			}
+
+			osprintout(f, "public:  // functions\n");
+			osprintout(f, "\tinline Node", node.ident, "(const ",
+				"SrcCodeChunk& s_src_code_chunk");
+			//--------
+			// Var args
+			if (ext_init_vec.size() != 0)
+			{
+				osprintout(f, ",\n\t\t");
+				for (size_t i=0; i<ext_init_vec.size(); ++i)
+				{
+					const auto& var = ext_init_vec.at(i);
+					osprintout(f, "const ", var.type, "& ");
+
+					osprintout(f, var.init_ident());
+
+					if ((i + 1) != ext_init_vec.size())
+					{
+						osprintout(f, ", ");
+					}
+				}
+			}
+			//--------
+
+			//--------
+			// Child args
+			if (node.children.size() != 0)
+			{
+				osprintout(f, ",\n\t\t");
+				for (size_t i=0; i<node.children.size(); ++i)
+				{
+					osprintout(f, "Child&& s_", node.children.at(i));
+
+					if ((i + 1) != node.children.size())
+					{
+						osprintout(f, ",\n\t\t");
+					}
+				}
+			}
+			//--------
+
+			osprintout(f, ")\n");
+
+			if (node.extends.size() == 0)
+			{
+				osprintout(f, "\t\t: NodeBase(s_src_code_chunk)");
+			}
+			else if (node.extends == "List")
+			{
+				osprintout(f, "\t\t: NodeList(s_src_code_chunk)");
+			}
+			else
+			{
+				osprintout(f, "\t\t: Node", node.extends,
+					"(s_src_code_chunk");
+
+				if (ext_only_init_vec.size() != 0)
+				{
+					osprintout(f, ",\n\t\t\t");
+
+					for (size_t i=0; i<ext_only_init_vec.size(); ++i)
+					{
+						const auto& var = ext_only_init_vec.at(i);
+
+						osprintout(f, var.init_ident());
+						if ((i + 1) != ext_only_init_vec.size())
+						{
+							osprintout(f, ",\n\t\t\t");
+						}
+					}
+				}
+				osprintout(f, ")");
+			}
+			if (own_init_vec.size() != 0)
+			{
+				osprintout(f, ", ");
+
+				for (size_t i=0; i<own_init_vec.size(); ++i)
+				{
+					const auto& var = own_init_vec.at(i);
+
+					osprintout(f, var.ident, "(", var.init_ident(), ")");
+
+					if ((i + 1) != own_init_vec.size())
+					{
+						osprintout(f, ",\n\t\t\t");
+					}
+				}
+			}
+			osprintout(f, "\n");
+
+			osprintout(f, "\t{\n");
+
+			if (node.children.size() != 0)
+			{
+				osprintout(f, "\t\t_add_indiv_children(");
+
+				for (size_t i=0; i<node.children.size(); ++i)
+				{
+					osprintout(f, "APPEND_CHILD(", node.children.at(i),
+						")");
+					if ((i + 1) != node.children.size())
+					{
+						osprintout(f, ",\n\t\t\t");
+					}
+				}
+				osprintout(f, ");\n");
+			}
+			osprintout(f, "\t}\n");
+			osprintout(f, "\tGEN_POST_CONSTRUCTOR(Node", node.ident,
+				");\n");
+
+			for (const auto& var : node.var_vec)
+			{
+				if (var.is_protected())
+				{
+					osprintout(f, "\tGEN_GETTER_AND_SETTER_BY_CON_REF(",
+						var.ident.substr(1), ");\n");
+				}
+			}
+
+			osprintout(f, "};\n\n");
+		}
+	}
+	if (auto&& f = std::ofstream("list_of_ast_node_classes_define.hpp");
+		true)
+	{
+		osprintout(f,
+			"//#ifndef src_list_of_ast_node_classes_define_hpp\n",
+			"//#define src_list_of_ast_node_classes_define_hpp\n",
+			"\n",
+			"// src/list_of_ast_node_classes_define.hpp\n",
+			"\n",
+			"#define LIST_OF_AST_NODE_CLASSES(X) \\\n",
+			"\tX(NodeBase) \\\n",
+			"\tX(NodeList) \\\n");
+
+		for (const auto& node : _node_vec)
+		{
+			osprintout(f, "\tX(Node", node.ident, ") \\\n");
+		}
+		osprintout(f,
+			"\n",
+			"//#endif		// src_list_of_ast_node_classes_define_hpp\n");
+
+	}
+}
+
+auto AstGen::_extended_var_vec(const Node& node) const -> std::vector<Var>
+{
+	std::vector<Var> ret;
+
+	for (const auto& iter : node.var_vec)
+	{
+		ret.push_back(iter);
+	}
+
+	if ((node.extends != "") && (node.extends != "List"))
+	{
+		const auto temp = _extended_var_vec(_node_vec.at(_node_ident_map
+			.at(node.extends)));
+		for (const auto& iter : temp)
+		{
+			ret.push_back(iter);
+		}
+	}
+	return ret;
 }
 
 bool AstGen::_parse_node()
@@ -198,18 +446,12 @@ bool AstGen::_parse_node()
 	_node_vec.push_back(Node());
 
 	_node_vec.back().ident = _lss.find_found().s();
-	printout(_node_vec.back().ident, "\n");
 
 	_opt_parse(&AstGen::_parse_extends);
 
 	_expect(Tok::Colon);
 
-	size_t i = 0;
-	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child))
-	{
-		printout("Sub list number ", i, "\n");
-		++i;
-	}
+	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child));
 	return false;
 }
 bool AstGen::_parse_extends()
@@ -225,7 +467,6 @@ bool AstGen::_parse_extends()
 		_node_vec.back().extends = _lex_state().s();
 	}
 
-
 	return false;
 }
 bool AstGen::_parse_var()
@@ -233,8 +474,10 @@ bool AstGen::_parse_var()
 	if (just_test())
 	{
 		_check_prefixed_tok_seq(Tok::Ident);
-		return (_lss.find_found().s() == "var");
+		return ((_lss.find_found().s() == "initvar")
+			|| (_lss.find_found().s() == "noinitvar"));
 	}
+	const bool s_init = (_lss.find_found().s() == "initvar");
 	_next_lss_tokens();
 
 	string type;
@@ -254,6 +497,7 @@ bool AstGen::_parse_var()
 		{
 			var.type = type;
 			var.ident = _lex_state().s();
+			var.init = s_init;
 
 			if (node.var_ident_set.count(var.ident))
 			{
@@ -293,11 +537,6 @@ bool AstGen::_parse_child()
 			}
 
 			node.child_ident_set.insert(node.children.back());
-		}
-
-		if (node.ident == "ExprUnopBase")
-		{
-			printout("Again:  ", node.ident, "\n");
 		}
 		if (!_to_next_in_list(Tok::Semicolon))
 		{
