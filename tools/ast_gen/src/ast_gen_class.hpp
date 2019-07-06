@@ -60,7 +60,7 @@ public:		// types
 		string ident, extends;
 		std::vector<string> children;
 		std::vector<Var> var_vec;
-		std::set<string> children_ident_set, var_ident_set;
+		std::set<string> child_ident_set, var_ident_set;
 	
 	public:		// functions
 		Node() = default;
@@ -68,8 +68,8 @@ public:		// types
 		~Node() = default;
 	};
 
-public:		// constants
-	static const string node_base_str, node_list_str;
+//public:		// constants
+//	static const string node_base_str, node_list_str;
 
 private:		// variables
 	std::vector<Node> _node_vec;
@@ -116,7 +116,7 @@ private:		// functions
 	{
 		return Base::_to_next_in_list(end, separator, tok_ident_map);
 	}
-	inline void _next_lss_tokens(bool perf_next_tok)
+	inline void _next_lss_tokens(bool perf_next_tok=true)
 	{
 		Base::_next_lss_tokens(tok_ident_map, perf_next_tok);
 	}

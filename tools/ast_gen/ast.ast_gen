@@ -1,6 +1,5 @@
 Package:
 	child ident, scope;
-	a
 ScopePackage, List:
 Module:
 	child ident, param_list, port_list, scope;

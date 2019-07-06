@@ -75,92 +75,92 @@ void Lexer::_inner_next_tok()
 	}
 }
 
-const string AstGen::node_base_str
-	= sconcat("class NodeBase\n",
-	"{\n",
-	"public:		// types\n",
-	"	using TokSet = std::set<Tok>;\n",
-	"	using Children = std::map<string, ",
-		"std::vector<unique_ptr<NodeBase>>>;\n",
-	"	using Child = unique_ptr<NodeBase>;\n",
-	"\n",
-	"protected:		// variables\n",
-	"	SrcCodeChunk _src_code_chunk;\n",
-	"	Children _children;\n",
-	"\n",
-	"public:		// functions\n",
-	"	inline NodeBase()\n",
-	"	{\n",
-	"	}\n",
-	"	inline NodeBase(const SrcCodeChunk& s_src_code_chunk)\n",
-	"		: _src_code_chunk(s_src_code_chunk)\n",
-	"	{\n",
-	"	}\n",
-	"	GEN_POST_CONSTRUCTOR(NodeBase);\n",
-	"\n",
-	"	inline bool has(const string& ident) const\n",
-	"	{\n",
-	"		//return ((children().count(ident) != 0)\n",
-	"		//	&& (children().at(ident).front().get() != nullptr));\n",
-	"		return (children().at(ident).front().get() != nullptr);\n",
-	"	}\n",
-	"\n",
-	"	inline const Children& children() const\n",
-	"	{\n",
-	"		return _children;\n",
-	"	}\n",
-	"\n",
-	"	GEN_GETTER_BY_CON_REF(src_code_chunk)\n",
-	"\n",
-	"protected:		// functions\n",
-	"	template<typename FirstType, typename... RemArgTypes>\n",
-	"	inline void _add_indiv_children(const string& first_ident,\n",
-	"		FirstType&& first_child, RemArgTypes&&... rem_children)\n",
-	"	{\n",
-	"		_insert_children_list(first_ident);\n",
-	"		_children[first_ident].push_back(move(first_child));\n",
-	"		if constexpr (sizeof...(rem_children) != 0)\n",
-	"		{\n",
-	"			_add_indiv_children(rem_children...);\n",
-	"		}\n",
-	"	}\n",
-	"	inline void _insert_children_list(const string& ident)\n",
-	"	{\n",
-	"		_children[ident] = std::vector<unique_ptr<NodeBase>>();\n",
-	"	}\n",
-	"	template<typename FirstType, typename... RemArgTypes>\n",
-	"	inline void _append_children(const string& ident,\n",
-	"		FirstType&& first_child, RemArgTypes&&... rem_children)\n",
-	"	{\n",
-	"		if (_children.count(ident) == 0)\n",
-	"		{\n",
-	"			_insert_children_list(ident);\n",
-	"		}\n",
-	"		_children[ident].push_back(move(first_child));\n",
-	"\n",
-	"		if constexpr (sizeof...(rem_children) != 0)\n",
-	"		{\n",
-	"			_append_children(ident, rem_children...);\n",
-	"		}\n",
-	"	}\n",
-	"};\n");
-
-const string AstGen::node_list_str
-	= sconcat("class NodeList : public NodeBase\n",
-	"{\n",
-	"public:		// functions\n",
-	"	inline NodeList(const SrcCodeChunk& s_src_code_chunk)\n",
-	"		: NodeBase(s_src_code_chunk)\n",
-	"	{\n",
-	"		_insert_children_list(\"list\");\n",
-	"	}\n",
-	"	GEN_POST_CONSTRUCTOR(NodeList);\n",
-	"\n",
-	"	inline void append_list_child(Child&& child)\n",
-	"	{\n",
-	"		_append_children(\"list\", move(child));\n",
-	"	}\n",
-	"};\n");
+//const string AstGen::node_base_str
+//	= sconcat("class NodeBase\n",
+//	"{\n",
+//	"public:		// types\n",
+//	"	using TokSet = std::set<Tok>;\n",
+//	"	using Children = std::map<string, ",
+//		"std::vector<unique_ptr<NodeBase>>>;\n",
+//	"	using Child = unique_ptr<NodeBase>;\n",
+//	"\n",
+//	"protected:		// variables\n",
+//	"	SrcCodeChunk _src_code_chunk;\n",
+//	"	Children _children;\n",
+//	"\n",
+//	"public:		// functions\n",
+//	"	inline NodeBase()\n",
+//	"	{\n",
+//	"	}\n",
+//	"	inline NodeBase(const SrcCodeChunk& s_src_code_chunk)\n",
+//	"		: _src_code_chunk(s_src_code_chunk)\n",
+//	"	{\n",
+//	"	}\n",
+//	"	GEN_POST_CONSTRUCTOR(NodeBase);\n",
+//	"\n",
+//	"	inline bool has(const string& ident) const\n",
+//	"	{\n",
+//	"		//return ((children().count(ident) != 0)\n",
+//	"		//	&& (children().at(ident).front().get() != nullptr));\n",
+//	"		return (children().at(ident).front().get() != nullptr);\n",
+//	"	}\n",
+//	"\n",
+//	"	inline const Children& children() const\n",
+//	"	{\n",
+//	"		return _children;\n",
+//	"	}\n",
+//	"\n",
+//	"	GEN_GETTER_BY_CON_REF(src_code_chunk)\n",
+//	"\n",
+//	"protected:		// functions\n",
+//	"	template<typename FirstType, typename... RemArgTypes>\n",
+//	"	inline void _add_indiv_children(const string& first_ident,\n",
+//	"		FirstType&& first_child, RemArgTypes&&... rem_children)\n",
+//	"	{\n",
+//	"		_insert_children_list(first_ident);\n",
+//	"		_children[first_ident].push_back(move(first_child));\n",
+//	"		if constexpr (sizeof...(rem_children) != 0)\n",
+//	"		{\n",
+//	"			_add_indiv_children(rem_children...);\n",
+//	"		}\n",
+//	"	}\n",
+//	"	inline void _insert_children_list(const string& ident)\n",
+//	"	{\n",
+//	"		_children[ident] = std::vector<unique_ptr<NodeBase>>();\n",
+//	"	}\n",
+//	"	template<typename FirstType, typename... RemArgTypes>\n",
+//	"	inline void _append_children(const string& ident,\n",
+//	"		FirstType&& first_child, RemArgTypes&&... rem_children)\n",
+//	"	{\n",
+//	"		if (_children.count(ident) == 0)\n",
+//	"		{\n",
+//	"			_insert_children_list(ident);\n",
+//	"		}\n",
+//	"		_children[ident].push_back(move(first_child));\n",
+//	"\n",
+//	"		if constexpr (sizeof...(rem_children) != 0)\n",
+//	"		{\n",
+//	"			_append_children(ident, rem_children...);\n",
+//	"		}\n",
+//	"	}\n",
+//	"};\n");
+//
+//const string AstGen::node_list_str
+//	= sconcat("class NodeList : public NodeBase\n",
+//	"{\n",
+//	"public:		// functions\n",
+//	"	inline NodeList(const SrcCodeChunk& s_src_code_chunk)\n",
+//	"		: NodeBase(s_src_code_chunk)\n",
+//	"	{\n",
+//	"		_insert_children_list(\"list\");\n",
+//	"	}\n",
+//	"	GEN_POST_CONSTRUCTOR(NodeList);\n",
+//	"\n",
+//	"	inline void append_list_child(Child&& child)\n",
+//	"	{\n",
+//	"		_append_children(\"list\", move(child));\n",
+//	"	}\n",
+//	"};\n");
 
 
 AstGen::AstGen(std::vector<string>&& s_filename_vec)
@@ -173,7 +173,12 @@ AstGen::~AstGen()
 
 void AstGen::run()
 {
-	_do_parse(&AstGen::_parse_node);
+	size_t i = 0;
+	while (_opt_parse(&AstGen::_parse_node))
+	{
+		printout("Node number ", i, "\n");
+		++i;
+	}
 }
 
 bool AstGen::_parse_node()
@@ -189,12 +194,20 @@ bool AstGen::_parse_node()
 	_node_vec.back().ident = _lss.find_found().s();
 	//printout(_node_vec.back().ident, "\n");
 
-	_opt_do_parse(&AstGen::_parse_extends);
-	//printout(_lexer().s(), " ", static_cast<size_t>(_lexer().tok()), "\n");
+	_opt_parse(&AstGen::_parse_extends);
+	printout("egg 0:  ", _lexer().s(), " ",
+		tok_ident_map.at(_lexer().tok()), "\n");
 
 	_expect(Tok::Colon);
+	printout("egg 1:  ", _lexer().s(), " ",
+		tok_ident_map.at(_lexer().tok()), "\n");
 
-	_force_do_parse(&AstGen::_parse_var, &AstGen::_parse_child);
+	size_t i = 0;
+	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child))
+	{
+		printout("Innards number ", i, "\n");
+		++i;
+	}
 	return false;
 }
 bool AstGen::_parse_extends()
@@ -203,7 +216,7 @@ bool AstGen::_parse_extends()
 	{
 		return _check_prefixed_tok_seq(Tok::Comma);
 	}
-	_next_lss_tokens(true);
+	_next_lss_tokens();
 
 	_node_vec.back().extends = _lss.find_found().s();
 
@@ -216,7 +229,7 @@ bool AstGen::_parse_var()
 		_check_prefixed_tok_seq(Tok::Ident);
 		return (_lss.find_found().s() == "var");
 	}
-	_next_lss_tokens(true);
+	_next_lss_tokens();
 
 	string type;
 	with(we, _wexpect(Tok::Ident))
@@ -257,6 +270,28 @@ bool AstGen::_parse_child()
 	{
 		_check_prefixed_tok_seq(Tok::Ident);
 		return (_lss.find_found().s() == "child");
+	}
+	_next_lss_tokens();
+
+	for (;;)
+	{
+		auto& node = _node_vec.back();
+
+		with(we, _wexpect(Tok::Ident))
+		{
+			node.children.push_back(_lex_state().s());
+
+			if (node.child_ident_set.count(node.children.back()))
+			{
+				_err("Duplicate child \"", node.children.back(), "\"");
+			}
+
+			node.child_ident_set.insert(node.children.back());
+		}
+		if (!_to_next_in_list(Tok::Semicolon))
+		{
+			break;
+		}
 	}
 
 	return false;
