@@ -18,6 +18,7 @@ const std::map<Tok, string> tok_ident_map
 	{Tok::Comma, ","},
 	{Tok::Ident, "ident"},
 	{Tok::Unknown, "unknown"},
+	{Tok::Done, "done"},
 };
 Tok Lexer::next_tok()
 {
@@ -71,6 +72,7 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == EOF)
 	{
+		printout("testificate\n");
 		_set_tok(Tok::Done, false);
 	}
 	else
