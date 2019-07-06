@@ -69,6 +69,10 @@ void Lexer::_inner_next_tok()
 		}
 		_set_tok(Tok::Ident, false);
 	}
+	else if (c() == EOF)
+	{
+		_set_tok(Tok::Done, false);
+	}
 	else
 	{
 		_set_tok(Tok::Unknown, true);
@@ -176,7 +180,7 @@ void AstGen::run()
 	size_t i = 0;
 	while (_opt_parse(&AstGen::_parse_node))
 	{
-		printout("Node number ", i, "\n");
+		printout("Node number ", i, "\n\n");
 		++i;
 	}
 }
@@ -192,13 +196,18 @@ bool AstGen::_parse_node()
 	_node_vec.push_back(Node());
 
 	_node_vec.back().ident = _lss.find_found().s();
-	//printout(_node_vec.back().ident, "\n");
+	printout(_node_vec.back().ident, "\n");
 
 	_opt_parse(&AstGen::_parse_extends);
 
 	_expect(Tok::Colon);
 
-	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child));
+	size_t i = 0;
+	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child))
+	{
+		printout("Sub list number ", i, "\n");
+		++i;
+	}
 	return false;
 }
 bool AstGen::_parse_extends()
@@ -271,6 +280,10 @@ bool AstGen::_parse_child()
 	for (;;)
 	{
 		auto& node = _node_vec.back();
+		if (node.ident == "ExprUnopBase")
+		{
+			printout("Again:  ", node.ident, "\n");
+		}
 
 		with(we, _wexpect(Tok::Ident))
 		{
