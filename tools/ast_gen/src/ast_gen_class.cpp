@@ -282,10 +282,6 @@ bool AstGen::_parse_child()
 	for (;;)
 	{
 		auto& node = _node_vec.back();
-		if (node.ident == "ExprUnopBase")
-		{
-			printout("Again:  ", node.ident, "\n");
-		}
 
 		with(we, _wexpect(Tok::Ident))
 		{
@@ -297,6 +293,11 @@ bool AstGen::_parse_child()
 			}
 
 			node.child_ident_set.insert(node.children.back());
+		}
+
+		if (node.ident == "ExprUnopBase")
+		{
+			printout("Again:  ", node.ident, "\n");
 		}
 		if (!_to_next_in_list(Tok::Semicolon))
 		{
