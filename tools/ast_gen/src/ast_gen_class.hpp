@@ -116,9 +116,9 @@ private:		// functions
 	{
 		return Base::_to_next_in_list(end, separator, tok_ident_map);
 	}
-	inline void _next_lss_tokens(bool perf_next_tok=true)
+	inline void _next_lss_tokens()
 	{
-		Base::_next_lss_tokens(tok_ident_map, perf_next_tok);
+		Base::_next_lss_tokens(tok_ident_map);
 	}
 	bool _check_prefixed_tok_seq(const TokSet& prefix_set, Tok end)
 	{

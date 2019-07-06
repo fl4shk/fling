@@ -187,7 +187,7 @@ bool AstGen::_parse_node()
 	{
 		return _check_prefixed_tok_seq(Tok::Ident);
 	}
-	_next_lss_tokens(true);
+	_next_lss_tokens();
 
 	_node_vec.push_back(Node());
 
@@ -195,19 +195,10 @@ bool AstGen::_parse_node()
 	//printout(_node_vec.back().ident, "\n");
 
 	_opt_parse(&AstGen::_parse_extends);
-	printout("egg 0:  ", _lexer().s(), " ",
-		tok_ident_map.at(_lexer().tok()), "\n");
 
 	_expect(Tok::Colon);
-	printout("egg 1:  ", _lexer().s(), " ",
-		tok_ident_map.at(_lexer().tok()), "\n");
 
-	size_t i = 0;
-	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child))
-	{
-		printout("Innards number ", i, "\n");
-		++i;
-	}
+	while (_opt_parse(&AstGen::_parse_var, &AstGen::_parse_child));
 	return false;
 }
 bool AstGen::_parse_extends()
@@ -218,7 +209,11 @@ bool AstGen::_parse_extends()
 	}
 	_next_lss_tokens();
 
-	_node_vec.back().extends = _lss.find_found().s();
+	with(we, _wexpect(Tok::Ident))
+	{
+		_node_vec.back().extends = _lex_state().s();
+	}
+
 
 	return false;
 }
