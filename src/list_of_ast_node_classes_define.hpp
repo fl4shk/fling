@@ -10,14 +10,16 @@
 	X(NodeScopePackage) \
 	X(NodeModule) \
 	X(NodeScopeModule) \
-	X(NodeInputSubPortList) \
-	X(NodeOutputSubPortList) \
-	X(NodeBidirSubPortList) \
-	X(NodeSubParamList) \
+	X(NodeInputSubPortArgList) \
+	X(NodeOutputSubPortArgList) \
+	X(NodeBidirSubPortArgList) \
+	X(NodeSubParamArgList) \
+	X(NodeLeftRightBase) \
+	X(NodeParamArgList) \
 	X(NodeIdentBracket) \
 	X(NodeIdentScope) \
-	X(NodeIdentMemberAccess) \
-	X(NodeIdentExpr) \
+	X(NodeCall) \
+	X(NodeIdentEtc) \
 	X(NodeNumExpr) \
 	X(NodeSizedNumExpr) \
 	X(NodeBracketPair) \
@@ -29,8 +31,26 @@
 	X(NodeClass) \
 	X(NodeScopeClass) \
 	X(NodeTypename) \
+	X(NodeType) \
+	X(NodeAuto) \
+	X(NodeVoid) \
+	X(NodeUwire) \
+	X(NodeSwire) \
+	X(NodeUbit) \
+	X(NodeSbit) \
+	X(NodeUbyte) \
+	X(NodeSbyte) \
+	X(NodeUshortint) \
+	X(NodeSshortint) \
+	X(NodeUint) \
+	X(NodeSint) \
+	X(NodeUlongint) \
+	X(NodeSlongint) \
+	X(NodeSelf) \
+	X(NodePort) \
 	X(NodePosParamArgInstList) \
 	X(NodeNamedParamArgInstList) \
+	X(NodeSliceRange) \
 	X(NodeOneParamArgInst) \
 	X(NodeExprBase) \
 	X(NodeExprBinopBase) \
@@ -74,6 +94,25 @@
 	X(NodeExprUnopTypeof) \
 	X(NodeExprCat) \
 	X(NodeListCat) \
-	X(NodeExprFuncCall) \
+	X(NodeExprRangeAny) \
+	X(NodeRangeOne) \
+	X(NodeRangeTwo) \
+	X(NodeStmtAnyFor) \
+	X(NodeStmtFor) \
+	X(NodeStmtGenerateFor) \
+	X(NodeStmtAnyIf) \
+	X(NodeStmtAnyElse) \
+	X(NodeStmtGenerateIf) \
+	X(NodeStmtGenerateElse) \
+	X(NodeStmtIf) \
+	X(NodeStmtElse) \
+	X(NodeStmtWhile) \
+	X(NodeStmtBehavAssign) \
+	X(NodeStmtContAssign) \
+	X(NodeStmtLabMemberAccessPublic) \
+	X(NodeStmtLabMemberAccessProtected) \
+	X(NodeStmtLabMemberAccessPrivate) \
+	X(NodeStmtUsing) \
+	X(NodeStmtInstModule) \
 
 //#endif		// src_list_of_ast_node_classes_define_hpp

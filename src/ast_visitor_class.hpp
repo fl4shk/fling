@@ -22,10 +22,9 @@ public:		// functions
 	Visitor();
 	virtual ~Visitor();
 
-	#define GEN_VISIT(AstNodeType) \
-		virtual void visit##AstNodeType(AstNodeType& node) = 0;
-	LIST_OF_AST_NODE_CLASSES(GEN_VISIT)
-	#undef GEN_VISIT
+	virtual void visitBase(NodeBase* node) = 0;
+	virtual void visitList(NodeList* node) = 0;
+	#include "ast_visitor_visit_funcs.hpp"
 
 };
 

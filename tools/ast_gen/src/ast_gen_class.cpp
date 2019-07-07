@@ -185,7 +185,7 @@ void AstGen::run()
 		_node_ident_map[_node_vec.at(i).ident] = i;
 	}
 
-	if (auto&& f = std::ofstream("ast_node_main_classes.hpp"); true)
+	rwith(f, std::ofstream("ast_node_main_classes.hpp"))
 	{
 		for (const auto& node : _node_vec)
 		{
@@ -211,11 +211,11 @@ void AstGen::run()
 					{
 						if (var.is_protected())
 						{
-							osprintout(f, "protected:  // variables\n");
+							osprintout(f, "protected:\t\t// variables\n");
 						}
 						else // if (!var.is_protected())
 						{
-							osprintout(f, "public:  // variables\n");
+							osprintout(f, "public:\t\t// variables\n");
 						}
 						start = false;
 					}
@@ -225,18 +225,37 @@ void AstGen::run()
 						{
 							if (var.is_protected())
 							{
-								osprintout(f, "protected:  // ",
+								osprintout(f, "protected:\t\t// ",
 									"variables\n");
 							}
 							else // if (!var.is_protected())
 							{
-								osprintout(f, "public:  // variables\n");
+								osprintout(f, "public:\t\t// variables\n");
 							}
 						}
 					}
 					osprintout(f, "\t", var.type, " ", var.ident, ";\n");
 
 					was_protected = var.is_protected();
+				}
+			}
+			if (node.children.size() != 0)
+			{
+				osprintout(f, "protected:\t\t// children\n");
+
+				osprintout(f, "\tChild ");
+
+				for (size_t i=0; i<node.children.size(); ++i)
+				{
+					osprintout(f, "_", node.children.at(i));
+					if ((i + 1) != node.children.size())
+					{
+						osprintout(f, ",\n\t\t");
+					}
+					else
+					{
+						osprintout(f, ";\n");
+					}
 				}
 			}
 
@@ -273,7 +292,7 @@ void AstGen::run()
 				}
 			}
 
-			osprintout(f, "public:  // functions\n");
+			osprintout(f, "public:\t\t// functions\n");
 			osprintout(f, "\tinline Node", node.ident, "(const ",
 				"SrcCodeChunk& s_src_code_chunk");
 			//--------
@@ -330,7 +349,7 @@ void AstGen::run()
 
 				if (ext_only_init_vec.size() != 0)
 				{
-					osprintout(f, ",\n\t\t\t");
+					osprintout(f, ",\n\t\t");
 
 					for (size_t i=0; i<ext_only_init_vec.size(); ++i)
 					{
@@ -339,22 +358,23 @@ void AstGen::run()
 						osprintout(f, var.init_ident());
 						if ((i + 1) != ext_only_init_vec.size())
 						{
-							osprintout(f, ",\n\t\t\t");
+							osprintout(f, ",\n\t\t");
 						}
 					}
 				}
 				if (ext_only_children.size() != 0)
 				{
-					osprintout(f, ",\n\t\t\t");
+					osprintout(f, ",\n\t\t");
 
 					for (size_t i=0; i<ext_only_children.size(); ++i)
 					{
 						const auto& child = ext_only_children.at(i);
 
 						osprintout(f, "std::move(s_", child, ")");
+
 						if ((i + 1) != ext_only_children.size())
 						{
-							osprintout(f, ",\n\t\t\t");
+							osprintout(f, ",\n\t\t");
 						}
 					}
 				}
@@ -372,7 +392,22 @@ void AstGen::run()
 
 					if ((i + 1) != own_init_vec.size())
 					{
-						osprintout(f, ",\n\t\t\t");
+						osprintout(f, ",\n\t\t");
+					}
+				}
+			}
+			if (node.children.size() != 0)
+			{
+				osprintout(f, ",\n\t\t");
+
+				for (size_t i=0; i<node.children.size(); ++i)
+				{
+					const auto& child = node.children.at(i);
+					osprintout(f,
+						"_", child, "(std::move(s_", child, "))");
+					if ((i + 1) != node.children.size())
+					{
+						osprintout(f, ",\n\t\t");
 					}
 				}
 			}
@@ -380,44 +415,40 @@ void AstGen::run()
 
 			osprintout(f, "\t{\n");
 
-			if (node.children.size() != 0)
-			{
-				osprintout(f, "\t\t_add_indiv_children(");
-
-				for (size_t i=0; i<node.children.size(); ++i)
-				{
-					osprintout(f, "APPEND_CHILD(", node.children.at(i),
-						")");
-					if ((i + 1) != node.children.size())
-					{
-						osprintout(f, ",\n\t\t\t");
-					}
-				}
-				osprintout(f, ");\n");
-			}
 			osprintout(f, "\t}\n");
-			osprintout(f, "\tGEN_POST_CONSTRUCTOR(Node", node.ident,
-				");\n");
+			osprintout(f,
+				"\tGEN_POST_CONSTRUCTOR(Node", node.ident, ");\n");
+
+			osprintout(f,
+				"\tvirtual Type type() const\n",
+				"\t{\n",
+				"\t\treturn Type::", node.ident, ";\n",
+				"\t}\n",
+				"\tvirtual string name() const\n",
+				"\t{\n",
+				"\t\treturn \"", node.ident, "\";\n",
+				"\t}\n");
 
 			for (const auto& var : node.var_vec)
 			{
 				if (var.is_protected())
 				{
 					osprintout(f, "\tGEN_GETTER_AND_SETTER_BY_CON_REF(",
-						var.ident.substr(1), ");\n");
+						var.ident.substr(1), ")\n");
 				}
+			}
+			for (const auto& child : node.children)
+			{
+				osprintout(f, "\tGEN_GETTER_BY_CON_REF(", child, ")\n",
+					"\tGEN_SETTER_BY_RVAL_REF(", child, ")\n");
 			}
 
 			osprintout(f, "};\n\n");
 		}
 	}
-	if (auto&& f = std::ofstream("list_of_ast_node_classes_define.hpp");
-		true)
+	rwith(f, std::ofstream("list_of_ast_node_classes_define.hpp"))
 	{
 		osprintout(f,
-			"//#ifndef src_list_of_ast_node_classes_define_hpp\n",
-			"//#define src_list_of_ast_node_classes_define_hpp\n",
-			"\n",
 			"// src/list_of_ast_node_classes_define.hpp\n",
 			"\n",
 			"#define LIST_OF_AST_NODE_CLASSES(X) \\\n",
@@ -428,10 +459,34 @@ void AstGen::run()
 		{
 			osprintout(f, "\tX(Node", node.ident, ") \\\n");
 		}
-		osprintout(f,
-			"\n",
-			"//#endif		// src_list_of_ast_node_classes_define_hpp\n");
 
+	}
+	rwith(f, std::ofstream("ast_node_type_enum.hpp"))
+	{
+		osprintout(f,
+			"// src/ast_node_type_enum.hpp\n",
+			"\n",
+			"enum class Type\n",
+			"{\n");
+
+		for (const auto& node : _node_vec)
+		{
+			osprintout(f, "\t", node.ident, ",\n");
+		}
+		osprintout(f,
+			"}\n");
+	}
+	rwith(f, std::ofstream("ast_visitor_visit_funcs.hpp"))
+	{
+		osprintout(f,
+			"// src/ast_visitor_visit_funcs.hpp\n",
+			"\n");
+
+		for (const auto& node : _node_vec)
+		{
+			osprintout(f, "virtual void visit", node.ident, "(Node",
+				node.ident, "* node) = 0;\n");
+		}
 	}
 }
 
@@ -504,7 +559,7 @@ bool AstGen::_parse_extends()
 	}
 	_next_lss_tokens();
 
-	with(we, _wexpect(Tok::Ident))
+	rwith(we, _wexpect(Tok::Ident))
 	{
 		_node_vec.back().extends = _lex_state().s();
 	}
@@ -523,7 +578,7 @@ bool AstGen::_parse_var()
 	_next_lss_tokens();
 
 	string type;
-	with(we, _wexpect(Tok::Ident))
+	rwith(we, _wexpect(Tok::Ident))
 	{
 		type = _lex_state().s();
 	}
@@ -535,7 +590,7 @@ bool AstGen::_parse_var()
 
 		auto& var = node.var_vec.back();
 
-		with(we, _wexpect(Tok::Ident))
+		rwith(we, _wexpect(Tok::Ident))
 		{
 			var.type = type;
 			var.ident = _lex_state().s();
@@ -569,7 +624,7 @@ bool AstGen::_parse_child()
 	{
 		auto& node = _node_vec.back();
 
-		with(we, _wexpect(Tok::Ident))
+		rwith(we, _wexpect(Tok::Ident))
 		{
 			node.children.push_back(_lex_state().s());
 

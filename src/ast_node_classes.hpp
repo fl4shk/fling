@@ -55,6 +55,10 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeBase);
+	static inline bool has(const Child& child)
+	{
+		return (child.get() != nullptr);
+	}
 
 	virtual Type type() const
 	{

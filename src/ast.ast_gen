@@ -199,7 +199,7 @@ RangeTwo, LeftRightBase:
 
 StmtAnyFor:
 	child var, items;
-StmtFor, StmtAnyFor
+StmtFor, StmtAnyFor:
 StmtGenerateFor, StmtAnyFor:
 	child label;
 
@@ -240,4 +240,4 @@ StmtLabMemberAccessPrivate:
 StmtUsing, LeftRightBase:
 
 StmtInstModule:
-	child module_ident, inst_ident,
+	child module_ident, inst_ident, arg_inst_list;
