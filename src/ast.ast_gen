@@ -19,9 +19,8 @@ LeftRightBase:
 // List of SubParamArgList's
 ParamArgList, List:
 
-// Example:  DataInout i_a_arr[ARR_SIZE]
-// The `NodeIdentBracket` indicates both `i_a_arr` (`ident` child) and
-// `[ARR_SIZE]` (`list` child "inherited" from `NodeList`)
+// Example:  `i_a_arr[ARR_SIZE]`
+// The list is of brackets.  Example of multiple brackets:  `i_a_arr[2][3]`
 IdentBracket, List:
 	child ident;
 
@@ -31,7 +30,7 @@ IdentScope:
 // This is either an expression or a statement.  It can only be an
 // expression for non-`void` `func`tions.
 Call:
-	child ident_etc, param_inst_list;
+	child ident, param_inst_list;
 
 // A string of identifiers and operations chained together via the `.`
 // (scope) operator.
@@ -61,6 +60,8 @@ HasString:
 Ident, HasString:
 ConstString, HasString:
 
+ScopeUnnamed, List:
+
 Enum:
 	child the_typename, ident, scope;
 ScopeEnum, List:
@@ -69,9 +70,11 @@ Class:
 	initvar bool _packed;
 	child ident, param_list, extends, scope, var_list;
 ScopeClass, List:
+Extends:
+	child the_typename;
 
 Typename:
-	child ident, param_inst_list;
+	child ident_etc, param_inst_list;
 
 Type:
 Auto: Void:
@@ -79,7 +82,6 @@ Uwire: Swire: Ubit: Sbit:
 Ubyte: Sbyte: Ushortint: Sshortint:
 Uint: Sint: Ulongint: Slongint:
 Self:
-Port:
 
 PosParamArgInstList, List:
 NamedParamArgInstList, List:
@@ -188,6 +190,8 @@ ExprCat, ExprBase:
 	child list;
 ListCat, List:
 
+ExprRepl, ExprBase:
+	child how_much_expr, to_repl_expr;
 
 ExprRangeAny, ExprBase:
 	child expr;
@@ -197,8 +201,11 @@ RangeTwo, LeftRightBase:
 
 
 
+
+StmtList, List:
+
 StmtAnyFor:
-	child var, items;
+	child var, items, stmt_list;
 StmtFor, StmtAnyFor:
 StmtGenerateFor, StmtAnyFor:
 	child label;
@@ -221,14 +228,25 @@ StmtAnyIf:
 StmtAnyElse:
 	child stmt_list;
 
-StmtGenerateIf, StmtAnyIf:
-StmtGenerateElse, StmtAnyElse:
-
 StmtIf, StmtAnyIf:
 StmtElse, StmtAnyElse:
 
-StmtWhile:
+StmtGenerateIf, StmtAnyIf:
+StmtGenerateElse, StmtAnyElse:
+
+StmtAnyWhile:
 	child cond_expr, stmt_list;
+
+StmtGenerateWhile, StmtAnyWhile:
+	child label;
+StmtWhile, StmtAnyWhile:
+
+StmtGenerateDoWhile, StmtGenerateWhile:
+StmtDoWhile, StmtWhile:
+
+StmtGenerateRaw:
+	child stmt_list;
+
 
 StmtBehavAssign, LeftRightBase:
 StmtContAssign, LeftRightBase:
@@ -237,7 +255,45 @@ StmtLabMemberAccessPublic:
 StmtLabMemberAccessProtected:
 StmtLabMemberAccessPrivate:
 
+StmtSwitch:
+	child ident_etc, stmt_list;
+StmtSwitchz, StmtSwitch:
+StmtCase:
+	child expr;
+StmtDefault:
+
 StmtUsing, LeftRightBase:
 
 StmtInstModule:
 	child module_ident, inst_ident, arg_inst_list;
+StmtReturn:
+	child expr;
+StmtInitial:
+	child stmt_list;
+StmtAlwaysComb:
+	child stmt_list;
+StmtAlwaysBlk:
+	child edge_list, stmt_list:
+StmtAlwaysFf:
+	child edge_list, stmt_list;
+
+PosedgeInst:
+	child ident_etc;
+NegedgeInst:
+	child ident_etc;
+EdgeList, List;
+
+DeclCallable:
+	initvar bool _is_static, _is_virtual;
+	child param_list, arg_list, ident, stmt_list;
+
+DeclFunc, DeclCallable:
+	initvar _is_const;
+	child the_typename;
+DeclProc, DeclCallable:
+	initvar _is_port;
+DeclTask, DeclCallable:
+
+DeclVar:
+	child the_typename, ident_bracket;
+DeclGenvar, DeclVar:

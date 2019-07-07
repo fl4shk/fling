@@ -78,7 +78,6 @@
 	\
 	X(KwGenerate, "generate") \
 	X(KwGenvar, "genvar") \
-	X(KwVar, "var") \
 	\
 	X(KwCat, "cat") \
 	X(KwRepl, "repl") \
