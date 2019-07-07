@@ -4,21 +4,43 @@ ScopePackage, List:
 Module:
 	child ident, param_list, port_list, scope;
 ScopeModule, List:
-InputSubPortList, List:
+InputSubPortArgList, List:
 	child typename;
-OutputSubPortList, List:
+OutputSubPortArgList, List:
 	child typename;
-BidirSubPortList, List:
+BidirSubPortArgList, List:
 	child typename;
-SubParamList, List:
+SubParamArgList, List:
 	child primary;
+
+LeftRightBase:
+	child left, right;
+
+// List of SubParamArgList's
+ParamArgList, List:
+
+// Example:  DataInout i_a_arr[ARR_SIZE]
+// The `NodeIdentBracket` indicates both `i_a_arr` (`ident` child) and
+// `[ARR_SIZE]` (`list` child "inherited" from `NodeList`)
 IdentBracket, List:
 	child ident;
-IdentScope, List:
-IdentMemberAccess, List:
-IdentExpr, List:
+
+// This represents the `.`, indicating a scope.
+IdentScope:
+
+// This is either an expression or a statement.  It can only be an
+// expression for non-`void` `func`tions.
+Call:
+	child ident_etc, param_inst_list;
+
+// A string of identifiers and operations chained together via the `.`
+// (scope) operator.
+IdentEtc, List:
+
 NumExpr:
-	initvar BigNum;
+	initvar BigNum _n;
+SizedNumExpr, NumExpr:
+	child size;
 
 
 // Blank brackets (`[]`) indicate that (a) this pair is on a port
@@ -46,16 +68,23 @@ ScopeEnum, List:
 Class:
 	initvar bool _packed;
 	child ident, param_list, extends, scope, var_list;
-
 ScopeClass, List:
 
 Typename:
-	child bracket_pair, ident, param_inst_list;
+	child ident, param_inst_list;
+
+Type:
+Auto: Void:
+Uwire: Swire: Ubit: Sbit:
+Ubyte: Sbyte: Ushortint: Sshortint:
+Uint: Sint: Ulongint: Slongint:
+Self:
+Port:
 
 PosParamArgInstList, List:
 NamedParamArgInstList, List:
-OneParamArgInst:
-	child left, right;
+SliceRange, LeftRightBase:
+OneParamArgInst, LeftRightBase:
 
 //// Expression parsing
 //expr:
@@ -156,3 +185,59 @@ ExprBinopDollarPow, ExprBinopBase:
 
 ExprUnopTypeof, ExprUnopBase:
 ExprCat, ExprBase:
+	child list;
+ListCat, List:
+
+
+ExprRangeAny, ExprBase:
+	child expr;
+RangeOne:
+	child child;
+RangeTwo, LeftRightBase:
+
+
+
+StmtAnyFor:
+	child var, items;
+StmtFor, StmtAnyFor
+StmtGenerateFor, StmtAnyFor:
+	child label;
+
+// generate if (...)
+// {
+// 	...
+// }
+// else generate if (...)
+// {
+// 	...
+// }
+// else generate
+// {
+// 	...
+// }
+
+StmtAnyIf:
+	child cond_expr, stmt_list, else;
+StmtAnyElse:
+	child stmt_list;
+
+StmtGenerateIf, StmtAnyIf:
+StmtGenerateElse, StmtAnyElse:
+
+StmtIf, StmtAnyIf:
+StmtElse, StmtAnyElse:
+
+StmtWhile:
+	child cond_expr, stmt_list;
+
+StmtBehavAssign, LeftRightBase:
+StmtContAssign, LeftRightBase:
+
+StmtLabMemberAccessPublic:
+StmtLabMemberAccessProtected:
+StmtLabMemberAccessPrivate:
+
+StmtUsing, LeftRightBase:
+
+StmtInstModule:
+	child module_ident, inst_ident,

@@ -108,6 +108,7 @@ public:		// functions
 	void run();
 
 private:		// functions
+	std::vector<string> _extended_children(const Node& node) const;
 	std::vector<Var> _extended_var_vec(const Node& node) const;
 	inline std::string _msg_for_expect(Tok tok,
 		const LexerState& lex_state) const

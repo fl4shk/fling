@@ -203,8 +203,7 @@ void AstGen::run()
 
 			if (node.var_vec.size() != 0)
 			{
-				bool start = true, was_protected = false,
-					is_protected = false;
+				bool start = true, was_protected = false;
 
 				for (const auto& var : node.var_vec)
 				{
@@ -237,12 +236,19 @@ void AstGen::run()
 					}
 					osprintout(f, "\t", var.type, " ", var.ident, ";\n");
 
-					was_protected = is_protected;
+					was_protected = var.is_protected();
 				}
 			}
 
+			const auto ext_children = _extended_children(node);
 			const auto ext_var_vec = _extended_var_vec(node);
+			std::vector<string> ext_only_children;
 			std::vector<Var> own_init_vec, ext_init_vec, ext_only_init_vec;
+
+			for (size_t i=node.children.size(); i<ext_children.size(); ++i)
+			{
+				ext_only_children.push_back(ext_children.at(i));
+			}
 
 			for (const auto& var : node.var_vec)
 			{
@@ -292,14 +298,14 @@ void AstGen::run()
 
 			//--------
 			// Child args
-			if (node.children.size() != 0)
+			if (ext_children.size() != 0)
 			{
 				osprintout(f, ",\n\t\t");
-				for (size_t i=0; i<node.children.size(); ++i)
+				for (size_t i=0; i<ext_children.size(); ++i)
 				{
-					osprintout(f, "Child&& s_", node.children.at(i));
+					osprintout(f, "Child&& s_", ext_children.at(i));
 
-					if ((i + 1) != node.children.size())
+					if ((i + 1) != ext_children.size())
 					{
 						osprintout(f, ",\n\t\t");
 					}
@@ -332,6 +338,21 @@ void AstGen::run()
 
 						osprintout(f, var.init_ident());
 						if ((i + 1) != ext_only_init_vec.size())
+						{
+							osprintout(f, ",\n\t\t\t");
+						}
+					}
+				}
+				if (ext_only_children.size() != 0)
+				{
+					osprintout(f, ",\n\t\t\t");
+
+					for (size_t i=0; i<ext_only_children.size(); ++i)
+					{
+						const auto& child = ext_only_children.at(i);
+
+						osprintout(f, "std::move(s_", child, ")");
+						if ((i + 1) != ext_only_children.size())
 						{
 							osprintout(f, ",\n\t\t\t");
 						}
@@ -414,6 +435,27 @@ void AstGen::run()
 	}
 }
 
+auto AstGen::_extended_children(const Node& node) const
+	-> std::vector<string>
+{
+	std::vector<string> ret;
+
+	for (const auto& iter : node.children)
+	{
+		ret.push_back(iter);
+	}
+
+	if ((node.extends != "") && (node.extends != "List"))
+	{
+		const auto temp = _extended_children(_node_vec.at(_node_ident_map
+			.at(node.extends)));
+		for (const auto& iter : temp)
+		{
+			ret.push_back(iter);
+		}
+	}
+	return ret;
+}
 auto AstGen::_extended_var_vec(const Node& node) const -> std::vector<Var>
 {
 	std::vector<Var> ret;

@@ -14,7 +14,12 @@
 	X(NodeOutputSubPortList) \
 	X(NodeBidirSubPortList) \
 	X(NodeSubParamList) \
-	X(NodePostTypenameIdent) \
+	X(NodeIdentBracket) \
+	X(NodeIdentScope) \
+	X(NodeIdentMemberAccess) \
+	X(NodeIdentExpr) \
+	X(NodeNumExpr) \
+	X(NodeSizedNumExpr) \
 	X(NodeBracketPair) \
 	X(NodeHasString) \
 	X(NodeIdent) \
@@ -30,5 +35,45 @@
 	X(NodeExprBase) \
 	X(NodeExprBinopBase) \
 	X(NodeExprUnopBase) \
+	X(NodeExprBinopLogAnd) \
+	X(NodeExprBinopLogOr) \
+	X(NodeExprBinopCmpEq) \
+	X(NodeExprBinopCmpNe) \
+	X(NodeExprBinopCmpLt) \
+	X(NodeExprBinopCmpGt) \
+	X(NodeExprBinopCmpLe) \
+	X(NodeExprBinopCmpGe) \
+	X(NodeExprBinopPlus) \
+	X(NodeExprBinopMinus) \
+	X(NodeExprBinopMul) \
+	X(NodeExprBinopDiv) \
+	X(NodeExprBinopMod) \
+	X(NodeExprBinopBitAnd) \
+	X(NodeExprBinopBitOr) \
+	X(NodeExprBinopBitXor) \
+	X(NodeExprBinopBitLsl) \
+	X(NodeExprBinopBitLsr) \
+	X(NodeExprBinopBitAsr) \
+	X(NodeExprUnopLogNot) \
+	X(NodeExprUnopBitNot) \
+	X(NodeExprUnopPlus) \
+	X(NodeExprUnopMinus) \
+	X(NodeExprUnopDollarUnsgn) \
+	X(NodeExprUnopDollarSgn) \
+	X(NodeExprUnopDollarIsUnsgn) \
+	X(NodeExprUnopDollarIsSgn) \
+	X(NodeExprUnopDollarRange) \
+	X(NodeExprUnopDollarSize) \
+	X(NodeExprUnopDollarMsbpos) \
+	X(NodeExprUnopDollarFirst) \
+	X(NodeExprUnopDollarLast) \
+	X(NodeExprUnopDollarHigh) \
+	X(NodeExprUnopDollarLow) \
+	X(NodeExprUnopDollarClog2) \
+	X(NodeExprBinopDollarPow) \
+	X(NodeExprUnopTypeof) \
+	X(NodeExprCat) \
+	X(NodeListCat) \
+	X(NodeExprFuncCall) \
 
 //#endif		// src_list_of_ast_node_classes_define_hpp
