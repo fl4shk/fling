@@ -273,7 +273,7 @@ StmtInitial:
 StmtAlwaysComb:
 	child stmt_list;
 StmtAlwaysBlk:
-	child edge_list, stmt_list:
+	child edge_list, stmt_list;
 StmtAlwaysFf:
 	child edge_list, stmt_list;
 
@@ -281,17 +281,17 @@ PosedgeInst:
 	child ident_etc;
 NegedgeInst:
 	child ident_etc;
-EdgeList, List;
+EdgeList, List:
 
 DeclCallable:
 	initvar bool _is_static, _is_virtual;
 	child param_list, arg_list, ident, stmt_list;
 
 DeclFunc, DeclCallable:
-	initvar _is_const;
+	initvar bool _is_const;
 	child the_typename;
 DeclProc, DeclCallable:
-	initvar _is_port;
+	initvar bool _is_port;
 DeclTask, DeclCallable:
 
 DeclVar:

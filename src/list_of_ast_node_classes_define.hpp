@@ -23,10 +23,12 @@
 	X(NodeHasString, HasString) \
 	X(NodeIdent, Ident) \
 	X(NodeConstString, ConstString) \
+	X(NodeScopeUnnamed, ScopeUnnamed) \
 	X(NodeEnum, Enum) \
 	X(NodeScopeEnum, ScopeEnum) \
 	X(NodeClass, Class) \
 	X(NodeScopeClass, ScopeClass) \
+	X(NodeExtends, Extends) \
 	X(NodeTypename, Typename) \
 	X(NodeType, Type) \
 	X(NodeAuto, Auto) \
@@ -44,7 +46,6 @@
 	X(NodeUlongint, Ulongint) \
 	X(NodeSlongint, Slongint) \
 	X(NodeSelf, Self) \
-	X(NodePort, Port) \
 	X(NodePosParamArgInstList, PosParamArgInstList) \
 	X(NodeNamedParamArgInstList, NamedParamArgInstList) \
 	X(NodeSliceRange, SliceRange) \
@@ -91,24 +92,49 @@
 	X(NodeExprUnopTypeof, ExprUnopTypeof) \
 	X(NodeExprCat, ExprCat) \
 	X(NodeListCat, ListCat) \
+	X(NodeExprRepl, ExprRepl) \
 	X(NodeExprRangeAny, ExprRangeAny) \
 	X(NodeRangeOne, RangeOne) \
 	X(NodeRangeTwo, RangeTwo) \
+	X(NodeStmtList, StmtList) \
 	X(NodeStmtAnyFor, StmtAnyFor) \
 	X(NodeStmtFor, StmtFor) \
 	X(NodeStmtGenerateFor, StmtGenerateFor) \
 	X(NodeStmtAnyIf, StmtAnyIf) \
 	X(NodeStmtAnyElse, StmtAnyElse) \
-	X(NodeStmtGenerateIf, StmtGenerateIf) \
-	X(NodeStmtGenerateElse, StmtGenerateElse) \
 	X(NodeStmtIf, StmtIf) \
 	X(NodeStmtElse, StmtElse) \
+	X(NodeStmtGenerateIf, StmtGenerateIf) \
+	X(NodeStmtGenerateElse, StmtGenerateElse) \
+	X(NodeStmtAnyWhile, StmtAnyWhile) \
+	X(NodeStmtGenerateWhile, StmtGenerateWhile) \
 	X(NodeStmtWhile, StmtWhile) \
+	X(NodeStmtGenerateDoWhile, StmtGenerateDoWhile) \
+	X(NodeStmtDoWhile, StmtDoWhile) \
+	X(NodeStmtGenerateRaw, StmtGenerateRaw) \
 	X(NodeStmtBehavAssign, StmtBehavAssign) \
 	X(NodeStmtContAssign, StmtContAssign) \
 	X(NodeStmtLabMemberAccessPublic, StmtLabMemberAccessPublic) \
 	X(NodeStmtLabMemberAccessProtected, StmtLabMemberAccessProtected) \
 	X(NodeStmtLabMemberAccessPrivate, StmtLabMemberAccessPrivate) \
+	X(NodeStmtSwitch, StmtSwitch) \
+	X(NodeStmtSwitchz, StmtSwitchz) \
+	X(NodeStmtCase, StmtCase) \
+	X(NodeStmtDefault, StmtDefault) \
 	X(NodeStmtUsing, StmtUsing) \
 	X(NodeStmtInstModule, StmtInstModule) \
+	X(NodeStmtReturn, StmtReturn) \
+	X(NodeStmtInitial, StmtInitial) \
+	X(NodeStmtAlwaysComb, StmtAlwaysComb) \
+	X(NodeStmtAlwaysBlk, StmtAlwaysBlk) \
+	X(NodeStmtAlwaysFf, StmtAlwaysFf) \
+	X(NodePosedgeInst, PosedgeInst) \
+	X(NodeNegedgeInst, NegedgeInst) \
+	X(NodeEdgeList, EdgeList) \
+	X(NodeDeclCallable, DeclCallable) \
+	X(NodeDeclFunc, DeclFunc) \
+	X(NodeDeclProc, DeclProc) \
+	X(NodeDeclTask, DeclTask) \
+	X(NodeDeclVar, DeclVar) \
+	X(NodeDeclGenvar, DeclGenvar) \
 
