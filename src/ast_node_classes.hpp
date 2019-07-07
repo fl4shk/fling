@@ -19,7 +19,7 @@ namespace ast
 	virtual void accept(Visitor& visitor)
 
 #include "list_of_ast_node_classes_define.hpp"
-#define X(AstNodeType) \
+#define X(AstNodeType, suffix) \
 	class AstNodeType;
 LIST_OF_AST_NODE_CLASSES(X)
 #undef X
@@ -40,11 +40,11 @@ public:		// types
 	using TokSet = std::set<Tok>;
 	using Child = unique_ptr<NodeBase>;
 
+	#include "ast_node_type_enum.hpp"
 
 protected:		// variables
 	SrcCodeChunk _src_code_chunk;
 
-	#include "ast_node_type_enum.hpp"
 
 public:		// functions
 	inline NodeBase()
@@ -63,6 +63,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Base;
+	}
+	virtual string name() const
+	{
+		return "Base";
 	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
@@ -120,6 +124,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::List;
+	}
+	virtual string name() const
+	{
+		return "List";
 	}
 
 	GEN_GETTER_BY_CON_REF(list)

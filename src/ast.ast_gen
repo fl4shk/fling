@@ -5,11 +5,11 @@ Module:
 	child ident, param_list, port_list, scope;
 ScopeModule, List:
 InputSubPortArgList, List:
-	child typename;
+	child the_typename;
 OutputSubPortArgList, List:
-	child typename;
+	child the_typename;
 BidirSubPortArgList, List:
-	child typename;
+	child the_typename;
 SubParamArgList, List:
 	child primary;
 
@@ -62,7 +62,7 @@ Ident, HasString:
 ConstString, HasString:
 
 Enum:
-	child typename, ident, scope;
+	child the_typename, ident, scope;
 ScopeEnum, List:
 
 Class:
@@ -217,7 +217,7 @@ StmtGenerateFor, StmtAnyFor:
 // }
 
 StmtAnyIf:
-	child cond_expr, stmt_list, else;
+	child cond_expr, stmt_list, stmt_else;
 StmtAnyElse:
 	child stmt_list;
 

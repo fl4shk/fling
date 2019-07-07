@@ -17,6 +17,10 @@ public:		// functions
 	{
 		return Type::Package;
 	}
+	virtual string name() const
+	{
+		return "Package";
+	}
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(scope)
@@ -34,6 +38,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ScopePackage;
+	}
+	virtual string name() const
+	{
+		return "ScopePackage";
 	}
 };
 
@@ -62,6 +70,10 @@ public:		// functions
 	{
 		return Type::Module;
 	}
+	virtual string name() const
+	{
+		return "Module";
+	}
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(param_list)
@@ -84,17 +96,21 @@ public:		// functions
 	{
 		return Type::ScopeModule;
 	}
+	virtual string name() const
+	{
+		return "ScopeModule";
+	}
 };
 
 class NodeInputSubPortArgList : public NodeList
 {
 protected:		// children
-	Child _typename;
+	Child _the_typename;
 public:		// functions
 	inline NodeInputSubPortArgList(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_typename)
+		Child&& s_the_typename)
 		: NodeList(s_src_code_chunk),
-		_typename(std::move(s_typename))
+		_the_typename(std::move(s_the_typename))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeInputSubPortArgList);
@@ -102,19 +118,23 @@ public:		// functions
 	{
 		return Type::InputSubPortArgList;
 	}
-	GEN_GETTER_BY_CON_REF(typename)
-	GEN_SETTER_BY_RVAL_REF(typename)
+	virtual string name() const
+	{
+		return "InputSubPortArgList";
+	}
+	GEN_GETTER_BY_CON_REF(the_typename)
+	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
 class NodeOutputSubPortArgList : public NodeList
 {
 protected:		// children
-	Child _typename;
+	Child _the_typename;
 public:		// functions
 	inline NodeOutputSubPortArgList(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_typename)
+		Child&& s_the_typename)
 		: NodeList(s_src_code_chunk),
-		_typename(std::move(s_typename))
+		_the_typename(std::move(s_the_typename))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeOutputSubPortArgList);
@@ -122,19 +142,23 @@ public:		// functions
 	{
 		return Type::OutputSubPortArgList;
 	}
-	GEN_GETTER_BY_CON_REF(typename)
-	GEN_SETTER_BY_RVAL_REF(typename)
+	virtual string name() const
+	{
+		return "OutputSubPortArgList";
+	}
+	GEN_GETTER_BY_CON_REF(the_typename)
+	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
 class NodeBidirSubPortArgList : public NodeList
 {
 protected:		// children
-	Child _typename;
+	Child _the_typename;
 public:		// functions
 	inline NodeBidirSubPortArgList(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_typename)
+		Child&& s_the_typename)
 		: NodeList(s_src_code_chunk),
-		_typename(std::move(s_typename))
+		_the_typename(std::move(s_the_typename))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeBidirSubPortArgList);
@@ -142,8 +166,12 @@ public:		// functions
 	{
 		return Type::BidirSubPortArgList;
 	}
-	GEN_GETTER_BY_CON_REF(typename)
-	GEN_SETTER_BY_RVAL_REF(typename)
+	virtual string name() const
+	{
+		return "BidirSubPortArgList";
+	}
+	GEN_GETTER_BY_CON_REF(the_typename)
+	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
 class NodeSubParamArgList : public NodeList
@@ -161,6 +189,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::SubParamArgList;
+	}
+	virtual string name() const
+	{
+		return "SubParamArgList";
 	}
 	GEN_GETTER_BY_CON_REF(primary)
 	GEN_SETTER_BY_RVAL_REF(primary)
@@ -185,6 +217,10 @@ public:		// functions
 	{
 		return Type::LeftRightBase;
 	}
+	virtual string name() const
+	{
+		return "LeftRightBase";
+	}
 	GEN_GETTER_BY_CON_REF(left)
 	GEN_SETTER_BY_RVAL_REF(left)
 	GEN_GETTER_BY_CON_REF(right)
@@ -202,6 +238,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ParamArgList;
+	}
+	virtual string name() const
+	{
+		return "ParamArgList";
 	}
 };
 
@@ -221,6 +261,10 @@ public:		// functions
 	{
 		return Type::IdentBracket;
 	}
+	virtual string name() const
+	{
+		return "IdentBracket";
+	}
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 };
@@ -236,6 +280,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::IdentScope;
+	}
+	virtual string name() const
+	{
+		return "IdentScope";
 	}
 };
 
@@ -258,6 +306,10 @@ public:		// functions
 	{
 		return Type::Call;
 	}
+	virtual string name() const
+	{
+		return "Call";
+	}
 	GEN_GETTER_BY_CON_REF(ident_etc)
 	GEN_SETTER_BY_RVAL_REF(ident_etc)
 	GEN_GETTER_BY_CON_REF(param_inst_list)
@@ -276,6 +328,10 @@ public:		// functions
 	{
 		return Type::IdentEtc;
 	}
+	virtual string name() const
+	{
+		return "IdentEtc";
+	}
 };
 
 class NodeNumExpr : public NodeBase
@@ -292,6 +348,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::NumExpr;
+	}
+	virtual string name() const
+	{
+		return "NumExpr";
 	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(n)
 };
@@ -314,6 +374,10 @@ public:		// functions
 	{
 		return Type::SizedNumExpr;
 	}
+	virtual string name() const
+	{
+		return "SizedNumExpr";
+	}
 	GEN_GETTER_BY_CON_REF(size)
 	GEN_SETTER_BY_RVAL_REF(size)
 };
@@ -334,6 +398,10 @@ public:		// functions
 	{
 		return Type::BracketPair;
 	}
+	virtual string name() const
+	{
+		return "BracketPair";
+	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
 };
@@ -353,6 +421,10 @@ public:		// functions
 	{
 		return Type::HasString;
 	}
+	virtual string name() const
+	{
+		return "HasString";
+	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(s)
 };
 
@@ -370,6 +442,10 @@ public:		// functions
 	{
 		return Type::Ident;
 	}
+	virtual string name() const
+	{
+		return "Ident";
+	}
 };
 
 class NodeConstString : public NodeHasString
@@ -386,21 +462,25 @@ public:		// functions
 	{
 		return Type::ConstString;
 	}
+	virtual string name() const
+	{
+		return "ConstString";
+	}
 };
 
 class NodeEnum : public NodeBase
 {
 protected:		// children
-	Child _typename,
+	Child _the_typename,
 		_ident,
 		_scope;
 public:		// functions
 	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_typename,
+		Child&& s_the_typename,
 		Child&& s_ident,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
-		_typename(std::move(s_typename)),
+		_the_typename(std::move(s_the_typename)),
 		_ident(std::move(s_ident)),
 		_scope(std::move(s_scope))
 	{
@@ -410,8 +490,12 @@ public:		// functions
 	{
 		return Type::Enum;
 	}
-	GEN_GETTER_BY_CON_REF(typename)
-	GEN_SETTER_BY_RVAL_REF(typename)
+	virtual string name() const
+	{
+		return "Enum";
+	}
+	GEN_GETTER_BY_CON_REF(the_typename)
+	GEN_SETTER_BY_RVAL_REF(the_typename)
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(scope)
@@ -429,6 +513,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ScopeEnum;
+	}
+	virtual string name() const
+	{
+		return "ScopeEnum";
 	}
 };
 
@@ -463,6 +551,10 @@ public:		// functions
 	{
 		return Type::Class;
 	}
+	virtual string name() const
+	{
+		return "Class";
+	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(packed)
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
@@ -488,6 +580,10 @@ public:		// functions
 	{
 		return Type::ScopeClass;
 	}
+	virtual string name() const
+	{
+		return "ScopeClass";
+	}
 };
 
 class NodeTypename : public NodeBase
@@ -509,6 +605,10 @@ public:		// functions
 	{
 		return Type::Typename;
 	}
+	virtual string name() const
+	{
+		return "Typename";
+	}
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(param_inst_list)
@@ -527,6 +627,10 @@ public:		// functions
 	{
 		return Type::Type;
 	}
+	virtual string name() const
+	{
+		return "Type";
+	}
 };
 
 class NodeAuto : public NodeBase
@@ -540,6 +644,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Auto;
+	}
+	virtual string name() const
+	{
+		return "Auto";
 	}
 };
 
@@ -555,6 +663,10 @@ public:		// functions
 	{
 		return Type::Void;
 	}
+	virtual string name() const
+	{
+		return "Void";
+	}
 };
 
 class NodeUwire : public NodeBase
@@ -568,6 +680,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Uwire;
+	}
+	virtual string name() const
+	{
+		return "Uwire";
 	}
 };
 
@@ -583,6 +699,10 @@ public:		// functions
 	{
 		return Type::Swire;
 	}
+	virtual string name() const
+	{
+		return "Swire";
+	}
 };
 
 class NodeUbit : public NodeBase
@@ -596,6 +716,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Ubit;
+	}
+	virtual string name() const
+	{
+		return "Ubit";
 	}
 };
 
@@ -611,6 +735,10 @@ public:		// functions
 	{
 		return Type::Sbit;
 	}
+	virtual string name() const
+	{
+		return "Sbit";
+	}
 };
 
 class NodeUbyte : public NodeBase
@@ -624,6 +752,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Ubyte;
+	}
+	virtual string name() const
+	{
+		return "Ubyte";
 	}
 };
 
@@ -639,6 +771,10 @@ public:		// functions
 	{
 		return Type::Sbyte;
 	}
+	virtual string name() const
+	{
+		return "Sbyte";
+	}
 };
 
 class NodeUshortint : public NodeBase
@@ -652,6 +788,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Ushortint;
+	}
+	virtual string name() const
+	{
+		return "Ushortint";
 	}
 };
 
@@ -667,6 +807,10 @@ public:		// functions
 	{
 		return Type::Sshortint;
 	}
+	virtual string name() const
+	{
+		return "Sshortint";
+	}
 };
 
 class NodeUint : public NodeBase
@@ -680,6 +824,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Uint;
+	}
+	virtual string name() const
+	{
+		return "Uint";
 	}
 };
 
@@ -695,6 +843,10 @@ public:		// functions
 	{
 		return Type::Sint;
 	}
+	virtual string name() const
+	{
+		return "Sint";
+	}
 };
 
 class NodeUlongint : public NodeBase
@@ -708,6 +860,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Ulongint;
+	}
+	virtual string name() const
+	{
+		return "Ulongint";
 	}
 };
 
@@ -723,6 +879,10 @@ public:		// functions
 	{
 		return Type::Slongint;
 	}
+	virtual string name() const
+	{
+		return "Slongint";
+	}
 };
 
 class NodeSelf : public NodeBase
@@ -736,6 +896,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::Self;
+	}
+	virtual string name() const
+	{
+		return "Self";
 	}
 };
 
@@ -751,6 +915,10 @@ public:		// functions
 	{
 		return Type::Port;
 	}
+	virtual string name() const
+	{
+		return "Port";
+	}
 };
 
 class NodePosParamArgInstList : public NodeList
@@ -765,6 +933,10 @@ public:		// functions
 	{
 		return Type::PosParamArgInstList;
 	}
+	virtual string name() const
+	{
+		return "PosParamArgInstList";
+	}
 };
 
 class NodeNamedParamArgInstList : public NodeList
@@ -778,6 +950,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::NamedParamArgInstList;
+	}
+	virtual string name() const
+	{
+		return "NamedParamArgInstList";
 	}
 };
 
@@ -797,6 +973,10 @@ public:		// functions
 	{
 		return Type::SliceRange;
 	}
+	virtual string name() const
+	{
+		return "SliceRange";
+	}
 };
 
 class NodeOneParamArgInst : public NodeLeftRightBase
@@ -815,6 +995,10 @@ public:		// functions
 	{
 		return Type::OneParamArgInst;
 	}
+	virtual string name() const
+	{
+		return "OneParamArgInst";
+	}
 };
 
 class NodeExprBase : public NodeBase
@@ -830,6 +1014,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBase;
+	}
+	virtual string name() const
+	{
+		return "ExprBase";
 	}
 };
 
@@ -851,6 +1039,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopBase;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopBase";
 	}
 	GEN_GETTER_BY_CON_REF(left)
 	GEN_SETTER_BY_RVAL_REF(left)
@@ -874,6 +1066,10 @@ public:		// functions
 	{
 		return Type::ExprUnopBase;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopBase";
+	}
 	GEN_GETTER_BY_CON_REF(child)
 	GEN_SETTER_BY_RVAL_REF(child)
 };
@@ -894,6 +1090,10 @@ public:		// functions
 	{
 		return Type::ExprBinopLogAnd;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopLogAnd";
+	}
 };
 
 class NodeExprBinopLogOr : public NodeExprBinopBase
@@ -911,6 +1111,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopLogOr;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopLogOr";
 	}
 };
 
@@ -930,6 +1134,10 @@ public:		// functions
 	{
 		return Type::ExprBinopCmpEq;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopCmpEq";
+	}
 };
 
 class NodeExprBinopCmpNe : public NodeExprBinopBase
@@ -947,6 +1155,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpNe;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopCmpNe";
 	}
 };
 
@@ -966,6 +1178,10 @@ public:		// functions
 	{
 		return Type::ExprBinopCmpLt;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopCmpLt";
+	}
 };
 
 class NodeExprBinopCmpGt : public NodeExprBinopBase
@@ -983,6 +1199,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpGt;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopCmpGt";
 	}
 };
 
@@ -1002,6 +1222,10 @@ public:		// functions
 	{
 		return Type::ExprBinopCmpLe;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopCmpLe";
+	}
 };
 
 class NodeExprBinopCmpGe : public NodeExprBinopBase
@@ -1019,6 +1243,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpGe;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopCmpGe";
 	}
 };
 
@@ -1038,6 +1266,10 @@ public:		// functions
 	{
 		return Type::ExprBinopPlus;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopPlus";
+	}
 };
 
 class NodeExprBinopMinus : public NodeExprBinopBase
@@ -1055,6 +1287,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopMinus;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopMinus";
 	}
 };
 
@@ -1074,6 +1310,10 @@ public:		// functions
 	{
 		return Type::ExprBinopMul;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopMul";
+	}
 };
 
 class NodeExprBinopDiv : public NodeExprBinopBase
@@ -1091,6 +1331,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopDiv;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopDiv";
 	}
 };
 
@@ -1110,6 +1354,10 @@ public:		// functions
 	{
 		return Type::ExprBinopMod;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopMod";
+	}
 };
 
 class NodeExprBinopBitAnd : public NodeExprBinopBase
@@ -1127,6 +1375,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitAnd;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopBitAnd";
 	}
 };
 
@@ -1146,6 +1398,10 @@ public:		// functions
 	{
 		return Type::ExprBinopBitOr;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopBitOr";
+	}
 };
 
 class NodeExprBinopBitXor : public NodeExprBinopBase
@@ -1163,6 +1419,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitXor;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopBitXor";
 	}
 };
 
@@ -1182,6 +1442,10 @@ public:		// functions
 	{
 		return Type::ExprBinopBitLsl;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopBitLsl";
+	}
 };
 
 class NodeExprBinopBitLsr : public NodeExprBinopBase
@@ -1199,6 +1463,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitLsr;
+	}
+	virtual string name() const
+	{
+		return "ExprBinopBitLsr";
 	}
 };
 
@@ -1218,6 +1486,10 @@ public:		// functions
 	{
 		return Type::ExprBinopBitAsr;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopBitAsr";
+	}
 };
 
 class NodeExprUnopLogNot : public NodeExprUnopBase
@@ -1233,6 +1505,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopLogNot;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopLogNot";
 	}
 };
 
@@ -1250,6 +1526,10 @@ public:		// functions
 	{
 		return Type::ExprUnopBitNot;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopBitNot";
+	}
 };
 
 class NodeExprUnopPlus : public NodeExprUnopBase
@@ -1265,6 +1545,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopPlus;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopPlus";
 	}
 };
 
@@ -1282,6 +1566,10 @@ public:		// functions
 	{
 		return Type::ExprUnopMinus;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopMinus";
+	}
 };
 
 class NodeExprUnopDollarUnsgn : public NodeExprUnopBase
@@ -1297,6 +1585,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarUnsgn;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarUnsgn";
 	}
 };
 
@@ -1314,6 +1606,10 @@ public:		// functions
 	{
 		return Type::ExprUnopDollarSgn;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarSgn";
+	}
 };
 
 class NodeExprUnopDollarIsUnsgn : public NodeExprUnopBase
@@ -1329,6 +1625,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarIsUnsgn;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarIsUnsgn";
 	}
 };
 
@@ -1346,6 +1646,10 @@ public:		// functions
 	{
 		return Type::ExprUnopDollarIsSgn;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarIsSgn";
+	}
 };
 
 class NodeExprUnopDollarRange : public NodeExprUnopBase
@@ -1361,6 +1665,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarRange;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarRange";
 	}
 };
 
@@ -1378,6 +1686,10 @@ public:		// functions
 	{
 		return Type::ExprUnopDollarSize;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarSize";
+	}
 };
 
 class NodeExprUnopDollarMsbpos : public NodeExprUnopBase
@@ -1393,6 +1705,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarMsbpos;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarMsbpos";
 	}
 };
 
@@ -1410,6 +1726,10 @@ public:		// functions
 	{
 		return Type::ExprUnopDollarFirst;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarFirst";
+	}
 };
 
 class NodeExprUnopDollarLast : public NodeExprUnopBase
@@ -1425,6 +1745,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarLast;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarLast";
 	}
 };
 
@@ -1442,6 +1766,10 @@ public:		// functions
 	{
 		return Type::ExprUnopDollarHigh;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarHigh";
+	}
 };
 
 class NodeExprUnopDollarLow : public NodeExprUnopBase
@@ -1458,6 +1786,10 @@ public:		// functions
 	{
 		return Type::ExprUnopDollarLow;
 	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarLow";
+	}
 };
 
 class NodeExprUnopDollarClog2 : public NodeExprUnopBase
@@ -1473,6 +1805,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarClog2;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarClog2";
 	}
 };
 
@@ -1492,6 +1828,10 @@ public:		// functions
 	{
 		return Type::ExprBinopDollarPow;
 	}
+	virtual string name() const
+	{
+		return "ExprBinopDollarPow";
+	}
 };
 
 class NodeExprUnopTypeof : public NodeExprUnopBase
@@ -1507,6 +1847,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprUnopTypeof;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopTypeof";
 	}
 };
 
@@ -1526,6 +1870,10 @@ public:		// functions
 	{
 		return Type::ExprCat;
 	}
+	virtual string name() const
+	{
+		return "ExprCat";
+	}
 	GEN_GETTER_BY_CON_REF(list)
 	GEN_SETTER_BY_RVAL_REF(list)
 };
@@ -1541,6 +1889,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ListCat;
+	}
+	virtual string name() const
+	{
+		return "ListCat";
 	}
 };
 
@@ -1559,6 +1911,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::ExprRangeAny;
+	}
+	virtual string name() const
+	{
+		return "ExprRangeAny";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
@@ -1580,6 +1936,10 @@ public:		// functions
 	{
 		return Type::RangeOne;
 	}
+	virtual string name() const
+	{
+		return "RangeOne";
+	}
 	GEN_GETTER_BY_CON_REF(child)
 	GEN_SETTER_BY_RVAL_REF(child)
 };
@@ -1599,6 +1959,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::RangeTwo;
+	}
+	virtual string name() const
+	{
+		return "RangeTwo";
 	}
 };
 
@@ -1620,6 +1984,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtAnyFor;
+	}
+	virtual string name() const
+	{
+		return "StmtAnyFor";
 	}
 	GEN_GETTER_BY_CON_REF(var)
 	GEN_SETTER_BY_RVAL_REF(var)
@@ -1643,6 +2011,10 @@ public:		// functions
 	{
 		return Type::StmtFor;
 	}
+	virtual string name() const
+	{
+		return "StmtFor";
+	}
 };
 
 class NodeStmtGenerateFor : public NodeStmtAnyFor
@@ -1665,6 +2037,10 @@ public:		// functions
 	{
 		return Type::StmtGenerateFor;
 	}
+	virtual string name() const
+	{
+		return "StmtGenerateFor";
+	}
 	GEN_GETTER_BY_CON_REF(label)
 	GEN_SETTER_BY_RVAL_REF(label)
 };
@@ -1674,16 +2050,16 @@ class NodeStmtAnyIf : public NodeBase
 protected:		// children
 	Child _cond_expr,
 		_stmt_list,
-		_else;
+		_stmt_else;
 public:		// functions
 	inline NodeStmtAnyIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_stmt_list,
-		Child&& s_else)
+		Child&& s_stmt_else)
 		: NodeBase(s_src_code_chunk),
 		_cond_expr(std::move(s_cond_expr)),
 		_stmt_list(std::move(s_stmt_list)),
-		_else(std::move(s_else))
+		_stmt_else(std::move(s_stmt_else))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAnyIf);
@@ -1691,12 +2067,16 @@ public:		// functions
 	{
 		return Type::StmtAnyIf;
 	}
+	virtual string name() const
+	{
+		return "StmtAnyIf";
+	}
 	GEN_GETTER_BY_CON_REF(cond_expr)
 	GEN_SETTER_BY_RVAL_REF(cond_expr)
 	GEN_GETTER_BY_CON_REF(stmt_list)
 	GEN_SETTER_BY_RVAL_REF(stmt_list)
-	GEN_GETTER_BY_CON_REF(else)
-	GEN_SETTER_BY_RVAL_REF(else)
+	GEN_GETTER_BY_CON_REF(stmt_else)
+	GEN_SETTER_BY_RVAL_REF(stmt_else)
 };
 
 class NodeStmtAnyElse : public NodeBase
@@ -1715,6 +2095,10 @@ public:		// functions
 	{
 		return Type::StmtAnyElse;
 	}
+	virtual string name() const
+	{
+		return "StmtAnyElse";
+	}
 	GEN_GETTER_BY_CON_REF(stmt_list)
 	GEN_SETTER_BY_RVAL_REF(stmt_list)
 };
@@ -1725,17 +2109,21 @@ public:		// functions
 	inline NodeStmtGenerateIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_stmt_list,
-		Child&& s_else)
+		Child&& s_stmt_else)
 		: NodeStmtAnyIf(s_src_code_chunk,
 		std::move(s_cond_expr),
 		std::move(s_stmt_list),
-		std::move(s_else))
+		std::move(s_stmt_else))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtGenerateIf);
 	virtual Type type() const
 	{
 		return Type::StmtGenerateIf;
+	}
+	virtual string name() const
+	{
+		return "StmtGenerateIf";
 	}
 };
 
@@ -1753,6 +2141,10 @@ public:		// functions
 	{
 		return Type::StmtGenerateElse;
 	}
+	virtual string name() const
+	{
+		return "StmtGenerateElse";
+	}
 };
 
 class NodeStmtIf : public NodeStmtAnyIf
@@ -1761,17 +2153,21 @@ public:		// functions
 	inline NodeStmtIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_stmt_list,
-		Child&& s_else)
+		Child&& s_stmt_else)
 		: NodeStmtAnyIf(s_src_code_chunk,
 		std::move(s_cond_expr),
 		std::move(s_stmt_list),
-		std::move(s_else))
+		std::move(s_stmt_else))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtIf);
 	virtual Type type() const
 	{
 		return Type::StmtIf;
+	}
+	virtual string name() const
+	{
+		return "StmtIf";
 	}
 };
 
@@ -1788,6 +2184,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtElse;
+	}
+	virtual string name() const
+	{
+		return "StmtElse";
 	}
 };
 
@@ -1809,6 +2209,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtWhile;
+	}
+	virtual string name() const
+	{
+		return "StmtWhile";
 	}
 	GEN_GETTER_BY_CON_REF(cond_expr)
 	GEN_SETTER_BY_RVAL_REF(cond_expr)
@@ -1832,6 +2236,10 @@ public:		// functions
 	{
 		return Type::StmtBehavAssign;
 	}
+	virtual string name() const
+	{
+		return "StmtBehavAssign";
+	}
 };
 
 class NodeStmtContAssign : public NodeLeftRightBase
@@ -1850,6 +2258,10 @@ public:		// functions
 	{
 		return Type::StmtContAssign;
 	}
+	virtual string name() const
+	{
+		return "StmtContAssign";
+	}
 };
 
 class NodeStmtLabMemberAccessPublic : public NodeBase
@@ -1863,6 +2275,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtLabMemberAccessPublic;
+	}
+	virtual string name() const
+	{
+		return "StmtLabMemberAccessPublic";
 	}
 };
 
@@ -1878,6 +2294,10 @@ public:		// functions
 	{
 		return Type::StmtLabMemberAccessProtected;
 	}
+	virtual string name() const
+	{
+		return "StmtLabMemberAccessProtected";
+	}
 };
 
 class NodeStmtLabMemberAccessPrivate : public NodeBase
@@ -1891,6 +2311,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtLabMemberAccessPrivate;
+	}
+	virtual string name() const
+	{
+		return "StmtLabMemberAccessPrivate";
 	}
 };
 
@@ -1909,6 +2333,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtUsing;
+	}
+	virtual string name() const
+	{
+		return "StmtUsing";
 	}
 };
 
@@ -1933,6 +2361,10 @@ public:		// functions
 	virtual Type type() const
 	{
 		return Type::StmtInstModule;
+	}
+	virtual string name() const
+	{
+		return "StmtInstModule";
 	}
 	GEN_GETTER_BY_CON_REF(module_ident)
 	GEN_SETTER_BY_RVAL_REF(module_ident)

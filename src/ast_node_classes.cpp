@@ -9,10 +9,10 @@ namespace frost_hdl
 namespace ast
 {
 
-#define GEN_ACCEPT(AstNodeType) \
+#define GEN_ACCEPT(AstNodeType, suffix) \
 	void AstNodeType::accept(Visitor& visitor) \
 	{ \
-		visitor.visit##AstNodeType(*this); \
+		visitor.visit##suffix(this); \
 	}
 
 LIST_OF_AST_NODE_CLASSES(GEN_ACCEPT)

@@ -452,13 +452,15 @@ void AstGen::run()
 			"// src/list_of_ast_node_classes_define.hpp\n",
 			"\n",
 			"#define LIST_OF_AST_NODE_CLASSES(X) \\\n",
-			"\tX(NodeBase) \\\n",
-			"\tX(NodeList) \\\n");
+			"\tX(NodeBase, Base) \\\n",
+			"\tX(NodeList, List) \\\n");
 
 		for (const auto& node : _node_vec)
 		{
-			osprintout(f, "\tX(Node", node.ident, ") \\\n");
+			osprintout(f, "\tX(Node", node.ident, ", ", node.ident,
+				") \\\n");
 		}
+		osprintout(f, "\n");
 
 	}
 	rwith(f, std::ofstream("ast_node_type_enum.hpp"))
@@ -467,14 +469,16 @@ void AstGen::run()
 			"// src/ast_node_type_enum.hpp\n",
 			"\n",
 			"enum class Type\n",
-			"{\n");
+			"{\n",
+			"\tBase,\n",
+			"\tList,\n");
 
 		for (const auto& node : _node_vec)
 		{
 			osprintout(f, "\t", node.ident, ",\n");
 		}
 		osprintout(f,
-			"}\n");
+			"};\n");
 	}
 	rwith(f, std::ofstream("ast_visitor_visit_funcs.hpp"))
 	{

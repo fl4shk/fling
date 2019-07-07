@@ -1,118 +1,114 @@
-//#ifndef src_list_of_ast_node_classes_define_hpp
-//#define src_list_of_ast_node_classes_define_hpp
-
 // src/list_of_ast_node_classes_define.hpp
 
 #define LIST_OF_AST_NODE_CLASSES(X) \
-	X(NodeBase) \
-	X(NodeList) \
-	X(NodePackage) \
-	X(NodeScopePackage) \
-	X(NodeModule) \
-	X(NodeScopeModule) \
-	X(NodeInputSubPortArgList) \
-	X(NodeOutputSubPortArgList) \
-	X(NodeBidirSubPortArgList) \
-	X(NodeSubParamArgList) \
-	X(NodeLeftRightBase) \
-	X(NodeParamArgList) \
-	X(NodeIdentBracket) \
-	X(NodeIdentScope) \
-	X(NodeCall) \
-	X(NodeIdentEtc) \
-	X(NodeNumExpr) \
-	X(NodeSizedNumExpr) \
-	X(NodeBracketPair) \
-	X(NodeHasString) \
-	X(NodeIdent) \
-	X(NodeConstString) \
-	X(NodeEnum) \
-	X(NodeScopeEnum) \
-	X(NodeClass) \
-	X(NodeScopeClass) \
-	X(NodeTypename) \
-	X(NodeType) \
-	X(NodeAuto) \
-	X(NodeVoid) \
-	X(NodeUwire) \
-	X(NodeSwire) \
-	X(NodeUbit) \
-	X(NodeSbit) \
-	X(NodeUbyte) \
-	X(NodeSbyte) \
-	X(NodeUshortint) \
-	X(NodeSshortint) \
-	X(NodeUint) \
-	X(NodeSint) \
-	X(NodeUlongint) \
-	X(NodeSlongint) \
-	X(NodeSelf) \
-	X(NodePort) \
-	X(NodePosParamArgInstList) \
-	X(NodeNamedParamArgInstList) \
-	X(NodeSliceRange) \
-	X(NodeOneParamArgInst) \
-	X(NodeExprBase) \
-	X(NodeExprBinopBase) \
-	X(NodeExprUnopBase) \
-	X(NodeExprBinopLogAnd) \
-	X(NodeExprBinopLogOr) \
-	X(NodeExprBinopCmpEq) \
-	X(NodeExprBinopCmpNe) \
-	X(NodeExprBinopCmpLt) \
-	X(NodeExprBinopCmpGt) \
-	X(NodeExprBinopCmpLe) \
-	X(NodeExprBinopCmpGe) \
-	X(NodeExprBinopPlus) \
-	X(NodeExprBinopMinus) \
-	X(NodeExprBinopMul) \
-	X(NodeExprBinopDiv) \
-	X(NodeExprBinopMod) \
-	X(NodeExprBinopBitAnd) \
-	X(NodeExprBinopBitOr) \
-	X(NodeExprBinopBitXor) \
-	X(NodeExprBinopBitLsl) \
-	X(NodeExprBinopBitLsr) \
-	X(NodeExprBinopBitAsr) \
-	X(NodeExprUnopLogNot) \
-	X(NodeExprUnopBitNot) \
-	X(NodeExprUnopPlus) \
-	X(NodeExprUnopMinus) \
-	X(NodeExprUnopDollarUnsgn) \
-	X(NodeExprUnopDollarSgn) \
-	X(NodeExprUnopDollarIsUnsgn) \
-	X(NodeExprUnopDollarIsSgn) \
-	X(NodeExprUnopDollarRange) \
-	X(NodeExprUnopDollarSize) \
-	X(NodeExprUnopDollarMsbpos) \
-	X(NodeExprUnopDollarFirst) \
-	X(NodeExprUnopDollarLast) \
-	X(NodeExprUnopDollarHigh) \
-	X(NodeExprUnopDollarLow) \
-	X(NodeExprUnopDollarClog2) \
-	X(NodeExprBinopDollarPow) \
-	X(NodeExprUnopTypeof) \
-	X(NodeExprCat) \
-	X(NodeListCat) \
-	X(NodeExprRangeAny) \
-	X(NodeRangeOne) \
-	X(NodeRangeTwo) \
-	X(NodeStmtAnyFor) \
-	X(NodeStmtFor) \
-	X(NodeStmtGenerateFor) \
-	X(NodeStmtAnyIf) \
-	X(NodeStmtAnyElse) \
-	X(NodeStmtGenerateIf) \
-	X(NodeStmtGenerateElse) \
-	X(NodeStmtIf) \
-	X(NodeStmtElse) \
-	X(NodeStmtWhile) \
-	X(NodeStmtBehavAssign) \
-	X(NodeStmtContAssign) \
-	X(NodeStmtLabMemberAccessPublic) \
-	X(NodeStmtLabMemberAccessProtected) \
-	X(NodeStmtLabMemberAccessPrivate) \
-	X(NodeStmtUsing) \
-	X(NodeStmtInstModule) \
+	X(NodeBase, Base) \
+	X(NodeList, List) \
+	X(NodePackage, Package) \
+	X(NodeScopePackage, ScopePackage) \
+	X(NodeModule, Module) \
+	X(NodeScopeModule, ScopeModule) \
+	X(NodeInputSubPortArgList, InputSubPortArgList) \
+	X(NodeOutputSubPortArgList, OutputSubPortArgList) \
+	X(NodeBidirSubPortArgList, BidirSubPortArgList) \
+	X(NodeSubParamArgList, SubParamArgList) \
+	X(NodeLeftRightBase, LeftRightBase) \
+	X(NodeParamArgList, ParamArgList) \
+	X(NodeIdentBracket, IdentBracket) \
+	X(NodeIdentScope, IdentScope) \
+	X(NodeCall, Call) \
+	X(NodeIdentEtc, IdentEtc) \
+	X(NodeNumExpr, NumExpr) \
+	X(NodeSizedNumExpr, SizedNumExpr) \
+	X(NodeBracketPair, BracketPair) \
+	X(NodeHasString, HasString) \
+	X(NodeIdent, Ident) \
+	X(NodeConstString, ConstString) \
+	X(NodeEnum, Enum) \
+	X(NodeScopeEnum, ScopeEnum) \
+	X(NodeClass, Class) \
+	X(NodeScopeClass, ScopeClass) \
+	X(NodeTypename, Typename) \
+	X(NodeType, Type) \
+	X(NodeAuto, Auto) \
+	X(NodeVoid, Void) \
+	X(NodeUwire, Uwire) \
+	X(NodeSwire, Swire) \
+	X(NodeUbit, Ubit) \
+	X(NodeSbit, Sbit) \
+	X(NodeUbyte, Ubyte) \
+	X(NodeSbyte, Sbyte) \
+	X(NodeUshortint, Ushortint) \
+	X(NodeSshortint, Sshortint) \
+	X(NodeUint, Uint) \
+	X(NodeSint, Sint) \
+	X(NodeUlongint, Ulongint) \
+	X(NodeSlongint, Slongint) \
+	X(NodeSelf, Self) \
+	X(NodePort, Port) \
+	X(NodePosParamArgInstList, PosParamArgInstList) \
+	X(NodeNamedParamArgInstList, NamedParamArgInstList) \
+	X(NodeSliceRange, SliceRange) \
+	X(NodeOneParamArgInst, OneParamArgInst) \
+	X(NodeExprBase, ExprBase) \
+	X(NodeExprBinopBase, ExprBinopBase) \
+	X(NodeExprUnopBase, ExprUnopBase) \
+	X(NodeExprBinopLogAnd, ExprBinopLogAnd) \
+	X(NodeExprBinopLogOr, ExprBinopLogOr) \
+	X(NodeExprBinopCmpEq, ExprBinopCmpEq) \
+	X(NodeExprBinopCmpNe, ExprBinopCmpNe) \
+	X(NodeExprBinopCmpLt, ExprBinopCmpLt) \
+	X(NodeExprBinopCmpGt, ExprBinopCmpGt) \
+	X(NodeExprBinopCmpLe, ExprBinopCmpLe) \
+	X(NodeExprBinopCmpGe, ExprBinopCmpGe) \
+	X(NodeExprBinopPlus, ExprBinopPlus) \
+	X(NodeExprBinopMinus, ExprBinopMinus) \
+	X(NodeExprBinopMul, ExprBinopMul) \
+	X(NodeExprBinopDiv, ExprBinopDiv) \
+	X(NodeExprBinopMod, ExprBinopMod) \
+	X(NodeExprBinopBitAnd, ExprBinopBitAnd) \
+	X(NodeExprBinopBitOr, ExprBinopBitOr) \
+	X(NodeExprBinopBitXor, ExprBinopBitXor) \
+	X(NodeExprBinopBitLsl, ExprBinopBitLsl) \
+	X(NodeExprBinopBitLsr, ExprBinopBitLsr) \
+	X(NodeExprBinopBitAsr, ExprBinopBitAsr) \
+	X(NodeExprUnopLogNot, ExprUnopLogNot) \
+	X(NodeExprUnopBitNot, ExprUnopBitNot) \
+	X(NodeExprUnopPlus, ExprUnopPlus) \
+	X(NodeExprUnopMinus, ExprUnopMinus) \
+	X(NodeExprUnopDollarUnsgn, ExprUnopDollarUnsgn) \
+	X(NodeExprUnopDollarSgn, ExprUnopDollarSgn) \
+	X(NodeExprUnopDollarIsUnsgn, ExprUnopDollarIsUnsgn) \
+	X(NodeExprUnopDollarIsSgn, ExprUnopDollarIsSgn) \
+	X(NodeExprUnopDollarRange, ExprUnopDollarRange) \
+	X(NodeExprUnopDollarSize, ExprUnopDollarSize) \
+	X(NodeExprUnopDollarMsbpos, ExprUnopDollarMsbpos) \
+	X(NodeExprUnopDollarFirst, ExprUnopDollarFirst) \
+	X(NodeExprUnopDollarLast, ExprUnopDollarLast) \
+	X(NodeExprUnopDollarHigh, ExprUnopDollarHigh) \
+	X(NodeExprUnopDollarLow, ExprUnopDollarLow) \
+	X(NodeExprUnopDollarClog2, ExprUnopDollarClog2) \
+	X(NodeExprBinopDollarPow, ExprBinopDollarPow) \
+	X(NodeExprUnopTypeof, ExprUnopTypeof) \
+	X(NodeExprCat, ExprCat) \
+	X(NodeListCat, ListCat) \
+	X(NodeExprRangeAny, ExprRangeAny) \
+	X(NodeRangeOne, RangeOne) \
+	X(NodeRangeTwo, RangeTwo) \
+	X(NodeStmtAnyFor, StmtAnyFor) \
+	X(NodeStmtFor, StmtFor) \
+	X(NodeStmtGenerateFor, StmtGenerateFor) \
+	X(NodeStmtAnyIf, StmtAnyIf) \
+	X(NodeStmtAnyElse, StmtAnyElse) \
+	X(NodeStmtGenerateIf, StmtGenerateIf) \
+	X(NodeStmtGenerateElse, StmtGenerateElse) \
+	X(NodeStmtIf, StmtIf) \
+	X(NodeStmtElse, StmtElse) \
+	X(NodeStmtWhile, StmtWhile) \
+	X(NodeStmtBehavAssign, StmtBehavAssign) \
+	X(NodeStmtContAssign, StmtContAssign) \
+	X(NodeStmtLabMemberAccessPublic, StmtLabMemberAccessPublic) \
+	X(NodeStmtLabMemberAccessProtected, StmtLabMemberAccessProtected) \
+	X(NodeStmtLabMemberAccessPrivate, StmtLabMemberAccessPrivate) \
+	X(NodeStmtUsing, StmtUsing) \
+	X(NodeStmtInstModule, StmtInstModule) \
 
-//#endif		// src_list_of_ast_node_classes_define_hpp

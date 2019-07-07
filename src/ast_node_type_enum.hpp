@@ -1,10 +1,9 @@
-//#ifndef src_ast_node_type_enum_hpp
-//#define src_ast_node_type_enum_hpp
-
 // src/ast_node_type_enum.hpp
 
 enum class Type
 {
+	Base,
+	List,
 	Package,
 	ScopePackage,
 	Module,
@@ -113,5 +112,4 @@ enum class Type
 	StmtLabMemberAccessPrivate,
 	StmtUsing,
 	StmtInstModule,
-}
-//#endif		// src_ast_node_type_enum_hpp
+};
