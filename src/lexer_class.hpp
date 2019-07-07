@@ -17,7 +17,7 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Lexer)
 	~Lexer();
 
-	Tok next_tok(bool just_test);
+	Tok next_tok();
 	inline auto src_code_chunk(State* state=nullptr) const
 	{
 		return LexerBase<Tok>::src_code_chunk<SrcCodeChunk>(state);

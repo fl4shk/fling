@@ -12,8 +12,13 @@ BidirSubPortList, List:
 	child typename;
 SubParamList, List:
 	child primary;
-PostTypenameIdent, List:
+IdentBracket, List:
 	child ident;
+IdentScope, List:
+IdentMemberAccess, List:
+IdentExpr, List:
+NumExpr:
+	initvar BigNum;
 
 
 // Blank brackets (`[]`) indicate that (a) this pair is on a port
@@ -147,4 +152,7 @@ ExprUnopDollarHigh, ExprUnopBase:
 ExprUnopDollarLow, ExprUnopBase:
 ExprUnopDollarClog2, ExprUnopBase:
 
-ExprBinopDollarPow, ExprUnopBase:
+ExprBinopDollarPow, ExprBinopBase:
+
+ExprUnopTypeof, ExprUnopBase:
+ExprCat, ExprBase:

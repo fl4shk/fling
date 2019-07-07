@@ -134,7 +134,7 @@ module Alu[uint ALU_WIDTH]
 	// bus();
 }
 
-module Alu[uint WIDTH](bidir PkgAlu::Bus[WIDTH=WIDTH] bus)
+module Alu[uint WIDTH](bidir PkgAlu.Bus[WIDTH=WIDTH] bus)
 {
 	bus();
 }
@@ -144,7 +144,7 @@ module Alu
 	// This syntax means that the `class` placed on the bus of an
 	// instance of this `Alu` can be determined by the instantiation of
 	// this `Alu`.  Note that this syntax can only be used with ports.
-	bidir PkgAlu::Bus[] bus,
+	bidir PkgAlu.Bus[] bus,
 )
 {
 	//assign cat(bus.out.carry, bus.out.data) = bus();
@@ -156,7 +156,7 @@ module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 	input
 		DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
 		ubit i_carry_arr[ARR_SIZE],
-		PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
+		PkgAlu.Opcode i_opcode_arr[ARR_SIZE],
 
 	output
 		DataInout o_data_arr[ARR_SIZE],
@@ -186,7 +186,7 @@ module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 	}
 }
 
-module VectorAlu(bidir PkgAlu::Bus[] bus_arr[])
+module VectorAlu(bidir PkgAlu.Bus[] bus_arr[])
 {
 	//generate lab for (i : bus_arr$range)
 	generate lab for (bus : bus_arr)

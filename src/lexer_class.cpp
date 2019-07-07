@@ -6,23 +6,16 @@ namespace frost_hdl
 {
 
 Lexer::Lexer(const string& s_filename, string* s_text)
-	: LexerBase<Tok>(s_filename, s_text, Tok::Done, Tok::Comment)
+	: LexerBase<Tok>(s_filename, s_text)
 {
 }
 Lexer::~Lexer()
 {
 }
 
-Tok Lexer::next_tok(bool just_test)
+Tok Lexer::next_tok()
 {
-	if (!just_test)
-	{
-		return _next_tok_no_test(Tok::Done, Tok::Comment);
-	}
-	else // if (just_test)
-	{
-		return Lexer(*this).next_tok(false);
-	}
+	return _next_tok(Tok::Comment);
 }
 
 void Lexer::_inner_next_tok()
@@ -164,16 +157,7 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == '.')
 	{
-		_next_char();
-
-		if (c() == '.')
-		{
-			_set_tok(Tok::PrevScope, true);
-		}
-		else
-		{
-			_set_tok(Tok::Period, false);
-		}
+		_set_tok(Tok::Period, true);
 	}
 	else if (c() == '#')
 	{
@@ -189,17 +173,17 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == ':')
 	{
-		//_set_tok(Tok::Colon, true);
-		_next_char();
+		_set_tok(Tok::Colon, true);
+		//_next_char();
 
-		if (c() == ':')
-		{
-			_set_tok(Tok::NextScope, true);
-		}
-		else
-		{
-			_set_tok(Tok::Colon, false);
-		}
+		//if (c() == ':')
+		//{
+		//	_set_tok(Tok::Scope, true);
+		//}
+		//else
+		//{
+		//	_set_tok(Tok::Colon, false);
+		//}
 	}
 	else if (c() == '"')
 	{
