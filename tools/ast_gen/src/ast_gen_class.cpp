@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 Lexer::Lexer(const string& s_filename, string* s_text)
-	: LexerBase<Tok>(s_filename, s_text, Tok::Done, Tok::Comment)
+	: LexerBase<Tok>(s_filename, s_text)
 {
 }
 Lexer::~Lexer()
