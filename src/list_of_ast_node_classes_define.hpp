@@ -7,12 +7,12 @@
 	X(NodeScopePackage, ScopePackage) \
 	X(NodeModule, Module) \
 	X(NodeScopeModule, ScopeModule) \
-	X(NodeInputSubPortArgList, InputSubPortArgList) \
-	X(NodeOutputSubPortArgList, OutputSubPortArgList) \
-	X(NodeBidirSubPortArgList, BidirSubPortArgList) \
-	X(NodeSubParamArgList, SubParamArgList) \
-	X(NodeSubParamModule, SubParamModule) \
-	X(NodeSubParamModuleList, SubParamModuleList) \
+	X(NodeInputPortArgSublist, InputPortArgSublist) \
+	X(NodeOutputPortArgSublist, OutputPortArgSublist) \
+	X(NodeBidirPortArgSublist, BidirPortArgSublist) \
+	X(NodeParamArgSublist, ParamArgSublist) \
+	X(NodeOneParamModule, OneParamModule) \
+	X(NodeParamModuleSublist, ParamModuleSublist) \
 	X(NodeParamArgList, ParamArgList) \
 	X(NodeLeftRightBase, LeftRightBase) \
 	X(NodeIdentBracket, IdentBracket) \
@@ -115,12 +115,7 @@
 	X(NodeStmtElse, StmtElse) \
 	X(NodeStmtGenerateIf, StmtGenerateIf) \
 	X(NodeStmtGenerateElse, StmtGenerateElse) \
-	X(NodeStmtAnyWhile, StmtAnyWhile) \
-	X(NodeStmtGenerateWhile, StmtGenerateWhile) \
 	X(NodeStmtWhile, StmtWhile) \
-	X(NodeStmtGenerateDoWhile, StmtGenerateDoWhile) \
-	X(NodeStmtDoWhile, StmtDoWhile) \
-	X(NodeStmtGenerateAlone, StmtGenerateAlone) \
 	X(NodeStmtBehavAssign, StmtBehavAssign) \
 	X(NodeStmtContAssign, StmtContAssign) \
 	X(NodeStmtLabMemberAccessPublic, StmtLabMemberAccessPublic) \
@@ -151,6 +146,5 @@
 	X(NodeDeclTask, DeclTask) \
 	X(NodeDeclVar, DeclVar) \
 	X(NodeDeclConst, DeclConst) \
-	X(NodeDeclGenvar, DeclGenvar) \
 	X(NodeDeclVarList, DeclVarList) \
 

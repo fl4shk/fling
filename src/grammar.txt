@@ -5,6 +5,27 @@ program:
 	)*
 	;
 
+header_if:
+	TokKwIf '(' expr ')'
+	;
+header_for:
+	TokKwFor '(' ident : expr ')'
+	;
+
+header_generate_if:
+	TokKwGenerate header_if:
+	;
+header_else_generate_if:
+	TokKwElse header_generate_if
+	;
+header_else_generate:
+	TokKwElse TokKwGenerate
+	;
+header_generate_for:
+	TokKwGenerate ident? header_for
+	;
+
+
 package:
 	TokKwPackage ident
 		scope_package
@@ -13,31 +34,171 @@ package:
 scope_package:
 	'{'
 		(
-			package
+			generate_package
+			| package
 			| module
 			| const
-			| proc
-			| func
-			| task
-			| class
-			| generate
+			| using
+			| decl_callable
+			| decl_cstm_type
 		)*
 	'}'
 	;
 
 
-module:
-	TokKwModule ident param_list?
-		arg_list?
-		scope_module
+generate_package:
+	generate_package_if
+	| generate_package_for
+	;
+generate_package_if:
+	header_generate_if scope_package
+	(header_else_generate_if scope_package)*
+	(header_else_generate scope_package)?
+	;
+generate_package_for:
+	header_generate_for scope_package
 	;
 
-scope_module:
+
+callable_member_prefix:
+	// Handled by lookahead
+	// TokKwConst, TokKwVirtual, TokKwStatic
+	;
+
+suffix_module_proc:
+	param_list? arg_list
+		scope_module_proc
+
+proc:
+	TokKwProc (ident | TokKwPort | const_str)
+		suffix_module_proc
+	;
+module:
+	TokKwModule ident
+		suffix_module_proc
+	;
+
+
+scope_module_proc:
 	'{'
 		(
-			// TODO
+			generate_module_proc
+			| const
+			| var
+			| using
+			| decl_callable
+			| decl_cstm_type
+			| hardware_block
 		)*
 	'}'
+	;
+
+generate_module_proc:
+	generate_module_proc_if
+	| generate_module_proc_for
+	;
+generate_module_proc_if:
+	header_generate_if scope_module_proc
+	(header_else_generate_if scope_module_proc)*
+	(header_else_generate scope_module_proc)?
+	;
+generate_module_proc_for:
+	header_generate_for scope_module_proc
+	;
+
+decl_callable:
+	func
+	| task
+	| proc
+	;
+
+suffix_func_task:
+	param_list? arg_list
+		scope_behav
+	;
+
+func:
+	TokKwFunc typename
+		suffix_behav
+	;
+task:
+	TokKwTask
+		suffix_behav
+	;
+
+scope_behav:
+	'{'
+		(
+			generate_behav
+			| const
+			| var
+			| using
+			| stmt_assign
+			| stmt_if
+			| stmt_for
+			| stmt_while
+			| ident_etc
+			| decl_cstm_type
+		)*
+	'}'
+	;
+
+
+generate_behav:
+	generate_behav_if
+	| generate_behav_for
+	;
+generate_behav_if:
+	header_generate_if scope_behav
+	(header_else_generate_if scope_behav)*
+	(header_else_generate scope_behav)?
+	;
+generate_behav_for:
+	header_generate_for scope_behav
+	;
+
+
+decl_cstm_type:
+	class
+	| enum
+	| union
+	;
+
+class:
+	TokKwPacked? TokKwClass ident param_list?
+		extends?
+		scope_class
+	;
+extends:
+	TokKwVirtual? TokKwExtends typename
+	;
+
+scope_class:
+	'{'
+		(
+			member_access_label?
+			(callable_member_prefix? decl_callable)
+			| 
+		)*
+	'}'
+	;
+
+
+// Top-level contents of a `module` or a `proc`.
+hardware_block:
+	cont_assign
+	| initial
+	| always_comb
+	| always_blk
+	| always_ff
+
+	// Inside a `proc`, this is still valid.  This means that `module`s can
+	// be instantiated inside of `class`es' `proc`s.
+	| inst
+
+	// This needs to be a proc call, but that's a semantic analysis
+	// problem.
+	| ident_etc
 	;
 
 
@@ -111,22 +272,39 @@ param_inst_list:
 	;
 
 pos_pararg_inst_list:
-	(
-		expr
-		(',' expr)*
-	)+
+	expr
+	(',' expr)*
 	;
 named_pararg_inst_list:
-	(
-		ident '=' expr
-		(',' ident '=' expr)*
-	)+
+	ident '=' expr
+	(',' ident '=' expr)*
 	;
+
+
+stmt_while:
+	TokKwWhile '(' expr ')'
+	;
+
 
 typename:
-	ident_etc param_inst_list
+	param_possible_typename
+	| no_param_possible_typename
 	;
 
+param_possible_typename:
+	(ident_etc
+		| TokKwUwire | TokKwSwire
+		| TokKwUbit | TokKwSbit)
+		param_inst_list
+	;
+
+no_param_possible_typename:
+	TokKwVoid | TokKwAuto
+	| TokUbyte | TokSbyte
+	| TokUshortint | TokSshortint
+	| TokUint | TokSint
+	| TokUlongint | TokSlongint
+	;
 
 expr:
 	inner_expr
@@ -168,7 +346,6 @@ expr_mul_div_mod_etc:
 	| ident_etc
 	| num_expr
 	| const_str
-	| typeof_expr
 	;
 
 inner_expr_mul_div_mod_etc:
@@ -182,11 +359,11 @@ dollar_global_clock:
 dollar_pow_expr:
 	TokKwDollarPow '(' expr ',' expr ')'
 	;
-typeof_expr:
-	TokKwTypeof '(' expr | typename ')'
-	;
 const_str:
 	TokConstStr
+	;
+typeof:
+	TokKwTypeof '(' expr | typename ')'
 	;
 
 
@@ -206,7 +383,8 @@ inner_ident_etc:
 	ident_terminal
 	| ident_member_access
 	| ident_call
-	| ident_overloaded_call
+	| ident_no_param_overloaded_call
+	| ident_param_overloaded_call
 	;
 
 ident_terminal:
@@ -226,7 +404,7 @@ ident_bracket:
 	;
 
 ident_call:
-	ident_terminal param_inst_list? arg_inst_list
+	ident param_inst_list? arg_inst_list
 	;
 
 ident_no_param_overloaded_call:

@@ -62,7 +62,7 @@
 	\
 	X(KwFor, "for") \
 	X(KwWhile, "while") \
-	X(KwDo, "do") \
+	/* X(KwDo, "do") */ \
 	\
 	X(KwRange, "range") \
 	\
@@ -83,7 +83,7 @@
 	X(KwNegedge, "negedge") \
 	\
 	X(KwGenerate, "generate") \
-	X(KwGenvar, "genvar") \
+	/* X(KwGenvar, "genvar") */ \
 	\
 	X(KwCat, "cat") \
 	X(KwRepl, "repl") \

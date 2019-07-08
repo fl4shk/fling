@@ -75,7 +75,7 @@ Enum:
 ScopeEnum, List:
 
 Class:
-	initvar bool _packed;
+	initvar bool _packed, _virtual_extends;
 	child ident, param_list, extends, scope, var_list;
 ScopeClass, List:
 Extends:
@@ -257,18 +257,8 @@ StmtElse, StmtAnyElse:
 StmtGenerateIf, StmtAnyIf:
 StmtGenerateElse, StmtAnyElse:
 
-StmtAnyWhile:
+StmtWhile:
 	child cond_expr, stmt_list;
-
-StmtGenerateWhile, StmtAnyWhile:
-	child label;
-StmtWhile, StmtAnyWhile:
-
-StmtGenerateDoWhile, StmtGenerateWhile:
-StmtDoWhile, StmtWhile:
-
-StmtGenerateAlone:
-	child stmt_list;
 
 
 StmtBehavAssign, LeftRightBase:
@@ -331,6 +321,6 @@ DeclTask, DeclCallable:
 DeclVar:
 	child the_typename, ident_bracket, port_inst_list, expr;
 DeclConst, DeclVar:
-DeclGenvar, DeclVar:
+//DeclGenvar, DeclVar:
 
 DeclVarList, List:

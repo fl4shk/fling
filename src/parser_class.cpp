@@ -19,7 +19,7 @@ bool Parser::_parse_package()
 {
 	if (just_test())
 	{
-		return _check_prefixed_tok_seq(TokSet(), Tok::KwPackage);
+		return _check_prefixed_tok_seq(Tok::KwPackage);
 	}
 	_next_lss_tokens();
 

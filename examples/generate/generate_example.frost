@@ -14,9 +14,9 @@ module GenerateExample[uint WIDTH, ARR_SIZE]
 	//--------
 
 	//--------
+	// `generate` is always sequential.
 	generate lab_0 for (i : range(ARR_SIZE))
 	{
-		// Dependency scanning is going to be a must.
 		assign out.data[i] = lab_1[i].f(in.a[i], in.b[i]);
 	}
 

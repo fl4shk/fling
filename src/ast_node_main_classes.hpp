@@ -102,141 +102,141 @@ public:		// functions
 	}
 };
 
-class NodeInputSubPortArgList : public NodeList
+class NodeInputPortArgSublist : public NodeList
 {
 protected:		// children
 	Child _the_typename;
 public:		// functions
-	inline NodeInputSubPortArgList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeInputPortArgSublist(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename)
 		: NodeList(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeInputSubPortArgList);
+	GEN_POST_CONSTRUCTOR(NodeInputPortArgSublist);
 	virtual Type type() const
 	{
-		return Type::InputSubPortArgList;
+		return Type::InputPortArgSublist;
 	}
 	virtual string name() const
 	{
-		return "InputSubPortArgList";
+		return "InputPortArgSublist";
 	}
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
-class NodeOutputSubPortArgList : public NodeList
+class NodeOutputPortArgSublist : public NodeList
 {
 protected:		// children
 	Child _the_typename;
 public:		// functions
-	inline NodeOutputSubPortArgList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeOutputPortArgSublist(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename)
 		: NodeList(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeOutputSubPortArgList);
+	GEN_POST_CONSTRUCTOR(NodeOutputPortArgSublist);
 	virtual Type type() const
 	{
-		return Type::OutputSubPortArgList;
+		return Type::OutputPortArgSublist;
 	}
 	virtual string name() const
 	{
-		return "OutputSubPortArgList";
+		return "OutputPortArgSublist";
 	}
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
-class NodeBidirSubPortArgList : public NodeList
+class NodeBidirPortArgSublist : public NodeList
 {
 protected:		// children
 	Child _the_typename;
 public:		// functions
-	inline NodeBidirSubPortArgList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBidirPortArgSublist(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename)
 		: NodeList(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeBidirSubPortArgList);
+	GEN_POST_CONSTRUCTOR(NodeBidirPortArgSublist);
 	virtual Type type() const
 	{
-		return Type::BidirSubPortArgList;
+		return Type::BidirPortArgSublist;
 	}
 	virtual string name() const
 	{
-		return "BidirSubPortArgList";
+		return "BidirPortArgSublist";
 	}
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
-class NodeSubParamArgList : public NodeList
+class NodeParamArgSublist : public NodeList
 {
 protected:		// children
 	Child _primary;
 public:		// functions
-	inline NodeSubParamArgList(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeParamArgSublist(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_primary)
 		: NodeList(s_src_code_chunk),
 		_primary(std::move(s_primary))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeSubParamArgList);
+	GEN_POST_CONSTRUCTOR(NodeParamArgSublist);
 	virtual Type type() const
 	{
-		return Type::SubParamArgList;
+		return Type::ParamArgSublist;
 	}
 	virtual string name() const
 	{
-		return "SubParamArgList";
+		return "ParamArgSublist";
 	}
 	GEN_GETTER_BY_CON_REF(primary)
 	GEN_SETTER_BY_RVAL_REF(primary)
 };
 
-class NodeSubParamModule : public NodeBase
+class NodeOneParamModule : public NodeBase
 {
 protected:		// children
 	Child _ident_etc;
 public:		// functions
-	inline NodeSubParamModule(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeOneParamModule(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_ident_etc)
 		: NodeBase(s_src_code_chunk),
 		_ident_etc(std::move(s_ident_etc))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeSubParamModule);
+	GEN_POST_CONSTRUCTOR(NodeOneParamModule);
 	virtual Type type() const
 	{
-		return Type::SubParamModule;
+		return Type::OneParamModule;
 	}
 	virtual string name() const
 	{
-		return "SubParamModule";
+		return "OneParamModule";
 	}
 	GEN_GETTER_BY_CON_REF(ident_etc)
 	GEN_SETTER_BY_RVAL_REF(ident_etc)
 };
 
-class NodeSubParamModuleList : public NodeList
+class NodeParamModuleSublist : public NodeList
 {
 public:		// functions
-	inline NodeSubParamModuleList(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeParamModuleSublist(const SrcCodeChunk& s_src_code_chunk)
 		: NodeList(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeSubParamModuleList);
+	GEN_POST_CONSTRUCTOR(NodeParamModuleSublist);
 	virtual Type type() const
 	{
-		return Type::SubParamModuleList;
+		return Type::ParamModuleSublist;
 	}
 	virtual string name() const
 	{
-		return "SubParamModuleList";
+		return "ParamModuleSublist";
 	}
 };
 
@@ -589,6 +589,7 @@ class NodeClass : public NodeBase
 {
 protected:		// variables
 	bool _packed;
+	bool _virtual_extends;
 protected:		// children
 	Child _ident,
 		_param_list,
@@ -597,13 +598,14 @@ protected:		// children
 		_var_list;
 public:		// functions
 	inline NodeClass(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_packed,
+		const bool& s_packed, const bool& s_virtual_extends,
 		Child&& s_ident,
 		Child&& s_param_list,
 		Child&& s_extends,
 		Child&& s_scope,
 		Child&& s_var_list)
 		: NodeBase(s_src_code_chunk), _packed(s_packed),
+		_virtual_extends(s_virtual_extends),
 		_ident(std::move(s_ident)),
 		_param_list(std::move(s_param_list)),
 		_extends(std::move(s_extends)),
@@ -621,6 +623,7 @@ public:		// functions
 		return "Class";
 	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(packed)
+	GEN_GETTER_AND_SETTER_BY_CON_REF(virtual_extends)
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(param_list)
@@ -2146,12 +2149,12 @@ public:		// functions
 class NodeExprRangeAny : public NodeExprBase
 {
 protected:		// children
-	Child _range;
+	Child _which_range;
 public:		// functions
 	inline NodeExprRangeAny(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_range)
+		Child&& s_which_range)
 		: NodeExprBase(s_src_code_chunk),
-		_range(std::move(s_range))
+		_which_range(std::move(s_which_range))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprRangeAny);
@@ -2163,8 +2166,8 @@ public:		// functions
 	{
 		return "ExprRangeAny";
 	}
-	GEN_GETTER_BY_CON_REF(range)
-	GEN_SETTER_BY_RVAL_REF(range)
+	GEN_GETTER_BY_CON_REF(which_range)
+	GEN_SETTER_BY_RVAL_REF(which_range)
 };
 
 class NodeRangeOne : public NodeBase
@@ -2465,72 +2468,18 @@ public:		// functions
 	}
 };
 
-class NodeStmtAnyWhile : public NodeBase
+class NodeStmtWhile : public NodeBase
 {
 protected:		// children
 	Child _cond_expr,
 		_stmt_list;
 public:		// functions
-	inline NodeStmtAnyWhile(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeStmtWhile(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_stmt_list)
 		: NodeBase(s_src_code_chunk),
 		_cond_expr(std::move(s_cond_expr)),
 		_stmt_list(std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAnyWhile);
-	virtual Type type() const
-	{
-		return Type::StmtAnyWhile;
-	}
-	virtual string name() const
-	{
-		return "StmtAnyWhile";
-	}
-	GEN_GETTER_BY_CON_REF(cond_expr)
-	GEN_SETTER_BY_RVAL_REF(cond_expr)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
-};
-
-class NodeStmtGenerateWhile : public NodeStmtAnyWhile
-{
-protected:		// children
-	Child _label;
-public:		// functions
-	inline NodeStmtGenerateWhile(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_label,
-		Child&& s_cond_expr,
-		Child&& s_stmt_list)
-		: NodeStmtAnyWhile(s_src_code_chunk,
-		std::move(s_cond_expr),
-		std::move(s_stmt_list)),
-		_label(std::move(s_label))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtGenerateWhile);
-	virtual Type type() const
-	{
-		return Type::StmtGenerateWhile;
-	}
-	virtual string name() const
-	{
-		return "StmtGenerateWhile";
-	}
-	GEN_GETTER_BY_CON_REF(label)
-	GEN_SETTER_BY_RVAL_REF(label)
-};
-
-class NodeStmtWhile : public NodeStmtAnyWhile
-{
-public:		// functions
-	inline NodeStmtWhile(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_cond_expr,
-		Child&& s_stmt_list)
-		: NodeStmtAnyWhile(s_src_code_chunk,
-		std::move(s_cond_expr),
-		std::move(s_stmt_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtWhile);
@@ -2542,74 +2491,8 @@ public:		// functions
 	{
 		return "StmtWhile";
 	}
-};
-
-class NodeStmtGenerateDoWhile : public NodeStmtGenerateWhile
-{
-public:		// functions
-	inline NodeStmtGenerateDoWhile(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_label,
-		Child&& s_cond_expr,
-		Child&& s_stmt_list)
-		: NodeStmtGenerateWhile(s_src_code_chunk,
-		std::move(s_label),
-		std::move(s_cond_expr),
-		std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtGenerateDoWhile);
-	virtual Type type() const
-	{
-		return Type::StmtGenerateDoWhile;
-	}
-	virtual string name() const
-	{
-		return "StmtGenerateDoWhile";
-	}
-};
-
-class NodeStmtDoWhile : public NodeStmtWhile
-{
-public:		// functions
-	inline NodeStmtDoWhile(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_cond_expr,
-		Child&& s_stmt_list)
-		: NodeStmtWhile(s_src_code_chunk,
-		std::move(s_cond_expr),
-		std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtDoWhile);
-	virtual Type type() const
-	{
-		return Type::StmtDoWhile;
-	}
-	virtual string name() const
-	{
-		return "StmtDoWhile";
-	}
-};
-
-class NodeStmtGenerateAlone : public NodeBase
-{
-protected:		// children
-	Child _stmt_list;
-public:		// functions
-	inline NodeStmtGenerateAlone(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
-		: NodeBase(s_src_code_chunk),
-		_stmt_list(std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtGenerateAlone);
-	virtual Type type() const
-	{
-		return Type::StmtGenerateAlone;
-	}
-	virtual string name() const
-	{
-		return "StmtGenerateAlone";
-	}
+	GEN_GETTER_BY_CON_REF(cond_expr)
+	GEN_SETTER_BY_RVAL_REF(cond_expr)
 	GEN_GETTER_BY_CON_REF(stmt_list)
 	GEN_SETTER_BY_RVAL_REF(stmt_list)
 };
@@ -3389,32 +3272,6 @@ public:		// functions
 	virtual string name() const
 	{
 		return "DeclConst";
-	}
-};
-
-class NodeDeclGenvar : public NodeDeclVar
-{
-public:		// functions
-	inline NodeDeclGenvar(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_the_typename,
-		Child&& s_ident_bracket,
-		Child&& s_port_inst_list,
-		Child&& s_expr)
-		: NodeDeclVar(s_src_code_chunk,
-		std::move(s_the_typename),
-		std::move(s_ident_bracket),
-		std::move(s_port_inst_list),
-		std::move(s_expr))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeDeclGenvar);
-	virtual Type type() const
-	{
-		return Type::DeclGenvar;
-	}
-	virtual string name() const
-	{
-		return "DeclGenvar";
 	}
 };
 

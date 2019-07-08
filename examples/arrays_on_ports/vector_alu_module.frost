@@ -161,6 +161,7 @@ module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 	output
 		DataInout o_data_arr[ARR_SIZE],
 		ubit o_carry_arr[ARR_SIZE],
+		| op_genvar
 )
 {
 	using DataInout = ubit[WIDTH=ALU_WIDTH];
