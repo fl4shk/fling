@@ -68,6 +68,10 @@ public:		// functions
 	{
 		return "Base";
 	}
+	//virtual string to_string() const
+	//{
+	//	return sconcat(name(), "()\n");
+	//}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
 
@@ -106,8 +110,8 @@ protected:		// functions
 
 class NodeList : public NodeBase
 {
-protected:		// variables
-	std::vector<Child> _list;
+public:		// variables
+	std::vector<Child> list;
 
 public:		// functions
 	inline NodeList(const SrcCodeChunk& s_src_code_chunk)
@@ -129,8 +133,22 @@ public:		// functions
 	{
 		return "List";
 	}
-
-	GEN_GETTER_BY_CON_REF(list)
+	//virtual string to_string() const
+	//{
+	//	string ret;
+	//	ret += name();
+	//	ret += "(";
+	//	for (size_t i=0; i<list.size(); ++i)
+	//	{
+	//		ret += list.at(i).to_string();
+	//		if ((i + 1) != list.size())
+	//		{
+	//			ret += ", ";
+	//		}
+	//	}
+	//	ret += ")\n";
+	//	return ret;
+	//}
 };
 
 #include "ast_node_main_classes.hpp"

@@ -92,26 +92,31 @@ private:		// functions
 		Base::_req_parse(this, first_func, rem_funcs...);
 	}
 
-	bool _parse_decl_package();
-	bool _parse_decl_module();
-	bool _parse_decl_enum();
-	bool _parse_decl_class();
-	bool _parse_decl_union();
-	bool _parse_generate();
 
-	bool _parse_member_access_label();
+	bool _parse_package();
 
-	bool _parse_decl_member_func();
-	bool _parse_decl_func();
-	bool _parse_decl_member_task();
-	bool _parse_decl_task();
-	bool _parse_decl_member_proc();
-	bool _parse_decl_proc();
+	// Modules, classes, constants, functions, tasks, processes, and other
+	// packages.
+	bool _parse_package_scope();
+
+	bool _parse_module();
+	bool _parse_module_scope();
+	bool _parse_enum();
+	bool _parse_enum_scope();
+	bool _parse_union();
+	bool _parse_union_scope();
+
+	bool _parse_class();
+	bool _parse_extends();
+	bool _parse_class_scope();
+	bool _parse_using();
+
+	bool _parse_proc();
+	bool _parse_func();
+	bool _parse_task();
 
 	bool _parse_param_list();
-	bool _parse_port_list();
-
-	bool _parse_expr();
+	bool _parse_arg_list();
 };
 
 } // namespace frost_hdl

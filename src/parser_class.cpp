@@ -7,138 +7,29 @@ using namespace ast;
 Parser::Parser(std::vector<string>&& s_filename_vec)
 	: ParserBase<Lexer>(std::move(s_filename_vec))
 {
-	_ast.reset(new NodeBase(SrcCodeChunk()));
+	_ast.reset(new NodeList(SrcCodeChunk()));
 }
 Parser::~Parser()
 {
 }
 
-bool Parser::_parse_decl_package()
+#define fp(func) &Parser::func
+
+bool Parser::_parse_package()
 {
 	if (just_test())
 	{
-		//return _check_prefixed_tok_seq<NodePackage>();
 		return _check_prefixed_tok_seq(TokSet(), Tok::KwPackage);
 	}
 	_next_lss_tokens();
 
-	return true;
-}
-bool Parser::_parse_decl_module()
-{
-	if (just_test())
-	{
-		return _check_prefixed_tok_seq(TokSet(), Tok::KwModule);
-	}
-	_next_lss_tokens();
-
-	return true;
-}
-bool Parser::_parse_decl_enum()
-{
-	if (just_test())
-	{
-		return _check_prefixed_tok_seq(TokSet(), Tok::KwEnum);
-	}
-	_next_lss_tokens();
-
-	return true;
-}
-bool Parser::_parse_decl_class()
-{
-	if (just_test())
-	{
-		//return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
-		return _check_prefixed_tok_seq({Tok::KwPacked}, Tok::KwClass);
-	}
-	_next_lss_tokens();
-
-	return true;
-}
-bool Parser::_parse_generate()
-{
-	if (just_test())
-	{
-		return _check_prefixed_tok_seq(Tok::KwGenerate);
-	}
-	_next_lss_tokens();
-
-	return true;
-}
-
-bool Parser::_parse_member_access_label()
-{
-	if (just_test())
+	rwith(we, _wexpect(Tok::Ident))
 	{
 	}
 
 	return true;
 }
 
-bool Parser::_parse_decl_member_func()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_decl_func()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_decl_member_task()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_decl_task()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_decl_member_proc()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_decl_proc()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-
-bool Parser::_parse_param_list()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-bool Parser::_parse_port_list()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
-
-bool Parser::_parse_expr()
-{
-	if (just_test())
-	{
-	}
-	return true;
-}
+#undef fp
 
 } // namespace frost_hdl

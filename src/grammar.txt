@@ -1,54 +1,238 @@
 program:
 	(
-		decl_package
-		| decl_module
+		package
+		| module
 	)*
-	EOF
 	;
 
-decl_package:
+package:
 	TokKwPackage ident
+		scope_package
+	;
+
+scope_package:
 	'{'
-		(list_decl_const ';'
-		| decl_range
-		| decl_using
-		| decl_func_task
-		| decl_class
-		| decl_union
-		| decl_enum
-		| decl_package)*
+		(
+			package
+			| module
+			| const
+			| proc
+			| func
+			| task
+			| class
+			| generate
+		)*
 	'}'
 	;
 
-decl_module:
-	TokKwModule ident
-	('#' '('
-		decl_using*
-	')')?
-	'('
+
+module:
+	TokKwModule ident param_list?
 		arg_list?
-	')'
+		scope_module
+	;
+
+scope_module:
 	'{'
-		inside_module
+		(
+			// TODO
+		)*
 	'}'
 	;
 
-arg_list:
-	(list_decl_const ',')
 
+param_list:
+	'['
+		sub_param_list
+		(',' sub_param_list)*
+		(',')?
+	']'
+	;
+
+param_sublist:
+	(pararg_type_sublist
+	| param_module_sublist
+	| pararg_var_sublist)
+	(',' param_sublist)?
 	(',')?
 	;
 
-list_decl_const:
-	TokKwConst typename (post_typename_ident ('=' expr)?)
-		(',' post_typename_ident ('=' expr)?)*
+arg_list:
+	'('
+		(arg_sublist
+		(',' arg_sublist)*)?
+		(',')?
+	')'
+	;
+
+arg_sublist:
+	(arg_port_sublist
+	| pararg_type_sublist)
+	(',' arg_sublist)?
+	(',')?
+	;
+
+arg_port_sublist:
+	(TokKwInput
+	| TokKwOutput
+	| TokKwBidir)
+	pararg_var_sublist
+	;
+
+pararg_var_sublist:
+	typename
+	ident_terminal ('=' expr)?
+	(',' ident_terminal ('=' expr)?)*
+	;
+
+pararg_type_sublist:
+	TokKwType
+	pararg_ident_equals_typename_sublist
+	;
+
+param_module_sublist:
+	TokKwModule
+	pararg_ident_equals_typename_sublist
+	;
+
+pararg_ident_equals_typename_sublist:
+	ident ('=' typename)?
+	(',' ident ('=' typename)?)*
+	;
+
+param_inst_list:
+	'['
+		(
+			pos_pararg_inst_list
+			| named_pararg_inst_list
+		)?
+		(',')?
+	']'
+	;
+
+pos_pararg_inst_list:
+	(
+		expr
+		(',' expr)*
+	)+
+	;
+named_pararg_inst_list:
+	(
+		ident '=' expr
+		(',' ident '=' expr)*
+	)+
 	;
 
 typename:
+	ident_etc param_inst_list
 	;
 
-post_typename_ident:
-	ident ('[' expr (':' expr)? ']')?
+
+expr:
+	inner_expr
+	| expr_logical
+	;
+inner_expr:
+	expr_logical TokOpLogical expr
 	;
 
-inside_module:
+expr_logical:
+	inner_expr_logical
+	| expr_compare
+	;
+inner_expr_logical:
+	expr_compare TokOpCompare expr_logical
+	;
+
+expr_compare:
+	inner_expr_compare
+	| expr_add_sub
+	;
+inner_expr_compare:
+	expr_add_sub TokOpPlusMinus expr_compare
+	;
+
+expr_add_sub:
+	inner_expr_add_sub
+	| expr_mul_div_mod_etc
+	;
+inner_expr_add_sub:
+	expr_mul_div_mod_etc TokOpMulDivModEtc expr_add_sub
+	;
+
+expr_mul_div_mod_etc:
+	inner_expr_mul_div_mod_etc
+	| '(' expr ')'
+	| dollar_global_clock
+	| dollar_pow_expr
+	| ident_etc
+	| num_expr
+	| const_str
+	| typeof_expr
+	;
+
+inner_expr_mul_div_mod_etc:
+	TokOpUnary expr
+	;
+
+dollar_global_clock:
+	TokKwDollarGlobalClock
+	;
+
+dollar_pow_expr:
+	TokKwDollarPow '(' expr ',' expr ')'
+	;
+typeof_expr:
+	TokKwTypeof '(' expr | typename ')'
+	;
+const_str:
+	TokConstStr
+	;
+
+
+ident_etc:
+	ident_etc_pre_dollar_func
+	| ident_etc_post_dollar_func
+	| inner_ident_etc
+	;
+ident_etc_pre_dollar_func:
+	TokKwDollarFuncOfOne '(' ident_etc ')'
+	;
+ident_etc_post_dollar_func:
+	inner_ident_etc TokKwDollarFuncOfOne
+	;
+
+inner_ident_etc:
+	ident_terminal
+	| ident_member_access
+	| ident_call
+	| ident_overloaded_call
+	;
+
+ident_terminal:
+	ident_bracket
+	| ident
+	;
+
+ident_member_access:
+	ident_terminal '.' inner_ident_etc
+	;
+ident:
+	TokIdent
+	;
+
+ident_bracket:
+	ident ('[' expr ']')+
+	;
+
+ident_call:
+	ident_terminal param_inst_list? arg_inst_list
+	;
+
+ident_no_param_overloaded_call:
+	ident_terminal arg_inst_list
+	;
+ident_param_overloaded_call:
+	ident_terminal '.' param_inst_list arg_inst_list
+	;
+

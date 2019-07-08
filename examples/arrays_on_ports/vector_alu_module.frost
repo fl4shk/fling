@@ -109,9 +109,9 @@ module Alu[uint ALU_WIDTH]
 		// Built-in types (`ubit`, `bits`, `wireu`, and `wires`) have a
 		// parameter defined for them already called `WIDTH` with a default
 		// value of `1` and type `uint`.  Other parameters of these types
-		// include `HIGH` and `LOW` as well as `D_OR_A`, but they are not
-		// available to be set with the generics syntax.  Instead, use
-		// Verilog-style syntax.
+		// include `HIGH` and `LOW` as well as `D_OR_A`, and they are 
+		// available to be set with the generics syntax.
+		// Verilog-style syntax is preferred, however.
 		ubit[WIDTH=ALU_WIDTH] i_a, i_b,
 		Opcode i_opcode,
 

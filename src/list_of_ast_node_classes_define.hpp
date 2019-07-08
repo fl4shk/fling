@@ -11,8 +11,10 @@
 	X(NodeOutputSubPortArgList, OutputSubPortArgList) \
 	X(NodeBidirSubPortArgList, BidirSubPortArgList) \
 	X(NodeSubParamArgList, SubParamArgList) \
-	X(NodeLeftRightBase, LeftRightBase) \
+	X(NodeSubParamModule, SubParamModule) \
+	X(NodeSubParamModuleList, SubParamModuleList) \
 	X(NodeParamArgList, ParamArgList) \
+	X(NodeLeftRightBase, LeftRightBase) \
 	X(NodeIdentBracket, IdentBracket) \
 	X(NodeIdentScope, IdentScope) \
 	X(NodeCall, Call) \
@@ -29,6 +31,8 @@
 	X(NodeClass, Class) \
 	X(NodeScopeClass, ScopeClass) \
 	X(NodeExtends, Extends) \
+	X(NodeUnion, Union) \
+	X(NodeScopeUnion, ScopeUnion) \
 	X(NodeTypename, Typename) \
 	X(NodeType, Type) \
 	X(NodeAuto, Auto) \
@@ -48,7 +52,6 @@
 	X(NodeSelf, Self) \
 	X(NodePosParamArgInstList, PosParamArgInstList) \
 	X(NodeNamedParamArgInstList, NamedParamArgInstList) \
-	X(NodeSliceRange, SliceRange) \
 	X(NodeOneParamArgInst, OneParamArgInst) \
 	X(NodeExprBase, ExprBase) \
 	X(NodeExprBinopBase, ExprBinopBase) \
@@ -89,6 +92,12 @@
 	X(NodeExprUnopDollarLow, ExprUnopDollarLow) \
 	X(NodeExprUnopDollarClog2, ExprUnopDollarClog2) \
 	X(NodeExprBinopDollarPow, ExprBinopDollarPow) \
+	X(NodePseudoExprDollarBase, PseudoExprDollarBase) \
+	X(NodePseudoExprDollarPast, PseudoExprDollarPast) \
+	X(NodePseudoExprDollarStable, PseudoExprDollarStable) \
+	X(NodePseudoExprDollarRose, PseudoExprDollarRose) \
+	X(NodePseudoExprDollarFell, PseudoExprDollarFell) \
+	X(NodePseudoExprDollarGlobalClock, PseudoExprDollarGlobalClock) \
 	X(NodeExprUnopTypeof, ExprUnopTypeof) \
 	X(NodeExprCat, ExprCat) \
 	X(NodeListCat, ListCat) \
@@ -111,7 +120,7 @@
 	X(NodeStmtWhile, StmtWhile) \
 	X(NodeStmtGenerateDoWhile, StmtGenerateDoWhile) \
 	X(NodeStmtDoWhile, StmtDoWhile) \
-	X(NodeStmtGenerateRaw, StmtGenerateRaw) \
+	X(NodeStmtGenerateAlone, StmtGenerateAlone) \
 	X(NodeStmtBehavAssign, StmtBehavAssign) \
 	X(NodeStmtContAssign, StmtContAssign) \
 	X(NodeStmtLabMemberAccessPublic, StmtLabMemberAccessPublic) \
@@ -128,6 +137,11 @@
 	X(NodeStmtAlwaysComb, StmtAlwaysComb) \
 	X(NodeStmtAlwaysBlk, StmtAlwaysBlk) \
 	X(NodeStmtAlwaysFf, StmtAlwaysFf) \
+	X(NodeStmtAssert, StmtAssert) \
+	X(NodeStmtAssume, StmtAssume) \
+	X(NodeStmtCover, StmtCover) \
+	X(NodeStmtRestrict, StmtRestrict) \
+	X(NodeStmtStaticAssert, StmtStaticAssert) \
 	X(NodePosedgeInst, PosedgeInst) \
 	X(NodeNegedgeInst, NegedgeInst) \
 	X(NodeEdgeList, EdgeList) \
@@ -136,5 +150,7 @@
 	X(NodeDeclProc, DeclProc) \
 	X(NodeDeclTask, DeclTask) \
 	X(NodeDeclVar, DeclVar) \
+	X(NodeDeclConst, DeclConst) \
 	X(NodeDeclGenvar, DeclGenvar) \
+	X(NodeDeclVarList, DeclVarList) \
 

@@ -4,20 +4,28 @@ ScopePackage, List:
 Module:
 	child ident, param_list, port_list, scope;
 ScopeModule, List:
-InputSubPortArgList, List:
+InputPortArgSublist, List:
 	child the_typename;
-OutputSubPortArgList, List:
+OutputPortArgSublist, List:
 	child the_typename;
-BidirSubPortArgList, List:
+BidirPortArgSublist, List:
 	child the_typename;
-SubParamArgList, List:
+ParamArgSublist, List:
 	child primary;
+
+
+
+// Modules are not types, but they can be used generically.
+OneParamModule:
+	child ident_etc;
+ParamModuleSublist, List:
+
+// List of SubParamArgList's or ParamModuleList's
+ParamArgList, List:
+
 
 LeftRightBase:
 	child left, right;
-
-// List of SubParamArgList's
-ParamArgList, List:
 
 // Example:  `i_a_arr[ARR_SIZE]`
 // The list is of brackets.  Example of multiple brackets:  `i_a_arr[2][3]`
@@ -28,9 +36,9 @@ IdentBracket, List:
 IdentScope:
 
 // This is either an expression or a statement.  It can only be an
-// expression for non-`void` `func`tions.
+// expression for non-`void` `func`tions.  It is part of an IdentEtc.
 Call:
-	child ident, param_inst_list;
+	child ident, param_inst_list, arg_inst_list;
 
 // A string of identifiers and operations chained together via the `.`
 // (scope) operator.
@@ -73,6 +81,10 @@ ScopeClass, List:
 Extends:
 	child the_typename;
 
+Union:
+	child ident, scope;
+ScopeUnion, List:
+
 Typename:
 	child ident_etc, param_inst_list;
 
@@ -85,7 +97,6 @@ Self:
 
 PosParamArgInstList, List:
 NamedParamArgInstList, List:
-SliceRange, LeftRightBase:
 OneParamArgInst, LeftRightBase:
 
 //// Expression parsing
@@ -185,6 +196,15 @@ ExprUnopDollarClog2, ExprUnopBase:
 
 ExprBinopDollarPow, ExprBinopBase:
 
+PseudoExprDollarBase:
+	child child;
+PseudoExprDollarPast, PseudoExprDollarBase:
+PseudoExprDollarStable, PseudoExprDollarBase:
+PseudoExprDollarRose, PseudoExprDollarBase:
+PseudoExprDollarFell, PseudoExprDollarBase:
+PseudoExprDollarGlobalClock:
+
+
 ExprUnopTypeof, ExprUnopBase:
 ExprCat, ExprBase:
 	child list;
@@ -194,7 +214,7 @@ ExprRepl, ExprBase:
 	child how_much_expr, to_repl_expr;
 
 ExprRangeAny, ExprBase:
-	child expr;
+	child which_range;
 RangeOne:
 	child child;
 RangeTwo, LeftRightBase:
@@ -218,6 +238,9 @@ StmtGenerateFor, StmtAnyFor:
 // {
 // 	...
 // }
+//
+// ...
+//
 // else generate
 // {
 // 	...
@@ -244,7 +267,7 @@ StmtWhile, StmtAnyWhile:
 StmtGenerateDoWhile, StmtGenerateWhile:
 StmtDoWhile, StmtWhile:
 
-StmtGenerateRaw:
+StmtGenerateAlone:
 	child stmt_list;
 
 
@@ -265,7 +288,7 @@ StmtDefault:
 StmtUsing, LeftRightBase:
 
 StmtInstModule:
-	child module_ident, inst_ident, arg_inst_list;
+	child module_ident, param_inst_list, inst_ident_etc, arg_inst_list;
 StmtReturn:
 	child expr;
 StmtInitial:
@@ -277,6 +300,17 @@ StmtAlwaysBlk:
 StmtAlwaysFf:
 	child edge_list, stmt_list;
 
+StmtAssert:
+	child expr;
+StmtAssume:
+	child expr;
+StmtCover:
+	child expr;
+StmtRestrict:
+	child expr;
+StmtStaticAssert:
+	child expr;
+
 PosedgeInst:
 	child ident_etc;
 NegedgeInst:
@@ -285,7 +319,7 @@ EdgeList, List:
 
 DeclCallable:
 	initvar bool _is_static, _is_virtual;
-	child param_list, arg_list, ident, stmt_list;
+	child param_list, arg_list, ident_or_op, stmt_list;
 
 DeclFunc, DeclCallable:
 	initvar bool _is_const;
@@ -295,5 +329,8 @@ DeclProc, DeclCallable:
 DeclTask, DeclCallable:
 
 DeclVar:
-	child the_typename, ident_bracket;
+	child the_typename, ident_bracket, port_inst_list, expr;
+DeclConst, DeclVar:
 DeclGenvar, DeclVar:
+
+DeclVarList, List:

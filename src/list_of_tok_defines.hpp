@@ -14,6 +14,11 @@
 	X(KwDollarLow, "$low") \
 	X(KwDollarClog2, "$clog2") \
 	X(KwDollarPow, "$pow") \
+	X(KwDollarPast, "$past") \
+	X(KwDollarPast, "$stable") \
+	X(KwDollarPast, "$rose") \
+	X(KwDollarPast, "$fell") \
+	X(KwDollarPast, "$global_clock") \
 
 #define LIST_OF_KW_NON_DOLLAR_TOK(X) \
 	X(KwConst, "const") \
@@ -70,6 +75,7 @@
 	X(KwAssert, "assert") \
 	X(KwAssume, "assume") \
 	X(KwCover, "cover") \
+	X(KwRestrict, "restrict") \
 	\
 	X(KwStaticAssert, "static_assert") \
 	\
