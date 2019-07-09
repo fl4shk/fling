@@ -175,6 +175,12 @@ private:		// functions
 	{
 		Base::_req_parse(this, first_func, rem_funcs...);
 	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	void _req_parse_loop(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		Base::_req_parse_loop(this, first_func, rem_funcs...);
+	}
 
 	bool _parse_node();
 	bool _parse_extends();
