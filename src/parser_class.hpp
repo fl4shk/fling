@@ -79,6 +79,8 @@ private:		// functions
 	{
 		_lexer().next_tok();
 	}
+
+public:		// functions
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	bool _opt_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
@@ -86,37 +88,154 @@ private:		// functions
 		return Base::_opt_parse(this, first_func, rem_funcs...);
 	}
 	template<typename FirstFuncType, typename... RemFuncTypes>
+	auto _check_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		return Base::_check_parse(this, first_func, rem_funcs...);
+	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
 	void _req_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
 		Base::_req_parse(this, first_func, rem_funcs...);
 	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	void _req_parse_loop(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		Base::_req_parse_loop(this, first_func, rem_funcs...);
+	}
+private:		// functions
 
+
+	bool _parse_program();
+
+	bool _parse_header_if();
+	bool _parse_header_else_if();
+	bool _parse_header_else();
+	bool _parse_header_for();
+
+	bool _parse_header_generate_if();
+	bool _parse_header_else_generate_if();
+	bool _parse_header_else_generate();
+	bool _parse_header_generate_for();
 
 	bool _parse_package();
+	bool _parse_scope_package();
 
-	// Modules, classes, constants, functions, tasks, processes, and other
-	// packages.
-	bool _parse_package_scope();
+	bool _parse_generate_package();
+	bool _parse_generate_package_if();
+	bool _parse_generate_package_for();
 
-	bool _parse_module();
-	bool _parse_module_scope();
-	bool _parse_enum();
-	bool _parse_enum_scope();
-	bool _parse_union();
-	bool _parse_union_scope();
+	bool _parse_callable_member_prefix();
 
-	bool _parse_class();
-	bool _parse_extends();
-	bool _parse_class_scope();
-	bool _parse_using();
-
+	bool _parse_contents_modproc();
 	bool _parse_proc();
+	bool _parse_module();
+
+	bool _parse_scope_modproc();
+	bool _parse_generate_modproc();
+	bool _parse_generate_modproc_if();
+	bool _parse_generate_modproc_for();
+
+	bool _parse_decl_callable();
+	bool _parse_contents_func_task();
 	bool _parse_func();
 	bool _parse_task();
 
+	bool _parse_scope_behav();
+	bool _parse_inner_scope_behav();
+
+	bool _parse_generate_behav();
+	bool _parse_generate_behav_if();
+	bool _parse_generate_behav_for();
+
+	bool _parse_const();
+	bool _parse_var();
+	bool _parse_using();
+
+	bool _parse_stmt_assign();
+	bool _parse_stmt_if();
+	bool _parse_stmt_for();
+	bool _parse_stmt_while();
+	bool _parse_stmt_switch();
+	bool _parse_stmt_switchz();
+	bool _parse_scope_switch();
+
+	bool _parse_decl_cstm_type();
+	bool _parse_class();
+	bool _parse_extends();
+
+	bool _parse_scope_class();
+	bool _parse_generate_class();
+	bool _parse_generate_class_if();
+	bool _parse_generate_class_for();
+	bool _parse_member_access_label();
+
+	bool _parse_enum();
+
+	bool _parse_hardware_block();
+	bool _parse_cont_assign();
+	bool _parse_initial();
+	bool _parse_always_comb();
+	bool _parse_always_blk();
+	bool _parse_always_ff();
+	bool _parse_edge_list();
+	bool _parse_posedge_inst();
+	bool _parse_negedge_inst();
+
+	bool _parse_inst();
+
 	bool _parse_param_list();
+	bool _parse_param_sublist();
 	bool _parse_arg_list();
+	bool _parse_arg_sublist();
+	bool _parse_arg_port_sublist();
+	bool _parse_pararg_var_sublist();
+	bool _parse_pararg_type_sublist();
+	bool _parse_param_module_sublist();
+	bool _parse_ident_equals_typename_sublist();
+	bool _parse_param_inst_list();
+
+	bool _parse_pos_pararg_inst_list();
+	bool _parse_named_pararg_inst_list();
+
+	bool _parse_typename();
+	bool _parse_param_possible_typename();
+	bool _parse_no_param_possible_typename();
+	bool _parse_typeof();
+
+	bool _parse_expr();
+	bool _parse_inner_expr();
+
+	bool _parse_expr_logical();
+	bool _parse_inner_expr_logical();
+
+	bool _parse_expr_compare();
+	bool _parse_inner_expr_compare();
+
+	bool _parse_expr_add_sub();
+	bool _parse_inner_expr_add_sub();
+
+	bool _parse_expr_mul_div_mod_etc();
+	bool _parse_inner_expr_mul_div_mod_etc();
+
+	bool _parse_dollar_global_clock();
+	bool _parse_dollar_pow_expr();
+	bool _parse_const_str();
+
+	bool _parse_ident_etc();
+	bool _parse_ident_etc_pre_dollar_func();
+	bool _parse_ident_etc_post_dollar_func();
+
+	bool _parse_inner_ident_etc();
+	bool _parse_ident_terminal();
+	bool _parse_ident_member_access();
+	bool _parse_ident();
+	bool _parse_ident_bracket();
+	bool _parse_ident_call();
+	bool _parse_ident_no_param_overloaded_call();
+	bool _parse_ident_param_overloaded_call();
 };
 
 } // namespace frost_hdl

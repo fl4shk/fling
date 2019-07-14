@@ -8,6 +8,13 @@ program:
 header_if:
 	TokKwIf '(' expr ')'
 	;
+header_else_if:
+	TokKwElse header_if
+	;
+header_else:
+	TokKwElse
+	;
+
 header_for:
 	TokKwFor '(' ident : expr ')'
 	;
@@ -65,24 +72,26 @@ callable_member_prefix:
 	// TokKwConst, TokKwVirtual, TokKwStatic
 	;
 
-suffix_module_proc:
+contents_modproc:
 	param_list? arg_list
-		scope_module_proc
+		scope_modproc
+	;
 
 proc:
 	TokKwProc (ident | TokKwPort | const_str)
-		suffix_module_proc
+		contents_modproc
 	;
 module:
 	TokKwModule ident
-		suffix_module_proc
+		contents_modproc
 	;
 
 
-scope_module_proc:
+scope_modproc:
 	'{'
 		(
-			generate_module_proc
+			generate_modproc
+			| module
 			| const
 			| var
 			| using
@@ -93,17 +102,17 @@ scope_module_proc:
 	'}'
 	;
 
-generate_module_proc:
-	generate_module_proc_if
-	| generate_module_proc_for
+generate_modproc:
+	generate_modproc_if
+	| generate_modproc_for
 	;
-generate_module_proc_if:
-	header_generate_if scope_module_proc
-	(header_else_generate_if scope_module_proc)*
-	(header_else_generate scope_module_proc)?
+generate_modproc_if:
+	header_generate_if scope_modproc
+	(header_else_generate_if scope_modproc)*
+	(header_else_generate scope_modproc)?
 	;
-generate_module_proc_for:
-	header_generate_for scope_module_proc
+generate_modproc_for:
+	header_generate_for scope_modproc
 	;
 
 decl_callable:
@@ -112,35 +121,40 @@ decl_callable:
 	| proc
 	;
 
-suffix_func_task:
+contents_func_task:
 	param_list? arg_list
 		scope_behav
 	;
 
 func:
 	TokKwFunc typename
-		suffix_behav
+		contents_func_task
 	;
 task:
 	TokKwTask
-		suffix_behav
+		contents_func_task
 	;
 
 scope_behav:
 	'{'
 		(
-			generate_behav
-			| const
-			| var
-			| using
-			| stmt_assign
-			| stmt_if
-			| stmt_for
-			| stmt_while
-			| ident_etc
-			| decl_cstm_type
+			inner_scope_behav
 		)*
 	'}'
+	;
+inner_scope_behav:
+	generate_behav
+	| const
+	| var
+	| using
+	| stmt_assign
+	| stmt_if
+	| stmt_for
+	| stmt_while
+	| stmt_switch
+	| stmt_switchz
+	| ident_etc
+	| decl_cstm_type
 	;
 
 
@@ -153,8 +167,62 @@ generate_behav_if:
 	(header_else_generate_if scope_behav)*
 	(header_else_generate scope_behav)?
 	;
+
 generate_behav_for:
 	header_generate_for scope_behav
+	;
+
+const:
+	TokKwConst typename?
+		(ident_terminal '=' expr)
+		(',' ident_terminal '=' expr)*
+		';'
+	;
+var:
+	typename
+		ident_terminal ('=' expr)?
+		(',' ident_terminal ('=' expr)?)*
+		';'
+	;
+
+using:
+	TokKwUsing ident_etc ('=' ident_etc)?
+		';'
+	;
+
+stmt_assign:
+	expr '=' expr ';'
+	;
+stmt_if:
+	header_if scope_behav
+	(header_else_if scope_behav)*
+	(header_else scope_behav)?
+	;
+
+stmt_for:
+	header_for
+		scope_behav
+	;
+
+stmt_while:
+	TokKwWhile '(' expr ')'
+		scope_behav
+	;
+stmt_switch:
+	TokKwSwitch '(' expr ')'
+		scope_switch
+	;
+stmt_switchz:
+	TokKwSwitchz '(' expr ')'
+		scope_switch
+	;
+scope_switch:
+	'{'
+		(
+			(TokKwCase expr ':' (scope_behav | inner_scope_behav))
+			| (TokKwDefault ':' (scope_behav | inner_scope_behav))
+		)*
+	'}'
 	;
 
 
@@ -168,6 +236,7 @@ class:
 	TokKwPacked? TokKwClass ident param_list?
 		extends?
 		scope_class
+		ident_terminal? ';'
 	;
 extends:
 	TokKwVirtual? TokKwExtends typename
@@ -177,10 +246,41 @@ scope_class:
 	'{'
 		(
 			member_access_label?
-			(callable_member_prefix? decl_callable)
-			| 
+			(
+				generate_class
+				| const
+				| var
+				| using
+				| (callable_member_prefix? decl_callable)
+				| decl_cstm_type
+			)
 		)*
 	'}'
+	;
+
+generate_class:
+	generate_class_if
+	| generate_class_for
+	;
+generate_class_if:
+	header_generate_if scope_class
+	(header_else_generate_if scope_class)*
+	(header_else_generate scope_class)?
+	;
+generate_class_for:
+	header_generate_for scope_class
+
+member_access_label:
+	(TokKwPublic | TokKwProtected | TokKwPrivate) ':'
+	;
+
+enum:
+	TokKwEnum typename? ident
+	'{'
+		ident_terminal
+		(',' ident_terminal)
+		(',')?
+	'}' ident_terminal? ';'
 	;
 
 
@@ -201,11 +301,46 @@ hardware_block:
 	| ident_etc
 	;
 
+cont_assign:
+	TokKwAssign expr '=' expr ';'
+	;
+initial:
+	TokKwInitial (scope_behav | inner_scope_behav)
+	;
+always_comb:
+	TokKwAlwaysComb (scope_behav | inner_scope_behav)
+	;
+always_blk:
+	TokKwAlwaysBlk edge_list
+		(scope_behav | inner_scope_behav)
+	;
+always_ff:
+	TokKwAlwaysFf edge_list
+		(scope_behav | inner_scope_behav)
+	;
+edge_list:
+	'('
+		(posedge_inst | negedge_inst)
+		(',' (posedge_inst | negedge_inst))*
+	')'
+	;
+posedge_inst:
+	TokKwPosedge expr
+	;
+negedge_inst:
+	TokKwNegedge expr
+	;
+
+inst:
+	TokKwInst ident_etc param_list?
+		ident? arg_list? ';'
+	;
+
 
 param_list:
 	'['
-		sub_param_list
-		(',' sub_param_list)*
+		param_sublist
+		(',' param_sublist)*
 		(',')?
 	']'
 	;
@@ -281,29 +416,27 @@ named_pararg_inst_list:
 	;
 
 
-stmt_while:
-	TokKwWhile '(' expr ')'
-	;
-
-
 typename:
 	param_possible_typename
 	| no_param_possible_typename
+	| typeof
 	;
-
 param_possible_typename:
 	(ident_etc
 		| TokKwUwire | TokKwSwire
 		| TokKwUbit | TokKwSbit)
 		param_inst_list
 	;
-
 no_param_possible_typename:
 	TokKwVoid | TokKwAuto
 	| TokUbyte | TokSbyte
 	| TokUshortint | TokSshortint
 	| TokUint | TokSint
 	| TokUlongint | TokSlongint
+	;
+
+typeof:
+	TokKwTypeof '(' expr | typename ')'
 	;
 
 expr:
@@ -361,9 +494,6 @@ dollar_pow_expr:
 	;
 const_str:
 	TokConstStr
-	;
-typeof:
-	TokKwTypeof '(' expr | typename ')'
 	;
 
 
