@@ -122,7 +122,7 @@ public:		// functions
 
 	inline void append_child(Child&& to_append)
 	{
-		_list.push_back(std::move(to_append));
+		list.push_back(std::move(to_append));
 	}
 
 	virtual Type type() const

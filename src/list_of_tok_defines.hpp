@@ -15,10 +15,10 @@
 	X(KwDollarClog2, "$clog2") \
 	X(KwDollarPow, "$pow") \
 	X(KwDollarPast, "$past") \
-	X(KwDollarPast, "$stable") \
-	X(KwDollarPast, "$rose") \
-	X(KwDollarPast, "$fell") \
-	X(KwDollarPast, "$global_clock") \
+	X(KwDollarStable, "$stable") \
+	X(KwDollarRose, "$rose") \
+	X(KwDollarFell, "$fell") \
+	X(KwDollarGlobalClock, "$global_clock") \
 
 #define LIST_OF_KW_NON_DOLLAR_TOK(X) \
 	X(KwConst, "const") \

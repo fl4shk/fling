@@ -43,6 +43,8 @@ private:		// functions
 	{
 		return Base::_wexpect(tok, tok_ident_map, lexer);
 	}
+
+public:		// functions
 	inline void _unexpected(const LexerState& lex_state)
 	{
 		Base::_unexpected(tok_ident_map, lex_state);
@@ -55,6 +57,7 @@ private:		// functions
 	{
 		Base::_unexpected(tok_ident_map, lexer);
 	}
+private:		// functions
 	inline bool _to_next_in_list(Tok end, Tok separator=Tok::Comma)
 	{
 		return Base::_to_next_in_list(end, separator, tok_ident_map);
@@ -80,36 +83,63 @@ private:		// functions
 		_lexer().next_tok();
 	}
 
-public:		// functions
+
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	bool _opt_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
 		return Base::_opt_parse(this, first_func, rem_funcs...);
 	}
+	template<typename FuncType>
+	static bool _opt_parse(Parser* self,
+		const std::vector<FuncType>& func_vec)
+	{
+		return Base::_opt_parse(self, func_vec);
+	}
+
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	auto _check_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
 		return Base::_check_parse(this, first_func, rem_funcs...);
 	}
+	template<typename FuncType>
+	static auto _check_parse(Parser* self,
+		const std::vector<FuncType>& func_vec)
+	{
+		return Base::_check_parse(self, func_vec);
+	}
+
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	void _req_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
 		Base::_req_parse(this, first_func, rem_funcs...);
 	}
+	template<typename FuncType>
+	static void _req_parse(Parser* self,
+		const std::vector<FuncType>& func_vec)
+	{
+		Base::_req_parse(self, func_vec);
+	}
+
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	void _req_parse_loop(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
 		Base::_req_parse_loop(this, first_func, rem_funcs...);
 	}
-private:		// functions
+	template<typename FuncType>
+	static void _req_parse_loop(Parser* self,
+		const std::vector<FuncType>& func_vec)
+	{
+		Base::_req_parse_loop(self, func_vec);
+	}
 
-
+public:		// functions
 	bool _parse_program();
 
+private:		// functions
 	bool _parse_header_if();
 	bool _parse_header_else_if();
 	bool _parse_header_else();

@@ -15,15 +15,18 @@ Parser::~Parser()
 
 #define fp(func) &Parser::func
 
+using FuncVec = std::vector<decltype(fp(_parse_program))>;
 
 bool Parser::_parse_program()
 {
+	const FuncVec func_vec({fp(_parse_package), fp(_parse_module)});
+
 	if (just_test())
 	{
-		return _check_parse(fp(_parse_package), fp(_parse_module));
+		return _check_parse(this, func_vec);
 	}
 
-	_req_parse_loop(fp(_parse_program), fp(_parse_module));
+	_req_parse_loop(this, func_vec);
 
 	return true;
 }
@@ -947,6 +950,7 @@ bool Parser::_parse_ident_param_overloaded_call()
 	return true;
 }
 
+#undef FUNC_VEC
 #undef fp
 
 } // namespace frost_hdl
