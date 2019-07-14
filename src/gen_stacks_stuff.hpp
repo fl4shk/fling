@@ -44,14 +44,14 @@ class with_stacks_##whateverfix \
 { \
 private:		/* variables */ \
 	/* I considered making this a static variable, but.... */ \
-	PTVisitor* _visitor = nullptr; \
+	Parser* _parser = nullptr; \
 \
 public:		/* functions */ \
-	inline with_stacks_##whateverfix(PTVisitor* s_visitor, \
+	inline with_stacks_##whateverfix(Parser* s_parser, \
 		var_type to_push) \
 	{ \
-		_visitor = s_visitor; \
-		_visitor->_stacks.push_##whateverfix(to_push); \
+		_parser = s_parser; \
+		_parser->_stacks.push_##whateverfix(to_push); \
 	} \
 	\
 	inline with_stacks_##whateverfix \
@@ -59,7 +59,7 @@ public:		/* functions */ \
 	\
 	inline ~with_stacks_##whateverfix() \
 	{ \
-		_visitor->_stacks.pop_##whateverfix(); \
+		_parser->_stacks.pop_##whateverfix(); \
 	} \
 	\
 	inline with_stacks_##whateverfix& operator = \

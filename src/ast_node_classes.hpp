@@ -72,6 +72,9 @@ public:		// functions
 	//{
 	//	return sconcat(name(), "()\n");
 	//}
+	virtual inline void append(Child&& child)
+	{
+	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
 
@@ -120,7 +123,7 @@ public:		// functions
 	}
 	GEN_POST_CONSTRUCTOR(NodeList);
 
-	inline void append_child(Child&& to_append)
+	virtual inline void append(Child&& to_append)
 	{
 		list.push_back(std::move(to_append));
 	}

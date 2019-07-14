@@ -4,6 +4,7 @@ enum class Type
 {
 	Base,
 	List,
+	Program,
 	Package,
 	ScopePackage,
 	Module,

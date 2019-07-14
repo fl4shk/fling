@@ -3,6 +3,7 @@
 #define LIST_OF_AST_NODE_CLASSES(X) \
 	X(NodeBase, Base) \
 	X(NodeList, List) \
+	X(NodeProgram, Program) \
 	X(NodePackage, Package) \
 	X(NodeScopePackage, ScopePackage) \
 	X(NodeModule, Module) \

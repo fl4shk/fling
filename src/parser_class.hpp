@@ -18,7 +18,50 @@ public:		// types
 	using TokSet = ast::NodeBase::TokSet;
 
 private:		// variables
-	unique_ptr<ast::NodeBase> _ast;
+	ast::NodeBase::Child _ast_root;
+
+	#define LIST_FOR_GEN_STACK(X) \
+		X(BigNum, const BigNum&, num)
+
+	#include "gen_stacks_stuff.hpp"
+	#undef LIST_FOR_GEN_STACK
+
+	std::stack<ast::NodeBase::Child> _ast_child_stack;
+
+	inline void _push_ast_child(ast::NodeBase::Child&& to_push)
+	{
+		_ast_child_stack.push(std::move(to_push));
+	}
+	template<typename ChildType>
+	inline void _push_ast_child(ChildType&& to_push)
+	{
+		_push_ast_child(ast::NodeBase::Child(new ChildType(std::move
+			(to_push))));
+	}
+	//inline auto _get_top_ast_child()
+	//{
+	//	return _ast_child_stack.top();
+	//}
+	inline auto _pop_ast_child()
+	{
+		auto&& ret = _ast_child_stack.top();
+		_ast_child_stack.pop();
+		return std::move(ret);
+	}
+
+	inline void _push_num(const BigNum& to_push)
+	{
+		_stacks.push_num(to_push);
+	}
+	inline auto _get_top_num()
+	{
+		return _stacks.get_top_num();
+	}
+	inline auto _pop_num()
+	{
+		return _stacks.pop_num();
+	}
+
 
 public:		// functions
 	Parser(std::vector<string>&& s_filename_vec);
@@ -97,6 +140,7 @@ private:		// functions
 		return Base::_opt_parse(self, func_vec);
 	}
 
+
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	auto _check_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
@@ -110,6 +154,7 @@ private:		// functions
 		return Base::_check_parse(self, func_vec);
 	}
 
+
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	void _req_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
@@ -122,6 +167,21 @@ private:		// functions
 	{
 		Base::_req_parse(self, func_vec);
 	}
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	auto _get_req_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		Base::_req_parse(this, first_func, rem_funcs...);
+		return _pop_ast_child();
+	}
+	template<typename FuncType>
+	static auto _get_req_parse(Parser* self,
+		const std::vector<FuncType>& func_vec)
+	{
+		Base::_req_parse(self, func_vec);
+		return self->_pop_ast_child();
+	}
+
 
 	template<typename FirstFuncType, typename... RemFuncTypes>
 	void _req_parse_loop(FirstFuncType&& first_func,
@@ -137,7 +197,7 @@ private:		// functions
 	}
 
 public:		// functions
-	bool _parse_program();
+	bool parse_program();
 
 private:		// functions
 	bool _parse_header_if();

@@ -16,7 +16,7 @@ header_else:
 	;
 
 header_for:
-	TokKwFor '(' ident : expr ')'
+	TokKwFor '(' ident ':' expr ')'
 	;
 
 header_generate_if:
@@ -78,8 +78,11 @@ contents_modproc:
 	;
 
 proc:
-	TokKwProc (ident | TokKwPort | const_str)
+	TokKwProc (ident | kw_port | const_str)
 		contents_modproc
+	;
+kw_port:
+	TokKwPort
 	;
 module:
 	TokKwModule ident
@@ -434,7 +437,6 @@ no_param_possible_typename:
 	| TokUint | TokSint
 	| TokUlongint | TokSlongint
 	;
-
 typeof:
 	TokKwTypeof '(' expr | typename ')'
 	;

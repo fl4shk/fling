@@ -1,5 +1,6 @@
 // src/ast_visitor_visit_funcs.hpp
 
+virtual void visitProgram(NodeProgram* node) = 0;
 virtual void visitPackage(NodePackage* node) = 0;
 virtual void visitScopePackage(NodeScopePackage* node) = 0;
 virtual void visitModule(NodeModule* node) = 0;

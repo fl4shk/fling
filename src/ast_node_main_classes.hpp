@@ -1,3 +1,21 @@
+class NodeProgram : public NodeList
+{
+public:		// functions
+	inline NodeProgram(const SrcCodeChunk& s_src_code_chunk)
+		: NodeList(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeProgram);
+	virtual Type type() const
+	{
+		return Type::Program;
+	}
+	virtual string name() const
+	{
+		return "Program";
+	}
+};
+
 class NodePackage : public NodeBase
 {
 protected:		// children
