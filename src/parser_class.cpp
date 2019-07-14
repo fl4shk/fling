@@ -126,6 +126,12 @@ bool Parser::_parse_package()
 }
 bool Parser::_parse_scope_package()
 {
+	CHECK_PREFIXED_ONE_TOK(Tok::LBracket);
+
+
+
+	_expect(Tok::RBracket);
+
 	return true;
 }
 
