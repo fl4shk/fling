@@ -329,21 +329,39 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(ident)
 };
 
-class NodeIdentScope : public NodeBase
+class NodeIdentMemberAccess : public NodeBase
 {
 public:		// functions
-	inline NodeIdentScope(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeIdentMemberAccess(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeIdentScope);
+	GEN_POST_CONSTRUCTOR(NodeIdentMemberAccess);
 	virtual Type type() const
 	{
-		return Type::IdentScope;
+		return Type::IdentMemberAccess;
 	}
 	virtual string name() const
 	{
-		return "IdentScope";
+		return "IdentMemberAccess";
+	}
+};
+
+class NodeIdentScopeAccess : public NodeBase
+{
+public:		// functions
+	inline NodeIdentScopeAccess(const SrcCodeChunk& s_src_code_chunk)
+		: NodeBase(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeIdentScopeAccess);
+	virtual Type type() const
+	{
+		return Type::IdentScopeAccess;
+	}
+	virtual string name() const
+	{
+		return "IdentScopeAccess";
 	}
 };
 

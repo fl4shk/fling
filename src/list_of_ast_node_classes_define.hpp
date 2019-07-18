@@ -17,7 +17,8 @@
 	X(NodeParamArgList, ParamArgList) \
 	X(NodeLeftRightBase, LeftRightBase) \
 	X(NodeIdentBracket, IdentBracket) \
-	X(NodeIdentScope, IdentScope) \
+	X(NodeIdentMemberAccess, IdentMemberAccess) \
+	X(NodeIdentScopeAccess, IdentScopeAccess) \
 	X(NodeCall, Call) \
 	X(NodeIdentEtc, IdentEtc) \
 	X(NodeNumExpr, NumExpr) \

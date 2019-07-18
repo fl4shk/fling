@@ -20,7 +20,7 @@ header_for:
 	;
 
 header_generate_if:
-	TokKwGenerate header_if:
+	TokKwGenerate header_if
 	;
 header_else_generate_if:
 	TokKwElse header_generate_if
@@ -514,9 +514,11 @@ ident_etc_post_dollar_func:
 inner_ident_etc:
 	ident_terminal
 	| ident_member_access
+	| ident_scope_access
 	| ident_call
 	| ident_no_param_overloaded_call
-	| ident_param_overloaded_call
+	| ident_param_member_overloaded_call
+	| ident_param_scope_overloaded_call
 	;
 
 ident_terminal:
@@ -527,6 +529,10 @@ ident_terminal:
 ident_member_access:
 	ident_terminal '.' inner_ident_etc
 	;
+ident_scope_access:
+	ident_terminal '::' inner_ident_etc
+	;
+
 ident:
 	TokIdent
 	;
@@ -542,7 +548,10 @@ ident_call:
 ident_no_param_overloaded_call:
 	ident_terminal arg_inst_list
 	;
-ident_param_overloaded_call:
+ident_param_member_overloaded_call:
 	ident_terminal '.' param_inst_list arg_inst_list
+	;
+ident_param_scope_overloaded_call:
+	ident_terminal '::' param_inst_list arg_inst_list
 	;
 

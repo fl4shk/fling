@@ -17,6 +17,7 @@ Parser::~Parser()
 
 using FuncVec = std::vector<decltype(fp(parse_program))>;
 using std::move;
+using Child = ast::NodeBase::Child;
 
 bool Parser::parse_program()
 {
@@ -44,6 +45,13 @@ bool Parser::parse_program()
 	} \
 	_next_lss_tokens()
 
+#define RUN_ONE_FUNC(func_vec)
+	if (just_test())
+	{
+		return _check_parse(this, func_vec);
+	}
+	_opt_parse(this, func_vec)
+
 bool Parser::_parse_header_if()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
@@ -56,9 +64,13 @@ bool Parser::_parse_header_if()
 }
 bool Parser::_parse_header_else_if()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
+	if (just_test())
+	{
+	}
 
-	_parse_header_if();
+	_expect(Tok::LParen);
+	_parse_expr();
+	_expect(Tok::RParen);
 
 	return true;
 }
@@ -83,17 +95,21 @@ bool Parser::_parse_header_for()
 
 bool Parser::_parse_header_generate_if()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
+	//CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
 
-	_parse_header_if();
+	//_parse_header_if();
+
+	if (just_test())
+	{
+	}
 
 	return true;
 }
 bool Parser::_parse_header_else_generate_if()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
+	//CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
 
-	_parse_header_generate_if();
+	//_parse_header_generate_if();
 
 	return true;
 }
@@ -104,11 +120,12 @@ bool Parser::_parse_header_else_generate()
 }
 bool Parser::_parse_header_generate_for()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
+	//CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
 
-	_push_num(_opt_parse(fp(_parse_ident)));
+	//_push_num(_opt_parse(fp(_parse_ident)));
 
-	_parse_header_for();
+	//_parse_header_for();
+
 
 	return true;
 }
@@ -126,26 +143,38 @@ bool Parser::_parse_package()
 }
 bool Parser::_parse_scope_package()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::LBracket);
+	CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
 
+	NodeScopePackage to_push(_lexer().src_code_chunk());
 
+	while (_opt_parse(fp(_parse_generate_package),
+		fp(_parse_package), fp(_parse_module), fp(_parse_const),
+		fp(_parse_using), fp(_parse_decl_callable),
+		fp(_parse_decl_cstm_type)))
+	{
+		to_push.append(_pop_ast_child());
+	}
+	_push_ast_child(move(to_push));
 
-	_expect(Tok::RBracket);
+	_expect(Tok::RBrace);
 
 	return true;
 }
 
 bool Parser::_parse_generate_package()
 {
+	RUN_ONE_FUNC(FuncVec({fp(_parse_generate_package_if),
+		fp(_parse_generate_package_for)}));
+
 	return true;
 }
 bool Parser::_parse_generate_package_if()
 {
-	return true;
+	return _parse_generate_any_if(fp(_parse_scope_package));
 }
 bool Parser::_parse_generate_package_for()
 {
-	return true;
+	return _parse_generate_any_for(fp(_parse_scope_package));
 }
 
 bool Parser::_parse_callable_member_prefix()
@@ -158,6 +187,10 @@ bool Parser::_parse_contents_modproc()
 	return true;
 }
 bool Parser::_parse_proc()
+{
+	return true;
+}
+bool Parser::_parse_kw_port()
 {
 	return true;
 }
@@ -511,12 +544,42 @@ bool Parser::_parse_ident_no_param_overloaded_call()
 {
 	return true;
 }
-bool Parser::_parse_ident_param_overloaded_call()
+bool Parser::_parse_ident_param_member_overloaded_call()
+{
+	return true;
+}
+bool Parser::_parse_ident_param_scope_overloaded_call()
+{
+	return true;
+}
+
+bool Parser::_parse_generate_any_if(bool (Parser::* parse_scope_func)())
+{
+	RUN_ONE_FUNC(fp(_parse_header_generate_if));
+
+	NodeStmtGenerateIf to_push(_lexer().src_code_chunk(), _pop_ast_child(),
+		Child(nullptr), Child(nullptr));
+	NodeBase* which_to_push = &to_push;
+
+	bool found = false;
+	while (_check_parse(fp(_parse_header_else_generate_if)))
+	{
+		_req_parse(fp(_parse_header_else_generate_if));
+
+		found = true;
+	}
+
+	return true;
+}
+bool Parser::_parse_generate_any_for(bool (Parser::* parse_scope_func)())
 {
 	return true;
 }
 
 #undef FUNC_VEC
 #undef fp
+#undef CHECK_PREFIXED_ONE_TOK
+#undef CHECK_PREFIXED_TOK_SEQ
+#undef RUN_ONE_FUNC
 
 } // namespace frost_hdl

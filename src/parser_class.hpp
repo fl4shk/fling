@@ -128,20 +128,6 @@ private:		// functions
 
 
 	template<typename FirstFuncType, typename... RemFuncTypes>
-	bool _opt_parse(FirstFuncType&& first_func,
-		RemFuncTypes&&... rem_funcs)
-	{
-		return Base::_opt_parse(this, first_func, rem_funcs...);
-	}
-	template<typename FuncType>
-	static bool _opt_parse(Parser* self,
-		const std::vector<FuncType>& func_vec)
-	{
-		return Base::_opt_parse(self, func_vec);
-	}
-
-
-	template<typename FirstFuncType, typename... RemFuncTypes>
 	auto _check_parse(FirstFuncType&& first_func,
 		RemFuncTypes&&... rem_funcs)
 	{
@@ -152,6 +138,20 @@ private:		// functions
 		const std::vector<FuncType>& func_vec)
 	{
 		return Base::_check_parse(self, func_vec);
+	}
+
+
+	template<typename FirstFuncType, typename... RemFuncTypes>
+	bool _opt_parse(FirstFuncType&& first_func,
+		RemFuncTypes&&... rem_funcs)
+	{
+		return Base::_opt_parse(this, first_func, rem_funcs...);
+	}
+	template<typename FuncType>
+	static bool _opt_parse(Parser* self,
+		const std::vector<FuncType>& func_vec)
+	{
+		return Base::_opt_parse(self, func_vec);
 	}
 
 
@@ -221,6 +221,7 @@ private:		// functions
 
 	bool _parse_contents_modproc();
 	bool _parse_proc();
+	bool _parse_kw_port();
 	bool _parse_module();
 
 	bool _parse_scope_modproc();
@@ -321,11 +322,16 @@ private:		// functions
 	bool _parse_inner_ident_etc();
 	bool _parse_ident_terminal();
 	bool _parse_ident_member_access();
+	bool _parse_ident_scope_access();
 	bool _parse_ident();
 	bool _parse_ident_bracket();
 	bool _parse_ident_call();
 	bool _parse_ident_no_param_overloaded_call();
-	bool _parse_ident_param_overloaded_call();
+	bool _parse_ident_param_member_overloaded_call();
+	bool _parse_ident_param_scope_overloaded_call();
+
+	bool _parse_generate_any_if(bool (Parser::* parse_scope_func)());
+	bool _parse_generate_any_for(bool (Parser::* parse_scope_func)());
 };
 
 } // namespace frost_hdl
