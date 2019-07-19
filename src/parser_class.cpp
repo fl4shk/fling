@@ -28,9 +28,11 @@ Parser::~Parser()
 	{ \
 		return some_req_seq_parse.check(); \
 	}
+
 #define simple_parse_named(seq, some_req_seq_parse) \
 	check_parse_named(seq, some_req_seq_parse) \
 	to_check.exec(); \
+
 #define simple_parse_anon(some_req_seq_parse) \
 	check_parse_anon(some_req_seq_parse) \
 	some_req_seq_parse.exec(); \

@@ -438,7 +438,7 @@ private:		// functions
 		ParseFunc s_parse_func, bool s_optional=false)
 	{
 		return TheMultiParse::_unit_parse(this, s_parse_func_str,
-			s_optional, s_parse_func);
+			s_parse_func, s_optional);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _opt_seq_parse(FirstArgType&& first_arg,
