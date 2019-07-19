@@ -432,10 +432,10 @@ private:		// functions
 			to_push = SeqParse::TheSeqParse(new OrParse(std::move
 				(first_arg)));
 		}
-		else
-		{
-			static_assert(false, "Invalid _inner_seq_parse() first arg");
-		}
+		static_assert((std::is_same<FirstArgType, UnitParse>()
+			|| std::is_same<FirstArgType, SeqParse>()
+			|| std::is_same<FirstArgType, OrParse>()),
+			"Invalid _inner_seq_parse() first arg");
 		ret.push_back(std::move(to_push));
 
 		if constexpr (sizeof...(rem_args) > 0)
