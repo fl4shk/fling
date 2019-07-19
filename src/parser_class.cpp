@@ -472,7 +472,7 @@ bool Parser::_parse_scope_package()
 
 	//_expect(Tok::RBrace);
 
-	auto list_seq = _opt_or_parse(
+	const auto list_seq = _opt_or_parse(
 	check_parse_anon(_req_seq_parse(req_up(
 
 	return true;
