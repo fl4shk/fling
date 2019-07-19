@@ -470,6 +470,9 @@ private:		// functions
 		return ParseRet(new LexerState(_lex_state()));
 	}
 
+	template<typename SeqType>
+	inline ParseRet _check_just_test
+
 };
 
 } // namespace frost_hdl
