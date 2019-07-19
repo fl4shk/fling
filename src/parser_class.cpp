@@ -37,7 +37,7 @@ Parser::~Parser()
 	some_req_seq_parse.exec(); \
 	return true;
 
-using FuncVec = std::vector<decltype(fp(parse_program))>;
+//using FuncVec = std::vector<decltype(fp(parse_program))>;
 using std::move;
 using Child = ast::NodeBase::Child;
 
