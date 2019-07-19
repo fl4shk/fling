@@ -17,10 +17,7 @@ public:		// types
 	using Base = ParserBase<Lexer>;
 	using TokSet = ast::NodeBase::TokSet;
 
-	using UnitParse = Base::UnitParse<Parser>;
-	using ParseFunc = UnitParse::ParseFunc;
-	using SeqParse = Base::SeqParse<Parser>;
-	using OrParse = Base::OrParse<Parser>;
+	using MultiParse = Base::MultiParse<Parser>;
 
 private:		// variables
 	ast::NodeBase::Child _ast_root;
@@ -408,60 +405,6 @@ private:		// functions
 	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
 	//bool _parse_generate_any_for(ParseFunc parse_scope_func);
 
-	inline UnitParse _unit_parse(bool s_optional, ParseFunc s_parse_func)
-	{
-		return UnitParse(this, s_parse_func, s_optional);
-	}
-
-	template<typename FirstArgType, typename... RemArgTypes>
-	inline void _inner_seq_parse(SeqParse::Vec& ret,
-		FirstArgType&& first_arg, RemArgTypes&&... rem_args)
-	{
-		SeqParse::OneInst to_push;
-		if constexpr (std::is_same<FirstArgType, UnitParse>())
-		{
-			to_push = std::move(first_arg);
-		}
-		else if constexpr (std::is_same<FirstArgType, SeqParse>())
-		{
-			to_push = SeqParse::TheSeqParse(new SeqParse(std::move
-				(first_arg)));
-		}
-		else if constexpr (std::is_same<FirstArgType, OrParse>())
-		{
-			to_push = SeqParse::TheSeqParse(new OrParse(std::move
-				(first_arg)));
-		}
-		static_assert((std::is_same<FirstArgType, UnitParse>()
-			|| std::is_same<FirstArgType, SeqParse>()
-			|| std::is_same<FirstArgType, OrParse>()),
-			"Invalid _inner_seq_parse() first arg");
-		ret.push_back(std::move(to_push));
-
-		if constexpr (sizeof...(rem_args) > 0)
-		{
-			_inner_seq_parse(ret, rem_args...);
-		}
-	}
-
-	template<typename FirstArgType, typename... RemArgTypes>
-	inline SeqParse _seq_parse(bool s_optional, FirstArgType&& first_arg,
-		RemArgTypes&&... rem_args)
-	{
-		SeqParse::Vec s_vec;
-		_inner_seq_parse(s_vec, first_arg, rem_args...);
-
-		return SeqParse(std::move(s_vec), s_optional);
-	}
-	template<typename FirstArgType, typename... RemArgTypes>
-	inline OrParse _or_parse(bool s_optional, FirstArgType&& first_arg,
-		RemArgTypes&&... rem_args)
-	{
-		OrParse::Vec s_vec;
-		_inner_seq_parse(s_vec, first_arg, rem_args...);
-
-		return OrParse(std::move(s_vec), s_optional);
-	}
 
 };
 
