@@ -14,22 +14,22 @@ Parser::~Parser()
 }
 
 #define fp(func) &Parser::_parse_##func
-#define req_unit_parse(func) _unit_parse(fp(func), false)
-#define opt_unit_parse(func) _unit_parse(fp(func), true)
+#define req_up(func) _unit_parse(fp(func), false)
+#define opt_up(func) _unit_parse(fp(func), true)
 
-#define check_parse_named(to_check, some_req_seq_parse) \
-	const auto to_check = some_req_seq_parse; \
+#define check_parse_named(seq, some_req_seq_parse) \
+	const auto seq = some_req_seq_parse; \
 	if (just_test()) \
 	{ \
-		return to_check.check(); \
+		return seq.check(); \
 	}
 #define check_parse_anon(some_req_seq_parse) \
 	if (just_test()) \
 	{ \
 		return some_req_seq_parse.check(); \
 	}
-#define simple_parse_named(to_check, some_req_seq_parse) \
-	check_parse_named(to_check, some_req_seq_parse) \
+#define simple_parse_named(seq, some_req_seq_parse) \
+	check_parse_named(seq, some_req_seq_parse) \
 	to_check.exec(); \
 	return true;
 #define simple_parse_anon(some_req_seq_parse) \
@@ -49,6 +49,17 @@ bool Parser::parse_program()
 	//{
 	//	_ast_root->append(move(_pop_ast_child()));
 	//}
+
+	//check_parse_named(seq, _opt_or_parse(req_up(package),
+	//	req_up(module)));
+	const auto seq = _opt_or_parse(req_up(package),
+		req_up(module));
+
+	while (seq.check())
+	{
+		seq.exec();
+		_ast_root->append(move(_pop_ast_child()));
+	}
 
 	return true;
 }
@@ -386,46 +397,46 @@ bool Parser::_parse_punct_scope_access()
 
 bool Parser::_parse_header_if()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_if),
-		req_unit_parse(punct_lparen), req_unit_parse(expr),
-		req_unit_parse(punct_rparen)))
+	simple_parse_anon(_req_seq_parse(req_up(kw_if),
+		req_up(punct_lparen), req_up(expr),
+		req_up(punct_rparen)))
 }
 bool Parser::_parse_header_else_if()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else),
-		req_unit_parse(header_if)))
+	simple_parse_anon(_req_seq_parse(req_up(kw_else),
+		req_up(header_if)))
 }
 bool Parser::_parse_header_else()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else)));
+	simple_parse_anon(_req_seq_parse(req_up(kw_else)));
 }
 bool Parser::_parse_header_for()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_for),
-		req_unit_parse(punct_lparen), req_unit_parse(ident),
-		req_unit_parse(punct_colon), req_unit_parse(expr),
-		req_unit_parse(punct_rparen)))
+	simple_parse_anon(_req_seq_parse(req_up(kw_for),
+		req_up(punct_lparen), req_up(ident),
+		req_up(punct_colon), req_up(expr),
+		req_up(punct_rparen)))
 }
 
 bool Parser::_parse_header_generate_if()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_generate),
-		req_unit_parse(header_if)))
+	simple_parse_anon(_req_seq_parse(req_up(kw_generate),
+		req_up(header_if)))
 }
 bool Parser::_parse_header_else_generate_if()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else),
-		req_unit_parse(header_generate_if)))
+	simple_parse_anon(_req_seq_parse(req_up(kw_else),
+		req_up(header_generate_if)))
 }
 bool Parser::_parse_header_else_generate()
 {
-	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else),
-		req_unit_parse(kw_generate)))
+	simple_parse_anon(_req_seq_parse(req_up(kw_else),
+		req_up(kw_generate)))
 }
 bool Parser::_parse_header_generate_for()
 {
-	check_parse_named(to_check, _req_seq_parse(req_unit_parse(kw_generate),
-		opt_unit_parse(ident), req_unit_parse(header_for)))
+	check_parse_named(to_check, _req_seq_parse(req_up(kw_generate),
+		opt_up(ident), req_up(header_for)))
 }
 
 bool Parser::_parse_package()
@@ -433,9 +444,14 @@ bool Parser::_parse_package()
 	//CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
 	//const auto src_code_chunk = _lexer().src_code_chunk();
 
-	//auto ident = _get_req_parse(fp(_parse_ident));
-	//auto scope = _get_req_parse(fp(_parse_scope_package));
-	//_push_ast_child(NodePackage(src_code_chunk, move(ident), move(scope)));
+	if (just_test())
+	{
+		return req_up(kw_package).check();
+	}
+
+	auto ident = _get_req_parse(fp(ident));
+	auto scope = _get_req_parse(fp(scope_package));
+	_push_ast_child(NodePackage(src_code_chunk, move(ident), move(scope)));
 
 	return true;
 }
@@ -455,6 +471,9 @@ bool Parser::_parse_scope_package()
 	//_push_ast_child(move(to_push));
 
 	//_expect(Tok::RBrace);
+
+	auto list_seq = _opt_or_parse(
+	check_parse_anon(_req_seq_parse(req_up(
 
 	return true;
 }
@@ -899,8 +918,8 @@ bool Parser::_parse_ident_param_scope_overloaded_call()
 
 #undef FUNC_VEC
 #undef fp
-#undef opt_unit_parse
-#undef req_unit_parse
+#undef opt_up
+#undef req_up
 #undef check_parse_named
 #undef check_parse_anon
 #undef simple_parse_named

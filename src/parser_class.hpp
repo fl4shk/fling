@@ -26,6 +26,7 @@ private:		// variables
 	#define LIST_FOR_GEN_STACK(X) \
 		X(BigNum, const BigNum&, num) \
 		X(Tok, Tok, tok) \
+		X(string, string, str) \
 
 	#include "gen_stacks_stuff.hpp"
 	#undef LIST_FOR_GEN_STACK
@@ -77,6 +78,19 @@ private:		// variables
 	inline auto _pop_tok()
 	{
 		return _stacks.pop_tok();
+	}
+
+	inline void _push_str(const string& to_push)
+	{
+		_stacks.push_str(to_push);
+	}
+	inline auto _get_top_str()
+	{
+		return _stacks.get_top_str();
+	}
+	inline auto _pop_str()
+	{
+		return _stacks.pop_str();
 	}
 
 
