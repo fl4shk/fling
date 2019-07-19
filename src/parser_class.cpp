@@ -435,18 +435,18 @@ bool Parser::_parse_scope_package()
 
 bool Parser::_parse_generate_package()
 {
-	RUN_ONE_FUNC(FuncVec({fp(_parse_generate_package_if),
-		fp(_parse_generate_package_for)}));
+	//RUN_ONE_FUNC(FuncVec({fp(_parse_generate_package_if),
+	//	fp(_parse_generate_package_for)}));
 
 	return true;
 }
 bool Parser::_parse_generate_package_if()
 {
-	return _parse_generate_any_if(fp(_parse_scope_package));
+	return true;
 }
 bool Parser::_parse_generate_package_for()
 {
-	return _parse_generate_any_for(fp(_parse_scope_package));
+	return true;
 }
 
 bool Parser::_parse_callable_member_prefix()
@@ -875,6 +875,6 @@ bool Parser::_parse_ident_param_scope_overloaded_call()
 #undef fp
 #undef CHECK_PREFIXED_ONE_TOK
 #undef CHECK_PREFIXED_TOK_SEQ
-#undef RUN_ONE_FUNC
+//#undef RUN_ONE_FUNC
 
 } // namespace frost_hdl
