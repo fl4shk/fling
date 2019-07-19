@@ -14,8 +14,8 @@ Parser::~Parser()
 }
 
 #define fp(func) &Parser::_parse_##func
-#define req_up(func) _unit_parse(fp(func), false)
-#define opt_up(func) _unit_parse(fp(func), true)
+#define req_up(func) _unit_parse(#func, fp(func), false)
+#define opt_up(func) _unit_parse(#func, fp(func), true)
 
 #define check_parse_named(seq, some_req_seq_parse) \
 	const auto seq = some_req_seq_parse; \
@@ -31,11 +31,9 @@ Parser::~Parser()
 #define simple_parse_named(seq, some_req_seq_parse) \
 	check_parse_named(seq, some_req_seq_parse) \
 	to_check.exec(); \
-	return true;
 #define simple_parse_anon(some_req_seq_parse) \
 	check_parse_anon(some_req_seq_parse) \
 	some_req_seq_parse.exec(); \
-	return true;
 
 //using FuncVec = std::vector<decltype(fp(parse_program))>;
 using std::move;
@@ -52,6 +50,9 @@ auto Parser::parse_program() -> ParseRet
 
 	//check_parse_named(seq, _opt_or_parse(req_up(package),
 	//	req_up(module)));
+
+	const auto ret = _dup_lex_state();
+
 	const auto seq = _opt_or_parse(req_up(package),
 		req_up(module));
 
@@ -61,387 +62,355 @@ auto Parser::parse_program() -> ParseRet
 		_ast_root->append(move(_pop_ast_child()));
 	}
 
-	return true;
+	return ret;
 }
 
 #define CHECK_PREFIXED_ONE_TOK(one_tok) \
 	if (just_test()) \
 	{ \
-		return _check_prefixed_tok_seq(one_tok); \
+		if (_check_prefixed_tok_seq(one_tok)) \
+		{ \
+			return _dup_lex_state(); \
+		} \
+		else \
+		{ \
+			return ParseRet(nullptr); \
+		} \
 	} \
-	_next_lss_tokens()
+	const auto ret = _dup_lex_state(); \
+	_next_lss_tokens(); \
+	return ret
 
 #define CHECK_PREFIXED_TOK_SEQ(left, right) \
 	if (just_test()) \
 	{ \
-		return _check_prefixed_tok_seq(left, right); \
+		if (_check_prefixed_tok_seq(left, right)) \
+		{ \
+			return _dup_lex_state(); \
+		} \
+		else \
+		{ \
+			return ParseRet(nullptr); \
+		} \
 	} \
-	_next_lss_tokens()
+	const auto ret = _dup_lex_state(); \
+	_next_lss_tokens(); \
+	return ret
 
 auto Parser::_parse_kw_if() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
-	return true;
 }
 auto Parser::_parse_kw_else() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
-	return true;
 }
 auto Parser::_parse_kw_for() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwFor);
-	return true;
 }
 auto Parser::_parse_kw_generate() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
-	return true;
 }
 auto Parser::_parse_kw_package() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
-	return true;
 }
 auto Parser::_parse_kw_port() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPort);
-	return true;
 }
 auto Parser::_parse_kw_proc() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwProc);
-	return true;
 }
 auto Parser::_parse_kw_func() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwFunc);
-	return true;
 }
 auto Parser::_parse_kw_task() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwTask);
-	return true;
 }
 auto Parser::_parse_kw_module() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwModule);
-	return true;
 }
 auto Parser::_parse_kw_const() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwConst);
-	return true;
 }
 auto Parser::_parse_kw_using() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUsing);
-	return true;
 }
 auto Parser::_parse_kw_while() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwWhile);
-	return true;
 }
 auto Parser::_parse_kw_switch() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitch);
-	return true;
 }
 auto Parser::_parse_kw_switchz() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitchz);
-	return true;
 }
 auto Parser::_parse_kw_case() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwCase);
-	return true;
 }
 auto Parser::_parse_kw_default() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwDefault);
-	return true;
 }
 auto Parser::_parse_kw_packed() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPacked);
-	return true;
 }
 auto Parser::_parse_kw_class() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwClass);
-	return true;
 }
 auto Parser::_parse_kw_virtual() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwVirtual);
-	return true;
 }
 auto Parser::_parse_kw_extends() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwExtends);
-	return true;
 }
 auto Parser::_parse_kw_public() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPublic);
-	return true;
 }
 auto Parser::_parse_kw_protected() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwProtected);
-	return true;
 }
 auto Parser::_parse_kw_private() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPrivate);
-	return true;
 }
 auto Parser::_parse_kw_enum() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwEnum);
-	return true;
 }
 auto Parser::_parse_kw_assign() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAssign);
-	return true;
 }
 auto Parser::_parse_kw_initial() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInitial);
-	return true;
 }
 auto Parser::_parse_kw_always_comb() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysComb);
-	return true;
 }
 auto Parser::_parse_kw_always_blk() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysBlk);
-	return true;
 }
 auto Parser::_parse_kw_always_ff() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysFf);
-	return true;
 }
 auto Parser::_parse_kw_posedge() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPosedge);
-	return true;
 }
 auto Parser::_parse_kw_negedge() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwNegedge);
-	return true;
 }
 auto Parser::_parse_kw_inst() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInst);
-	return true;
 }
 auto Parser::_parse_kw_input() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInput);
-	return true;
 }
 auto Parser::_parse_kw_output() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwOutput);
-	return true;
 }
 auto Parser::_parse_kw_bidir() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwBidir);
-	return true;
 }
 auto Parser::_parse_kw_type() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwType);
-	return true;
 }
 auto Parser::_parse_kw_uwire() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUwire);
-	return true;
 }
 auto Parser::_parse_kw_swire() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwire);
-	return true;
 }
 auto Parser::_parse_kw_ubit() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUbit);
-	return true;
 }
 auto Parser::_parse_kw_sbit() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSbit);
-	return true;
 }
 auto Parser::_parse_kw_void() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwVoid);
-	return true;
 }
 auto Parser::_parse_kw_auto() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAuto);
-	return true;
 }
 auto Parser::_parse_kw_ubyte() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUbyte);
-	return true;
 }
 auto Parser::_parse_kw_sbyte() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSbyte);
-	return true;
 }
 auto Parser::_parse_kw_ushortint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUshortint);
-	return true;
 }
 auto Parser::_parse_kw_sshortint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSshortint);
-	return true;
 }
 auto Parser::_parse_kw_uint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUint);
-	return true;
 }
 auto Parser::_parse_kw_sint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSint);
-	return true;
 }
 auto Parser::_parse_kw_ulongint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUlongint);
-	return true;
 }
 auto Parser::_parse_kw_slongint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSlongint);
-	return true;
 }
 auto Parser::_parse_kw_typeof() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwTypeof);
-	return true;
 }
 
 auto Parser::_parse_punct_lparen() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LParen);
-	return true;
 }
 auto Parser::_parse_punct_rparen() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RParen);
-	return true;
 }
 auto Parser::_parse_punct_lbracket() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LBracket);
-	return true;
 }
 auto Parser::_parse_punct_rbracket() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RBracket);
-	return true;
 }
 auto Parser::_parse_punct_lbrace() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
-	return true;
 }
 auto Parser::_parse_punct_rbrace() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RBrace);
-	return true;
 }
 auto Parser::_parse_punct_comma() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Comma);
-	return true;
 }
 auto Parser::_parse_punct_semicolon() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Semicolon);
-	return true;
 }
 auto Parser::_parse_punct_colon() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Colon);
-	return true;
 }
 auto Parser::_parse_punct_assign() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Assign);
-	return true;
 }
 auto Parser::_parse_punct_member_access() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::MemberAccess);
-	return true;
 }
 auto Parser::_parse_punct_scope_access() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::ScopeAccess);
-	return true;
 }
 
 auto Parser::_parse_header_if() -> ParseRet
 {
-	simple_parse_anon(_req_seq_parse(req_up(kw_if),
-		req_up(punct_lparen), req_up(expr),
-		req_up(punct_rparen)))
+	const auto ret = _dup_lex_state();
+	simple_parse_anon(_req_seq_parse(req_up(kw_if), req_up(punct_lparen),
+		req_up(expr), req_up(punct_rparen)));
+	return ret;
 }
 auto Parser::_parse_header_else_if() -> ParseRet
 {
-	simple_parse_anon(_req_seq_parse(req_up(kw_else),
-		req_up(header_if)))
+	const auto ret = _dup_lex_state();
+	simple_parse_anon(_req_seq_parse(req_up(kw_else), req_up(header_if)))
+	return ret;
 }
 auto Parser::_parse_header_else() -> ParseRet
 {
+	const auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_else)));
+	return ret;
 }
 auto Parser::_parse_header_for() -> ParseRet
 {
+	const auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_for),
 		req_up(punct_lparen), req_up(ident),
 		req_up(punct_colon), req_up(expr),
 		req_up(punct_rparen)))
+	return ret;
 }
 
 auto Parser::_parse_header_generate_if() -> ParseRet
 {
+	const auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_generate),
 		req_up(header_if)))
+	return ret;
 }
 auto Parser::_parse_header_else_generate_if() -> ParseRet
 {
+	const auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(header_generate_if)))
+	return ret;
 }
 auto Parser::_parse_header_else_generate() -> ParseRet
 {
+	const auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(kw_generate)))
+	return ret;
 }
 auto Parser::_parse_header_generate_for() -> ParseRet
 {
+	const auto ret = _dup_lex_state();
 	check_parse_named(to_check, _req_seq_parse(req_up(kw_generate),
 		opt_up(ident), req_up(header_for)))
+	return ret;
 }
 
 auto Parser::_parse_package() -> ParseRet

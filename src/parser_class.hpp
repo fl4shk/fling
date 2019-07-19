@@ -17,9 +17,9 @@ public:		// types
 	using Base = ParserBase<Lexer>;
 	using TokSet = ast::NodeBase::TokSet;
 
-	using MultiParse = Base::MultiParse<Parser, SrcCodeChunk>;
-	using ParseRet = typename MultiParse::ParseRet;
-	using ParseFunc = typename MultiParse::ParseFunc;
+	using TheMultiParse = Base::MultiParse<Parser>;
+	using ParseRet = typename TheMultiParse::ParseRet;
+	using ParseFunc = typename TheMultiParse::ParseFunc;
 
 private:		// variables
 	ast::NodeBase::Child _ast_root;
@@ -434,7 +434,8 @@ private:		// functions
 
 	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
 	//bool _parse_generate_any_for(ParseFunc parse_scope_func);
-	inline auto _unit_parse(ParseFunc s_parse_func, bool s_optional=false)
+	inline auto _unit_parse(const string& s_parse_func_str,
+		ParseFunc s_parse_func, bool s_optional=false)
 	{
 		return MultiParse::_unit_parse(this, s_optional, s_parse_func);
 	}
@@ -442,27 +443,31 @@ private:		// functions
 	inline auto _opt_seq_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_opt_seq_parse(first_arg, rem_args...);
+		return MultiParse::_opt_seq_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _req_seq_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_req_seq_parse(first_arg, rem_args...);
+		return MultiParse::_req_seq_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _opt_or_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_opt_or_parse(first_arg, rem_args...);
+		return MultiParse::_opt_or_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _req_or_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_req_or_parse(first_arg, rem_args...);
+		return MultiParse::_req_or_parse(this, first_arg, rem_args...);
 	}
 
+	inline ParseRet _dup_lex_state() const
+	{
+		return ParseRet(new LexerState(_lex_state()));
+	}
 
 };
 
