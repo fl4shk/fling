@@ -469,6 +469,10 @@ private:		// functions
 	{
 		return ParseRet(new LexerState(_lex_state()));
 	}
+	inline SrcCodeChunk _ls_src_code_chunk(const ParseRet& lex_state) const
+	{
+		return _lexer().src_code_chunk(&lex_state);
+	}
 
 };
 

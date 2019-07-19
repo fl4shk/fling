@@ -359,26 +359,26 @@ auto Parser::_parse_punct_scope_access() -> ParseRet
 
 auto Parser::_parse_header_if() -> ParseRet
 {
-	const auto ret = _dup_lex_state();
+	auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_if), req_up(punct_lparen),
 		req_up(expr), req_up(punct_rparen)));
 	return ret;
 }
 auto Parser::_parse_header_else_if() -> ParseRet
 {
-	const auto ret = _dup_lex_state();
+	auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_else), req_up(header_if)))
 	return ret;
 }
 auto Parser::_parse_header_else() -> ParseRet
 {
-	const auto ret = _dup_lex_state();
+	auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_else)));
 	return ret;
 }
 auto Parser::_parse_header_for() -> ParseRet
 {
-	const auto ret = _dup_lex_state();
+	auto ret = _dup_lex_state();
 	simple_parse_anon(_req_seq_parse(req_up(kw_for),
 		req_up(punct_lparen), req_up(ident),
 		req_up(punct_colon), req_up(expr),
@@ -431,7 +431,7 @@ auto Parser::_parse_package() -> ParseRet
 
 	auto ident = _get_req_parse(fp(ident));
 	auto scope = _get_req_parse(fp(scope_package));
-	_push_ast_child(NodePackage(ret->src_code_chunk(), move(ident),
+	_push_ast_child(NodePackage(_ls_src_code_chunk(ret), move(ident),
 		move(scope)));
 	return ret;
 
