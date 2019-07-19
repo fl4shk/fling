@@ -1827,26 +1827,6 @@ public:		// functions
 	}
 };
 
-class NodeExprUnopDollarMsbpos : public NodeExprUnopBase
-{
-public:		// functions
-	inline NodeExprUnopDollarMsbpos(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
-		std::move(s_child))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarMsbpos);
-	virtual Type type() const
-	{
-		return Type::ExprUnopDollarMsbpos;
-	}
-	virtual string name() const
-	{
-		return "ExprUnopDollarMsbpos";
-	}
-};
-
 class NodeExprUnopDollarFirst : public NodeExprUnopBase
 {
 public:		// functions

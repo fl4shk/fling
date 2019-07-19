@@ -189,7 +189,6 @@ ExprUnopDollarIsUnsgn, ExprUnopBase:
 ExprUnopDollarIsSgn, ExprUnopBase:
 ExprUnopDollarRange, ExprUnopBase:
 ExprUnopDollarSize, ExprUnopBase:
-ExprUnopDollarMsbpos, ExprUnopBase:
 ExprUnopDollarFirst, ExprUnopBase:
 ExprUnopDollarLast, ExprUnopBase:
 ExprUnopDollarHigh, ExprUnopBase:

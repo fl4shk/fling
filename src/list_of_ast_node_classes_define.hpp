@@ -87,7 +87,6 @@
 	X(NodeExprUnopDollarIsSgn, ExprUnopDollarIsSgn) \
 	X(NodeExprUnopDollarRange, ExprUnopDollarRange) \
 	X(NodeExprUnopDollarSize, ExprUnopDollarSize) \
-	X(NodeExprUnopDollarMsbpos, ExprUnopDollarMsbpos) \
 	X(NodeExprUnopDollarFirst, ExprUnopDollarFirst) \
 	X(NodeExprUnopDollarLast, ExprUnopDollarLast) \
 	X(NodeExprUnopDollarHigh, ExprUnopDollarHigh) \

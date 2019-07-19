@@ -84,7 +84,6 @@ virtual void visitExprUnopDollarIsUnsgn(NodeExprUnopDollarIsUnsgn* node) = 0;
 virtual void visitExprUnopDollarIsSgn(NodeExprUnopDollarIsSgn* node) = 0;
 virtual void visitExprUnopDollarRange(NodeExprUnopDollarRange* node) = 0;
 virtual void visitExprUnopDollarSize(NodeExprUnopDollarSize* node) = 0;
-virtual void visitExprUnopDollarMsbpos(NodeExprUnopDollarMsbpos* node) = 0;
 virtual void visitExprUnopDollarFirst(NodeExprUnopDollarFirst* node) = 0;
 virtual void visitExprUnopDollarLast(NodeExprUnopDollarLast* node) = 0;
 virtual void visitExprUnopDollarHigh(NodeExprUnopDollarHigh* node) = 0;

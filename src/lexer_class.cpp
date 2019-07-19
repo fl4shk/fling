@@ -157,7 +157,7 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == '.')
 	{
-		_set_tok(Tok::Period, true);
+		_set_tok(Tok::MemberAccess, true);
 	}
 	else if (c() == '#')
 	{
@@ -173,17 +173,16 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == ':')
 	{
-		_set_tok(Tok::Colon, true);
-		//_next_char();
+		_next_char();
 
-		//if (c() == ':')
-		//{
-		//	_set_tok(Tok::Scope, true);
-		//}
-		//else
-		//{
-		//	_set_tok(Tok::Colon, false);
-		//}
+		if (c() == ':')
+		{
+			_set_tok(Tok::ScopeAccess, true);
+		}
+		else
+		{
+			_set_tok(Tok::Colon, false);
+		}
 	}
 	else if (c() == '"')
 	{

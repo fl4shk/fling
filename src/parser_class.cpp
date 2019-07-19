@@ -45,118 +45,390 @@ bool Parser::parse_program()
 	} \
 	_next_lss_tokens()
 
-#define RUN_ONE_FUNC(func_vec)
-	if (just_test())
-	{
-		return _check_parse(this, func_vec);
-	}
-	_opt_parse(this, func_vec)
+bool Parser::_parse_kw_if()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
+	return true;
+}
+bool Parser::_parse_kw_else()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
+	return true;
+}
+bool Parser::_parse_kw_for()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwFor);
+	return true;
+}
+bool Parser::_parse_kw_generate()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
+	return true;
+}
+bool Parser::_parse_kw_package()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
+	return true;
+}
+bool Parser::_parse_kw_proc()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwProc);
+	return true;
+}
+bool Parser::_parse_kw_func()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwFunc);
+	return true;
+}
+bool Parser::_parse_kw_task()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwTask);
+	return true;
+}
+bool Parser::_parse_kw_module()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwModule);
+	return true;
+}
+bool Parser::_parse_kw_const()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwConst);
+	return true;
+}
+bool Parser::_parse_kw_using()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUsing);
+	return true;
+}
+bool Parser::_parse_kw_while()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwWhile);
+	return true;
+}
+bool Parser::_parse_kw_switch()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitch);
+	return true;
+}
+bool Parser::_parse_kw_switchz()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitchz);
+	return true;
+}
+bool Parser::_parse_kw_case()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwCase);
+	return true;
+}
+bool Parser::_parse_kw_default()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwDefault);
+	return true;
+}
+bool Parser::_parse_kw_packed()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwPacked);
+	return true;
+}
+bool Parser::_parse_kw_class()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwClass);
+	return true;
+}
+bool Parser::_parse_kw_virtual()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwVirtual);
+	return true;
+}
+bool Parser::_parse_kw_extends()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwExtends);
+	return true;
+}
+bool Parser::_parse_kw_public()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwPublic);
+	return true;
+}
+bool Parser::_parse_kw_protected()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwProtected);
+	return true;
+}
+bool Parser::_parse_kw_private()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwPrivate);
+	return true;
+}
+bool Parser::_parse_kw_enum()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwEnum);
+	return true;
+}
+bool Parser::_parse_kw_assign()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwAssign);
+	return true;
+}
+bool Parser::_parse_kw_initial()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwInitial);
+	return true;
+}
+bool Parser::_parse_kw_always_comb()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysComb);
+	return true;
+}
+bool Parser::_parse_kw_always_blk()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysBlk);
+	return true;
+}
+bool Parser::_parse_kw_always_ff()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysFf);
+	return true;
+}
+bool Parser::_parse_kw_posedge()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwPosedge);
+	return true;
+}
+bool Parser::_parse_kw_negedge()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwNegedge);
+	return true;
+}
+bool Parser::_parse_kw_inst()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwInst);
+	return true;
+}
+bool Parser::_parse_kw_input()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwInput);
+	return true;
+}
+bool Parser::_parse_kw_output()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwOutput);
+	return true;
+}
+bool Parser::_parse_kw_bidir()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwBidir);
+	return true;
+}
+bool Parser::_parse_kw_type()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwType);
+	return true;
+}
+bool Parser::_parse_kw_uwire()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUwire);
+	return true;
+}
+bool Parser::_parse_kw_swire()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSwire);
+	return true;
+}
+bool Parser::_parse_kw_ubit()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUbit);
+	return true;
+}
+bool Parser::_parse_kw_sbit()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSbit);
+	return true;
+}
+bool Parser::_parse_kw_void()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwVoid);
+	return true;
+}
+bool Parser::_parse_kw_auto()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwAuto);
+	return true;
+}
+bool Parser::_parse_kw_ubyte()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUbyte);
+	return true;
+}
+bool Parser::_parse_kw_sbyte()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSbyte);
+	return true;
+}
+bool Parser::_parse_kw_ushortint()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUshortint);
+	return true;
+}
+bool Parser::_parse_kw_sshortint()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSshortint);
+	return true;
+}
+bool Parser::_parse_kw_uint()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUint);
+	return true;
+}
+bool Parser::_parse_kw_sint()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSint);
+	return true;
+}
+bool Parser::_parse_kw_ulongint()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUlongint);
+	return true;
+}
+bool Parser::_parse_kw_slongint()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwSlongint);
+	return true;
+}
+bool Parser::_parse_kw_typeof()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwTypeof);
+	return true;
+}
+
+bool Parser::_parse_punct_lparen()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::LParen);
+	return true;
+}
+bool Parser::_parse_punct_rparen()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::RParen);
+	return true;
+}
+bool Parser::_parse_punct_lbracket()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::LBracket);
+	return true;
+}
+bool Parser::_parse_punct_rbracket()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::RBracket);
+	return true;
+}
+bool Parser::_parse_punct_lbrace()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
+	return true;
+}
+bool Parser::_parse_punct_rbrace()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::RBrace);
+	return true;
+}
+bool Parser::_parse_punct_comma()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::Comma);
+	return true;
+}
+bool Parser::_parse_punct_semicolon()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::Semicolon);
+	return true;
+}
+bool Parser::_parse_punct_colon()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::Colon);
+	return true;
+}
+bool Parser::_parse_punct_assign()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::Assign);
+	return true;
+}
+bool Parser::_parse_punct_member_access()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::MemberAccess);
+	return true;
+}
+bool Parser::_parse_punct_scope_access()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::ScopeAccess);
+	return true;
+}
 
 bool Parser::_parse_header_if()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
+	//CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
 
-	_expect(Tok::LParen);
-	_parse_expr();
-	_expect(Tok::RParen);
+	//_expect(Tok::LParen);
+	//_parse_expr();
+	//_expect(Tok::RParen);
 
 	return true;
 }
 bool Parser::_parse_header_else_if()
 {
-	if (just_test())
-	{
-	}
-
-	_expect(Tok::LParen);
-	_parse_expr();
-	_expect(Tok::RParen);
-
 	return true;
 }
 bool Parser::_parse_header_else()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
-
 	return true;
 }
 bool Parser::_parse_header_for()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwFor);
-
-	_expect(Tok::LParen);
-	_parse_ident();
-	_expect(Tok::Colon);
-	_parse_expr();
-	_expect(Tok::RParen);
-
 	return true;
 }
 
 bool Parser::_parse_header_generate_if()
 {
-	//CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
-
-	//_parse_header_if();
-
-	if (just_test())
-	{
-	}
-
 	return true;
 }
 bool Parser::_parse_header_else_generate_if()
 {
-	//CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
-
-	//_parse_header_generate_if();
-
 	return true;
 }
 bool Parser::_parse_header_else_generate()
 {
-	CHECK_PREFIXED_TOK_SEQ(TokSet({Tok::KwElse}), Tok::KwGenerate);
 	return true;
 }
 bool Parser::_parse_header_generate_for()
 {
-	//CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
-
-	//_push_num(_opt_parse(fp(_parse_ident)));
-
-	//_parse_header_for();
-
-
 	return true;
 }
 
 bool Parser::_parse_package()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
-	const auto src_code_chunk = _lexer().src_code_chunk();
+	//CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
+	//const auto src_code_chunk = _lexer().src_code_chunk();
 
-	auto ident = _get_req_parse(fp(_parse_ident));
-	auto scope = _get_req_parse(fp(_parse_scope_package));
-	_push_ast_child(NodePackage(src_code_chunk, move(ident), move(scope)));
+	//auto ident = _get_req_parse(fp(_parse_ident));
+	//auto scope = _get_req_parse(fp(_parse_scope_package));
+	//_push_ast_child(NodePackage(src_code_chunk, move(ident), move(scope)));
 
 	return true;
 }
 bool Parser::_parse_scope_package()
 {
-	CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
+	//CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
 
-	NodeScopePackage to_push(_lexer().src_code_chunk());
+	//NodeScopePackage to_push(_lexer().src_code_chunk());
 
-	while (_opt_parse(fp(_parse_generate_package),
-		fp(_parse_package), fp(_parse_module), fp(_parse_const),
-		fp(_parse_using), fp(_parse_decl_callable),
-		fp(_parse_decl_cstm_type)))
-	{
-		to_push.append(_pop_ast_child());
-	}
-	_push_ast_child(move(to_push));
+	//while (_opt_parse(fp(_parse_generate_package),
+	//	fp(_parse_package), fp(_parse_module), fp(_parse_const),
+	//	fp(_parse_using), fp(_parse_decl_callable),
+	//	fp(_parse_decl_cstm_type)))
+	//{
+	//	to_push.append(_pop_ast_child());
+	//}
+	//_push_ast_child(move(to_push));
 
-	_expect(Tok::RBrace);
+	//_expect(Tok::RBrace);
 
 	return true;
 }
@@ -453,12 +725,20 @@ bool Parser::_parse_inner_expr()
 {
 	return true;
 }
+bool Parser::_parse_op_logical()
+{
+	return true;
+}
 
 bool Parser::_parse_expr_logical()
 {
 	return true;
 }
 bool Parser::_parse_inner_expr_logical()
+{
+	return true;
+}
+bool Parser::_parse_op_compare()
 {
 	return true;
 }
@@ -471,6 +751,10 @@ bool Parser::_parse_inner_expr_compare()
 {
 	return true;
 }
+bool Parser::_parse_op_plus_minus()
+{
+	return true;
+}
 
 bool Parser::_parse_expr_add_sub()
 {
@@ -480,12 +764,20 @@ bool Parser::_parse_inner_expr_add_sub()
 {
 	return true;
 }
+bool Parser::_parse_op_mul_div_mod_etc()
+{
+	return true;
+}
 
 bool Parser::_parse_expr_mul_div_mod_etc()
 {
 	return true;
 }
 bool Parser::_parse_inner_expr_mul_div_mod_etc()
+{
+	return true;
+}
+bool Parser::_parse_op_unary()
 {
 	return true;
 }
@@ -502,21 +794,20 @@ bool Parser::_parse_const_str()
 {
 	return true;
 }
+bool Parser::_parse_expr_pre_dollar_func()
+{
+	return true;
+}
+bool Parser::_parse_expr_post_dollar_func()
+{
+	return true;
+}
+bool Parser::_parse_dollar_func_of_one()
+{
+	return true;
+}
 
 bool Parser::_parse_ident_etc()
-{
-	return true;
-}
-bool Parser::_parse_ident_etc_pre_dollar_func()
-{
-	return true;
-}
-bool Parser::_parse_ident_etc_post_dollar_func()
-{
-	return true;
-}
-
-bool Parser::_parse_inner_ident_etc()
 {
 	return true;
 }
@@ -527,6 +818,10 @@ bool Parser::_parse_ident_terminal()
 bool Parser::_parse_ident_member_access()
 {
 	return true;
+}
+bool Parser::_parse_ident_scope_access()
+{
+	return true;;
 }
 bool Parser::_parse_ident()
 {
@@ -553,28 +848,28 @@ bool Parser::_parse_ident_param_scope_overloaded_call()
 	return true;
 }
 
-bool Parser::_parse_generate_any_if(bool (Parser::* parse_scope_func)())
-{
-	RUN_ONE_FUNC(fp(_parse_header_generate_if));
-
-	NodeStmtGenerateIf to_push(_lexer().src_code_chunk(), _pop_ast_child(),
-		Child(nullptr), Child(nullptr));
-	NodeBase* which_to_push = &to_push;
-
-	bool found = false;
-	while (_check_parse(fp(_parse_header_else_generate_if)))
-	{
-		_req_parse(fp(_parse_header_else_generate_if));
-
-		found = true;
-	}
-
-	return true;
-}
-bool Parser::_parse_generate_any_for(bool (Parser::* parse_scope_func)())
-{
-	return true;
-}
+//bool Parser::_parse_generate_any_if(bool (Parser::* parse_scope_func)())
+//{
+//	RUN_ONE_FUNC(fp(_parse_header_generate_if));
+//
+//	NodeStmtGenerateIf to_push(_lexer().src_code_chunk(), _pop_ast_child(),
+//		Child(nullptr), Child(nullptr));
+//	NodeBase* which_to_push = &to_push;
+//
+//	bool found = false;
+//	while (_check_parse(fp(_parse_header_else_generate_if)))
+//	{
+//		_req_parse(fp(_parse_header_else_generate_if));
+//
+//		found = true;
+//	}
+//
+//	return true;
+//}
+//bool Parser::_parse_generate_any_for(bool (Parser::* parse_scope_func)())
+//{
+//	return true;
+//}
 
 #undef FUNC_VEC
 #undef fp

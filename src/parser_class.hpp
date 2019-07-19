@@ -17,6 +17,11 @@ public:		// types
 	using Base = ParserBase<Lexer>;
 	using TokSet = ast::NodeBase::TokSet;
 
+	using UnitParse = Base::UnitParse<Parser>;
+	using ParseFunc = UnitParse::ParseFunc;
+	using SeqParse = Base::SeqParse<Parser>;
+	using OrParse = Base::OrParse<Parser>;
+
 private:		// variables
 	ast::NodeBase::Child _ast_root;
 
@@ -200,6 +205,72 @@ public:		// functions
 	bool parse_program();
 
 private:		// functions
+	bool _parse_kw_if();
+	bool _parse_kw_else();
+	bool _parse_kw_for();
+	bool _parse_kw_generate();
+	bool _parse_kw_package();
+	bool _parse_kw_port();
+	bool _parse_kw_proc();
+	bool _parse_kw_func();
+	bool _parse_kw_task();
+	bool _parse_kw_module();
+	bool _parse_kw_const();
+	bool _parse_kw_using();
+	bool _parse_kw_while();
+	bool _parse_kw_switch();
+	bool _parse_kw_switchz();
+	bool _parse_kw_case();
+	bool _parse_kw_default();
+	bool _parse_kw_packed();
+	bool _parse_kw_class();
+	bool _parse_kw_virtual();
+	bool _parse_kw_extends();
+	bool _parse_kw_public();
+	bool _parse_kw_protected();
+	bool _parse_kw_private();
+	bool _parse_kw_enum();
+	bool _parse_kw_assign();
+	bool _parse_kw_initial();
+	bool _parse_kw_always_comb();
+	bool _parse_kw_always_blk();
+	bool _parse_kw_always_ff();
+	bool _parse_kw_posedge();
+	bool _parse_kw_negedge();
+	bool _parse_kw_inst();
+	bool _parse_kw_input();
+	bool _parse_kw_output();
+	bool _parse_kw_bidir();
+	bool _parse_kw_type();
+	bool _parse_kw_uwire();
+	bool _parse_kw_swire();
+	bool _parse_kw_ubit();
+	bool _parse_kw_sbit();
+	bool _parse_kw_void();
+	bool _parse_kw_auto();
+	bool _parse_kw_ubyte();
+	bool _parse_kw_sbyte();
+	bool _parse_kw_ushortint();
+	bool _parse_kw_sshortint();
+	bool _parse_kw_uint();
+	bool _parse_kw_sint();
+	bool _parse_kw_ulongint();
+	bool _parse_kw_slongint();
+	bool _parse_kw_typeof();
+
+	bool _parse_punct_lparen();
+	bool _parse_punct_rparen();
+	bool _parse_punct_lbracket();
+	bool _parse_punct_rbracket();
+	bool _parse_punct_lbrace();
+	bool _parse_punct_rbrace();
+	bool _parse_punct_comma();
+	bool _parse_punct_semicolon();
+	bool _parse_punct_colon();
+	bool _parse_punct_assign();
+	bool _parse_punct_member_access();
+	bool _parse_punct_scope_access();
+
 	bool _parse_header_if();
 	bool _parse_header_else_if();
 	bool _parse_header_else();
@@ -221,7 +292,6 @@ private:		// functions
 
 	bool _parse_contents_modproc();
 	bool _parse_proc();
-	bool _parse_kw_port();
 	bool _parse_module();
 
 	bool _parse_scope_modproc();
@@ -298,28 +368,33 @@ private:		// functions
 
 	bool _parse_expr();
 	bool _parse_inner_expr();
+	bool _parse_op_logical();
 
 	bool _parse_expr_logical();
 	bool _parse_inner_expr_logical();
+	bool _parse_op_compare();
 
 	bool _parse_expr_compare();
 	bool _parse_inner_expr_compare();
+	bool _parse_op_plus_minus();
 
 	bool _parse_expr_add_sub();
 	bool _parse_inner_expr_add_sub();
+	bool _parse_op_mul_div_mod_etc();
 
 	bool _parse_expr_mul_div_mod_etc();
 	bool _parse_inner_expr_mul_div_mod_etc();
+	bool _parse_op_unary();
 
 	bool _parse_dollar_global_clock();
 	bool _parse_dollar_pow_expr();
 	bool _parse_const_str();
 
-	bool _parse_ident_etc();
-	bool _parse_ident_etc_pre_dollar_func();
-	bool _parse_ident_etc_post_dollar_func();
+	bool _parse_expr_pre_dollar_func();
+	bool _parse_expr_post_dollar_func();
+	bool _parse_dollar_func_of_one();
 
-	bool _parse_inner_ident_etc();
+	bool _parse_ident_etc();
 	bool _parse_ident_terminal();
 	bool _parse_ident_member_access();
 	bool _parse_ident_scope_access();
@@ -330,8 +405,64 @@ private:		// functions
 	bool _parse_ident_param_member_overloaded_call();
 	bool _parse_ident_param_scope_overloaded_call();
 
-	bool _parse_generate_any_if(bool (Parser::* parse_scope_func)());
-	bool _parse_generate_any_for(bool (Parser::* parse_scope_func)());
+	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
+	//bool _parse_generate_any_for(ParseFunc parse_scope_func);
+
+	inline UnitParse _unit_parse(bool s_optional, ParseFunc s_parse_func)
+	{
+		return UnitParse(this, s_parse_func, s_optional);
+	}
+
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline void _inner_seq_parse(SeqParse::Vec& ret,
+		FirstArgType&& first_arg, RemArgTypes&&... rem_args)
+	{
+		SeqParse::OneInst to_push;
+		if constexpr (std::is_same<FirstArgType, UnitParse>())
+		{
+			to_push = std::move(first_arg);
+		}
+		else if constexpr (std::is_same<FirstArgType, SeqParse>())
+		{
+			to_push = SeqParse::TheSeqParse(new SeqParse(std::move
+				(first_arg)));
+		}
+		else if constexpr (std::is_same<FirstArgType, OrParse>())
+		{
+			to_push = SeqParse::TheSeqParse(new OrParse(std::move
+				(first_arg)));
+		}
+		else
+		{
+			static_assert(false, "Invalid _inner_seq_parse() first arg");
+		}
+		ret.push_back(std::move(to_push));
+
+		if constexpr (sizeof...(rem_args) > 0)
+		{
+			_inner_seq_parse(ret, rem_args...);
+		}
+	}
+
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline SeqParse _seq_parse(bool s_optional, FirstArgType&& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		SeqParse::Vec s_vec;
+		_inner_seq_parse(s_vec, first_arg, rem_args...);
+
+		return SeqParse(std::move(s_vec), s_optional);
+	}
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline OrParse _or_parse(bool s_optional, FirstArgType&& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		OrParse::Vec s_vec;
+		_inner_seq_parse(s_vec, first_arg, rem_args...);
+
+		return OrParse(std::move(s_vec), s_optional);
+	}
+
 };
 
 } // namespace frost_hdl

@@ -88,7 +88,6 @@ enum class Type
 	ExprUnopDollarIsSgn,
 	ExprUnopDollarRange,
 	ExprUnopDollarSize,
-	ExprUnopDollarMsbpos,
 	ExprUnopDollarFirst,
 	ExprUnopDollarLast,
 	ExprUnopDollarHigh,

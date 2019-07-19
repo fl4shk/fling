@@ -7,7 +7,6 @@
 	X(KwDollarIsSgn, "$is_sgn") \
 	X(KwDollarRange, "$range") \
 	X(KwDollarSize, "$size") \
-	X(KwDollarMsbpos, "$msbpos") \
 	X(KwDollarFirst, "$first") \
 	X(KwDollarLast, "$last") \
 	X(KwDollarHigh, "$high") \
@@ -143,7 +142,8 @@ X(Assign, "=") \
 /* -------- */ \
 \
 /* -------- */ \
-X(Period, ".") \
+X(MemberAccess, ".") \
+X(ScopeAccess, "::") \
 \
 X(Pound, "#") \
 X(Comma, ",") \
