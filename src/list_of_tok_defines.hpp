@@ -35,6 +35,7 @@
 	\
 	X(KwFunc, "func") \
 	X(KwTask, "task") \
+	X(KwPort, "port") \
 	X(KwProc, "proc") \
 	X(KwVirtual, "virtual") \
 	X(KwStatic, "static") \

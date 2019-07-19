@@ -41,7 +41,7 @@ Parser::~Parser()
 using std::move;
 using Child = ast::NodeBase::Child;
 
-bool Parser::parse_program()
+auto Parser::parse_program() -> ParseRet
 {
 	//const FuncVec func_vec({fp(_parse_package), fp(_parse_module)});
 
@@ -78,339 +78,344 @@ bool Parser::parse_program()
 	} \
 	_next_lss_tokens()
 
-bool Parser::_parse_kw_if()
+auto Parser::_parse_kw_if() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
 	return true;
 }
-bool Parser::_parse_kw_else()
+auto Parser::_parse_kw_else() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
 	return true;
 }
-bool Parser::_parse_kw_for()
+auto Parser::_parse_kw_for() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwFor);
 	return true;
 }
-bool Parser::_parse_kw_generate()
+auto Parser::_parse_kw_generate() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
 	return true;
 }
-bool Parser::_parse_kw_package()
+auto Parser::_parse_kw_package() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
 	return true;
 }
-bool Parser::_parse_kw_proc()
+auto Parser::_parse_kw_port() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwPort);
+	return true;
+}
+auto Parser::_parse_kw_proc() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwProc);
 	return true;
 }
-bool Parser::_parse_kw_func()
+auto Parser::_parse_kw_func() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwFunc);
 	return true;
 }
-bool Parser::_parse_kw_task()
+auto Parser::_parse_kw_task() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwTask);
 	return true;
 }
-bool Parser::_parse_kw_module()
+auto Parser::_parse_kw_module() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwModule);
 	return true;
 }
-bool Parser::_parse_kw_const()
+auto Parser::_parse_kw_const() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwConst);
 	return true;
 }
-bool Parser::_parse_kw_using()
+auto Parser::_parse_kw_using() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUsing);
 	return true;
 }
-bool Parser::_parse_kw_while()
+auto Parser::_parse_kw_while() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwWhile);
 	return true;
 }
-bool Parser::_parse_kw_switch()
+auto Parser::_parse_kw_switch() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitch);
 	return true;
 }
-bool Parser::_parse_kw_switchz()
+auto Parser::_parse_kw_switchz() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitchz);
 	return true;
 }
-bool Parser::_parse_kw_case()
+auto Parser::_parse_kw_case() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwCase);
 	return true;
 }
-bool Parser::_parse_kw_default()
+auto Parser::_parse_kw_default() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwDefault);
 	return true;
 }
-bool Parser::_parse_kw_packed()
+auto Parser::_parse_kw_packed() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPacked);
 	return true;
 }
-bool Parser::_parse_kw_class()
+auto Parser::_parse_kw_class() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwClass);
 	return true;
 }
-bool Parser::_parse_kw_virtual()
+auto Parser::_parse_kw_virtual() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwVirtual);
 	return true;
 }
-bool Parser::_parse_kw_extends()
+auto Parser::_parse_kw_extends() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwExtends);
 	return true;
 }
-bool Parser::_parse_kw_public()
+auto Parser::_parse_kw_public() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPublic);
 	return true;
 }
-bool Parser::_parse_kw_protected()
+auto Parser::_parse_kw_protected() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwProtected);
 	return true;
 }
-bool Parser::_parse_kw_private()
+auto Parser::_parse_kw_private() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPrivate);
 	return true;
 }
-bool Parser::_parse_kw_enum()
+auto Parser::_parse_kw_enum() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwEnum);
 	return true;
 }
-bool Parser::_parse_kw_assign()
+auto Parser::_parse_kw_assign() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAssign);
 	return true;
 }
-bool Parser::_parse_kw_initial()
+auto Parser::_parse_kw_initial() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInitial);
 	return true;
 }
-bool Parser::_parse_kw_always_comb()
+auto Parser::_parse_kw_always_comb() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysComb);
 	return true;
 }
-bool Parser::_parse_kw_always_blk()
+auto Parser::_parse_kw_always_blk() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysBlk);
 	return true;
 }
-bool Parser::_parse_kw_always_ff()
+auto Parser::_parse_kw_always_ff() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysFf);
 	return true;
 }
-bool Parser::_parse_kw_posedge()
+auto Parser::_parse_kw_posedge() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPosedge);
 	return true;
 }
-bool Parser::_parse_kw_negedge()
+auto Parser::_parse_kw_negedge() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwNegedge);
 	return true;
 }
-bool Parser::_parse_kw_inst()
+auto Parser::_parse_kw_inst() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInst);
 	return true;
 }
-bool Parser::_parse_kw_input()
+auto Parser::_parse_kw_input() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInput);
 	return true;
 }
-bool Parser::_parse_kw_output()
+auto Parser::_parse_kw_output() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwOutput);
 	return true;
 }
-bool Parser::_parse_kw_bidir()
+auto Parser::_parse_kw_bidir() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwBidir);
 	return true;
 }
-bool Parser::_parse_kw_type()
+auto Parser::_parse_kw_type() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwType);
 	return true;
 }
-bool Parser::_parse_kw_uwire()
+auto Parser::_parse_kw_uwire() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUwire);
 	return true;
 }
-bool Parser::_parse_kw_swire()
+auto Parser::_parse_kw_swire() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwire);
 	return true;
 }
-bool Parser::_parse_kw_ubit()
+auto Parser::_parse_kw_ubit() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUbit);
 	return true;
 }
-bool Parser::_parse_kw_sbit()
+auto Parser::_parse_kw_sbit() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSbit);
 	return true;
 }
-bool Parser::_parse_kw_void()
+auto Parser::_parse_kw_void() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwVoid);
 	return true;
 }
-bool Parser::_parse_kw_auto()
+auto Parser::_parse_kw_auto() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAuto);
 	return true;
 }
-bool Parser::_parse_kw_ubyte()
+auto Parser::_parse_kw_ubyte() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUbyte);
 	return true;
 }
-bool Parser::_parse_kw_sbyte()
+auto Parser::_parse_kw_sbyte() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSbyte);
 	return true;
 }
-bool Parser::_parse_kw_ushortint()
+auto Parser::_parse_kw_ushortint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUshortint);
 	return true;
 }
-bool Parser::_parse_kw_sshortint()
+auto Parser::_parse_kw_sshortint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSshortint);
 	return true;
 }
-bool Parser::_parse_kw_uint()
+auto Parser::_parse_kw_uint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUint);
 	return true;
 }
-bool Parser::_parse_kw_sint()
+auto Parser::_parse_kw_sint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSint);
 	return true;
 }
-bool Parser::_parse_kw_ulongint()
+auto Parser::_parse_kw_ulongint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUlongint);
 	return true;
 }
-bool Parser::_parse_kw_slongint()
+auto Parser::_parse_kw_slongint() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSlongint);
 	return true;
 }
-bool Parser::_parse_kw_typeof()
+auto Parser::_parse_kw_typeof() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwTypeof);
 	return true;
 }
 
-bool Parser::_parse_punct_lparen()
+auto Parser::_parse_punct_lparen() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LParen);
 	return true;
 }
-bool Parser::_parse_punct_rparen()
+auto Parser::_parse_punct_rparen() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RParen);
 	return true;
 }
-bool Parser::_parse_punct_lbracket()
+auto Parser::_parse_punct_lbracket() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LBracket);
 	return true;
 }
-bool Parser::_parse_punct_rbracket()
+auto Parser::_parse_punct_rbracket() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RBracket);
 	return true;
 }
-bool Parser::_parse_punct_lbrace()
+auto Parser::_parse_punct_lbrace() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
 	return true;
 }
-bool Parser::_parse_punct_rbrace()
+auto Parser::_parse_punct_rbrace() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RBrace);
 	return true;
 }
-bool Parser::_parse_punct_comma()
+auto Parser::_parse_punct_comma() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Comma);
 	return true;
 }
-bool Parser::_parse_punct_semicolon()
+auto Parser::_parse_punct_semicolon() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Semicolon);
 	return true;
 }
-bool Parser::_parse_punct_colon()
+auto Parser::_parse_punct_colon() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Colon);
 	return true;
 }
-bool Parser::_parse_punct_assign()
+auto Parser::_parse_punct_assign() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Assign);
 	return true;
 }
-bool Parser::_parse_punct_member_access()
+auto Parser::_parse_punct_member_access() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::MemberAccess);
 	return true;
 }
-bool Parser::_parse_punct_scope_access()
+auto Parser::_parse_punct_scope_access() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::ScopeAccess);
 	return true;
 }
 
-bool Parser::_parse_header_if()
+auto Parser::_parse_header_if() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_if),
 		req_up(punct_lparen), req_up(expr),
 		req_up(punct_rparen)))
 }
-bool Parser::_parse_header_else_if()
+auto Parser::_parse_header_else_if() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(header_if)))
 }
-bool Parser::_parse_header_else()
+auto Parser::_parse_header_else() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_else)));
 }
-bool Parser::_parse_header_for()
+auto Parser::_parse_header_for() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_for),
 		req_up(punct_lparen), req_up(ident),
@@ -418,28 +423,28 @@ bool Parser::_parse_header_for()
 		req_up(punct_rparen)))
 }
 
-bool Parser::_parse_header_generate_if()
+auto Parser::_parse_header_generate_if() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_generate),
 		req_up(header_if)))
 }
-bool Parser::_parse_header_else_generate_if()
+auto Parser::_parse_header_else_generate_if() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(header_generate_if)))
 }
-bool Parser::_parse_header_else_generate()
+auto Parser::_parse_header_else_generate() -> ParseRet
 {
 	simple_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(kw_generate)))
 }
-bool Parser::_parse_header_generate_for()
+auto Parser::_parse_header_generate_for() -> ParseRet
 {
 	check_parse_named(to_check, _req_seq_parse(req_up(kw_generate),
 		opt_up(ident), req_up(header_for)))
 }
 
-bool Parser::_parse_package()
+auto Parser::_parse_package() -> ParseRet
 {
 	//CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
 	//const auto src_code_chunk = _lexer().src_code_chunk();
@@ -455,7 +460,7 @@ bool Parser::_parse_package()
 
 	return true;
 }
-bool Parser::_parse_scope_package()
+auto Parser::_parse_scope_package() -> ParseRet
 {
 	NodeScopePackage to_push(_lexer().src_code_chunk());
 
@@ -484,414 +489,410 @@ bool Parser::_parse_scope_package()
 	return true;
 }
 
-bool Parser::_parse_generate_package()
+auto Parser::_parse_generate_package() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_generate_package_if()
+auto Parser::_parse_generate_package_if() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_generate_package_for()
-{
-	return true;
-}
-
-bool Parser::_parse_callable_member_prefix()
+auto Parser::_parse_generate_package_for() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_contents_modproc()
-{
-	return true;
-}
-bool Parser::_parse_proc()
-{
-	return true;
-}
-bool Parser::_parse_kw_port()
-{
-	return true;
-}
-bool Parser::_parse_module()
+auto Parser::_parse_callable_member_prefix() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_scope_modproc()
+auto Parser::_parse_contents_modproc() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_generate_modproc()
+auto Parser::_parse_proc() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_generate_modproc_if()
-{
-	return true;
-}
-bool Parser::_parse_generate_modproc_for()
+auto Parser::_parse_module() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_decl_callable()
+auto Parser::_parse_scope_modproc() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_contents_func_task()
+auto Parser::_parse_generate_modproc() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_func()
+auto Parser::_parse_generate_modproc_if() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_task()
-{
-	return true;
-}
-
-bool Parser::_parse_scope_behav()
-{
-	return true;
-}
-bool Parser::_parse_inner_scope_behav()
+auto Parser::_parse_generate_modproc_for() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_generate_behav()
+auto Parser::_parse_decl_callable() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_generate_behav_if()
+auto Parser::_parse_contents_func_task() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_generate_behav_for()
+auto Parser::_parse_func() -> ParseRet
 {
 	return true;
 }
-
-bool Parser::_parse_const()
-{
-	return true;
-}
-bool Parser::_parse_var()
-{
-	return true;
-}
-bool Parser::_parse_using()
+auto Parser::_parse_task() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_stmt_assign()
+auto Parser::_parse_scope_behav() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_stmt_if()
-{
-	return true;
-}
-bool Parser::_parse_stmt_for()
-{
-	return true;
-}
-bool Parser::_parse_stmt_while()
-{
-	return true;
-}
-bool Parser::_parse_stmt_switch()
-{
-	return true;
-}
-bool Parser::_parse_stmt_switchz()
-{
-	return true;
-}
-bool Parser::_parse_scope_switch()
+auto Parser::_parse_inner_scope_behav() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_decl_cstm_type()
+auto Parser::_parse_generate_behav() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_class()
+auto Parser::_parse_generate_behav_if() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_extends()
-{
-	return true;
-}
-
-bool Parser::_parse_scope_class()
-{
-	return true;
-}
-bool Parser::_parse_generate_class()
-{
-	return true;
-}
-bool Parser::_parse_generate_class_if()
-{
-	return true;
-}
-bool Parser::_parse_generate_class_for()
-{
-	return true;
-}
-bool Parser::_parse_member_access_label()
+auto Parser::_parse_generate_behav_for() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_enum()
+auto Parser::_parse_const() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_var() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_using() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_hardware_block()
+auto Parser::_parse_stmt_assign() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_cont_assign()
+auto Parser::_parse_stmt_if() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_initial()
+auto Parser::_parse_stmt_for() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_always_comb()
+auto Parser::_parse_stmt_while() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_always_blk()
+auto Parser::_parse_stmt_switch() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_always_ff()
+auto Parser::_parse_stmt_switchz() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_edge_list()
-{
-	return true;
-}
-bool Parser::_parse_posedge_inst()
-{
-	return true;
-}
-bool Parser::_parse_negedge_inst()
+auto Parser::_parse_scope_switch() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_inst()
+auto Parser::_parse_decl_cstm_type() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_class() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_extends() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_param_list()
+auto Parser::_parse_scope_class() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_param_sublist()
+auto Parser::_parse_generate_class() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_arg_list()
+auto Parser::_parse_generate_class_if() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_arg_sublist()
+auto Parser::_parse_generate_class_for() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_arg_port_sublist()
-{
-	return true;
-}
-bool Parser::_parse_pararg_var_sublist()
-{
-	return true;
-}
-bool Parser::_parse_pararg_type_sublist()
-{
-	return true;
-}
-bool Parser::_parse_param_module_sublist()
-{
-	return true;
-}
-bool Parser::_parse_ident_equals_typename_sublist()
-{
-	return true;
-}
-bool Parser::_parse_param_inst_list()
+auto Parser::_parse_member_access_label() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_pos_pararg_inst_list()
-{
-	return true;
-}
-bool Parser::_parse_named_pararg_inst_list()
+auto Parser::_parse_enum() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_typename()
+auto Parser::_parse_hardware_block() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_param_possible_typename()
+auto Parser::_parse_cont_assign() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_no_param_possible_typename()
+auto Parser::_parse_initial() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_typeof()
+auto Parser::_parse_always_comb() -> ParseRet
 {
 	return true;
 }
-
-bool Parser::_parse_expr()
+auto Parser::_parse_always_blk() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_inner_expr()
+auto Parser::_parse_always_ff() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_op_logical()
+auto Parser::_parse_edge_list() -> ParseRet
 {
 	return true;
 }
-
-bool Parser::_parse_expr_logical()
+auto Parser::_parse_posedge_inst() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_inner_expr_logical()
-{
-	return true;
-}
-bool Parser::_parse_op_compare()
+auto Parser::_parse_negedge_inst() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_expr_compare()
-{
-	return true;
-}
-bool Parser::_parse_inner_expr_compare()
-{
-	return true;
-}
-bool Parser::_parse_op_plus_minus()
+auto Parser::_parse_inst() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_expr_add_sub()
+auto Parser::_parse_param_list() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_inner_expr_add_sub()
+auto Parser::_parse_param_sublist() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_op_mul_div_mod_etc()
+auto Parser::_parse_arg_list() -> ParseRet
 {
 	return true;
 }
-
-bool Parser::_parse_expr_mul_div_mod_etc()
+auto Parser::_parse_arg_sublist() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_inner_expr_mul_div_mod_etc()
+auto Parser::_parse_arg_port_sublist() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_op_unary()
+auto Parser::_parse_pararg_var_sublist() -> ParseRet
 {
 	return true;
 }
-
-bool Parser::_parse_dollar_global_clock()
+auto Parser::_parse_pararg_type_sublist() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_dollar_pow_expr()
+auto Parser::_parse_param_module_sublist() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_const_str()
+auto Parser::_parse_ident_equals_typename_sublist() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_expr_pre_dollar_func()
-{
-	return true;
-}
-bool Parser::_parse_expr_post_dollar_func()
-{
-	return true;
-}
-bool Parser::_parse_dollar_func_of_one()
+auto Parser::_parse_param_inst_list() -> ParseRet
 {
 	return true;
 }
 
-bool Parser::_parse_ident_etc()
+auto Parser::_parse_pos_pararg_inst_list() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_terminal()
+auto Parser::_parse_named_pararg_inst_list() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_member_access()
+
+auto Parser::_parse_typename() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_scope_access()
+auto Parser::_parse_param_possible_typename() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_no_param_possible_typename() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_typeof() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_expr() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_inner_expr() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_op_logical() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_expr_logical() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_inner_expr_logical() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_op_compare() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_expr_compare() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_inner_expr_compare() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_op_plus_minus() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_expr_add_sub() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_inner_expr_add_sub() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_op_mul_div_mod_etc() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_expr_mul_div_mod_etc() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_inner_expr_mul_div_mod_etc() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_op_unary() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_dollar_global_clock() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_dollar_pow_expr() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_const_str() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_expr_pre_dollar_func() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_expr_post_dollar_func() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_dollar_func_of_one() -> ParseRet
+{
+	return true;
+}
+
+auto Parser::_parse_ident_etc() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_ident_terminal() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_ident_member_access() -> ParseRet
+{
+	return true;
+}
+auto Parser::_parse_ident_scope_access() -> ParseRet
 {
 	return true;;
 }
-bool Parser::_parse_ident()
+auto Parser::_parse_ident() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_bracket()
+auto Parser::_parse_ident_bracket() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_call()
+auto Parser::_parse_ident_call() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_no_param_overloaded_call()
+auto Parser::_parse_ident_no_param_overloaded_call() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_param_member_overloaded_call()
+auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 {
 	return true;
 }
-bool Parser::_parse_ident_param_scope_overloaded_call()
+auto Parser::_parse_ident_param_scope_overloaded_call() -> ParseRet
 {
 	return true;
 }
