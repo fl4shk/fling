@@ -457,32 +457,35 @@ bool Parser::_parse_package()
 }
 bool Parser::_parse_scope_package()
 {
-	//CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
+	NodeScopePackage to_push(_lexer().src_code_chunk());
 
-	//NodeScopePackage to_push(_lexer().src_code_chunk());
+	const auto list_seq = _opt_or_parse(req_up(generate_package),
+		req_up(package), req_up(module), req_up(const), req_up(using),
+		req_up(decl_callable), req_up(decl_cstm_type));
+	check_parse_anon(_req_seq_parse(req_up(punct_lbrace), list_seq))
 
-	//while (_opt_parse(fp(_parse_generate_package),
-	//	fp(_parse_package), fp(_parse_module), fp(_parse_const),
-	//	fp(_parse_using), fp(_parse_decl_callable),
-	//	fp(_parse_decl_cstm_type)))
-	//{
-	//	to_push.append(_pop_ast_child());
-	//}
-	//_push_ast_child(move(to_push));
+	req_up(punct_lbrace).exec();
 
-	//_expect(Tok::RBrace);
+	while (list_seq.check())
+	{
+		list_seq.exec();
+		to_push.append(_pop_ast_child());
+	}
 
-	const auto list_seq = _opt_or_parse(
-	check_parse_anon(_req_seq_parse(req_up(
+	const auto end = req_up(punct_rbrace);
+	if (!end.check())
+	{
+		_unexpected();
+	}
+	end.exec();
+
+	_push_ast_child(move(to_push));
 
 	return true;
 }
 
 bool Parser::_parse_generate_package()
 {
-	//RUN_ONE_FUNC(FuncVec({fp(_parse_generate_package_if),
-	//	fp(_parse_generate_package_for)}));
-
 	return true;
 }
 bool Parser::_parse_generate_package_if()
