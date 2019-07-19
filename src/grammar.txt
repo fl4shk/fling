@@ -741,19 +741,15 @@ dollar_func_of_one:
 
 
 ident_etc:
-	ident_terminal
-	| ident_member_access
+	ident_member_access
 	| ident_scope_access
 	| ident_call
 	| ident_no_param_overloaded_call
 	| ident_param_member_overloaded_call
 	| ident_param_scope_overloaded_call
+	| ident_terminal
 	;
 
-ident_terminal:
-	ident_bracket
-	| ident
-	;
 
 ident_member_access:
 	ident_terminal punct_member_access ident_etc
@@ -762,13 +758,6 @@ ident_scope_access:
 	ident_terminal punct_scope_access ident_etc
 	;
 
-ident:
-	TokIdent
-	;
-
-ident_bracket:
-	ident (punct_lbracket expr punct_rbracket)+
-	;
 
 ident_call:
 	ident param_inst_list? arg_inst_list
@@ -778,9 +767,25 @@ ident_no_param_overloaded_call:
 	ident_terminal arg_inst_list
 	;
 ident_param_member_overloaded_call:
-	ident_terminal punct_member_access param_inst_list arg_inst_list
+	ident_terminal
+		punct_member_access
+		param_inst_list arg_inst_list
 	;
 ident_param_scope_overloaded_call:
-	ident_terminal punct_scope_access param_inst_list arg_inst_list
+	ident_terminal
+		punct_scope_access
+		param_inst_list arg_inst_list
 	;
 
+ident_terminal:
+	ident_bracket
+	| ident
+	;
+
+ident_bracket:
+	ident (punct_lbracket expr punct_rbracket)+
+	;
+
+ident:
+	TokIdent
+	;

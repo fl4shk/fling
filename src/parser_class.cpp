@@ -369,6 +369,7 @@ bool Parser::_parse_header_if()
 	//_expect(Tok::LParen);
 	//_parse_expr();
 	//_expect(Tok::RParen);
+	_seq_parse(
 
 	return true;
 }

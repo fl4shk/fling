@@ -18,12 +18,14 @@ public:		// types
 	using TokSet = ast::NodeBase::TokSet;
 
 	using MultiParse = Base::MultiParse<Parser>;
+	using ParseFunc = typename MultiParse::ParseFunc;
 
 private:		// variables
 	ast::NodeBase::Child _ast_root;
 
 	#define LIST_FOR_GEN_STACK(X) \
-		X(BigNum, const BigNum&, num)
+		X(BigNum, const BigNum&, num) \
+		X(Tok, Tok, tok) \
 
 	#include "gen_stacks_stuff.hpp"
 	#undef LIST_FOR_GEN_STACK
@@ -62,6 +64,19 @@ private:		// variables
 	inline auto _pop_num()
 	{
 		return _stacks.pop_num();
+	}
+
+	inline void _push_tok(Tok to_push)
+	{
+		_stacks.push_tok(to_push);
+	}
+	inline auto _get_top_tok()
+	{
+		return _stacks.get_top_tok();
+	}
+	inline auto _pop_tok()
+	{
+		return _stacks.pop_tok();
 	}
 
 
@@ -404,6 +419,18 @@ private:		// functions
 
 	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
 	//bool _parse_generate_any_for(ParseFunc parse_scope_func);
+	inline auto _unit_parse(ParseFunc s_parse_func, bool s_optional=false)
+	{
+		return MultiParse::_unit_parse(this, s_optional, s_parse_func);
+	}
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline auto _opt_seq_parse(bool s_optional, FirstArgType&& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		return MultiParse::_seq_parse(s_optional, first_arg, rem_args...);
+	}
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline auto _opt_or_parse(bool s_optional, FirstArgType&& first_arg,
 
 
 };
