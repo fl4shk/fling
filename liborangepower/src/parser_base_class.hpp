@@ -324,7 +324,7 @@ public:		// types
 			// Any one found gets used
 			for (const auto& iter : Base::vec())
 			{
-				if (_check_one(iter))
+				if (Base::_check_one(iter))
 				{
 					return true;
 				}
@@ -338,10 +338,10 @@ public:		// types
 			for (const auto& iter : Base::vec())
 			{
 				// First one found gets executed
-				if (_check_one(iter))
+				if (Base::_check_one(iter))
 				{
-					_exec_one(iter);
-					return;
+					Base::_exec_one(iter);
+					return ParseRet(new LexerState(ret));
 				}
 			}
 
