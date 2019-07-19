@@ -437,31 +437,32 @@ private:		// functions
 	inline auto _unit_parse(const string& s_parse_func_str,
 		ParseFunc s_parse_func, bool s_optional=false)
 	{
-		return MultiParse::_unit_parse(this, s_optional, s_parse_func);
+		return TheMultiParse::_unit_parse(this, s_parse_func_str,
+			s_optional, s_parse_func);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _opt_seq_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_opt_seq_parse(this, first_arg, rem_args...);
+		return TheMultiParse::_opt_seq_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _req_seq_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_req_seq_parse(this, first_arg, rem_args...);
+		return TheMultiParse::_req_seq_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _opt_or_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_opt_or_parse(this, first_arg, rem_args...);
+		return TheMultiParse::_opt_or_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
 	inline auto _req_or_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_req_or_parse(this, first_arg, rem_args...);
+		return TheMultiParse::_req_or_parse(this, first_arg, rem_args...);
 	}
 
 	inline ParseRet _dup_lex_state() const
