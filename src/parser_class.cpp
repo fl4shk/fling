@@ -21,12 +21,12 @@ Parser::~Parser()
 	const auto seq = some_req_seq_parse; \
 	if (just_test()) \
 	{ \
-		return seq.check(); \
+		return _check_for_just_test(seq); \
 	}
 #define check_parse_anon(some_req_seq_parse) \
 	if (just_test()) \
 	{ \
-		return some_req_seq_parse.check(); \
+		return _check_for_just_test(some_req_seq_parse); \
 	}
 
 #define simple_parse_named(seq, some_req_seq_parse) \
@@ -420,19 +420,20 @@ auto Parser::_parse_package() -> ParseRet
 	//CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
 	//const auto src_code_chunk = _lexer().src_code_chunk();
 
+	const auto ret = _dup_lex_state();
+
+	const auto check_seq = _req_seq_parse(req_up(kw_package));
 	if (just_test())
 	{
-		const auto seq = _req_seq_parse(req_up(kw_package));
-		if (seq.check())
-		{
-			return _dup_lex_state();
-		}
-		return req_up(kw_package).check();
+		return _check_for_just_test(check_seq);
 	}
+	check_seq.exec();
 
 	auto ident = _get_req_parse(fp(ident));
 	auto scope = _get_req_parse(fp(scope_package));
-	_push_ast_child(NodePackage(src_code_chunk, move(ident), move(scope)));
+	_push_ast_child(NodePackage(ret->src_code_chunk(), move(ident),
+		move(scope)));
+	return ret;
 
 }
 auto Parser::_parse_scope_package() -> ParseRet
