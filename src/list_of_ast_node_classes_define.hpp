@@ -110,18 +110,14 @@
 	X(NodeStmtAnyFor, StmtAnyFor) \
 	X(NodeStmtFor, StmtFor) \
 	X(NodeStmtGenerateFor, StmtGenerateFor) \
-	X(NodeStmtAnyIf, StmtAnyIf) \
-	X(NodeStmtAnyElse, StmtAnyElse) \
 	X(NodeStmtIf, StmtIf) \
-	X(NodeStmtElse, StmtElse) \
 	X(NodeStmtGenerateIf, StmtGenerateIf) \
-	X(NodeStmtGenerateElse, StmtGenerateElse) \
 	X(NodeStmtWhile, StmtWhile) \
 	X(NodeStmtBehavAssign, StmtBehavAssign) \
 	X(NodeStmtContAssign, StmtContAssign) \
-	X(NodeStmtLabMemberAccessPublic, StmtLabMemberAccessPublic) \
-	X(NodeStmtLabMemberAccessProtected, StmtLabMemberAccessProtected) \
-	X(NodeStmtLabMemberAccessPrivate, StmtLabMemberAccessPrivate) \
+	X(NodeStmtMemberAccessPublic, StmtMemberAccessPublic) \
+	X(NodeStmtMemberAccessProtected, StmtMemberAccessProtected) \
+	X(NodeStmtMemberAccessPrivate, StmtMemberAccessPrivate) \
 	X(NodeStmtSwitch, StmtSwitch) \
 	X(NodeStmtSwitchz, StmtSwitchz) \
 	X(NodeStmtCase, StmtCase) \

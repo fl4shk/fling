@@ -13,7 +13,29 @@ Parser::~Parser()
 {
 }
 
-#define fp(func) &Parser::func
+#define fp(func) &Parser::_parse_##func
+#define req_unit_parse(func) _unit_parse(fp(func), false)
+#define opt_unit_parse(func) _unit_parse(fp(func), true)
+
+#define check_parse_named(to_check, some_req_seq_parse) \
+	const auto to_check = some_req_seq_parse; \
+	if (just_test()) \
+	{ \
+		return to_check.check(); \
+	}
+#define check_parse_anon(some_req_seq_parse) \
+	if (just_test()) \
+	{ \
+		return some_req_seq_parse.check(); \
+	}
+#define simple_parse_named(to_check, some_req_seq_parse) \
+	check_parse_named(to_check, some_req_seq_parse) \
+	to_check.exec(); \
+	return true;
+#define simple_parse_anon(some_req_seq_parse) \
+	check_parse_anon(some_req_seq_parse) \
+	some_req_seq_parse.exec(); \
+	return true;
 
 using FuncVec = std::vector<decltype(fp(parse_program))>;
 using std::move;
@@ -21,12 +43,12 @@ using Child = ast::NodeBase::Child;
 
 bool Parser::parse_program()
 {
-	const FuncVec func_vec({fp(_parse_package), fp(_parse_module)});
+	//const FuncVec func_vec({fp(_parse_package), fp(_parse_module)});
 
-	while (_opt_parse(this, func_vec))
-	{
-		_ast_root->append(move(_pop_ast_child()));
-	}
+	//while (_opt_parse(this, func_vec))
+	//{
+	//	_ast_root->append(move(_pop_ast_child()));
+	//}
 
 	return true;
 }
@@ -364,42 +386,46 @@ bool Parser::_parse_punct_scope_access()
 
 bool Parser::_parse_header_if()
 {
-	//CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
-
-	//_expect(Tok::LParen);
-	//_parse_expr();
-	//_expect(Tok::RParen);
-
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_if),
+		req_unit_parse(punct_lparen), req_unit_parse(expr),
+		req_unit_parse(punct_rparen)))
 }
 bool Parser::_parse_header_else_if()
 {
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else),
+		req_unit_parse(header_if)))
 }
 bool Parser::_parse_header_else()
 {
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else)));
 }
 bool Parser::_parse_header_for()
 {
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_for),
+		req_unit_parse(punct_lparen), req_unit_parse(ident),
+		req_unit_parse(punct_colon), req_unit_parse(expr),
+		req_unit_parse(punct_rparen)))
 }
 
 bool Parser::_parse_header_generate_if()
 {
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_generate),
+		req_unit_parse(header_if)))
 }
 bool Parser::_parse_header_else_generate_if()
 {
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else),
+		req_unit_parse(header_generate_if)))
 }
 bool Parser::_parse_header_else_generate()
 {
-	return true;
+	simple_parse_anon(_req_seq_parse(req_unit_parse(kw_else),
+		req_unit_parse(kw_generate)))
 }
 bool Parser::_parse_header_generate_for()
 {
-	return true;
+	check_parse_named(to_check, _req_seq_parse(req_unit_parse(kw_generate),
+		opt_unit_parse(ident), req_unit_parse(header_for)))
 }
 
 bool Parser::_parse_package()
@@ -873,6 +899,12 @@ bool Parser::_parse_ident_param_scope_overloaded_call()
 
 #undef FUNC_VEC
 #undef fp
+#undef opt_unit_parse
+#undef req_unit_parse
+#undef check_parse_named
+#undef check_parse_anon
+#undef simple_parse_named
+#undef simple_parse_anon
 #undef CHECK_PREFIXED_ONE_TOK
 #undef CHECK_PREFIXED_TOK_SEQ
 //#undef RUN_ONE_FUNC

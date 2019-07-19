@@ -2338,14 +2338,14 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(label)
 };
 
-class NodeStmtAnyIf : public NodeBase
+class NodeStmtIf : public NodeBase
 {
 protected:		// children
 	Child _cond_expr,
 		_stmt_list,
 		_stmt_else;
 public:		// functions
-	inline NodeStmtAnyIf(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeStmtIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_stmt_list,
 		Child&& s_stmt_else)
@@ -2353,60 +2353,6 @@ public:		// functions
 		_cond_expr(std::move(s_cond_expr)),
 		_stmt_list(std::move(s_stmt_list)),
 		_stmt_else(std::move(s_stmt_else))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAnyIf);
-	virtual Type type() const
-	{
-		return Type::StmtAnyIf;
-	}
-	virtual string name() const
-	{
-		return "StmtAnyIf";
-	}
-	GEN_GETTER_BY_CON_REF(cond_expr)
-	GEN_SETTER_BY_RVAL_REF(cond_expr)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
-	GEN_GETTER_BY_CON_REF(stmt_else)
-	GEN_SETTER_BY_RVAL_REF(stmt_else)
-};
-
-class NodeStmtAnyElse : public NodeBase
-{
-protected:		// children
-	Child _stmt_list;
-public:		// functions
-	inline NodeStmtAnyElse(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
-		: NodeBase(s_src_code_chunk),
-		_stmt_list(std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAnyElse);
-	virtual Type type() const
-	{
-		return Type::StmtAnyElse;
-	}
-	virtual string name() const
-	{
-		return "StmtAnyElse";
-	}
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
-};
-
-class NodeStmtIf : public NodeStmtAnyIf
-{
-public:		// functions
-	inline NodeStmtIf(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_cond_expr,
-		Child&& s_stmt_list,
-		Child&& s_stmt_else)
-		: NodeStmtAnyIf(s_src_code_chunk,
-		std::move(s_cond_expr),
-		std::move(s_stmt_list),
-		std::move(s_stmt_else))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtIf);
@@ -2418,36 +2364,22 @@ public:		// functions
 	{
 		return "StmtIf";
 	}
+	GEN_GETTER_BY_CON_REF(cond_expr)
+	GEN_SETTER_BY_RVAL_REF(cond_expr)
+	GEN_GETTER_BY_CON_REF(stmt_list)
+	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(stmt_else)
+	GEN_SETTER_BY_RVAL_REF(stmt_else)
 };
 
-class NodeStmtElse : public NodeStmtAnyElse
-{
-public:		// functions
-	inline NodeStmtElse(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
-		: NodeStmtAnyElse(s_src_code_chunk,
-		std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtElse);
-	virtual Type type() const
-	{
-		return Type::StmtElse;
-	}
-	virtual string name() const
-	{
-		return "StmtElse";
-	}
-};
-
-class NodeStmtGenerateIf : public NodeStmtAnyIf
+class NodeStmtGenerateIf : public NodeStmtIf
 {
 public:		// functions
 	inline NodeStmtGenerateIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_stmt_list,
 		Child&& s_stmt_else)
-		: NodeStmtAnyIf(s_src_code_chunk,
+		: NodeStmtIf(s_src_code_chunk,
 		std::move(s_cond_expr),
 		std::move(s_stmt_list),
 		std::move(s_stmt_else))
@@ -2461,26 +2393,6 @@ public:		// functions
 	virtual string name() const
 	{
 		return "StmtGenerateIf";
-	}
-};
-
-class NodeStmtGenerateElse : public NodeStmtAnyElse
-{
-public:		// functions
-	inline NodeStmtGenerateElse(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
-		: NodeStmtAnyElse(s_src_code_chunk,
-		std::move(s_stmt_list))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeStmtGenerateElse);
-	virtual Type type() const
-	{
-		return Type::StmtGenerateElse;
-	}
-	virtual string name() const
-	{
-		return "StmtGenerateElse";
 	}
 };
 
@@ -2557,57 +2469,57 @@ public:		// functions
 	}
 };
 
-class NodeStmtLabMemberAccessPublic : public NodeBase
+class NodeStmtMemberAccessPublic : public NodeBase
 {
 public:		// functions
-	inline NodeStmtLabMemberAccessPublic(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeStmtMemberAccessPublic(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtLabMemberAccessPublic);
+	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessPublic);
 	virtual Type type() const
 	{
-		return Type::StmtLabMemberAccessPublic;
+		return Type::StmtMemberAccessPublic;
 	}
 	virtual string name() const
 	{
-		return "StmtLabMemberAccessPublic";
+		return "StmtMemberAccessPublic";
 	}
 };
 
-class NodeStmtLabMemberAccessProtected : public NodeBase
+class NodeStmtMemberAccessProtected : public NodeBase
 {
 public:		// functions
-	inline NodeStmtLabMemberAccessProtected(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeStmtMemberAccessProtected(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtLabMemberAccessProtected);
+	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessProtected);
 	virtual Type type() const
 	{
-		return Type::StmtLabMemberAccessProtected;
+		return Type::StmtMemberAccessProtected;
 	}
 	virtual string name() const
 	{
-		return "StmtLabMemberAccessProtected";
+		return "StmtMemberAccessProtected";
 	}
 };
 
-class NodeStmtLabMemberAccessPrivate : public NodeBase
+class NodeStmtMemberAccessPrivate : public NodeBase
 {
 public:		// functions
-	inline NodeStmtLabMemberAccessPrivate(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeStmtMemberAccessPrivate(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtLabMemberAccessPrivate);
+	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessPrivate);
 	virtual Type type() const
 	{
-		return Type::StmtLabMemberAccessPrivate;
+		return Type::StmtMemberAccessPrivate;
 	}
 	virtual string name() const
 	{
-		return "StmtLabMemberAccessPrivate";
+		return "StmtMemberAccessPrivate";
 	}
 };
 

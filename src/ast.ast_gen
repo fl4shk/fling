@@ -247,16 +247,10 @@ StmtGenerateFor, StmtAnyFor:
 // 	...
 // }
 
-StmtAnyIf:
+StmtIf:
 	child cond_expr, stmt_list, stmt_else;
-StmtAnyElse:
-	child stmt_list;
 
-StmtIf, StmtAnyIf:
-StmtElse, StmtAnyElse:
-
-StmtGenerateIf, StmtAnyIf:
-StmtGenerateElse, StmtAnyElse:
+StmtGenerateIf, StmtIf:
 
 StmtWhile:
 	child cond_expr, stmt_list;
@@ -265,9 +259,9 @@ StmtWhile:
 StmtBehavAssign, LeftRightBase:
 StmtContAssign, LeftRightBase:
 
-StmtLabMemberAccessPublic:
-StmtLabMemberAccessProtected:
-StmtLabMemberAccessPrivate:
+StmtMemberAccessPublic:
+StmtMemberAccessProtected:
+StmtMemberAccessPrivate:
 
 StmtSwitch:
 	child ident_etc, stmt_list;
