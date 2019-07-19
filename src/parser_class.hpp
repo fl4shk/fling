@@ -424,13 +424,29 @@ private:		// functions
 		return MultiParse::_unit_parse(this, s_optional, s_parse_func);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline auto _opt_seq_parse(bool s_optional, FirstArgType&& first_arg,
+	inline auto _opt_seq_parse(FirstArgType&& first_arg,
 		RemArgTypes&&... rem_args)
 	{
-		return MultiParse::_seq_parse(s_optional, first_arg, rem_args...);
+		return MultiParse::_opt_seq_parse(first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline auto _opt_or_parse(bool s_optional, FirstArgType&& first_arg,
+	inline auto _req_seq_parse(FirstArgType&& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		return MultiParse::_req_seq_parse(first_arg, rem_args...);
+	}
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline auto _opt_or_parse(FirstArgType&& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		return MultiParse::_opt_or_parse(first_arg, rem_args...);
+	}
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline auto _req_or_parse(FirstArgType&& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		return MultiParse::_req_or_parse(first_arg, rem_args...);
+	}
 
 
 };
