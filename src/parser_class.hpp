@@ -17,7 +17,7 @@ public:		// types
 	using Base = ParserBase<Lexer>;
 	using TokSet = ast::NodeBase::TokSet;
 
-	using MultiParse = Base::MultiParse<Parser>;
+	using MultiParse = Base::MultiParse<Parser, SrcCodeChunk>;
 	using ParseFunc = typename MultiParse::ParseFunc;
 
 private:		// variables
