@@ -441,25 +441,25 @@ private:		// functions
 			s_parse_func, s_optional);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline auto _opt_seq_parse(FirstArgType&& first_arg,
+	inline auto _opt_seq_parse(const FirstArgType& first_arg,
 		RemArgTypes&&... rem_args)
 	{
 		return TheMultiParse::_opt_seq_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline auto _req_seq_parse(FirstArgType&& first_arg,
+	inline auto _req_seq_parse(const FirstArgType& first_arg,
 		RemArgTypes&&... rem_args)
 	{
 		return TheMultiParse::_req_seq_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline auto _opt_or_parse(FirstArgType&& first_arg,
+	inline auto _opt_or_parse(const FirstArgType& first_arg,
 		RemArgTypes&&... rem_args)
 	{
 		return TheMultiParse::_opt_or_parse(this, first_arg, rem_args...);
 	}
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline auto _req_or_parse(FirstArgType&& first_arg,
+	inline auto _req_or_parse(const FirstArgType& first_arg,
 		RemArgTypes&&... rem_args)
 	{
 		return TheMultiParse::_req_or_parse(this, first_arg, rem_args...);
@@ -471,7 +471,7 @@ private:		// functions
 	}
 	inline SrcCodeChunk _ls_src_code_chunk(const ParseRet& lex_state) const
 	{
-		return _lexer().src_code_chunk(&lex_state);
+		return _lexer().src_code_chunk(lex_state.get());
 	}
 
 };

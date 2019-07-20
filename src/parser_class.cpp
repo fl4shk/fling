@@ -64,7 +64,7 @@ auto Parser::parse_program() -> ParseRet
 		_ast_root->append(move(_pop_ast_child()));
 	}
 
-	return move(ret);
+	return ret;
 }
 
 #define CHECK_PREFIXED_ONE_TOK(one_tok) \
@@ -420,7 +420,7 @@ auto Parser::_parse_package() -> ParseRet
 	//CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
 	//const auto src_code_chunk = _lexer().src_code_chunk();
 
-	const auto ret = _dup_lex_state();
+	auto ret = _dup_lex_state();
 
 	const auto check_seq = _req_seq_parse(req_up(kw_package));
 	if (just_test())
@@ -440,12 +440,15 @@ auto Parser::_parse_scope_package() -> ParseRet
 {
 	NodeScopePackage to_push(_lexer().src_code_chunk());
 
-	const auto list_seq = _opt_or_parse(req_up(generate_package),
+	auto list_seq = _opt_or_parse(req_up(generate_package),
 		req_up(package), req_up(module), req_up(const), req_up(using),
 		req_up(decl_callable), req_up(decl_cstm_type));
-	check_parse_anon(_req_seq_parse(req_up(punct_lbrace), list_seq))
 
-	req_up(punct_lbrace).exec();
+	auto check_seq = _req_seq_parse(req_up(punct_lbrace), list_seq);
+
+	check_parse_anon(check_seq)
+
+	req_up(punct_lbrace)();
 
 	while (list_seq.check())
 	{
@@ -453,12 +456,7 @@ auto Parser::_parse_scope_package() -> ParseRet
 		to_push.append(_pop_ast_child());
 	}
 
-	const auto end = req_up(punct_rbrace);
-	if (!end.check())
-	{
-		_unexpected();
-	}
-	end.exec();
+	req_up(punct_rbrace)();
 
 	_push_ast_child(move(to_push));
 
