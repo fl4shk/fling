@@ -14,8 +14,11 @@ Parser::~Parser()
 }
 
 #define fp(func) &Parser::_parse_##func
-#define req_up(func) _unit_parse(#func, fp(func), false)
-#define opt_up(func) _unit_parse(#func, fp(func), true)
+#define runitp(func) _unit_parse(#func, fp(func), false)
+#define ounitp(func) _unit_parse(#func, fp(func), true)
+#define one_rseqp(func) _req_seq_parse(runitp(func))
+#define one_oseqp(func) _opt_seq_parse(ounitp(func))
+#define basic_one_opt_parse(func) _one_opt_parse(one_rseqp(func))
 
 #define check_parse_named(seq, some_req_seq_parse) \
 	const auto seq = some_req_seq_parse; \
@@ -23,6 +26,7 @@ Parser::~Parser()
 	{ \
 		return _check_for_just_test(seq); \
 	}
+
 #define check_parse_anon(some_req_seq_parse) \
 	if (just_test()) \
 	{ \
@@ -31,20 +35,20 @@ Parser::~Parser()
 
 #define simple_seq_parse_named(seq, some_req_seq_parse) \
 	check_parse_named(seq, some_req_seq_parse) \
-	const auto first_invalid = seq.first_invalid(); \
-	if (std::holds_alternative<bool>(first_invalid.one_inst)) \
-	{ \
-		_unexpected(*first_invalid.parse_ret); \
-	} \
+	/* const auto first_invalid = seq.first_invalid(); */ \
+	/* if (!std::holds_alternative<bool>(first_invalid.one_inst)) */ \
+	/* { */ \
+	/* 	_unexpected(*first_invalid.parse_ret); */ \
+	/* } */ \
 	seq.exec(); \
 
 #define simple_seq_parse_anon(some_req_seq_parse) \
 	check_parse_anon(some_req_seq_parse) \
-	const auto first_invalid = some_req_seq_parse.first_invalid(); \
-	if (std::holds_alternative<bool>(first_invalid.one_inst)) \
-	{ \
-		_unexpected(*first_invalid.parse_ret); \
-	} \
+	/* const auto first_invalid = some_req_seq_parse.first_invalid(); */ \
+	/* if (!std::holds_alternative<bool>(first_invalid.one_inst)) */ \
+	/* { */ \
+	/* 	_unexpected(*first_invalid.parse_ret); */ \
+	/* } */ \
 	some_req_seq_parse.exec(); \
 
 //using FuncVec = std::vector<decltype(fp(parse_program))>;
@@ -60,13 +64,13 @@ auto Parser::parse_program() -> ParseRet
 	//	_ast_root->append(move(_pop_ast_child()));
 	//}
 
-	//check_parse_named(seq, _opt_or_parse(req_up(package),
-	//	req_up(module)));
+	//check_parse_named(seq, _opt_or_parse(runitp(package),
+	//	runitp(module)));
 
 	auto ret = _dup_lex_state();
 
-	const auto seq = _opt_or_parse(req_up(package),
-		req_up(module));
+	const auto seq = _opt_or_parse(runitp(package),
+		runitp(module));
 
 	while (seq.check())
 	{
@@ -371,58 +375,63 @@ auto Parser::_parse_punct_scope_access() -> ParseRet
 auto Parser::_parse_header_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_if),
-		req_up(punct_lparen), req_up(expr), req_up(punct_rparen)));
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_if),
+		runitp(punct_lparen), runitp(expr), runitp(punct_rparen)));
 	return ret;
 }
 auto Parser::_parse_header_else_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else),
-		req_up(header_if)))
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_else),
+		runitp(header_if)))
 	return ret;
 }
 auto Parser::_parse_header_else() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else)));
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_else)));
 	return ret;
 }
 auto Parser::_parse_header_for() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_for),
-		req_up(punct_lparen), req_up(ident), req_up(punct_colon),
-		req_up(expr), req_up(punct_rparen)))
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_for),
+		runitp(punct_lparen), runitp(ident), runitp(punct_colon),
+		runitp(expr), runitp(punct_rparen)))
 	return ret;
 }
 
 auto Parser::_parse_header_generate_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_generate),
-		req_up(header_if)))
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_generate),
+		runitp(header_if)))
 	return ret;
 }
 auto Parser::_parse_header_else_generate_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else),
-		req_up(header_generate_if)))
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_else),
+		runitp(header_generate_if)))
 	return ret;
 }
 auto Parser::_parse_header_else_generate() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else),
-		req_up(kw_generate)))
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_else),
+		runitp(kw_generate)))
 	return ret;
 }
 auto Parser::_parse_header_generate_for() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	check_parse_named(to_check, _req_seq_parse(req_up(kw_generate),
-		opt_up(ident), req_up(header_for)))
+	check_parse_anon(_req_seq_parse(runitp(kw_generate), ounitp(ident),
+		runitp(header_for)))
+	
+	one_rseqp(kw_generate).exec();
+	_push_num(basic_one_opt_parse(ident));
+	one_rseqp(header_for).exec();
+
 	return ret;
 }
 
@@ -433,7 +442,7 @@ auto Parser::_parse_package() -> ParseRet
 
 	auto ret = _dup_lex_state();
 
-	const auto check_seq = _req_seq_parse(req_up(kw_package));
+	const auto check_seq = _req_seq_parse(runitp(kw_package));
 	if (just_test())
 	{
 		return _check_for_just_test(check_seq);
@@ -449,17 +458,18 @@ auto Parser::_parse_package() -> ParseRet
 }
 auto Parser::_parse_scope_package() -> ParseRet
 {
+	auto ret = _dup_lex_state();
 	NodeScopePackage to_push(_lexer().src_code_chunk());
 
-	auto list_seq = _opt_or_parse(req_up(generate_package),
-		req_up(package), req_up(module), req_up(const), req_up(using),
-		req_up(decl_callable), req_up(decl_cstm_type));
+	auto list_seq = _req_or_parse(runitp(generate_package),
+		runitp(package), runitp(module), runitp(const), runitp(using),
+		runitp(decl_callable), runitp(decl_cstm_type));
 
-	auto check_seq = _req_seq_parse(req_up(punct_lbrace), list_seq);
+	auto check_seq = one_rseqp(punct_lbrace);
 
 	check_parse_anon(check_seq)
 
-	req_up(punct_lbrace)();
+	check_seq.exec();
 
 	while (list_seq.check())
 	{
@@ -467,20 +477,27 @@ auto Parser::_parse_scope_package() -> ParseRet
 		to_push.append(_pop_ast_child());
 	}
 
-	req_up(punct_rbrace)();
+	one_rseqp(punct_rbrace).exec();
 
 	_push_ast_child(move(to_push));
 
+	return ret;
 }
 
 auto Parser::_parse_generate_package() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(generate_package_if),
+		runitp(generate_package_for)))
+	return ret;
 }
 auto Parser::_parse_generate_package_if() -> ParseRet
 {
+	return _parse_generate_any_if("scope_package", fp(scope_package));
 }
 auto Parser::_parse_generate_package_for() -> ParseRet
 {
+	return _parse_generate_any_for("scope_package", fp(scope_package));
 }
 
 auto Parser::_parse_callable_member_prefix() -> ParseRet
@@ -555,6 +572,50 @@ auto Parser::_parse_stmt_assign() -> ParseRet
 }
 auto Parser::_parse_stmt_if() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	check_parse_named(to_check, _req_seq_parse(runitp(header_generate_if)))
+	to_check.exec();
+
+	NodeStmtIf to_push(_ls_src_code_chunk(ret), move(_pop_ast_child()),
+		Child(nullptr), Child(nullptr));
+
+	NodeStmtIf* top = &to_push;
+
+	const auto parse_scope_seq = one_rseqp(scope_behav);
+
+	parse_scope_seq.exec();
+	to_push.set_stmt_list(move(_pop_ast_child()));
+
+	const auto seq_else_if = _req_seq_parse
+		(runitp(header_else_generate_if));
+
+	while (seq_else_if.check())
+	{
+		auto temp = _dup_lex_state();
+		seq_else_if.exec();
+		auto cond_expr = _pop_ast_child();
+
+		parse_scope_seq.exec();
+		auto stmt_list = _pop_ast_child();
+
+		NodeStmtIf next_to_push(_ls_src_code_chunk(temp), move(cond_expr),
+			move(stmt_list), Child(nullptr));
+		top->set_stmt_else(Child(new NodeStmtIf(move(next_to_push))));
+		top = static_cast<NodeStmtIf*>(top->stmt_else().get());
+	}
+
+	const auto seq_else = _req_seq_parse(runitp(header_else_generate));
+
+	if (seq_else.check())
+	{
+		seq_else.exec();
+		parse_scope_seq.exec();
+		top->set_stmt_else(_pop_ast_child());
+	}
+
+	_push_ast_child(move(to_push));
+
+	return ret;
 }
 auto Parser::_parse_stmt_for() -> ParseRet
 {
@@ -808,16 +869,87 @@ auto Parser::_parse_ident_param_scope_overloaded_call() -> ParseRet
 //	return true;
 //}
 
-#undef FUNC_VEC
-#undef fp
-#undef opt_up
-#undef req_up
-#undef check_parse_named
-#undef check_parse_anon
-#undef simple_seq_parse_named
-#undef simple_seq_parse_anon
-#undef CHECK_PREFIXED_ONE_TOK
-#undef CHECK_PREFIXED_TOK_SEQ
-//#undef RUN_ONE_FUNC
+auto Parser::_parse_generate_any_if(const string& parse_scope_func_str,
+	ParseFunc parse_scope_func) -> ParseRet
+{
+	auto ret = _dup_lex_state();
+	check_parse_named(to_check, _req_seq_parse(runitp(header_generate_if)))
+	to_check.exec();
+
+	NodeStmtGenerateIf to_push(_ls_src_code_chunk(ret),
+		move(_pop_ast_child()), Child(nullptr), Child(nullptr));
+
+	NodeStmtGenerateIf* top = &to_push;
+
+	const auto parse_scope_seq = _req_seq_parse(_unit_parse
+		(parse_scope_func_str, parse_scope_func));
+
+	parse_scope_seq.exec();
+	to_push.set_stmt_list(move(_pop_ast_child()));
+
+	const auto seq_else_if = _req_seq_parse
+		(runitp(header_else_generate_if));
+
+	while (seq_else_if.check())
+	{
+		auto temp = _dup_lex_state();
+		seq_else_if.exec();
+		auto cond_expr = _pop_ast_child();
+
+		parse_scope_seq.exec();
+		auto stmt_list = _pop_ast_child();
+
+		NodeStmtGenerateIf next_to_push(_ls_src_code_chunk(temp),
+			move(cond_expr), move(stmt_list), Child(nullptr));
+		top->set_stmt_else(Child
+			(new NodeStmtGenerateIf(move(next_to_push))));
+		top = static_cast<NodeStmtGenerateIf*>(top->stmt_else().get());
+	}
+
+	const auto seq_else = _req_seq_parse(runitp(header_else_generate));
+
+	if (seq_else.check())
+	{
+		seq_else.exec();
+		parse_scope_seq.exec();
+		top->set_stmt_else(_pop_ast_child());
+	}
+
+	_push_ast_child(move(to_push));
+
+	return ret;
+}
+
+auto Parser::_parse_generate_any_for(const string& parse_scope_func_str,
+	ParseFunc parse_scope_func) -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	check_parse_named(to_check,
+		_req_seq_parse(runitp(header_generate_for)))
+
+	to_check.exec();
+
+
+	auto s_items = _pop_ast_child();
+	auto s_var = _pop_ast_child();
+
+	Child s_label(nullptr);
+
+	// Check for ident
+	if (_pop_num())
+	{
+		s_label = _pop_ast_child();
+	}
+
+	_req_seq_parse(_unit_parse(parse_scope_func_str, parse_scope_func))
+		.exec();
+	auto s_stmt_list = _pop_ast_child();
+
+	_push_ast_child(NodeStmtGenerateFor(_ls_src_code_chunk(ret),
+		move(s_label), move(s_var), move(s_items), move(s_stmt_list)));
+
+	return ret;
+}
 
 } // namespace frost_hdl

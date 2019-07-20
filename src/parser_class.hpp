@@ -474,6 +474,41 @@ private:		// functions
 		return _lexer().src_code_chunk(lex_state.get());
 	}
 
+	template<typename ParseSeqType>
+	inline bool _one_opt_parse(const ParseSeqType& parse_seq,
+		const string& exec_str, const string& no_exec_str)
+	{
+		if (parse_seq.check())
+		{
+			parse_seq.exec();
+			_push_str(exec_str);
+			return true;
+		}
+		else
+		{
+			_push_str(no_exec_str);
+			return false;
+		}
+	}
+	template<typename ParseSeqType>
+	inline bool _one_opt_parse(const ParseSeqType& parse_seq)
+	{
+		if (parse_seq.check())
+		{
+			parse_seq.exec();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	ParseRet _parse_generate_any_if(const string& parse_scope_func_str,
+		ParseFunc parse_scope_func);
+	ParseRet _parse_generate_any_for(const string& parse_scope_func_str,
+		ParseFunc parse_scope_func);
+
 };
 
 } // namespace frost_hdl
