@@ -90,7 +90,7 @@ auto Parser::parse_program() -> ParseRet
 		} \
 	} \
 	auto ret = _dup_lex_state(); \
-	_expect(one_tok);
+	_expect(one_tok); \
 	return ret
 
 #define CHECK_PREFIXED_TOK_SEQ(left, right) \
@@ -106,7 +106,7 @@ auto Parser::parse_program() -> ParseRet
 		} \
 	} \
 	auto ret = _dup_lex_state(); \
-	_check_prefixed_tok_seq(left, right);
+	_check_prefixed_tok_seq(left, right); \
 	_next_lss_tokens(); \
 	return ret
 
