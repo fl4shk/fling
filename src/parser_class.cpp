@@ -29,19 +29,21 @@ Parser::~Parser()
 		return _check_for_just_test(some_req_seq_parse); \
 	}
 
-#define simple_parse_named(seq, some_req_seq_parse) \
+#define simple_seq_parse_named(seq, some_req_seq_parse) \
 	check_parse_named(seq, some_req_seq_parse) \
-	if (!seq.check()) \
+	const auto first_invalid = seq.first_invalid(); \
+	if (std::holds_alternative<bool>(first_invalid.one_inst)) \
 	{ \
-		_unexpected(); \
+		_unexpected(*first_invalid.parse_ret); \
 	} \
 	seq.exec(); \
 
-#define simple_parse_anon(some_req_seq_parse) \
+#define simple_seq_parse_anon(some_req_seq_parse) \
 	check_parse_anon(some_req_seq_parse) \
-	if (!some_req_seq_parse.check()) \
+	const auto first_invalid = some_req_seq_parse.first_invalid(); \
+	if (std::holds_alternative<bool>(first_invalid.one_inst)) \
 	{ \
-		_unexpected(); \
+		_unexpected(*first_invalid.parse_ret); \
 	} \
 	some_req_seq_parse.exec(); \
 
@@ -369,50 +371,50 @@ auto Parser::_parse_punct_scope_access() -> ParseRet
 auto Parser::_parse_header_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_if), req_up(punct_lparen),
-		req_up(expr), req_up(punct_rparen)));
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_if),
+		req_up(punct_lparen), req_up(expr), req_up(punct_rparen)));
 	return ret;
 }
 auto Parser::_parse_header_else_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_else), req_up(header_if)))
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else),
+		req_up(header_if)))
 	return ret;
 }
 auto Parser::_parse_header_else() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_else)));
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else)));
 	return ret;
 }
 auto Parser::_parse_header_for() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_for),
-		req_up(punct_lparen), req_up(ident),
-		req_up(punct_colon), req_up(expr),
-		req_up(punct_rparen)))
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_for),
+		req_up(punct_lparen), req_up(ident), req_up(punct_colon),
+		req_up(expr), req_up(punct_rparen)))
 	return ret;
 }
 
 auto Parser::_parse_header_generate_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_generate),
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_generate),
 		req_up(header_if)))
 	return ret;
 }
 auto Parser::_parse_header_else_generate_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_else),
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(header_generate_if)))
 	return ret;
 }
 auto Parser::_parse_header_else_generate() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	simple_parse_anon(_req_seq_parse(req_up(kw_else),
+	simple_seq_parse_anon(_req_seq_parse(req_up(kw_else),
 		req_up(kw_generate)))
 	return ret;
 }
@@ -812,8 +814,8 @@ auto Parser::_parse_ident_param_scope_overloaded_call() -> ParseRet
 #undef req_up
 #undef check_parse_named
 #undef check_parse_anon
-#undef simple_parse_named
-#undef simple_parse_anon
+#undef simple_seq_parse_named
+#undef simple_seq_parse_anon
 #undef CHECK_PREFIXED_ONE_TOK
 #undef CHECK_PREFIXED_TOK_SEQ
 //#undef RUN_ONE_FUNC
