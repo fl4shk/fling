@@ -31,10 +31,18 @@ Parser::~Parser()
 
 #define simple_parse_named(seq, some_req_seq_parse) \
 	check_parse_named(seq, some_req_seq_parse) \
-	to_check.exec(); \
+	if (!seq.check()) \
+	{ \
+		_unexpected(); \
+	} \
+	seq.exec(); \
 
 #define simple_parse_anon(some_req_seq_parse) \
 	check_parse_anon(some_req_seq_parse) \
+	if (!some_req_seq_parse.check()) \
+	{ \
+		_unexpected(); \
+	} \
 	some_req_seq_parse.exec(); \
 
 //using FuncVec = std::vector<decltype(fp(parse_program))>;
@@ -80,7 +88,7 @@ auto Parser::parse_program() -> ParseRet
 		} \
 	} \
 	auto ret = _dup_lex_state(); \
-	_next_lss_tokens(); \
+	_expect(one_tok);
 	return ret
 
 #define CHECK_PREFIXED_TOK_SEQ(left, right) \
@@ -96,6 +104,7 @@ auto Parser::parse_program() -> ParseRet
 		} \
 	} \
 	auto ret = _dup_lex_state(); \
+	_check_prefixed_tok_seq(left, right);
 	_next_lss_tokens(); \
 	return ret
 
