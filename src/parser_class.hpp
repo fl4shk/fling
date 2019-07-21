@@ -18,6 +18,7 @@ public:		// types
 	using TokSet = ast::NodeBase::TokSet;
 
 	using TheMultiParse = Base::MultiParse<Parser>;
+	using TheSeqParse = Base::SeqParse<Parser>;
 	using ParseRet = typename TheMultiParse::ParseRet;
 	using ParseFunc = typename TheMultiParse::ParseFunc;
 
@@ -355,6 +356,7 @@ private:		// functions
 	ParseRet _parse_extends();
 
 	ParseRet _parse_scope_class();
+	ParseRet _parse_callable_member();
 	ParseRet _parse_generate_class();
 	ParseRet _parse_generate_class_if();
 	ParseRet _parse_generate_class_for();
@@ -508,6 +510,34 @@ private:		// functions
 		ParseFunc parse_scope_func);
 	ParseRet _parse_generate_any_for(const string& parse_scope_func_str,
 		ParseFunc parse_scope_func);
+
+
+	template<typename AstNodeScopeType>
+	ParseRet _parse_any_scope(const string& scope_type_str,
+		const TheSeqParse& list_seq);
+
+	inline ast::NodeBase::Child _pexec(const TheSeqParse& seq)
+	{
+		seq.exec();
+		return _pop_ast_child();
+	}
+
+	template<typename AstNodeScopeType>
+	inline bool _partial_parse_any_list(AstNodeScopeType& to_push,
+		const TheSeqParse& list_seq)
+	{
+		if (!list_seq.check())
+		{
+			return false;
+		}
+
+		while (list_seq.check())
+		{
+			to_push.append(_pexec(list_seq));
+		}
+
+		return true;
+	}
 
 };
 

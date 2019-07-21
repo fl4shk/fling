@@ -305,25 +305,25 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(right)
 };
 
-class NodeIdentBracket : public NodeList
+class NodeIdentTerminal : public NodeList
 {
 protected:		// children
 	Child _ident;
 public:		// functions
-	inline NodeIdentBracket(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeIdentTerminal(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_ident)
 		: NodeList(s_src_code_chunk),
 		_ident(std::move(s_ident))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeIdentBracket);
+	GEN_POST_CONSTRUCTOR(NodeIdentTerminal);
 	virtual Type type() const
 	{
-		return Type::IdentBracket;
+		return Type::IdentTerminal;
 	}
 	virtual string name() const
 	{
-		return "IdentBracket";
+		return "IdentTerminal";
 	}
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
@@ -3032,9 +3032,6 @@ public:		// functions
 
 class NodeDeclCallable : public NodeBase
 {
-protected:		// variables
-	bool _is_static;
-	bool _is_virtual;
 protected:		// children
 	Child _param_list,
 		_arg_list,
@@ -3042,14 +3039,11 @@ protected:		// children
 		_stmt_list;
 public:		// functions
 	inline NodeDeclCallable(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_static,
-		const bool& s_is_virtual,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
 		Child&& s_stmt_list)
-		: NodeBase(s_src_code_chunk), _is_static(s_is_static),
-		_is_virtual(s_is_virtual),
+		: NodeBase(s_src_code_chunk),
 		_param_list(std::move(s_param_list)),
 		_arg_list(std::move(s_arg_list)),
 		_ident_or_op(std::move(s_ident_or_op)),
@@ -3065,8 +3059,6 @@ public:		// functions
 	{
 		return "DeclCallable";
 	}
-	GEN_GETTER_AND_SETTER_BY_CON_REF(is_static)
-	GEN_GETTER_AND_SETTER_BY_CON_REF(is_virtual)
 	GEN_GETTER_BY_CON_REF(param_list)
 	GEN_SETTER_BY_RVAL_REF(param_list)
 	GEN_GETTER_BY_CON_REF(arg_list)
@@ -3086,16 +3078,12 @@ protected:		// children
 public:		// functions
 	inline NodeDeclFunc(const SrcCodeChunk& s_src_code_chunk,
 		const bool& s_is_const,
-		const bool& s_is_static,
-		const bool& s_is_virtual,
 		Child&& s_the_typename,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
 		Child&& s_stmt_list)
 		: NodeDeclCallable(s_src_code_chunk,
-		s_is_static,
-		s_is_virtual,
 		std::move(s_param_list),
 		std::move(s_arg_list),
 		std::move(s_ident_or_op),
@@ -3124,15 +3112,11 @@ protected:		// variables
 public:		// functions
 	inline NodeDeclProc(const SrcCodeChunk& s_src_code_chunk,
 		const bool& s_is_port,
-		const bool& s_is_static,
-		const bool& s_is_virtual,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
 		Child&& s_stmt_list)
 		: NodeDeclCallable(s_src_code_chunk,
-		s_is_static,
-		s_is_virtual,
 		std::move(s_param_list),
 		std::move(s_arg_list),
 		std::move(s_ident_or_op),
@@ -3155,15 +3139,11 @@ class NodeDeclTask : public NodeDeclCallable
 {
 public:		// functions
 	inline NodeDeclTask(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_static,
-		const bool& s_is_virtual,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
 		Child&& s_stmt_list)
 		: NodeDeclCallable(s_src_code_chunk,
-		s_is_static,
-		s_is_virtual,
 		std::move(s_param_list),
 		std::move(s_arg_list),
 		std::move(s_ident_or_op),
@@ -3185,18 +3165,18 @@ class NodeDeclVar : public NodeBase
 {
 protected:		// children
 	Child _the_typename,
-		_ident_bracket,
+		_ident_terminal,
 		_port_inst_list,
 		_expr;
 public:		// functions
 	inline NodeDeclVar(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename,
-		Child&& s_ident_bracket,
+		Child&& s_ident_terminal,
 		Child&& s_port_inst_list,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename)),
-		_ident_bracket(std::move(s_ident_bracket)),
+		_ident_terminal(std::move(s_ident_terminal)),
 		_port_inst_list(std::move(s_port_inst_list)),
 		_expr(std::move(s_expr))
 	{
@@ -3212,8 +3192,8 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
-	GEN_GETTER_BY_CON_REF(ident_bracket)
-	GEN_SETTER_BY_RVAL_REF(ident_bracket)
+	GEN_GETTER_BY_CON_REF(ident_terminal)
+	GEN_SETTER_BY_RVAL_REF(ident_terminal)
 	GEN_GETTER_BY_CON_REF(port_inst_list)
 	GEN_SETTER_BY_RVAL_REF(port_inst_list)
 	GEN_GETTER_BY_CON_REF(expr)
@@ -3225,12 +3205,12 @@ class NodeDeclConst : public NodeDeclVar
 public:		// functions
 	inline NodeDeclConst(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename,
-		Child&& s_ident_bracket,
+		Child&& s_ident_terminal,
 		Child&& s_port_inst_list,
 		Child&& s_expr)
 		: NodeDeclVar(s_src_code_chunk,
 		std::move(s_the_typename),
-		std::move(s_ident_bracket),
+		std::move(s_ident_terminal),
 		std::move(s_port_inst_list),
 		std::move(s_expr))
 	{

@@ -30,7 +30,7 @@ LeftRightBase:
 
 // Example:  `i_a_arr[ARR_SIZE]`
 // The list is of brackets.  Example of multiple brackets:  `i_a_arr[2][3]`
-IdentBracket, List:
+IdentTerminal, List:
 	child ident;
 
 // This represents the `.`, indicating a scope.
@@ -307,7 +307,6 @@ NegedgeInst:
 EdgeList, List:
 
 DeclCallable:
-	initvar bool _is_static, _is_virtual;
 	child param_list, arg_list, ident_or_op, stmt_list;
 
 DeclFunc, DeclCallable:
@@ -318,7 +317,7 @@ DeclProc, DeclCallable:
 DeclTask, DeclCallable:
 
 DeclVar:
-	child the_typename, ident_bracket, port_inst_list, expr;
+	child the_typename, ident_terminal, port_inst_list, expr;
 DeclConst, DeclVar:
 //DeclGenvar, DeclVar:
 

@@ -16,9 +16,9 @@ Parser::~Parser()
 #define fp(func) &Parser::_parse_##func
 #define runitp(func) _unit_parse(#func, fp(func), false)
 #define ounitp(func) _unit_parse(#func, fp(func), true)
-#define one_rseqp(func) _req_seq_parse(runitp(func))
-#define one_oseqp(func) _opt_seq_parse(ounitp(func))
-#define basic_one_opt_parse(func) _one_opt_parse(one_rseqp(func))
+#define one_req_seqp(func) _req_seq_parse(runitp(func))
+#define one_opt_seqp(func) _opt_seq_parse(ounitp(func))
+#define basic_one_opt_parse(func) _one_opt_parse(one_req_seqp(func))
 
 #define check_parse_named(seq, some_req_seq_parse) \
 	const auto seq = some_req_seq_parse; \
@@ -75,7 +75,7 @@ auto Parser::parse_program() -> ParseRet
 	while (seq.check())
 	{
 		seq.exec();
-		_ast_root->append(move(_pop_ast_child()));
+		_ast_root->append(_pop_ast_child());
 	}
 
 	return ret;
@@ -428,9 +428,9 @@ auto Parser::_parse_header_generate_for() -> ParseRet
 	check_parse_anon(_req_seq_parse(runitp(kw_generate), ounitp(ident),
 		runitp(header_for)))
 	
-	one_rseqp(kw_generate).exec();
+	one_req_seqp(kw_generate).exec();
 	_push_num(basic_one_opt_parse(ident));
-	one_rseqp(header_for).exec();
+	one_req_seqp(header_for).exec();
 
 	return ret;
 }
@@ -442,11 +442,7 @@ auto Parser::_parse_package() -> ParseRet
 
 	auto ret = _dup_lex_state();
 
-	const auto check_seq = _req_seq_parse(runitp(kw_package));
-	if (just_test())
-	{
-		return _check_for_just_test(check_seq);
-	}
+	check_parse_named(check_seq, one_req_seqp(kw_package))
 	check_seq.exec();
 
 	auto ident = _get_req_parse(fp(ident));
@@ -458,30 +454,10 @@ auto Parser::_parse_package() -> ParseRet
 }
 auto Parser::_parse_scope_package() -> ParseRet
 {
-	auto ret = _dup_lex_state();
-	NodeScopePackage to_push(_lexer().src_code_chunk());
-
-	auto list_seq = _req_or_parse(runitp(generate_package),
+	return _parse_any_scope<NodeScopePackage>("package",
+		_req_or_parse(runitp(generate_package),
 		runitp(package), runitp(module), runitp(const), runitp(using),
-		runitp(decl_callable), runitp(decl_cstm_type));
-
-	auto check_seq = one_rseqp(punct_lbrace);
-
-	check_parse_anon(check_seq)
-
-	check_seq.exec();
-
-	while (list_seq.check())
-	{
-		list_seq.exec();
-		to_push.append(_pop_ast_child());
-	}
-
-	one_rseqp(punct_rbrace).exec();
-
-	_push_ast_child(move(to_push));
-
-	return ret;
+		runitp(decl_callable), runitp(decl_cstm_type)));
 }
 
 auto Parser::_parse_generate_package() -> ParseRet
@@ -554,13 +530,13 @@ auto Parser::_parse_contents_modproc() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	const auto opt_seq = one_rseqp(param_list);
+	const auto opt_seq = one_opt_seqp(param_list);
 	const auto req_seq = _req_seq_parse(runitp(arg_list),
 		runitp(scope_modproc));
 
 	check_parse_anon(_req_seq_parse(opt_seq, req_seq))
 
-	_one_opt_parse(opt_seq, "param_list", "no_param_list");
+	_push_num(_one_opt_parse(opt_seq));
 	req_seq.exec();
 
 	return ret;
@@ -569,9 +545,46 @@ auto Parser::_parse_proc() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	const auto start_seq = one_rseqp(kw_proc);
+	check_parse_named(start_seq, one_req_seqp(kw_proc))
 
+	start_seq.exec();
 
+	//const auto or_seq = _req_or_parse(runitp(ident), runitp(kw_port),
+	//	runitp(const_str));
+
+	Child s_ident_or_op(nullptr);
+	bool s_is_port = false;
+
+	if (const auto seq_ident = one_req_seqp(ident); seq_ident.check())
+	{
+		s_ident_or_op = _pexec(seq_ident);
+	}
+	else if (const auto seq_port = one_req_seqp(kw_port); seq_port.check())
+	{
+		seq_port.exec();
+		s_is_port = true;
+	}
+	else if (const auto seq_const_str = one_req_seqp(const_str);
+		seq_const_str.check())
+	{
+		s_ident_or_op = _pexec(seq_const_str);
+	}
+
+	one_req_seqp(contents_modproc).exec();
+
+	Child s_param_list;
+
+	if (_pop_num())
+	{
+		s_param_list = _pop_ast_child();
+	}
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_arg_list = _pop_ast_child();
+
+	_push_ast_child(NodeDeclProc(_ls_src_code_chunk(ret), s_is_port,
+		move(s_param_list), move(s_arg_list), move(s_ident_or_op),
+		move(s_stmt_list)));
 	return ret;
 }
 auto Parser::_parse_module() -> ParseRet
@@ -639,44 +652,38 @@ auto Parser::_parse_stmt_assign() -> ParseRet
 auto Parser::_parse_stmt_if() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	check_parse_named(to_check, _req_seq_parse(runitp(header_generate_if)))
-	to_check.exec();
+	check_parse_named(to_check, one_req_seqp(header_if))
 
-	NodeStmtIf to_push(_ls_src_code_chunk(ret), move(_pop_ast_child()),
-		Child(nullptr), Child(nullptr));
+	NodeStmtIf to_push(_ls_src_code_chunk(ret),
+		_pexec(to_check), Child(nullptr), Child(nullptr));
 
 	NodeStmtIf* top = &to_push;
 
-	const auto parse_scope_seq = one_rseqp(scope_behav);
+	const auto parse_scope_seq = one_req_seqp(header_if);
 
-	parse_scope_seq.exec();
-	to_push.set_stmt_list(move(_pop_ast_child()));
+	to_push.set_stmt_list(_pexec(parse_scope_seq));
 
-	const auto seq_else_if = _req_seq_parse
-		(runitp(header_else_generate_if));
+	const auto seq_else_if = one_req_seqp(header_else_if);
 
 	while (seq_else_if.check())
 	{
 		auto temp = _dup_lex_state();
-		seq_else_if.exec();
-		auto cond_expr = _pop_ast_child();
+		auto cond_expr = _pexec(seq_else_if);
 
-		parse_scope_seq.exec();
-		auto stmt_list = _pop_ast_child();
+		auto stmt_list = _pexec(parse_scope_seq);
 
-		NodeStmtIf next_to_push(_ls_src_code_chunk(temp), move(cond_expr),
-			move(stmt_list), Child(nullptr));
+		NodeStmtIf next_to_push(_ls_src_code_chunk(temp),
+			move(cond_expr), move(stmt_list), Child(nullptr));
 		top->set_stmt_else(Child(new NodeStmtIf(move(next_to_push))));
 		top = static_cast<NodeStmtIf*>(top->stmt_else().get());
 	}
 
-	const auto seq_else = _req_seq_parse(runitp(header_else_generate));
+	const auto seq_else = one_req_seqp(header_else_generate);
 
 	if (seq_else.check())
 	{
 		seq_else.exec();
-		parse_scope_seq.exec();
-		top->set_stmt_else(_pop_ast_child());
+		top->set_stmt_else(_pexec(parse_scope_seq));
 	}
 
 	_push_ast_child(move(to_push));
@@ -710,6 +717,9 @@ auto Parser::_parse_extends() -> ParseRet
 }
 
 auto Parser::_parse_scope_class() -> ParseRet
+{
+}
+auto Parser::_parse_callable_member() -> ParseRet
 {
 }
 auto Parser::_parse_generate_class() -> ParseRet
@@ -912,46 +922,21 @@ auto Parser::_parse_ident_param_scope_overloaded_call() -> ParseRet
 {
 }
 
-//bool Parser::_parse_generate_any_if(bool (Parser::* parse_scope_func)())
-//{
-//	RUN_ONE_FUNC(fp(_parse_header_generate_if));
-//
-//	NodeStmtGenerateIf to_push(_lexer().src_code_chunk(), _pop_ast_child(),
-//		Child(nullptr), Child(nullptr));
-//	NodeBase* which_to_push = &to_push;
-//
-//	bool found = false;
-//	while (_check_parse(fp(_parse_header_else_generate_if)))
-//	{
-//		_req_parse(fp(_parse_header_else_generate_if));
-//
-//		found = true;
-//	}
-//
-//	return true;
-//}
-//bool Parser::_parse_generate_any_for(bool (Parser::* parse_scope_func)())
-//{
-//	return true;
-//}
-
 auto Parser::_parse_generate_any_if(const string& parse_scope_func_str,
 	ParseFunc parse_scope_func) -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	check_parse_named(to_check, _req_seq_parse(runitp(header_generate_if)))
-	to_check.exec();
 
 	NodeStmtGenerateIf to_push(_ls_src_code_chunk(ret),
-		move(_pop_ast_child()), Child(nullptr), Child(nullptr));
+		_pexec(to_check), Child(nullptr), Child(nullptr));
 
 	NodeStmtGenerateIf* top = &to_push;
 
 	const auto parse_scope_seq = _req_seq_parse(_unit_parse
 		(parse_scope_func_str, parse_scope_func));
 
-	parse_scope_seq.exec();
-	to_push.set_stmt_list(move(_pop_ast_child()));
+	to_push.set_stmt_list(_pexec(parse_scope_seq));
 
 	const auto seq_else_if = _req_seq_parse
 		(runitp(header_else_generate_if));
@@ -959,11 +944,9 @@ auto Parser::_parse_generate_any_if(const string& parse_scope_func_str,
 	while (seq_else_if.check())
 	{
 		auto temp = _dup_lex_state();
-		seq_else_if.exec();
-		auto cond_expr = _pop_ast_child();
+		auto cond_expr = _pexec(seq_else_if);
 
-		parse_scope_seq.exec();
-		auto stmt_list = _pop_ast_child();
+		auto stmt_list = _pexec(parse_scope_seq);
 
 		NodeStmtGenerateIf next_to_push(_ls_src_code_chunk(temp),
 			move(cond_expr), move(stmt_list), Child(nullptr));
@@ -977,8 +960,7 @@ auto Parser::_parse_generate_any_if(const string& parse_scope_func_str,
 	if (seq_else.check())
 	{
 		seq_else.exec();
-		parse_scope_seq.exec();
-		top->set_stmt_else(_pop_ast_child());
+		top->set_stmt_else(_pexec(parse_scope_seq));
 	}
 
 	_push_ast_child(move(to_push));
@@ -991,11 +973,9 @@ auto Parser::_parse_generate_any_for(const string& parse_scope_func_str,
 {
 	auto ret = _dup_lex_state();
 
-	check_parse_named(to_check,
-		_req_seq_parse(runitp(header_generate_for)))
+	check_parse_named(to_check, one_req_seqp(header_generate_for))
 
 	to_check.exec();
-
 
 	auto s_items = _pop_ast_child();
 	auto s_var = _pop_ast_child();
@@ -1008,14 +988,41 @@ auto Parser::_parse_generate_any_for(const string& parse_scope_func_str,
 		s_label = _pop_ast_child();
 	}
 
-	_req_seq_parse(_unit_parse(parse_scope_func_str, parse_scope_func))
-		.exec();
-	auto s_stmt_list = _pop_ast_child();
+	auto s_stmt_list = _pexec(_req_seq_parse(_unit_parse
+		(parse_scope_func_str, parse_scope_func)));
 
 	_push_ast_child(NodeStmtGenerateFor(_ls_src_code_chunk(ret),
 		move(s_label), move(s_var), move(s_items), move(s_stmt_list)));
 
 	return ret;
 }
+
+template<typename AstNodeScopeType>
+auto Parser::_parse_any_scope(const string& scope_type_str,
+	const TheSeqParse& list_seq) -> ParseRet
+{
+	auto ret = _dup_lex_state();
+	AstNodeScopeType to_push(_lexer().src_code_chunk());
+
+	const auto check_seq = one_req_seqp(punct_lbrace);
+	const auto end_seq = one_req_seqp(punct_rbrace);
+
+	check_parse_anon(check_seq)
+
+	check_seq.exec();
+
+	if ((!_partial_parse_any_list(to_push, list_seq))
+		&& (!end_seq.check()))
+	{
+		_lexer().src_code_chunk().err(sconcat("Unknown ", scope_type_str,
+			" scope item."));
+	}
+
+	end_seq.exec();
+	_push_ast_child(move(to_push));
+
+	return ret;
+}
+
 
 } // namespace frost_hdl

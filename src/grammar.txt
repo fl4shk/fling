@@ -439,17 +439,20 @@ extends:
 scope_class:
 	punct_lbrace
 		(
-			member_access_label?
+			generate_class
+			| member_access_label?
 			(
-				generate_class
-				| const
+				const
 				| var
 				| using
-				| (callable_member_prefix? decl_callable)
+				| callable_member
 				| decl_cstm_type
 			)
 		)*
 	punct_rbrace
+	;
+callable_member:
+	callable_member_prefix? decl_callable
 	;
 
 generate_class:

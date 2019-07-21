@@ -17,7 +17,7 @@ enum class Type
 	ParamModuleSublist,
 	ParamArgList,
 	LeftRightBase,
-	IdentBracket,
+	IdentTerminal,
 	IdentMemberAccess,
 	IdentScopeAccess,
 	Call,
