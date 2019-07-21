@@ -546,7 +546,6 @@ auto Parser::_parse_proc() -> ParseRet
 	auto ret = _dup_lex_state();
 
 	check_parse_named(start_seq, one_req_seqp(kw_proc))
-
 	start_seq.exec();
 
 	//const auto or_seq = _req_or_parse(runitp(ident), runitp(kw_port),
@@ -572,15 +571,15 @@ auto Parser::_parse_proc() -> ParseRet
 
 	one_req_seqp(contents_modproc).exec();
 
+	auto s_stmt_list = _pop_ast_child();
+	auto s_arg_list = _pop_ast_child();
+
 	Child s_param_list;
 
 	if (_pop_num())
 	{
 		s_param_list = _pop_ast_child();
 	}
-
-	auto s_stmt_list = _pop_ast_child();
-	auto s_arg_list = _pop_ast_child();
 
 	_push_ast_child(NodeDeclProc(_ls_src_code_chunk(ret), s_is_port,
 		move(s_param_list), move(s_arg_list), move(s_ident_or_op),
@@ -590,6 +589,25 @@ auto Parser::_parse_proc() -> ParseRet
 auto Parser::_parse_module() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+
+	check_parse_named(seq, _req_seq_parse(runitp(kw_module),
+		runitp(ident), runitp(contents_modproc)))
+	seq.exec();
+
+	auto s_scope = _pop_ast_child();
+	auto s_port_list = _pop_ast_child();
+
+	Child s_param_list;
+
+	if (_pop_num())
+	{
+		s_param_list = _pop_ast_child();
+	}
+
+	auto s_ident = _pop_ast_child();
+
+	_push_ast_child(NodeModule(_ls_src_code_chunk(ret), move(s_ident),
+		move(s_param_list), move(s_port_list), move(s_scope)));
 	return ret;
 }
 
