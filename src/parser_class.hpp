@@ -96,7 +96,7 @@ private:		// variables
 
 
 public:		// functions
-	Parser(std::vector<string>&& s_filename_vec);
+	Parser(vector<string>&& s_filename_vec);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Parser)
 	~Parser();
 
@@ -167,7 +167,7 @@ private:		// functions
 	}
 	template<typename FuncType>
 	static auto _check_parse(Parser* self,
-		const std::vector<FuncType>& func_vec)
+		const vector<FuncType>& func_vec)
 	{
 		return Base::_check_parse(self, func_vec);
 	}
@@ -181,7 +181,7 @@ private:		// functions
 	}
 	template<typename FuncType>
 	static bool _opt_parse(Parser* self,
-		const std::vector<FuncType>& func_vec)
+		const vector<FuncType>& func_vec)
 	{
 		return Base::_opt_parse(self, func_vec);
 	}
@@ -195,7 +195,7 @@ private:		// functions
 	}
 	template<typename FuncType>
 	static void _req_parse(Parser* self,
-		const std::vector<FuncType>& func_vec)
+		const vector<FuncType>& func_vec)
 	{
 		Base::_req_parse(self, func_vec);
 	}
@@ -208,7 +208,7 @@ private:		// functions
 	}
 	template<typename FuncType>
 	static auto _get_req_parse(Parser* self,
-		const std::vector<FuncType>& func_vec)
+		const vector<FuncType>& func_vec)
 	{
 		Base::_req_parse(self, func_vec);
 		return self->_pop_ast_child();
@@ -223,7 +223,7 @@ private:		// functions
 	}
 	template<typename FuncType>
 	static void _req_parse_loop(Parser* self,
-		const std::vector<FuncType>& func_vec)
+		const vector<FuncType>& func_vec)
 	{
 		Base::_req_parse_loop(self, func_vec);
 	}

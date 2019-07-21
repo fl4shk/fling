@@ -634,7 +634,8 @@ protected:		// children
 		_var_list;
 public:		// functions
 	inline NodeClass(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_packed, const bool& s_virtual_extends,
+		const bool& s_packed,
+		const bool& s_virtual_extends,
 		Child&& s_ident,
 		Child&& s_param_list,
 		Child&& s_extends,
@@ -724,7 +725,9 @@ protected:		// children
 	Child _callable;
 public:		// functions
 	inline NodeCallableMember(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_const, const bool& s_is_virtual, const bool& s_is_static,
+		const bool& s_is_const,
+		const bool& s_is_virtual,
+		const bool& s_is_static,
 		Child&& s_callable)
 		: NodeBase(s_src_code_chunk), _is_const(s_is_const),
 		_is_virtual(s_is_virtual),
@@ -3039,7 +3042,8 @@ protected:		// children
 		_stmt_list;
 public:		// functions
 	inline NodeDeclCallable(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_static, const bool& s_is_virtual,
+		const bool& s_is_static,
+		const bool& s_is_virtual,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
@@ -3081,7 +3085,9 @@ protected:		// children
 	Child _the_typename;
 public:		// functions
 	inline NodeDeclFunc(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_const, const bool& s_is_static, const bool& s_is_virtual,
+		const bool& s_is_const,
+		const bool& s_is_static,
+		const bool& s_is_virtual,
 		Child&& s_the_typename,
 		Child&& s_param_list,
 		Child&& s_arg_list,
@@ -3117,7 +3123,9 @@ protected:		// variables
 	bool _is_port;
 public:		// functions
 	inline NodeDeclProc(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_port, const bool& s_is_static, const bool& s_is_virtual,
+		const bool& s_is_port,
+		const bool& s_is_static,
+		const bool& s_is_virtual,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
@@ -3147,7 +3155,8 @@ class NodeDeclTask : public NodeDeclCallable
 {
 public:		// functions
 	inline NodeDeclTask(const SrcCodeChunk& s_src_code_chunk,
-		const bool& s_is_static, const bool& s_is_virtual,
+		const bool& s_is_static,
+		const bool& s_is_virtual,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,

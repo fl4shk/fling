@@ -4,7 +4,7 @@ namespace frost_hdl
 {
 using namespace ast;
 
-Parser::Parser(std::vector<string>&& s_filename_vec)
+Parser::Parser(vector<string>&& s_filename_vec)
 	: ParserBase<Lexer>(std::move(s_filename_vec))
 {
 	_ast_root.reset(new NodeProgram(SrcCodeChunk()));
@@ -51,7 +51,7 @@ Parser::~Parser()
 	/* } */ \
 	some_req_seq_parse.exec(); \
 
-//using FuncVec = std::vector<decltype(fp(parse_program))>;
+//using FuncVec = vector<decltype(fp(parse_program))>;
 using std::move;
 using Child = ast::NodeBase::Child;
 
@@ -502,6 +502,52 @@ auto Parser::_parse_generate_package_for() -> ParseRet
 
 auto Parser::_parse_callable_member_prefix() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(3, false);
+
+	TokSet found_set;
+
+	const TokSet search_set({Tok::KwConst, Tok::KwVirtual, Tok::KwStatic});
+
+	for (size_t i=0; i<vec.size(); ++i)
+	{
+		if (search_set.count(vec.at(i).tok()))
+		{
+			if (found_set.count(vec.at(i).tok()))
+			{
+				_lexer().src_code_chunk(ret.get()).err(sconcat
+					("Duplicate callable member prefix \"",
+					tok_ident_map.at(vec.at(i).tok()), "\""));
+			}
+			found_set.insert(vec.at(i).tok());
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (just_test())
+	{
+		if (found_set.size() != 0)
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+
+	_next_n_tokens(found_set.size(), true);
+	for (const auto& iter : found_set)
+	{
+		_push_tok(iter);
+	}
+	_push_num(found_set.size());
+
+	return ret;
 }
 
 auto Parser::_parse_contents_modproc() -> ParseRet

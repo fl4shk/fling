@@ -55,5 +55,8 @@ using string = std::string;
 template<typename Type>
 using unique_ptr = std::unique_ptr<Type>;
 
+template<typename Type>
+using vector = std::vector<Type>;
+
 
 #endif		// src_misc_includes_hpp
