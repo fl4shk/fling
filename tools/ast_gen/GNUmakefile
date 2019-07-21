@@ -29,7 +29,7 @@ PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX)
 
 # Compilers and initial compiler flags
 CXX:=$(PREFIX)g++
-CXX_FLAGS:=$(CXX_FLAGS) -std=c++17 -Wall
+CXX_FLAGS:=$(CXX_FLAGS) -std=c++2a -Wall
 
 OBJDUMP:=$(PREFIX)objdump
 

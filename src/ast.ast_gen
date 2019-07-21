@@ -83,6 +83,10 @@ ScopeClass, List:
 Extends:
 	child the_typename;
 
+CallableMember:
+	initvar bool _is_const, _is_virtual, _is_static;
+	child callable;
+
 Union:
 	child ident, scope;
 ScopeUnion, List:

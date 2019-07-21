@@ -30,6 +30,7 @@ virtual void visitScopeEnum(NodeScopeEnum* node) = 0;
 virtual void visitClass(NodeClass* node) = 0;
 virtual void visitScopeClass(NodeScopeClass* node) = 0;
 virtual void visitExtends(NodeExtends* node) = 0;
+virtual void visitCallableMember(NodeCallableMember* node) = 0;
 virtual void visitUnion(NodeUnion* node) = 0;
 virtual void visitScopeUnion(NodeScopeUnion* node) = 0;
 virtual void visitTypename(NodeTypename* node) = 0;

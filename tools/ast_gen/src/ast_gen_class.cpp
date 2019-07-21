@@ -303,7 +303,7 @@ void AstGen::run()
 				for (size_t i=0; i<ext_init_vec.size(); ++i)
 				{
 					const auto& var = ext_init_vec.at(i);
-					osprintout(f, "const ", var.type, "& ");
+					osprintout(f, "\n\t\t\tconst ", var.type, "& ");
 
 					osprintout(f, var.init_ident());
 

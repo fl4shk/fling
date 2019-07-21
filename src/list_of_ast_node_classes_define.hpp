@@ -33,6 +33,7 @@
 	X(NodeClass, Class) \
 	X(NodeScopeClass, ScopeClass) \
 	X(NodeExtends, Extends) \
+	X(NodeCallableMember, CallableMember) \
 	X(NodeUnion, Union) \
 	X(NodeScopeUnion, ScopeUnion) \
 	X(NodeTypename, Typename) \

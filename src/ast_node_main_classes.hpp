@@ -714,6 +714,40 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
+class NodeCallableMember : public NodeBase
+{
+protected:		// variables
+	bool _is_const;
+	bool _is_virtual;
+	bool _is_static;
+protected:		// children
+	Child _callable;
+public:		// functions
+	inline NodeCallableMember(const SrcCodeChunk& s_src_code_chunk,
+		const bool& s_is_const, const bool& s_is_virtual, const bool& s_is_static,
+		Child&& s_callable)
+		: NodeBase(s_src_code_chunk), _is_const(s_is_const),
+		_is_virtual(s_is_virtual),
+		_is_static(s_is_static),
+		_callable(std::move(s_callable))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeCallableMember);
+	virtual Type type() const
+	{
+		return Type::CallableMember;
+	}
+	virtual string name() const
+	{
+		return "CallableMember";
+	}
+	GEN_GETTER_AND_SETTER_BY_CON_REF(is_const)
+	GEN_GETTER_AND_SETTER_BY_CON_REF(is_virtual)
+	GEN_GETTER_AND_SETTER_BY_CON_REF(is_static)
+	GEN_GETTER_BY_CON_REF(callable)
+	GEN_SETTER_BY_RVAL_REF(callable)
+};
+
 class NodeUnion : public NodeBase
 {
 protected:		// children
