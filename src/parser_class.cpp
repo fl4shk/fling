@@ -552,12 +552,32 @@ auto Parser::_parse_callable_member_prefix() -> ParseRet
 
 auto Parser::_parse_contents_modproc() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto opt_seq = one_rseqp(param_list);
+	const auto req_seq = _req_seq_parse(runitp(arg_list),
+		runitp(scope_modproc));
+
+	check_parse_anon(_req_seq_parse(opt_seq, req_seq))
+
+	_one_opt_parse(opt_seq, "param_list", "no_param_list");
+	req_seq.exec();
+
+	return ret;
 }
 auto Parser::_parse_proc() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto start_seq = one_rseqp(kw_proc);
+
+
+	return ret;
 }
 auto Parser::_parse_module() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	return ret;
 }
 
 auto Parser::_parse_scope_modproc() -> ParseRet
