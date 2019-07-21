@@ -45,6 +45,11 @@ private:		// variables
 		_push_ast_child(ast::NodeBase::Child(new ChildType(std::move
 			(to_push))));
 	}
+	template<typename ChildType>
+	inline auto _to_ast_child(ChildType&& to_convert)
+	{
+		return ast::NodeBase::Child(new ChildType(std::move(to_convert)));
+	}
 	//inline auto _get_top_ast_child()
 	//{
 	//	return _ast_child_stack.top();
@@ -340,7 +345,9 @@ private:		// functions
 	ParseRet _parse_generate_behav_for();
 
 	ParseRet _parse_const();
+	ParseRet _parse_one_const();
 	ParseRet _parse_var();
+	ParseRet _parse_one_var();
 	ParseRet _parse_using();
 
 	ParseRet _parse_stmt_assign();
@@ -522,8 +529,8 @@ private:		// functions
 		return _pop_ast_child();
 	}
 
-	template<typename AstNodeScopeType>
-	inline bool _partial_parse_any_list(AstNodeScopeType& to_push,
+	template<typename AstNodeListType>
+	inline bool _partial_parse_any_list(AstNodeListType& ret,
 		const TheSeqParse& list_seq)
 	{
 		if (!list_seq.check())
@@ -533,7 +540,7 @@ private:		// functions
 
 		while (list_seq.check())
 		{
-			to_push.append(_pexec(list_seq));
+			ret.append(_pexec(list_seq));
 		}
 
 		return true;

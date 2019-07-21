@@ -4,7 +4,7 @@ Package:
 ScopePackage, List:
 Module:
 	child ident, param_list, port_list, scope;
-ScopeModule, List:
+ScopeModproc, List:
 InputPortArgSublist, List:
 	child the_typename;
 OutputPortArgSublist, List:
@@ -70,7 +70,7 @@ HasString:
 Ident, HasString:
 ConstString, HasString:
 
-ScopeUnnamed, List:
+ScopeBehav, List:
 
 Enum:
 	child the_typename, ident, scope;
@@ -310,15 +310,16 @@ DeclCallable:
 	child param_list, arg_list, ident_or_op, stmt_list;
 
 DeclFunc, DeclCallable:
-	initvar bool _is_const;
 	child the_typename;
 DeclProc, DeclCallable:
 	initvar bool _is_port;
 DeclTask, DeclCallable:
 
-DeclVar:
-	child the_typename, ident_terminal, port_inst_list, expr;
-DeclConst, DeclVar:
-//DeclGenvar, DeclVar:
+IdentTermAndExtra:
+	child ident_terminal, expr_or_arg_inst_list;
+IdentTermAndExtraList, List:
 
-DeclVarList, List:
+DeclConstList:
+	child the_typename, ident_term_and_extra_list;
+DeclVarList, DeclConstList:
+//DeclGenvar, DeclVar:

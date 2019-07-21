@@ -321,11 +321,11 @@ contents_func_task:
 	;
 
 func:
-	kw_func typename
+	kw_func typename (ident | const_str)
 		contents_func_task
 	;
 task:
-	kw_task
+	kw_task (ident | const_str)
 		contents_func_task
 	;
 
@@ -349,6 +349,7 @@ inner_scope_behav:
 	| stmt_switchz
 	| ident_etc
 	| decl_cstm_type
+	| scope_behav
 	;
 
 
@@ -368,24 +369,31 @@ generate_behav_for:
 
 const:
 	kw_const typename?
-		(ident_terminal punct_equal expr)
-		(punct_comma ident_terminal punct_equal expr)*
+		one_const
+		(punct_comma one_const)*
 		punct_semicolon
 	;
+one_const:
+	ident_terminal punct_assign expr
+	;
+
 var:
 	typename
-		ident_terminal (punct_equal expr)?
-		(punct_comma ident_terminal (punct_equal expr)?)*
+		one_var
+		(punct_comma one_var)*
 		punct_semicolon
+	;
+one_var:
+	ident_terminal ((punct_assign expr) | arg_inst_list)?
 	;
 
 using:
-	kw_using ident_etc (punct_equal ident_etc)?
+	kw_using ident_terminal (punct_assign ident_etc)?
 		punct_semicolon
 	;
 
 stmt_assign:
-	expr punct_equal expr punct_semicolon
+	expr punct_assign expr punct_semicolon
 	;
 stmt_if:
 	header_if scope_behav
@@ -413,8 +421,8 @@ stmt_switchz:
 scope_switch:
 	punct_lbrace
 		(
-			(kw_case expr punct_colon (scope_behav | inner_scope_behav))
-			| (kw_default punct_colon (scope_behav | inner_scope_behav))
+			(kw_case expr punct_colon inner_scope_behav)
+			| (kw_default punct_colon inner_scope_behav)
 		)*
 	punct_rbrace
 	;
@@ -499,21 +507,21 @@ hardware_block:
 	;
 
 cont_assign:
-	kw_assign expr punct_equal expr punct_semicolon
+	kw_assign expr punct_assign expr punct_semicolon
 	;
 initial:
-	kw_initial (scope_behav | inner_scope_behav)
+	kw_initial inner_scope_behav
 	;
 always_comb:
-	kw_always_comb (scope_behav | inner_scope_behav)
+	kw_always_comb inner_scope_behav
 	;
 always_blk:
 	kw_always_blk edge_list
-		(scope_behav | inner_scope_behav)
+		inner_scope_behav
 	;
 always_ff:
 	kw_always_ff edge_list
-		(scope_behav | inner_scope_behav)
+		inner_scope_behav
 	;
 edge_list:
 	punct_lparen
@@ -574,8 +582,8 @@ arg_port_sublist:
 
 pararg_var_sublist:
 	typename
-	ident_terminal (punct_equal expr)?
-	(punct_comma ident_terminal (punct_equal expr)?)*
+	ident_terminal (punct_assign expr)?
+	(punct_comma ident_terminal (punct_assign expr)?)*
 	;
 
 pararg_type_sublist:
@@ -589,8 +597,8 @@ param_module_sublist:
 	;
 
 pararg_ident_equals_typename_sublist:
-	ident (punct_equal typename)?
-	(punct_comma ident (punct_equal typename)?)*
+	ident (punct_assign typename)?
+	(punct_comma ident (punct_assign typename)?)*
 	;
 
 param_inst_list:
@@ -608,8 +616,8 @@ pos_pararg_inst_list:
 	(punct_comma expr)*
 	;
 named_pararg_inst_list:
-	ident punct_equal expr
-	(punct_comma ident punct_equal expr)*
+	ident punct_assign expr
+	(punct_comma ident punct_assign expr)*
 	;
 
 

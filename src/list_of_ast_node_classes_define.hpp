@@ -7,7 +7,7 @@
 	X(NodePackage, Package) \
 	X(NodeScopePackage, ScopePackage) \
 	X(NodeModule, Module) \
-	X(NodeScopeModule, ScopeModule) \
+	X(NodeScopeModproc, ScopeModproc) \
 	X(NodeInputPortArgSublist, InputPortArgSublist) \
 	X(NodeOutputPortArgSublist, OutputPortArgSublist) \
 	X(NodeBidirPortArgSublist, BidirPortArgSublist) \
@@ -27,7 +27,7 @@
 	X(NodeHasString, HasString) \
 	X(NodeIdent, Ident) \
 	X(NodeConstString, ConstString) \
-	X(NodeScopeUnnamed, ScopeUnnamed) \
+	X(NodeScopeBehav, ScopeBehav) \
 	X(NodeEnum, Enum) \
 	X(NodeScopeEnum, ScopeEnum) \
 	X(NodeClass, Class) \
@@ -142,7 +142,8 @@
 	X(NodeDeclFunc, DeclFunc) \
 	X(NodeDeclProc, DeclProc) \
 	X(NodeDeclTask, DeclTask) \
-	X(NodeDeclVar, DeclVar) \
-	X(NodeDeclConst, DeclConst) \
+	X(NodeIdentTermAndExtra, IdentTermAndExtra) \
+	X(NodeIdentTermAndExtraList, IdentTermAndExtraList) \
+	X(NodeDeclConstList, DeclConstList) \
 	X(NodeDeclVarList, DeclVarList) \
 

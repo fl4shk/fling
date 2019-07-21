@@ -613,55 +613,221 @@ auto Parser::_parse_module() -> ParseRet
 
 auto Parser::_parse_scope_modproc() -> ParseRet
 {
+	return _parse_any_scope<NodeScopeModproc>("scope_modproc",
+		_req_seq_parse(runitp(generate_modproc), runitp(module),
+		runitp(const), runitp(var), runitp(using), runitp(decl_callable),
+		runitp(decl_cstm_type), runitp(hardware_block)));
 }
 auto Parser::_parse_generate_modproc() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(generate_modproc_if),
+		runitp(generate_modproc_for)))
+	return ret;
 }
 auto Parser::_parse_generate_modproc_if() -> ParseRet
 {
+	return _parse_generate_any_if("scope_modproc", fp(scope_modproc));
 }
 auto Parser::_parse_generate_modproc_for() -> ParseRet
 {
+	return _parse_generate_any_for("scope_package", fp(scope_package));
 }
 
 auto Parser::_parse_decl_callable() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(func), runitp(task),
+		runitp(proc)))
+	return ret;
 }
 auto Parser::_parse_contents_func_task() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto opt_seq = one_opt_seqp(param_list);
+	const auto req_seq = _req_seq_parse(runitp(arg_list),
+		runitp(scope_behav));
+
+	check_parse_anon(_req_seq_parse(opt_seq, req_seq))
+
+	_push_num(_one_opt_parse(opt_seq));
+	req_seq.exec();
+
+	return ret;
 }
 auto Parser::_parse_func() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(one_req_seqp(kw_func))
+
+	auto s_the_typename = _pexec(one_req_seqp(typename));
+	auto s_ident_or_op = _pexec(_req_or_parse(runitp(ident),
+		runitp(const_str)));
+
+	one_req_seqp(contents_func_task).exec();
+	auto s_stmt_list = _pop_ast_child();
+	auto s_arg_list = _pop_ast_child();
+
+	Child s_param_list;
+
+	if (_pop_num())
+	{
+		s_param_list = _pop_ast_child();
+	}
+
+	_push_ast_child(NodeDeclFunc(_ls_src_code_chunk(ret),
+		move(s_the_typename), move(s_param_list), move(s_arg_list),
+		move(s_ident_or_op), move(s_stmt_list)));
+	return ret;
 }
 auto Parser::_parse_task() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(one_req_seqp(kw_task))
+
+	auto s_ident_or_op = _pexec(_req_or_parse(runitp(ident),
+		runitp(const_str)));
+
+	one_req_seqp(contents_func_task).exec();
+	auto s_stmt_list = _pop_ast_child();
+	auto s_arg_list = _pop_ast_child();
+
+	Child s_param_list;
+
+	if (_pop_num())
+	{
+		s_param_list = _pop_ast_child();
+	}
+
+	_push_ast_child(NodeDeclTask(_ls_src_code_chunk(ret),
+		move(s_param_list), move(s_arg_list), move(s_ident_or_op),
+		move(s_stmt_list)));
+	return ret;
 }
 
 auto Parser::_parse_scope_behav() -> ParseRet
 {
+	return _parse_any_scope<NodeScopeBehav>("behavioral",
+		one_req_seqp(inner_scope_behav));
 }
 auto Parser::_parse_inner_scope_behav() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(generate_behav),
+		runitp(const), runitp(var), runitp(using), runitp(stmt_assign),
+		runitp(stmt_if), runitp(stmt_for), runitp(stmt_while),
+		runitp(stmt_switch), runitp(stmt_switchz), runitp(ident_etc),
+		runitp(decl_cstm_type), runitp(scope_behav)))
+	return ret;
 }
 
 auto Parser::_parse_generate_behav() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(generate_behav_if),
+		runitp(generate_behav_for)))
+	return ret;
 }
 auto Parser::_parse_generate_behav_if() -> ParseRet
 {
+	return _parse_generate_any_if("scope_behav", fp(scope_behav));
 }
 auto Parser::_parse_generate_behav_for() -> ParseRet
 {
+	return _parse_generate_any_for("scope_behav", fp(scope_behav));
 }
 
 auto Parser::_parse_const() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(one_req_seqp(kw_const))
+
+	Child s_the_typename;
+
+	if (_one_opt_parse(one_req_seqp(typename)))
+	{
+		s_the_typename = _pop_ast_child();
+	}
+
+	NodeIdentTermAndExtraList s_ident_term_and_extra_list
+		(_ls_src_code_chunk(_dup_lex_state()));
+
+	const auto list_seq = one_req_seqp(one_const);
+	s_ident_term_and_extra_list.append(_pexec(list_seq));
+
+	_partial_parse_any_list(s_ident_term_and_extra_list,
+		_req_seq_parse(runitp(punct_comma), list_seq));
+
+	one_req_seqp(punct_semicolon).exec();
+
+	_push_ast_child(NodeDeclConstList(_ls_src_code_chunk(ret),
+		move(s_the_typename),
+		_to_ast_child(move(s_ident_term_and_extra_list))));
+
+	return ret;
+}
+auto Parser::_parse_one_const() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(ident_terminal),
+		runitp(punct_assign), runitp(expr)))
+	
+	auto s_expr_or_arg_inst_list = _pop_ast_child();
+	auto s_ident_terminal = _pop_ast_child();
+
+	_push_ast_child(NodeIdentTermAndExtra(_ls_src_code_chunk(ret),
+		move(s_ident_terminal), move(s_expr_or_arg_inst_list)));
+
+	return ret;
 }
 auto Parser::_parse_var() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	auto s_the_typename = _pexec(one_req_seqp(typename));
+
+	NodeIdentTermAndExtraList s_ident_term_and_extra_list
+		(_ls_src_code_chunk(_dup_lex_state()));
+
+	const auto list_seq = one_req_seqp(one_var);
+	s_ident_term_and_extra_list.append(_pexec(list_seq));
+
+	_partial_parse_any_list(s_ident_term_and_extra_list,
+		_req_seq_parse(runitp(punct_comma), list_seq));
+
+	one_req_seqp(punct_semicolon).exec();
+
+	_push_ast_child(NodeDeclVarList(_ls_src_code_chunk(ret),
+		move(s_the_typename),
+		_to_ast_child(move(s_ident_term_and_extra_list))));
+
+	return ret;
+}
+auto Parser::_parse_one_var() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(ident_terminal),
+		runitp(punct_assign), runitp(expr)))
+	
+	auto s_expr_or_arg_inst_list = _pop_ast_child();
+	auto s_ident_terminal = _pop_ast_child();
+
+	_push_ast_child(NodeIdentTermAndExtra(_ls_src_code_chunk(ret),
+		move(s_ident_terminal), move(s_expr_or_arg_inst_list)));
+
+	return ret;
 }
 auto Parser::_parse_using() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 
 auto Parser::_parse_stmt_assign() -> ParseRet
@@ -1031,6 +1197,12 @@ auto Parser::_parse_any_scope(const string& scope_type_str,
 
 	if ((!_partial_parse_any_list(to_push, list_seq))
 		&& (!end_seq.check()))
+	{
+		_lexer().src_code_chunk().err(sconcat("Unknown ", scope_type_str,
+			" scope item."));
+	}
+
+	if (!end_seq.check())
 	{
 		_lexer().src_code_chunk().err(sconcat("Unknown ", scope_type_str,
 			" scope item."));
