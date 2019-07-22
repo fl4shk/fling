@@ -504,7 +504,7 @@ enum:
 	punct_lbrace
 		ident_terminal
 		(punct_comma ident_terminal)
-		(punct_comma)?
+		punct_comma?
 	punct_rbrace
 		(one_var
 		(punct_comma one_var)*)? punct_semicolon

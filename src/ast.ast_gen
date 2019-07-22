@@ -74,7 +74,7 @@ ConstString, HasString:
 ScopeBehav, List:
 
 Enum:
-	child the_typename, ident, scope;
+	child the_typename, ident, scope, var_list;
 ScopeEnum, List:
 
 Class:
@@ -90,7 +90,7 @@ CallableMember:
 	child callable;
 
 Union:
-	child ident, scope;
+	child ident, scope, var_list;
 ScopeUnion, List:
 
 Typename:

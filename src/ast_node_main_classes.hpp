@@ -579,16 +579,19 @@ class NodeEnum : public NodeBase
 protected:		// children
 	Child _the_typename,
 		_ident,
-		_scope;
+		_scope,
+		_var_list;
 public:		// functions
 	inline NodeEnum(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename,
 		Child&& s_ident,
-		Child&& s_scope)
+		Child&& s_scope,
+		Child&& s_var_list)
 		: NodeBase(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename)),
 		_ident(std::move(s_ident)),
-		_scope(std::move(s_scope))
+		_scope(std::move(s_scope)),
+		_var_list(std::move(s_var_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeEnum);
@@ -606,6 +609,8 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(scope)
 	GEN_SETTER_BY_RVAL_REF(scope)
+	GEN_GETTER_BY_CON_REF(var_list)
+	GEN_SETTER_BY_RVAL_REF(var_list)
 };
 
 class NodeScopeEnum : public NodeList
@@ -760,14 +765,17 @@ class NodeUnion : public NodeBase
 {
 protected:		// children
 	Child _ident,
-		_scope;
+		_scope,
+		_var_list;
 public:		// functions
 	inline NodeUnion(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_ident,
-		Child&& s_scope)
+		Child&& s_scope,
+		Child&& s_var_list)
 		: NodeBase(s_src_code_chunk),
 		_ident(std::move(s_ident)),
-		_scope(std::move(s_scope))
+		_scope(std::move(s_scope)),
+		_var_list(std::move(s_var_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUnion);
@@ -783,6 +791,8 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(scope)
 	GEN_SETTER_BY_RVAL_REF(scope)
+	GEN_GETTER_BY_CON_REF(var_list)
+	GEN_SETTER_BY_RVAL_REF(var_list)
 };
 
 class NodeScopeUnion : public NodeList
