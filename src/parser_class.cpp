@@ -1260,6 +1260,39 @@ auto Parser::_parse_enum() -> ParseRet
 }
 auto Parser::_parse_union() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(one_req_seqp(kw_union))
+
+	auto s_ident = _pexec(one_req_seqp(ident));
+
+	one_req_seqp(punct_lbrace).exec();
+
+	NodeScopeUnion s_scope(_ls_src_code_chunk(_dup_lex_state()));
+
+	_partial_parse_any_list(s_scope, one_req_seqp(var));
+
+	one_req_seqp(punct_rbrace).exec();
+	Child s_var_list;
+
+	if (const auto one_var_seq = one_req_seqp(one_var);
+		one_var_seq.check())
+	{
+		NodeIdentTermAndExtraList s_var_list_1(_ls_src_code_chunk
+			(_dup_lex_state()));
+		s_var_list_1.append(_pexec(one_var_seq));
+
+		_partial_parse_any_list(s_var_list_1, _req_seq_parse
+			(runitp(punct_comma), one_var_seq));
+
+		s_var_list.reset(new NodeIdentTermAndExtraList(move
+			(s_var_list_1)));
+	}
+
+	one_req_seqp(punct_semicolon).exec();
+	_push_ast_child(NodeUnion(_ls_src_code_chunk(ret), move(s_ident),
+		_to_ast_child(move(s_scope)), move(s_var_list)));
+
+	return ret;
 }
 
 auto Parser::_parse_hardware_block() -> ParseRet
