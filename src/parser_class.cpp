@@ -1297,24 +1297,91 @@ auto Parser::_parse_union() -> ParseRet
 
 auto Parser::_parse_hardware_block() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(cont_assign),
+		runitp(initial), runitp(always_comb), runitp(always_blk),
+		runitp(always_ff), runitp(inst), runitp(ident_etc)))
+	return ret;
 }
 auto Parser::_parse_cont_assign() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_assign), runitp(expr),
+		runitp(punct_assign), runitp(expr), runitp(punct_semicolon)))
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+	_push_ast_child(NodeStmtContAssign(_ls_src_code_chunk(ret),
+		move(s_left), move(s_right)));
+	return ret;
 }
 auto Parser::_parse_initial() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_initial),
+		runitp(inner_scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+	_push_ast_child(NodeStmtInitial(_ls_src_code_chunk(ret),
+		move(s_stmt_list)));
+	return ret;
 }
 auto Parser::_parse_always_comb() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_always_comb),
+		runitp(inner_scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+	_push_ast_child(NodeStmtAlwaysComb(_ls_src_code_chunk(ret),
+		move(s_stmt_list)));
+	return ret;
 }
 auto Parser::_parse_always_blk() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_always_blk),
+		runitp(edge_list), runitp(inner_scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_edge_list = _pop_ast_child();
+	_push_ast_child(NodeStmtAlwaysBlk(_ls_src_code_chunk(ret),
+		move(s_edge_list), move(s_stmt_list)));
+	return ret;
 }
 auto Parser::_parse_always_ff() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_always_ff),
+		runitp(edge_list), runitp(inner_scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_edge_list = _pop_ast_child();
+	_push_ast_child(NodeStmtAlwaysFf(_ls_src_code_chunk(ret),
+		move(s_edge_list), move(s_stmt_list)));
+	return ret;
 }
 auto Parser::_parse_edge_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto one_edge_seq = _req_or_parse(runitp(posedge_inst),
+		runitp(negedge_inst));
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(punct_lparen),
+		one_edge_seq))
+
+	NodeEdgeList to_push(_ls_src_code_chunk(ret));
+	to_push.append(_pop_ast_child());
+
+	_partial_parse_any_list(to_push, _req_seq_parse(runitp(punct_comma),
+		one_edge_seq));
+
+	one_req_seqp(punct_rparen).exec();
+
+	_push_ast_child(move(to_push));
+
+	return ret;
 }
 auto Parser::_parse_posedge_inst() -> ParseRet
 {
