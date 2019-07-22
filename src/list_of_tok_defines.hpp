@@ -59,6 +59,7 @@
 	X(KwSwitchz, "switchz") \
 	X(KwCase, "case") \
 	X(KwDefault, "default") \
+	X(KwReturn, "return") \
 	\
 	X(KwFor, "for") \
 	X(KwWhile, "while") \

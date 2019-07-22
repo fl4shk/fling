@@ -2724,18 +2724,18 @@ class NodeStmtInstModule : public NodeBase
 protected:		// children
 	Child _module_ident,
 		_param_inst_list,
-		_inst_ident_etc,
+		_inst_ident,
 		_arg_inst_list;
 public:		// functions
 	inline NodeStmtInstModule(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_module_ident,
 		Child&& s_param_inst_list,
-		Child&& s_inst_ident_etc,
+		Child&& s_inst_ident,
 		Child&& s_arg_inst_list)
 		: NodeBase(s_src_code_chunk),
 		_module_ident(std::move(s_module_ident)),
 		_param_inst_list(std::move(s_param_inst_list)),
-		_inst_ident_etc(std::move(s_inst_ident_etc)),
+		_inst_ident(std::move(s_inst_ident)),
 		_arg_inst_list(std::move(s_arg_inst_list))
 	{
 	}
@@ -2752,8 +2752,8 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(module_ident)
 	GEN_GETTER_BY_CON_REF(param_inst_list)
 	GEN_SETTER_BY_RVAL_REF(param_inst_list)
-	GEN_GETTER_BY_CON_REF(inst_ident_etc)
-	GEN_SETTER_BY_RVAL_REF(inst_ident_etc)
+	GEN_GETTER_BY_CON_REF(inst_ident)
+	GEN_SETTER_BY_RVAL_REF(inst_ident)
 	GEN_GETTER_BY_CON_REF(arg_inst_list)
 	GEN_SETTER_BY_RVAL_REF(arg_inst_list)
 };
@@ -3011,12 +3011,12 @@ public:		// functions
 class NodePosedgeInst : public NodeBase
 {
 protected:		// children
-	Child _ident_etc;
+	Child _expr;
 public:		// functions
 	inline NodePosedgeInst(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_etc)
+		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
-		_ident_etc(std::move(s_ident_etc))
+		_expr(std::move(s_expr))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePosedgeInst);
@@ -3028,19 +3028,19 @@ public:		// functions
 	{
 		return "PosedgeInst";
 	}
-	GEN_GETTER_BY_CON_REF(ident_etc)
-	GEN_SETTER_BY_RVAL_REF(ident_etc)
+	GEN_GETTER_BY_CON_REF(expr)
+	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
 class NodeNegedgeInst : public NodeBase
 {
 protected:		// children
-	Child _ident_etc;
+	Child _expr;
 public:		// functions
 	inline NodeNegedgeInst(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_etc)
+		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
-		_ident_etc(std::move(s_ident_etc))
+		_expr(std::move(s_expr))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeNegedgeInst);
@@ -3052,8 +3052,8 @@ public:		// functions
 	{
 		return "NegedgeInst";
 	}
-	GEN_GETTER_BY_CON_REF(ident_etc)
-	GEN_SETTER_BY_RVAL_REF(ident_etc)
+	GEN_GETTER_BY_CON_REF(expr)
+	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
 class NodeEdgeList : public NodeList

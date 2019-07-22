@@ -194,6 +194,10 @@ auto Parser::_parse_kw_default() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwDefault);
 }
+auto Parser::_parse_kw_return() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwReturn);
+}
 auto Parser::_parse_kw_packed() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPacked);
@@ -740,8 +744,8 @@ auto Parser::_parse_inner_scope_behav() -> ParseRet
 	simple_seq_parse_anon(_req_or_parse(runitp(generate_behav),
 		runitp(const), runitp(var), runitp(using), runitp(stmt_assign),
 		runitp(stmt_if), runitp(stmt_for), runitp(stmt_while),
-		runitp(stmt_switch), runitp(stmt_switchz), runitp(ident_etc),
-		runitp(decl_cstm_type), runitp(scope_behav)))
+		runitp(stmt_switch), runitp(stmt_switchz), runitp(stmt_return),
+		runitp(ident_etc), runitp(decl_cstm_type), runitp(scope_behav)))
 	return ret;
 }
 
@@ -1018,6 +1022,17 @@ auto Parser::_parse_stmt_default() -> ParseRet
 
 	_push_ast_child(NodeStmtDefault(_ls_src_code_chunk(ret),
 		move(s_stmt_list)));
+	return ret;
+}
+auto Parser::_parse_stmt_return() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_return), runitp(expr),
+		runitp(punct_semicolon)))
+
+	auto s_expr = _pop_ast_child();
+	_push_ast_child(NodeStmtReturn(_ls_src_code_chunk(ret), move(s_expr)));
+
 	return ret;
 }
 
@@ -1385,13 +1400,36 @@ auto Parser::_parse_edge_list() -> ParseRet
 }
 auto Parser::_parse_posedge_inst() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_posedge), runitp(expr)))
+
+	auto s_expr = _pop_ast_child();
+
+	_push_ast_child(NodePosedgeInst(_ls_src_code_chunk(ret),
+		move(s_expr)));
+
+	return ret;
 }
 auto Parser::_parse_negedge_inst() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_posedge), runitp(expr)))
+
+	auto s_expr = _pop_ast_child();
+
+	_push_ast_child(NodeNegedgeInst(_ls_src_code_chunk(ret),
+		move(s_expr)));
+
+	return ret;
 }
 
 auto Parser::_parse_inst() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 
 auto Parser::_parse_param_list() -> ParseRet

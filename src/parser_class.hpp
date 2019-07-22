@@ -258,6 +258,7 @@ private:		// functions
 	ParseRet _parse_kw_switchz();
 	ParseRet _parse_kw_case();
 	ParseRet _parse_kw_default();
+	ParseRet _parse_kw_return();
 	ParseRet _parse_kw_packed();
 	ParseRet _parse_kw_class();
 	ParseRet _parse_kw_virtual();
@@ -364,6 +365,7 @@ private:		// functions
 	ParseRet _parse_scope_switch();
 	ParseRet _parse_stmt_case();
 	ParseRet _parse_stmt_default();
+	ParseRet _parse_stmt_return();
 
 	ParseRet _parse_decl_cstm_type();
 	ParseRet _parse_class();

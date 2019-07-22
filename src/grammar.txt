@@ -65,6 +65,9 @@ kw_case:
 kw_default:
 	TokKwDefault
 	;
+kw_return:
+	TokKwReturn
+	;
 kw_packed:
 	TokKwPacked
 	;
@@ -362,6 +365,7 @@ inner_scope_behav:
 	| stmt_while
 	| stmt_switch
 	| stmt_switchz
+	| stmt_return
 	| ident_etc
 	| decl_cstm_type
 	| scope_behav
@@ -446,6 +450,9 @@ stmt_case:
 	;
 stmt_default:
 	kw_default punct_colon inner_scope_behav
+	;
+stmt_return:
+	kw_return expr punct_semicolon
 	;
 
 
@@ -568,8 +575,8 @@ negedge_inst:
 	;
 
 inst:
-	kw_inst ident_etc param_list?
-		ident? arg_list? punct_semicolon
+	kw_inst ident_etc param_inst_list?
+		ident? arg_inst_list? punct_semicolon
 	;
 
 

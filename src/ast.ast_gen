@@ -281,7 +281,7 @@ ScopeSwitch, List:
 StmtUsing, LeftRightBase:
 
 StmtInstModule:
-	child module_ident, param_inst_list, inst_ident_etc, arg_inst_list;
+	child module_ident, param_inst_list, inst_ident, arg_inst_list;
 StmtReturn:
 	child expr;
 StmtInitial:
@@ -305,9 +305,9 @@ StmtStaticAssert:
 	child expr;
 
 PosedgeInst:
-	child ident_etc;
+	child expr;
 NegedgeInst:
-	child ident_etc;
+	child expr;
 EdgeList, List:
 
 DeclCallable:
