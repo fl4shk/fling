@@ -40,7 +40,7 @@ IdentScopeAccess:
 // This is either an expression or a statement.  It can only be an
 // expression for non-`void` `func`tions.  It is part of an IdentEtc.
 Call:
-	child ident, param_inst_list, arg_inst_list;
+	child ident_or_op, param_inst_list, arg_inst_list;
 
 // A string of identifiers and operations chained together via the `.`
 // (scope) operator.
@@ -62,7 +62,8 @@ SizedNumExpr, NumExpr:
 // When there is no expression, it indicates that this bracket pair is
 // blank.
 BracketPair:
-	child expr;
+	// right is only used when this is a multi-bit slice
+	child left, right;
 
 HasString:
 	initvar string _s;
@@ -77,10 +78,11 @@ Enum:
 ScopeEnum, List:
 
 Class:
-	initvar bool _packed, _virtual_extends;
+	initvar bool _packed;
 	child ident, param_list, extends, scope, var_list;
 ScopeClass, List:
 Extends:
+	initvar bool _is_virtual;
 	child the_typename;
 
 CallableMember:
@@ -268,11 +270,13 @@ StmtMemberAccessProtected:
 StmtMemberAccessPrivate:
 
 StmtSwitch:
-	child ident_etc, stmt_list;
+	child expr, stmt_list;
 StmtSwitchz, StmtSwitch:
 StmtCase:
-	child expr;
+	child expr, stmt_list;
 StmtDefault:
+	child stmt_list;
+ScopeSwitch, List:
 
 StmtUsing, LeftRightBase:
 

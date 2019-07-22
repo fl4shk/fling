@@ -38,6 +38,15 @@ kw_module:
 kw_const:
 	TokKwConst
 	;
+kw_range:
+	TokKwRange
+	;
+kw_cat:
+	TokKwCat
+	;
+kw_repl:
+	TokKwRepl
+	;
 kw_using:
 	TokKwUsing
 	;
@@ -79,6 +88,9 @@ kw_private:
 	;
 kw_enum:
 	TokKwEnum
+	;
+kw_union:
+	TokKwUnion
 	;
 kw_assign:
 	TokKwAssign
@@ -189,6 +201,9 @@ punct_semicolon:
 punct_colon:
 	':'
 	;
+punct_apostrophe:
+	'\''
+	;
 punct_assign:
 	'='
 	;
@@ -210,7 +225,7 @@ header_else:
 	;
 
 header_for:
-	kw_for punct_lparen ident punct_colon expr punct_rparen
+	kw_for punct_lparen ident punct_colon (expr | type_range) punct_rparen
 	;
 
 header_generate_if:
@@ -421,10 +436,16 @@ stmt_switchz:
 scope_switch:
 	punct_lbrace
 		(
-			(kw_case expr punct_colon inner_scope_behav)
-			| (kw_default punct_colon inner_scope_behav)
+			stmt_case
+			| stmt_default
 		)*
 	punct_rbrace
+	;
+stmt_case:
+	kw_case expr punct_colon inner_scope_behav
+	;
+stmt_default:
+	kw_default punct_colon inner_scope_behav
 	;
 
 
@@ -438,7 +459,8 @@ class:
 	kw_packed? kw_class ident param_list?
 		extends?
 		scope_class
-		ident_terminal? punct_semicolon
+		(one_var
+		(punct_comma one_var)*)? punct_semicolon
 	;
 extends:
 	kw_virtual? kw_extends typename
@@ -448,14 +470,12 @@ scope_class:
 	punct_lbrace
 		(
 			generate_class
-			| member_access_label?
-			(
-				const
-				| var
-				| using
-				| callable_member
-				| decl_cstm_type
-			)
+			| member_access_label
+			| const
+			| var
+			| using
+			| callable_member
+			| decl_cstm_type
 		)*
 	punct_rbrace
 	;
@@ -485,7 +505,18 @@ enum:
 		ident_terminal
 		(punct_comma ident_terminal)
 		(punct_comma)?
-	punct_rbrace ident_terminal? punct_semicolon
+	punct_rbrace
+		(one_var
+		(punct_comma one_var)*)? punct_semicolon
+	;
+
+union:
+	kw_union ident
+	punct_lbrace
+		var*;
+	punct_rbrace
+		(one_var
+		(punct_comma one_var)*)? punct_semicolon;
 	;
 
 
@@ -625,6 +656,7 @@ typename:
 	param_possible_typename
 	| no_param_possible_typename
 	| typeof
+	| type_range
 	;
 param_possible_typename:
 	(ident_etc
@@ -640,7 +672,20 @@ no_param_possible_typename:
 	| kw_ulongint | kw_slongint
 	;
 typeof:
-	kw_typeof punct_lparen (expr | typename) punct_rparen
+	kw_typeof
+	punct_lparen
+		(expr | typename)
+	punct_rparen
+	;
+type_range:
+	kw_range
+	range_suffix
+	;
+
+range_suffix:
+	punct_lbracket
+		expr (punct_colon expr)?
+	punct_rbracket
 	;
 
 expr:
@@ -712,6 +757,8 @@ expr_mul_div_mod_etc:
 	| const_str
 	| expr_pre_dollar_func
 	| expr_post_dollar_func
+	| expr_cat
+	| expr_repl
 	;
 
 inner_expr_mul_div_mod_etc:
@@ -731,6 +778,9 @@ dollar_global_clock:
 dollar_pow_expr:
 	TokKwDollarPow punct_lparen expr punct_comma expr punct_rparen
 	;
+num_expr:
+	(expr punct_apostrophe)? TokNum
+	;
 const_str:
 	TokConstStr
 	;
@@ -749,6 +799,20 @@ dollar_func_of_one:
 	| TokKwDollarClog2
 	;
 
+expr_cat:
+	kw_cat
+	punct_lparen
+		expr
+		(punct_comma expr)*
+	punct_rparen
+	;
+expr_repl:
+	kw_repl
+	punct_lparen
+		expr punct_comma expr
+	punct_rparen
+	;
+
 
 
 ident_etc:
@@ -763,38 +827,41 @@ ident_etc:
 
 
 ident_member_access:
-	ident_terminal punct_member_access ident_etc
+	ident_etc punct_member_access ident_etc
 	;
 ident_scope_access:
-	ident_terminal punct_scope_access ident_etc
+	ident_etc punct_scope_access ident_etc
 	;
 
 
 ident_call:
 	ident param_inst_list? arg_inst_list
+	ident_access_suffix?
+	;
+ident_access_suffix:
+	(punct_member_access | punct_scope_access) ident_etc
 	;
 
 ident_no_param_overloaded_call:
-	ident_terminal arg_inst_list
+	ident_etc arg_inst_list
+	ident_access_suffix?
 	;
 ident_param_member_overloaded_call:
-	ident_terminal
+	ident_etc
 		punct_member_access
 		param_inst_list arg_inst_list
+		ident_access_suffix?
 	;
 ident_param_scope_overloaded_call:
-	ident_terminal
+	ident_etc
 		punct_scope_access
 		param_inst_list arg_inst_list
+		ident_access_suffix?
 	;
 
 ident_terminal:
-	ident_bracket
-	| ident
-	;
-
-ident_bracket:
-	ident (punct_lbracket expr punct_rbracket)+
+	ident
+	range_suffix*
 	;
 
 ident:

@@ -249,6 +249,9 @@ private:		// functions
 	ParseRet _parse_kw_task();
 	ParseRet _parse_kw_module();
 	ParseRet _parse_kw_const();
+	ParseRet _parse_kw_range();
+	ParseRet _parse_kw_cat();
+	ParseRet _parse_kw_repl();
 	ParseRet _parse_kw_using();
 	ParseRet _parse_kw_while();
 	ParseRet _parse_kw_switch();
@@ -263,6 +266,7 @@ private:		// functions
 	ParseRet _parse_kw_protected();
 	ParseRet _parse_kw_private();
 	ParseRet _parse_kw_enum();
+	ParseRet _parse_kw_union();
 	ParseRet _parse_kw_assign();
 	ParseRet _parse_kw_initial();
 	ParseRet _parse_kw_always_comb();
@@ -300,6 +304,7 @@ private:		// functions
 	ParseRet _parse_punct_comma();
 	ParseRet _parse_punct_semicolon();
 	ParseRet _parse_punct_colon();
+	ParseRet _parse_punct_apostrophe();
 	ParseRet _parse_punct_assign();
 	ParseRet _parse_punct_member_access();
 	ParseRet _parse_punct_scope_access();
@@ -357,6 +362,8 @@ private:		// functions
 	ParseRet _parse_stmt_switch();
 	ParseRet _parse_stmt_switchz();
 	ParseRet _parse_scope_switch();
+	ParseRet _parse_stmt_case();
+	ParseRet _parse_stmt_default();
 
 	ParseRet _parse_decl_cstm_type();
 	ParseRet _parse_class();
@@ -370,6 +377,7 @@ private:		// functions
 	ParseRet _parse_member_access_label();
 
 	ParseRet _parse_enum();
+	ParseRet _parse_union();
 
 	ParseRet _parse_hardware_block();
 	ParseRet _parse_cont_assign();
@@ -401,6 +409,8 @@ private:		// functions
 	ParseRet _parse_param_possible_typename();
 	ParseRet _parse_no_param_possible_typename();
 	ParseRet _parse_typeof();
+	ParseRet _parse_type_range();
+	ParseRet _parse_range_suffix();
 
 	ParseRet _parse_expr();
 	ParseRet _parse_inner_expr();
@@ -429,17 +439,19 @@ private:		// functions
 	ParseRet _parse_expr_pre_dollar_func();
 	ParseRet _parse_expr_post_dollar_func();
 	ParseRet _parse_dollar_func_of_one();
+	ParseRet _parse_expr_cat();
+	ParseRet _parse_expr_repl();
 
 	ParseRet _parse_ident_etc();
-	ParseRet _parse_ident_terminal();
 	ParseRet _parse_ident_member_access();
 	ParseRet _parse_ident_scope_access();
-	ParseRet _parse_ident();
-	ParseRet _parse_ident_bracket();
 	ParseRet _parse_ident_call();
+	ParseRet _parse_ident_access_suffix();
 	ParseRet _parse_ident_no_param_overloaded_call();
 	ParseRet _parse_ident_param_member_overloaded_call();
 	ParseRet _parse_ident_param_scope_overloaded_call();
+	ParseRet _parse_ident_terminal();
+	ParseRet _parse_ident();
 
 	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
 	//bool _parse_generate_any_for(ParseFunc parse_scope_func);

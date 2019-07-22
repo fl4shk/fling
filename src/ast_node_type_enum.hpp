@@ -124,6 +124,7 @@ enum class Type
 	StmtSwitchz,
 	StmtCase,
 	StmtDefault,
+	ScopeSwitch,
 	StmtUsing,
 	StmtInstModule,
 	StmtReturn,

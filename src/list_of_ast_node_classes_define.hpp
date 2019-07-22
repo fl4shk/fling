@@ -123,6 +123,7 @@
 	X(NodeStmtSwitchz, StmtSwitchz) \
 	X(NodeStmtCase, StmtCase) \
 	X(NodeStmtDefault, StmtDefault) \
+	X(NodeScopeSwitch, ScopeSwitch) \
 	X(NodeStmtUsing, StmtUsing) \
 	X(NodeStmtInstModule, StmtInstModule) \
 	X(NodeStmtReturn, StmtReturn) \

@@ -120,6 +120,7 @@ virtual void visitStmtSwitch(NodeStmtSwitch* node) = 0;
 virtual void visitStmtSwitchz(NodeStmtSwitchz* node) = 0;
 virtual void visitStmtCase(NodeStmtCase* node) = 0;
 virtual void visitStmtDefault(NodeStmtDefault* node) = 0;
+virtual void visitScopeSwitch(NodeScopeSwitch* node) = 0;
 virtual void visitStmtUsing(NodeStmtUsing* node) = 0;
 virtual void visitStmtInstModule(NodeStmtInstModule* node) = 0;
 virtual void visitStmtReturn(NodeStmtReturn* node) = 0;

@@ -368,16 +368,16 @@ public:		// functions
 class NodeCall : public NodeBase
 {
 protected:		// children
-	Child _ident,
+	Child _ident_or_op,
 		_param_inst_list,
 		_arg_inst_list;
 public:		// functions
 	inline NodeCall(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident,
+		Child&& s_ident_or_op,
 		Child&& s_param_inst_list,
 		Child&& s_arg_inst_list)
 		: NodeBase(s_src_code_chunk),
-		_ident(std::move(s_ident)),
+		_ident_or_op(std::move(s_ident_or_op)),
 		_param_inst_list(std::move(s_param_inst_list)),
 		_arg_inst_list(std::move(s_arg_inst_list))
 	{
@@ -391,8 +391,8 @@ public:		// functions
 	{
 		return "Call";
 	}
-	GEN_GETTER_BY_CON_REF(ident)
-	GEN_SETTER_BY_RVAL_REF(ident)
+	GEN_GETTER_BY_CON_REF(ident_or_op)
+	GEN_SETTER_BY_RVAL_REF(ident_or_op)
 	GEN_GETTER_BY_CON_REF(param_inst_list)
 	GEN_SETTER_BY_RVAL_REF(param_inst_list)
 	GEN_GETTER_BY_CON_REF(arg_inst_list)
@@ -468,12 +468,15 @@ public:		// functions
 class NodeBracketPair : public NodeBase
 {
 protected:		// children
-	Child _expr;
+	Child _left,
+		_right;
 public:		// functions
 	inline NodeBracketPair(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_expr)
+		Child&& s_left,
+		Child&& s_right)
 		: NodeBase(s_src_code_chunk),
-		_expr(std::move(s_expr))
+		_left(std::move(s_left)),
+		_right(std::move(s_right))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeBracketPair);
@@ -485,8 +488,10 @@ public:		// functions
 	{
 		return "BracketPair";
 	}
-	GEN_GETTER_BY_CON_REF(expr)
-	GEN_SETTER_BY_RVAL_REF(expr)
+	GEN_GETTER_BY_CON_REF(left)
+	GEN_SETTER_BY_RVAL_REF(left)
+	GEN_GETTER_BY_CON_REF(right)
+	GEN_SETTER_BY_RVAL_REF(right)
 };
 
 class NodeHasString : public NodeBase
@@ -625,7 +630,6 @@ class NodeClass : public NodeBase
 {
 protected:		// variables
 	bool _packed;
-	bool _virtual_extends;
 protected:		// children
 	Child _ident,
 		_param_list,
@@ -635,14 +639,12 @@ protected:		// children
 public:		// functions
 	inline NodeClass(const SrcCodeChunk& s_src_code_chunk,
 		const bool& s_packed,
-		const bool& s_virtual_extends,
 		Child&& s_ident,
 		Child&& s_param_list,
 		Child&& s_extends,
 		Child&& s_scope,
 		Child&& s_var_list)
 		: NodeBase(s_src_code_chunk), _packed(s_packed),
-		_virtual_extends(s_virtual_extends),
 		_ident(std::move(s_ident)),
 		_param_list(std::move(s_param_list)),
 		_extends(std::move(s_extends)),
@@ -660,7 +662,6 @@ public:		// functions
 		return "Class";
 	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(packed)
-	GEN_GETTER_AND_SETTER_BY_CON_REF(virtual_extends)
 	GEN_GETTER_BY_CON_REF(ident)
 	GEN_SETTER_BY_RVAL_REF(ident)
 	GEN_GETTER_BY_CON_REF(param_list)
@@ -693,12 +694,15 @@ public:		// functions
 
 class NodeExtends : public NodeBase
 {
+protected:		// variables
+	bool _is_virtual;
 protected:		// children
 	Child _the_typename;
 public:		// functions
 	inline NodeExtends(const SrcCodeChunk& s_src_code_chunk,
+		const bool& s_is_virtual,
 		Child&& s_the_typename)
-		: NodeBase(s_src_code_chunk),
+		: NodeBase(s_src_code_chunk), _is_virtual(s_is_virtual),
 		_the_typename(std::move(s_the_typename))
 	{
 	}
@@ -711,6 +715,7 @@ public:		// functions
 	{
 		return "Extends";
 	}
+	GEN_GETTER_AND_SETTER_BY_CON_REF(is_virtual)
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
@@ -2563,14 +2568,14 @@ public:		// functions
 class NodeStmtSwitch : public NodeBase
 {
 protected:		// children
-	Child _ident_etc,
+	Child _expr,
 		_stmt_list;
 public:		// functions
 	inline NodeStmtSwitch(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_etc,
+		Child&& s_expr,
 		Child&& s_stmt_list)
 		: NodeBase(s_src_code_chunk),
-		_ident_etc(std::move(s_ident_etc)),
+		_expr(std::move(s_expr)),
 		_stmt_list(std::move(s_stmt_list))
 	{
 	}
@@ -2583,8 +2588,8 @@ public:		// functions
 	{
 		return "StmtSwitch";
 	}
-	GEN_GETTER_BY_CON_REF(ident_etc)
-	GEN_SETTER_BY_RVAL_REF(ident_etc)
+	GEN_GETTER_BY_CON_REF(expr)
+	GEN_SETTER_BY_RVAL_REF(expr)
 	GEN_GETTER_BY_CON_REF(stmt_list)
 	GEN_SETTER_BY_RVAL_REF(stmt_list)
 };
@@ -2593,10 +2598,10 @@ class NodeStmtSwitchz : public NodeStmtSwitch
 {
 public:		// functions
 	inline NodeStmtSwitchz(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_etc,
+		Child&& s_expr,
 		Child&& s_stmt_list)
 		: NodeStmtSwitch(s_src_code_chunk,
-		std::move(s_ident_etc),
+		std::move(s_expr),
 		std::move(s_stmt_list))
 	{
 	}
@@ -2614,12 +2619,15 @@ public:		// functions
 class NodeStmtCase : public NodeBase
 {
 protected:		// children
-	Child _expr;
+	Child _expr,
+		_stmt_list;
 public:		// functions
 	inline NodeStmtCase(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_expr)
+		Child&& s_expr,
+		Child&& s_stmt_list)
 		: NodeBase(s_src_code_chunk),
-		_expr(std::move(s_expr))
+		_expr(std::move(s_expr)),
+		_stmt_list(std::move(s_stmt_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtCase);
@@ -2633,13 +2641,19 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
+	GEN_GETTER_BY_CON_REF(stmt_list)
+	GEN_SETTER_BY_RVAL_REF(stmt_list)
 };
 
 class NodeStmtDefault : public NodeBase
 {
+protected:		// children
+	Child _stmt_list;
 public:		// functions
-	inline NodeStmtDefault(const SrcCodeChunk& s_src_code_chunk)
-		: NodeBase(s_src_code_chunk)
+	inline NodeStmtDefault(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_stmt_list)
+		: NodeBase(s_src_code_chunk),
+		_stmt_list(std::move(s_stmt_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtDefault);
@@ -2650,6 +2664,26 @@ public:		// functions
 	virtual string name() const
 	{
 		return "StmtDefault";
+	}
+	GEN_GETTER_BY_CON_REF(stmt_list)
+	GEN_SETTER_BY_RVAL_REF(stmt_list)
+};
+
+class NodeScopeSwitch : public NodeList
+{
+public:		// functions
+	inline NodeScopeSwitch(const SrcCodeChunk& s_src_code_chunk)
+		: NodeList(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeScopeSwitch);
+	virtual Type type() const
+	{
+		return Type::ScopeSwitch;
+	}
+	virtual string name() const
+	{
+		return "ScopeSwitch";
 	}
 };
 

@@ -158,6 +158,18 @@ auto Parser::_parse_kw_const() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwConst);
 }
+auto Parser::_parse_kw_range() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwRange);
+}
+auto Parser::_parse_kw_cat() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwCat);
+}
+auto Parser::_parse_kw_repl() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwRepl);
+}
 auto Parser::_parse_kw_using() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUsing);
@@ -213,6 +225,10 @@ auto Parser::_parse_kw_private() -> ParseRet
 auto Parser::_parse_kw_enum() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwEnum);
+}
+auto Parser::_parse_kw_union() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::KwUnion);
 }
 auto Parser::_parse_kw_assign() -> ParseRet
 {
@@ -359,6 +375,10 @@ auto Parser::_parse_punct_colon() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Colon);
 }
+auto Parser::_parse_punct_apostrophe() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::Apostrophe);
+}
 auto Parser::_parse_punct_assign() -> ParseRet
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Assign);
@@ -397,7 +417,8 @@ auto Parser::_parse_header_for() -> ParseRet
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(runitp(kw_for),
 		runitp(punct_lparen), runitp(ident), runitp(punct_colon),
-		runitp(expr), runitp(punct_rparen)))
+		_req_or_parse(runitp(expr), runitp(type_range)),
+		runitp(punct_rparen)))
 	return ret;
 }
 
@@ -827,11 +848,40 @@ auto Parser::_parse_using() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_using),
+		runitp(ident_terminal)))
+
+	auto s_left = _pop_ast_child();
+	Child s_right;
+
+	if (_one_opt_parse(_req_seq_parse(runitp(punct_assign),
+		runitp(ident_etc))))
+	{
+		s_right = _pop_ast_child();
+	}
+
+	one_req_seqp(punct_semicolon).exec();
+
+	_push_ast_child(NodeStmtUsing(_ls_src_code_chunk(ret), move(s_left),
+		move(s_right)));
+
 	return ret;
 }
 
 auto Parser::_parse_stmt_assign() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(expr),
+		runitp(punct_assign), runitp(expr), runitp(punct_semicolon)))
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+
+	_push_ast_child(NodeStmtBehavAssign(_ls_src_code_chunk(ret),
+		move(s_left), move(s_right)));
+
+	return ret;
 }
 auto Parser::_parse_stmt_if() -> ParseRet
 {
@@ -876,50 +926,282 @@ auto Parser::_parse_stmt_if() -> ParseRet
 }
 auto Parser::_parse_stmt_for() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(header_for),
+		runitp(scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_items = _pop_ast_child();
+	auto s_var = _pop_ast_child();
+
+	_push_ast_child(NodeStmtFor(_ls_src_code_chunk(ret), move(s_var),
+		move(s_items), move(s_var)));
+
+	return ret;
 }
 auto Parser::_parse_stmt_while() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_while),
+		runitp(punct_lparen), runitp(expr), runitp(punct_rparen),
+		runitp(scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_cond_expr = _pop_ast_child();
+
+	_push_ast_child(NodeStmtWhile(_ls_src_code_chunk(ret),
+		move(s_cond_expr), move(s_stmt_list)));
+
+	return ret;
 }
 auto Parser::_parse_stmt_switch() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_switch),
+		runitp(punct_lparen), runitp(expr), runitp(punct_rparen),
+		runitp(scope_switch)))
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_expr = _pop_ast_child();
+
+	_push_ast_child(NodeStmtSwitch(_ls_src_code_chunk(ret), move(s_expr),
+		move(s_stmt_list)));
+
+	return ret;
 }
 auto Parser::_parse_stmt_switchz() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_switchz),
+		runitp(punct_lparen), runitp(expr), runitp(punct_rparen),
+		runitp(scope_switch)))
+
+	auto s_stmt_list = _pop_ast_child();
+	auto s_expr = _pop_ast_child();
+
+	_push_ast_child(NodeStmtSwitchz(_ls_src_code_chunk(ret), move(s_expr),
+		move(s_stmt_list)));
+
+	return ret;
 }
 auto Parser::_parse_scope_switch() -> ParseRet
 {
+	return _parse_any_scope<NodeScopeSwitch>("switch",
+		_req_or_parse(runitp(stmt_case), runitp(stmt_default)));
+}
+auto Parser::_parse_stmt_case() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_case), runitp(expr),
+		runitp(punct_colon), runitp(inner_scope_behav)))
+	
+	auto s_stmt_list = _pop_ast_child();
+	auto s_expr = _pop_ast_child();
+
+	_push_ast_child(NodeStmtCase(_ls_src_code_chunk(ret), move(s_expr),
+		move(s_stmt_list)));
+	return ret;
+}
+auto Parser::_parse_stmt_default() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_default),
+		runitp(punct_colon), runitp(inner_scope_behav)))
+
+	auto s_stmt_list = _pop_ast_child();
+
+	_push_ast_child(NodeStmtDefault(_ls_src_code_chunk(ret),
+		move(s_stmt_list)));
+	return ret;
 }
 
 auto Parser::_parse_decl_cstm_type() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(class), runitp(enum),
+		runitp(union)))
+	return ret;
 }
 auto Parser::_parse_class() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	check_parse_anon(_req_seq_parse(ounitp(kw_packed), runitp(kw_class)))
+
+	bool s_packed = false;
+	if (_one_opt_parse(one_req_seqp(kw_packed)))
+	{
+		s_packed = true;
+	}
+
+	one_req_seqp(kw_class).exec();
+
+	auto s_ident = _pexec(one_req_seqp(ident));
+
+	Child s_param_list;
+	if (_one_opt_parse(one_req_seqp(param_list)))
+	{
+		s_param_list = _pop_ast_child();
+	}
+
+	Child s_extends;
+	if (_one_opt_parse(one_req_seqp(extends)))
+	{
+		s_extends = _pop_ast_child();
+	}
+
+	auto s_scope = _pexec(one_req_seqp(scope_class));
+
+	auto temp = _dup_lex_state();
+	const auto one_var_seq = one_req_seqp(one_var);
+
+	NodeIdentTermAndExtraList s_var_list(_ls_src_code_chunk(temp));
+
+	if (_one_opt_parse(one_var_seq))
+	{
+		s_var_list.append(_pop_ast_child());
+
+		_partial_parse_any_list(s_var_list, _req_seq_parse
+			(runitp(punct_comma), one_var_seq));
+	}
+
+	one_req_seqp(punct_semicolon).exec();
+
+	_push_ast_child(NodeClass(_ls_src_code_chunk(ret), s_packed,
+		move(s_ident), move(s_param_list), move(s_extends), move(s_scope),
+		_to_ast_child(move(s_var_list))));
+
+	return ret;
 }
 auto Parser::_parse_extends() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	check_parse_anon(_req_seq_parse(ounitp(kw_virtual),
+		runitp(kw_extends)))
+
+	bool s_is_virtual = false;
+	if (_one_opt_parse(one_req_seqp(kw_virtual)))
+	{
+		s_is_virtual = true;
+	}
+	one_req_seqp(kw_extends).exec();
+
+	auto s_the_typename = _pexec(one_req_seqp(typename));
+
+	_push_ast_child(NodeExtends(_ls_src_code_chunk(ret), s_is_virtual,
+		move(s_the_typename)));
+
+	return ret;
 }
 
 auto Parser::_parse_scope_class() -> ParseRet
 {
+	return _parse_any_scope<NodeScopeClass>("class",
+		_req_or_parse(runitp(generate_class), runitp(member_access_label),
+		runitp(const), runitp(var), runitp(using), runitp(callable_member),
+		runitp(decl_cstm_type)));
 }
 auto Parser::_parse_callable_member() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	check_parse_anon(_req_seq_parse(ounitp(callable_member_prefix),
+		runitp(decl_callable)))
+
+	bool s_is_const = false;
+	bool s_is_virtual = false;
+	bool s_is_static = false;
+
+	if (_one_opt_parse(one_req_seqp(callable_member_prefix)))
+	{
+		const auto num = _pop_num();
+
+		for (size_t i=0; i<num; ++i)
+		{
+			switch (_pop_tok())
+			{
+			case Tok::KwConst:
+				s_is_const = true;
+				break;
+			case Tok::KwVirtual:
+				s_is_virtual = true;
+				break;
+			case Tok::KwStatic:
+				s_is_static = true;
+				break;
+			default:
+				_lexer().src_code_chunk(ret.get()).err
+					("Parser::_parse_callable_member():  Eek!");
+				break;
+			}
+		}
+	}
+
+	auto s_callable = _pexec(one_req_seqp(decl_callable));
+
+	_push_ast_child(NodeCallableMember(_ls_src_code_chunk(ret), s_is_const,
+		s_is_virtual, s_is_static, move(s_callable)));
+
+	return ret;
 }
 auto Parser::_parse_generate_class() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_or_parse(runitp(generate_class_if),
+		runitp(generate_class_for)))
+	return ret;
 }
 auto Parser::_parse_generate_class_if() -> ParseRet
 {
+	return _parse_generate_any_if("scope_class", fp(scope_class));
 }
 auto Parser::_parse_generate_class_for() -> ParseRet
 {
+	return _parse_generate_any_for("scope_class", fp(scope_class));
 }
 auto Parser::_parse_member_access_label() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto seq_or = _req_or_parse(runitp(kw_public),
+		runitp(kw_protected), runitp(kw_private));
+	const auto seq_colon = one_req_seqp(punct_colon);
+	check_parse_named(to_check, _req_seq_parse(seq_or, seq_colon))
+
+	const auto first_valid = seq_or.first_valid();
+	const auto the_up = std::get<TheSeqParse::TheUnitParse>
+		(first_valid.one_inst);
+	if (the_up.parse_func_str() == "kw_public")
+	{
+		_push_ast_child(NodeStmtMemberAccessPublic(_ls_src_code_chunk
+			(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_protected")
+	{
+		_push_ast_child(NodeStmtMemberAccessProtected(_ls_src_code_chunk
+			(ret)));
+	}
+	else // if (the_up.parse_func_str() == "kw_private")
+	{
+		_push_ast_child(NodeStmtMemberAccessPrivate(_ls_src_code_chunk
+			(ret)));
+	}
+
+	one_req_seqp(punct_colon).exec();
+
+	return ret;
 }
 
 auto Parser::_parse_enum() -> ParseRet
+{
+}
+auto Parser::_parse_union() -> ParseRet
 {
 }
 
@@ -1005,6 +1287,12 @@ auto Parser::_parse_no_param_possible_typename() -> ParseRet
 auto Parser::_parse_typeof() -> ParseRet
 {
 }
+auto Parser::_parse_type_range() -> ParseRet
+{
+}
+auto Parser::_parse_range_suffix() -> ParseRet
+{
+}
 
 auto Parser::_parse_expr() -> ParseRet
 {
@@ -1074,36 +1362,86 @@ auto Parser::_parse_expr_post_dollar_func() -> ParseRet
 auto Parser::_parse_dollar_func_of_one() -> ParseRet
 {
 }
+auto Parser::_parse_expr_cat() -> ParseRet
+{
+}
+auto Parser::_parse_expr_repl() -> ParseRet
+{
+}
 
 auto Parser::_parse_ident_etc() -> ParseRet
 {
-}
-auto Parser::_parse_ident_terminal() -> ParseRet
-{
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_member_access() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_scope_access() -> ParseRet
 {
-}
-auto Parser::_parse_ident() -> ParseRet
-{
-}
-auto Parser::_parse_ident_bracket() -> ParseRet
-{
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_call() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
+}
+auto Parser::_parse_ident_access_suffix() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_no_param_overloaded_call() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_param_scope_overloaded_call() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
+}
+auto Parser::_parse_ident_terminal() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	return ret;
+}
+auto Parser::_parse_ident() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	if (just_test())
+	{
+		if (_check_prefixed_tok_seq(Tok::Ident))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+
+	_expect(Tok::Ident);
+	_push_ast_child(NodeIdent(_ls_src_code_chunk(ret), _lex_state().s()));
+	return ret;
 }
 
 auto Parser::_parse_generate_any_if(const string& parse_scope_func_str,
