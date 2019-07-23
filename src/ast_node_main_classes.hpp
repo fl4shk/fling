@@ -545,16 +545,16 @@ public:		// functions
 class NodeCall : public NodeBase
 {
 protected:		// children
-	Child _ident_or_op,
+	Child _ident_or_ident_etc,
 		_param_inst_list,
 		_arg_inst_list;
 public:		// functions
 	inline NodeCall(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_or_op,
+		Child&& s_ident_or_ident_etc,
 		Child&& s_param_inst_list,
 		Child&& s_arg_inst_list)
 		: NodeBase(s_src_code_chunk),
-		_ident_or_op(std::move(s_ident_or_op)),
+		_ident_or_ident_etc(std::move(s_ident_or_ident_etc)),
 		_param_inst_list(std::move(s_param_inst_list)),
 		_arg_inst_list(std::move(s_arg_inst_list))
 	{
@@ -564,7 +564,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_or_ident_etc\n(", ident_or_ident_etc()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:param_inst_list\n(", param_inst_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:arg_inst_list\n(", arg_inst_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
@@ -578,8 +578,8 @@ public:		// functions
 	{
 		return "Call";
 	}
-	GEN_GETTER_BY_CON_REF(ident_or_op)
-	GEN_SETTER_BY_RVAL_REF(ident_or_op)
+	GEN_GETTER_BY_CON_REF(ident_or_ident_etc)
+	GEN_SETTER_BY_RVAL_REF(ident_or_ident_etc)
 	GEN_GETTER_BY_CON_REF(param_inst_list)
 	GEN_SETTER_BY_RVAL_REF(param_inst_list)
 	GEN_GETTER_BY_CON_REF(arg_inst_list)

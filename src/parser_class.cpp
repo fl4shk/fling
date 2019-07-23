@@ -2530,6 +2530,16 @@ auto Parser::_parse_expr_repl() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_repl),
+		runitp(punct_lparen), runitp(expr), runitp(punct_comma),
+		runitp(expr), runitp(punct_rparen)))
+
+	auto s_to_repl_expr = _pop_ast_child();
+	auto s_how_much_expr = _pop_ast_child();
+
+	_push_ast_child(NodeExprRepl(_ls_src_code_chunk(ret),
+		move(s_how_much_expr), move(s_to_repl_expr)));
+
 	return ret;
 }
 
@@ -2537,11 +2547,35 @@ auto Parser::_parse_ident_etc() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	simple_seq_parse_anon(_req_or_parse(runitp(ident_member_access),
+		runitp(ident_scope_access), runitp(ident_call),
+		runitp(ident_no_param_overloaded_call),
+		runitp(ident_param_member_overloaded_call),
+		runitp(ident_terminal)));
+
 	return ret;
 }
 auto Parser::_parse_ident_member_access() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+
+	check_parse_anon(_req_seq_parse(runitp(ident_etc),
+		runitp(punct_member_access), runitp(ident_etc)))
+
+	auto s_left = _pexec(one_req_seqp(ident_etc));
+
+	NodeIdentMemberAccess s_ident_member_access(_ls_src_code_chunk
+		(_dup_lex_state()));
+
+	auto s_right = _pexec(_req_seq_parse(runitp(punct_member_access),
+		runitp(ident_etc)));
+
+	NodeIdentEtc to_push(_ls_src_code_chunk(ret));
+	to_push.append(move(s_left));
+	to_push.append(_to_ast_child(move(s_ident_member_access)));
+	to_push.append(move(s_right));
+
+	_push_ast_child(move(to_push));
 
 	return ret;
 }
@@ -2549,17 +2583,45 @@ auto Parser::_parse_ident_scope_access() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	check_parse_anon(_req_seq_parse(runitp(ident_etc),
+		runitp(punct_scope_access), runitp(ident_etc)))
+
+	auto s_left = _pexec(one_req_seqp(ident_etc));
+
+	NodeIdentScopeAccess s_ident_scope_access(_ls_src_code_chunk
+		(_dup_lex_state()));
+
+	auto s_right = _pexec(_req_seq_parse(runitp(punct_scope_access),
+		runitp(ident_etc)));
+
+	NodeIdentEtc to_push(_ls_src_code_chunk(ret));
+	to_push.append(move(s_left));
+	to_push.append(_to_ast_child(move(s_ident_scope_access)));
+	to_push.append(move(s_right));
+
+	_push_ast_child(move(to_push));
+
 	return ret;
 }
 auto Parser::_parse_ident_call() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	return ret;
-}
-auto Parser::_parse_ident_access_suffix() -> ParseRet
-{
-	auto ret = _dup_lex_state();
+	check_parse_anon(_req_seq_parse(runitp(ident), ounitp(param_inst_list),
+		runitp(arg_inst_list)))
+
+	auto s_ident = _pexec(one_req_seqp(ident));
+
+	Child s_param_inst_list;
+	if (_one_opt_parse(one_req_seqp(param_inst_list)))
+	{
+		s_param_inst_list = _pop_ast_child();
+	}
+
+	auto s_arg_inst_list = _pexec(one_req_seqp(arg_inst_list));
+
+	_push_ast_child(NodeCall(_ls_src_code_chunk(ret), move(s_ident),
+		move(s_param_inst_list), move(s_arg_inst_list)));
 
 	return ret;
 }
@@ -2567,23 +2629,49 @@ auto Parser::_parse_ident_no_param_overloaded_call() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	simple_seq_parse_anon(_req_seq_parse(runitp(ident_etc),
+		runitp(arg_inst_list)))
+
+	auto s_arg_inst_list = _pop_ast_child();
+	auto s_ident_etc = _pop_ast_child();
+
+	Child s_param_inst_list;
+
+	_push_ast_child(NodeCall(_ls_src_code_chunk(ret), move(s_ident_etc),
+		move(s_param_inst_list), move(s_arg_inst_list)));
+
 	return ret;
 }
 auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	return ret;
-}
-auto Parser::_parse_ident_param_scope_overloaded_call() -> ParseRet
-{
-	auto ret = _dup_lex_state();
+	simple_seq_parse_anon(_req_seq_parse(runitp(ident_etc),
+		runitp(punct_member_access), runitp(param_inst_list),
+		runitp(arg_inst_list)))
+
+	auto s_arg_inst_list = _pop_ast_child();
+	auto s_param_inst_list = _pop_ast_child();
+	auto s_ident_etc = _pop_ast_child();
+
+	_push_ast_child(NodeCall(_ls_src_code_chunk(ret), move(s_ident_etc),
+		move(s_param_inst_list), move(s_arg_inst_list)));
 
 	return ret;
 }
 auto Parser::_parse_ident_terminal() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(one_req_seqp(ident))
+
+	auto s_ident = _pop_ast_child();
+
+	NodeIdentTerminal to_push(_ls_src_code_chunk(ret), move(s_ident));
+
+	_partial_parse_any_list(to_push, one_req_seqp(range_suffix));
+
+	_push_ast_child(move(to_push));
 
 	return ret;
 }

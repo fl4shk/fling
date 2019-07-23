@@ -451,10 +451,8 @@ private:		// functions
 	ParseRet _parse_ident_member_access();
 	ParseRet _parse_ident_scope_access();
 	ParseRet _parse_ident_call();
-	ParseRet _parse_ident_access_suffix();
 	ParseRet _parse_ident_no_param_overloaded_call();
 	ParseRet _parse_ident_param_member_overloaded_call();
-	ParseRet _parse_ident_param_scope_overloaded_call();
 	ParseRet _parse_ident_terminal();
 	ParseRet _parse_ident();
 

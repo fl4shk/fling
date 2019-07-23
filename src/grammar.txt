@@ -858,27 +858,15 @@ ident_scope_access:
 
 ident_call:
 	ident param_inst_list? arg_inst_list
-	ident_access_suffix?
-	;
-ident_access_suffix:
-	(punct_member_access | punct_scope_access) ident_etc
 	;
 
 ident_no_param_overloaded_call:
 	ident_etc arg_inst_list
-	ident_access_suffix?
 	;
 ident_param_member_overloaded_call:
 	ident_etc
 		punct_member_access
 		param_inst_list arg_inst_list
-		ident_access_suffix?
-	;
-ident_param_scope_overloaded_call:
-	ident_etc
-		punct_scope_access
-		param_inst_list arg_inst_list
-		ident_access_suffix?
 	;
 
 ident_terminal:
