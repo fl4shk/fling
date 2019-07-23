@@ -106,6 +106,8 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Parser)
 	~Parser();
 
+	GEN_GETTER_BY_CON_REF(ast_root)
+
 private:		// functions
 	inline std::string _msg_for_expect(Tok tok,
 		const LexerState& lex_state) const
