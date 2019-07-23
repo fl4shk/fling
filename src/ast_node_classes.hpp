@@ -75,6 +75,10 @@ public:		// functions
 	virtual inline void append(Child&& child)
 	{
 	}
+	virtual string dbg_to_string() const
+	{
+		return string();
+	}
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
 
@@ -152,6 +156,10 @@ public:		// functions
 	//	ret += ")\n";
 	//	return ret;
 	//}
+	virtual string dbg_to_string() const
+	{
+		return string();
+	}
 };
 
 #include "ast_node_main_classes.hpp"

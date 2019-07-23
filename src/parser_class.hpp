@@ -403,6 +403,7 @@ private:		// functions
 	ParseRet _parse_param_module_sublist();
 	ParseRet _parse_ident_equals_typename_sublist();
 	ParseRet _parse_param_inst_list();
+	ParseRet _parse_arg_inst_list();
 
 	ParseRet _parse_pos_pararg_inst_list();
 	ParseRet _parse_named_pararg_inst_list();

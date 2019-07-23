@@ -80,6 +80,7 @@ void Lexer::_inner_next_tok()
 	}
 }
 
+
 //const string AstGen::node_base_str
 //	= sconcat("class NodeBase\n",
 //	"{\n",
@@ -418,6 +419,54 @@ void AstGen::run()
 			osprintout(f, "\t}\n");
 			osprintout(f,
 				"\tGEN_POST_CONSTRUCTOR(Node", node.ident, ");\n");
+			osprintout(f, "\tvirtual string dbg_to_string() const\n",
+				"\t{\n",
+				"\t\tstring ret;\n",
+				"\t\tret += name() + \"\\n(\";\n");
+
+
+			WTab t1(this);
+			WTab t2(&t1);
+			WTab t3(&t2);
+			WTab t4(&t3);
+			for (const auto& iter : ext_var_vec)
+			{
+				osprintout(f,
+					"\t\tret += sconcat(\"  ",
+					iter.ident,
+					"(\", ",
+					iter.ident, ", ",
+					"\")\\n\");\n");
+			}
+			for (const auto& iter : ext_children)
+			{
+				osprintout(f,
+					"\t\tret += sconcat(\"  child:",
+					iter,
+					"\\n(\", ",
+					iter, "()->dbg_to_string(), ",
+					"\"\\n)\\n\");\n");
+			}
+			if (_extends_from_list(node))
+			{
+				osprintout(f,
+					t2.run("ret += \"  list\\n  (\";\n"),
+					t2.run("for (size_t i=0; i<list.size(); ++i)\n"),
+					t2.run("{\n"),
+					t3.run("ret += \"    \";\n"),
+					t3.run("ret += list.at(i)->dbg_to_string();\n"),
+					t3.run("if ((i + 1) < list.size())\n"),
+					t3.run("{\n"),
+					t4.run("ret += \", \";\n"),
+					t3.run("}\n"),
+					t3.run("ret += \"  )\\n\";\n"),
+					t2.run("}\n"),
+					t2.run("ret += \"  )\\n\";\n"));
+			}
+			osprintout(f,
+				"\t\tret += \")\";\n",
+				"\t\treturn ret;\n",
+				"\t}\n");
 
 			osprintout(f,
 				"\tvirtual Type type() const\n",
@@ -534,6 +583,23 @@ auto AstGen::_extended_var_vec(const Node& node) const -> std::vector<Var>
 		}
 	}
 	return ret;
+}
+
+bool AstGen::_extends_from_list(const Node& node) const
+{
+	if (node.extends == "List")
+	{
+		return true;
+	}
+	else if ((node.extends != "") && _extends_from_list(_node_vec.at
+		(_node_ident_map.at(node.extends))))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool AstGen::_parse_node()

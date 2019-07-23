@@ -92,6 +92,38 @@ public:		// types
 		~Node() = default;
 	};
 
+	class WTab final
+	{
+	public:		// variables
+		std::variant<AstGen*, WTab*> parent;
+
+	public:		// functions
+		inline WTab(AstGen* s_parent)
+			: parent(s_parent)
+		{
+		}
+		inline WTab(WTab* s_parent)
+			: parent(s_parent)
+		{
+		}
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WTab);
+		~WTab() = default;
+
+		template<typename... ArgTypes>
+		inline string run(ArgTypes&&... args) const
+		{
+			if (std::holds_alternative<AstGen*>(parent))
+			{
+				return sconcat("\t", args...);
+			}
+			else
+			{
+				return sconcat("\t", std::get<WTab*>(parent)->run
+					(args...));
+			}
+		}
+	};
+
 //public:		// constants
 //	static const string node_base_str, node_list_str;
 
@@ -110,6 +142,7 @@ public:		// functions
 private:		// functions
 	std::vector<string> _extended_children(const Node& node) const;
 	std::vector<Var> _extended_var_vec(const Node& node) const;
+	bool _extends_from_list(const Node& node) const;
 	inline std::string _msg_for_expect(Tok tok,
 		const LexerState& lex_state) const
 	{

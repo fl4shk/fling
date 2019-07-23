@@ -8,13 +8,12 @@
 	X(NodeScopePackage, ScopePackage) \
 	X(NodeModule, Module) \
 	X(NodeScopeModproc, ScopeModproc) \
-	X(NodeInputPortArgSublist, InputPortArgSublist) \
-	X(NodeOutputPortArgSublist, OutputPortArgSublist) \
-	X(NodeBidirPortArgSublist, BidirPortArgSublist) \
-	X(NodeParamArgSublist, ParamArgSublist) \
-	X(NodeOneParamModule, OneParamModule) \
+	X(NodeTypeParamArgSublist, TypeParamArgSublist) \
+	X(NodePortArgSublist, PortArgSublist) \
+	X(NodeVarParamArgSublist, VarParamArgSublist) \
 	X(NodeParamModuleSublist, ParamModuleSublist) \
-	X(NodeParamArgList, ParamArgList) \
+	X(NodeParamList, ParamList) \
+	X(NodeArgList, ArgList) \
 	X(NodeLeftRightBase, LeftRightBase) \
 	X(NodeIdentTerminal, IdentTerminal) \
 	X(NodeIdentMemberAccess, IdentMemberAccess) \

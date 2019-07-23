@@ -648,6 +648,15 @@ param_inst_list:
 		(punct_comma)?
 	punct_rbracket
 	;
+arg_inst_list:
+	punct_lparen
+		(
+			pos_pararg_inst_list
+			| named_pararg_inst_list
+		)?
+		(punct_comma)?
+	punct_rparen
+	;
 
 pos_pararg_inst_list:
 	expr

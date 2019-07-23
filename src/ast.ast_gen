@@ -5,24 +5,22 @@ ScopePackage, List:
 Module:
 	child ident, param_list, port_list, scope;
 ScopeModproc, List:
-InputPortArgSublist, List:
-	child the_typename;
-OutputPortArgSublist, List:
-	child the_typename;
-BidirPortArgSublist, List:
-	child the_typename;
-ParamArgSublist, List:
-	child primary;
+TypeParamArgSublist, List:
+PortArgSublist:
+	initvar string _port_dir; 
+	child var_param_arg_sublist;
+VarParamArgSublist:
+	child the_typename, ident_term_and_extra_list;
 
 
 
 // Modules are not types, but they can be used generically.
-OneParamModule:
-	child ident_etc;
-ParamModuleSublist, List:
+ParamModuleSublist:
+	child ident_term_and_extra_list;
 
-// List of SubParamArgList's or ParamModuleList's
-ParamArgList, List:
+// List of ParamArgSublist's or ParamModuleList's
+ParamList, List:
+ArgList, List:
 
 
 LeftRightBase:
@@ -154,7 +152,7 @@ OneParamArgInst, LeftRightBase:
 //TokBitInvert: '~' ;
 
 ExprBase:
-	noinitvar ExprValue value;
+	//noinitvar ExprValue value;
 ExprBinopBase, ExprBase:
 	child left, right;
 ExprUnopBase, ExprBase:

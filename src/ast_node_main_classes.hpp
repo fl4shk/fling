@@ -6,6 +6,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeProgram);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Program;
@@ -31,6 +50,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePackage);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Package;
@@ -53,6 +81,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopePackage);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopePackage;
@@ -84,6 +131,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeModule);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:port_list\n(", port_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Module;
@@ -110,6 +168,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopeModproc);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopeModproc;
@@ -120,134 +197,138 @@ public:		// functions
 	}
 };
 
-class NodeInputPortArgSublist : public NodeList
-{
-protected:		// children
-	Child _the_typename;
-public:		// functions
-	inline NodeInputPortArgSublist(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_the_typename)
-		: NodeList(s_src_code_chunk),
-		_the_typename(std::move(s_the_typename))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeInputPortArgSublist);
-	virtual Type type() const
-	{
-		return Type::InputPortArgSublist;
-	}
-	virtual string name() const
-	{
-		return "InputPortArgSublist";
-	}
-	GEN_GETTER_BY_CON_REF(the_typename)
-	GEN_SETTER_BY_RVAL_REF(the_typename)
-};
-
-class NodeOutputPortArgSublist : public NodeList
-{
-protected:		// children
-	Child _the_typename;
-public:		// functions
-	inline NodeOutputPortArgSublist(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_the_typename)
-		: NodeList(s_src_code_chunk),
-		_the_typename(std::move(s_the_typename))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeOutputPortArgSublist);
-	virtual Type type() const
-	{
-		return Type::OutputPortArgSublist;
-	}
-	virtual string name() const
-	{
-		return "OutputPortArgSublist";
-	}
-	GEN_GETTER_BY_CON_REF(the_typename)
-	GEN_SETTER_BY_RVAL_REF(the_typename)
-};
-
-class NodeBidirPortArgSublist : public NodeList
-{
-protected:		// children
-	Child _the_typename;
-public:		// functions
-	inline NodeBidirPortArgSublist(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_the_typename)
-		: NodeList(s_src_code_chunk),
-		_the_typename(std::move(s_the_typename))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeBidirPortArgSublist);
-	virtual Type type() const
-	{
-		return Type::BidirPortArgSublist;
-	}
-	virtual string name() const
-	{
-		return "BidirPortArgSublist";
-	}
-	GEN_GETTER_BY_CON_REF(the_typename)
-	GEN_SETTER_BY_RVAL_REF(the_typename)
-};
-
-class NodeParamArgSublist : public NodeList
-{
-protected:		// children
-	Child _primary;
-public:		// functions
-	inline NodeParamArgSublist(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_primary)
-		: NodeList(s_src_code_chunk),
-		_primary(std::move(s_primary))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeParamArgSublist);
-	virtual Type type() const
-	{
-		return Type::ParamArgSublist;
-	}
-	virtual string name() const
-	{
-		return "ParamArgSublist";
-	}
-	GEN_GETTER_BY_CON_REF(primary)
-	GEN_SETTER_BY_RVAL_REF(primary)
-};
-
-class NodeOneParamModule : public NodeBase
-{
-protected:		// children
-	Child _ident_etc;
-public:		// functions
-	inline NodeOneParamModule(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_etc)
-		: NodeBase(s_src_code_chunk),
-		_ident_etc(std::move(s_ident_etc))
-	{
-	}
-	GEN_POST_CONSTRUCTOR(NodeOneParamModule);
-	virtual Type type() const
-	{
-		return Type::OneParamModule;
-	}
-	virtual string name() const
-	{
-		return "OneParamModule";
-	}
-	GEN_GETTER_BY_CON_REF(ident_etc)
-	GEN_SETTER_BY_RVAL_REF(ident_etc)
-};
-
-class NodeParamModuleSublist : public NodeList
+class NodeTypeParamArgSublist : public NodeList
 {
 public:		// functions
-	inline NodeParamModuleSublist(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeTypeParamArgSublist(const SrcCodeChunk& s_src_code_chunk)
 		: NodeList(s_src_code_chunk)
 	{
 	}
+	GEN_POST_CONSTRUCTOR(NodeTypeParamArgSublist);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::TypeParamArgSublist;
+	}
+	virtual string name() const
+	{
+		return "TypeParamArgSublist";
+	}
+};
+
+class NodePortArgSublist : public NodeBase
+{
+protected:		// variables
+	string _port_dir;
+protected:		// children
+	Child _var_param_arg_sublist;
+public:		// functions
+	inline NodePortArgSublist(const SrcCodeChunk& s_src_code_chunk,
+		const string& s_port_dir,
+		Child&& s_var_param_arg_sublist)
+		: NodeBase(s_src_code_chunk), _port_dir(s_port_dir),
+		_var_param_arg_sublist(std::move(s_var_param_arg_sublist))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodePortArgSublist);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _port_dir(", _port_dir, ")\n");
+		ret += sconcat("  child:var_param_arg_sublist\n(", var_param_arg_sublist()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::PortArgSublist;
+	}
+	virtual string name() const
+	{
+		return "PortArgSublist";
+	}
+	GEN_GETTER_AND_SETTER_BY_CON_REF(port_dir)
+	GEN_GETTER_BY_CON_REF(var_param_arg_sublist)
+	GEN_SETTER_BY_RVAL_REF(var_param_arg_sublist)
+};
+
+class NodeVarParamArgSublist : public NodeBase
+{
+protected:		// children
+	Child _the_typename,
+		_ident_term_and_extra_list;
+public:		// functions
+	inline NodeVarParamArgSublist(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_the_typename,
+		Child&& s_ident_term_and_extra_list)
+		: NodeBase(s_src_code_chunk),
+		_the_typename(std::move(s_the_typename)),
+		_ident_term_and_extra_list(std::move(s_ident_term_and_extra_list))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeVarParamArgSublist);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::VarParamArgSublist;
+	}
+	virtual string name() const
+	{
+		return "VarParamArgSublist";
+	}
+	GEN_GETTER_BY_CON_REF(the_typename)
+	GEN_SETTER_BY_RVAL_REF(the_typename)
+	GEN_GETTER_BY_CON_REF(ident_term_and_extra_list)
+	GEN_SETTER_BY_RVAL_REF(ident_term_and_extra_list)
+};
+
+class NodeParamModuleSublist : public NodeBase
+{
+protected:		// children
+	Child _ident_term_and_extra_list;
+public:		// functions
+	inline NodeParamModuleSublist(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_ident_term_and_extra_list)
+		: NodeBase(s_src_code_chunk),
+		_ident_term_and_extra_list(std::move(s_ident_term_and_extra_list))
+	{
+	}
 	GEN_POST_CONSTRUCTOR(NodeParamModuleSublist);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ParamModuleSublist;
@@ -256,23 +337,81 @@ public:		// functions
 	{
 		return "ParamModuleSublist";
 	}
+	GEN_GETTER_BY_CON_REF(ident_term_and_extra_list)
+	GEN_SETTER_BY_RVAL_REF(ident_term_and_extra_list)
 };
 
-class NodeParamArgList : public NodeList
+class NodeParamList : public NodeList
 {
 public:		// functions
-	inline NodeParamArgList(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeParamList(const SrcCodeChunk& s_src_code_chunk)
 		: NodeList(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeParamArgList);
+	GEN_POST_CONSTRUCTOR(NodeParamList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
-		return Type::ParamArgList;
+		return Type::ParamList;
 	}
 	virtual string name() const
 	{
-		return "ParamArgList";
+		return "ParamList";
+	}
+};
+
+class NodeArgList : public NodeList
+{
+public:		// functions
+	inline NodeArgList(const SrcCodeChunk& s_src_code_chunk)
+		: NodeList(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeArgList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::ArgList;
+	}
+	virtual string name() const
+	{
+		return "ArgList";
 	}
 };
 
@@ -291,6 +430,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeLeftRightBase);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::LeftRightBase;
@@ -317,6 +465,26 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdentTerminal);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::IdentTerminal;
@@ -337,6 +505,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdentMemberAccess);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::IdentMemberAccess;
@@ -355,6 +530,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdentScopeAccess);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::IdentScopeAccess;
@@ -383,6 +565,16 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeCall);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_inst_list\n(", param_inst_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:arg_inst_list\n(", arg_inst_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Call;
@@ -407,6 +599,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdentEtc);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::IdentEtc;
@@ -428,6 +639,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeNumExpr);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _n(", _n, ")\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::NumExpr;
@@ -453,6 +672,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSizedNumExpr);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _n(", _n, ")\n");
+		ret += sconcat("  child:size\n(", size()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::SizedNumExpr;
@@ -480,6 +708,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeBracketPair);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::BracketPair;
@@ -505,6 +742,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeHasString);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _s(", _s, ")\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::HasString;
@@ -526,6 +771,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdent);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _s(", _s, ")\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Ident;
@@ -546,6 +799,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeConstString);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _s(", _s, ")\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ConstString;
@@ -564,6 +825,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopeBehav);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopeBehav;
@@ -595,6 +875,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeEnum);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:var_list\n(", var_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Enum;
@@ -621,6 +912,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopeEnum);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopeEnum;
@@ -658,6 +968,19 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeClass);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _packed(", _packed, ")\n");
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:extends\n(", extends()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:var_list\n(", var_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Class;
@@ -687,6 +1010,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopeClass);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopeClass;
@@ -712,6 +1054,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExtends);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _is_virtual(", _is_virtual, ")\n");
+		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Extends;
@@ -746,6 +1097,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeCallableMember);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _is_const(", _is_const, ")\n");
+		ret += sconcat("  _is_virtual(", _is_virtual, ")\n");
+		ret += sconcat("  _is_static(", _is_static, ")\n");
+		ret += sconcat("  child:callable\n(", callable()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::CallableMember;
@@ -779,6 +1141,16 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUnion);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:var_list\n(", var_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Union;
@@ -803,6 +1175,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopeUnion);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopeUnion;
@@ -828,6 +1219,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeTypename);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident_etc\n(", ident_etc()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_inst_list\n(", param_inst_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Typename;
@@ -850,6 +1250,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeType);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Type;
@@ -868,6 +1275,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeAuto);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Auto;
@@ -886,6 +1300,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeVoid);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Void;
@@ -904,6 +1325,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUwire);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Uwire;
@@ -922,6 +1350,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSwire);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Swire;
@@ -940,6 +1375,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUbit);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Ubit;
@@ -958,6 +1400,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSbit);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Sbit;
@@ -976,6 +1425,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUbyte);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Ubyte;
@@ -994,6 +1450,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSbyte);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Sbyte;
@@ -1012,6 +1475,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUshortint);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Ushortint;
@@ -1030,6 +1500,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSshortint);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Sshortint;
@@ -1048,6 +1525,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUint);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Uint;
@@ -1066,6 +1550,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSint);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Sint;
@@ -1084,6 +1575,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeUlongint);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Ulongint;
@@ -1102,6 +1600,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSlongint);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Slongint;
@@ -1120,6 +1625,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeSelf);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::Self;
@@ -1138,6 +1650,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePosParamArgInstList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PosParamArgInstList;
@@ -1156,6 +1687,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeNamedParamArgInstList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::NamedParamArgInstList;
@@ -1178,6 +1728,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeOneParamArgInst);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::OneParamArgInst;
@@ -1190,14 +1749,19 @@ public:		// functions
 
 class NodeExprBase : public NodeBase
 {
-public:		// variables
-	ExprValue value;
 public:		// functions
 	inline NodeExprBase(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBase);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBase;
@@ -1223,6 +1787,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBase);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBase;
@@ -1249,6 +1822,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopBase);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopBase;
@@ -1273,6 +1854,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopLogAnd);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopLogAnd;
@@ -1295,6 +1885,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopLogOr);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopLogOr;
@@ -1317,6 +1916,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpEq);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpEq;
@@ -1339,6 +1947,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpNe);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpNe;
@@ -1361,6 +1978,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpLt);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpLt;
@@ -1383,6 +2009,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpGt);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpGt;
@@ -1405,6 +2040,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpLe);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpLe;
@@ -1427,6 +2071,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpGe);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopCmpGe;
@@ -1449,6 +2102,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopPlus);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopPlus;
@@ -1471,6 +2133,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopMinus);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopMinus;
@@ -1493,6 +2164,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopMul);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopMul;
@@ -1515,6 +2195,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopDiv);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopDiv;
@@ -1537,6 +2226,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopMod);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopMod;
@@ -1559,6 +2257,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBitAnd);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitAnd;
@@ -1581,6 +2288,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBitOr);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitOr;
@@ -1603,6 +2319,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBitXor);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitXor;
@@ -1625,6 +2350,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBitLsl);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitLsl;
@@ -1647,6 +2381,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBitLsr);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitLsr;
@@ -1669,6 +2412,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopBitAsr);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopBitAsr;
@@ -1689,6 +2441,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopLogNot);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopLogNot;
@@ -1709,6 +2469,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopBitNot);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopBitNot;
@@ -1729,6 +2497,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopPlus);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopPlus;
@@ -1749,6 +2525,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopMinus);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopMinus;
@@ -1769,6 +2553,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarUnsgn);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarUnsgn;
@@ -1789,6 +2581,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarSgn);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarSgn;
@@ -1809,6 +2609,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsUnsgn);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarIsUnsgn;
@@ -1829,6 +2637,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsSgn);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarIsSgn;
@@ -1849,6 +2665,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarRange);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarRange;
@@ -1869,6 +2693,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarSize);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarSize;
@@ -1889,6 +2721,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarFirst);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarFirst;
@@ -1909,6 +2749,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarLast);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarLast;
@@ -1929,6 +2777,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarHigh);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarHigh;
@@ -1949,6 +2805,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarLow);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarLow;
@@ -1969,6 +2833,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarClog2);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopDollarClog2;
@@ -1991,6 +2863,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprBinopDollarPow);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprBinopDollarPow;
@@ -2013,6 +2894,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePseudoExprDollarBase);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PseudoExprDollarBase;
@@ -2035,6 +2924,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePseudoExprDollarPast);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PseudoExprDollarPast;
@@ -2055,6 +2952,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePseudoExprDollarStable);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PseudoExprDollarStable;
@@ -2075,6 +2980,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePseudoExprDollarRose);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PseudoExprDollarRose;
@@ -2095,6 +3008,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePseudoExprDollarFell);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PseudoExprDollarFell;
@@ -2113,6 +3034,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePseudoExprDollarGlobalClock);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PseudoExprDollarGlobalClock;
@@ -2133,6 +3061,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprUnopTypeof);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprUnopTypeof;
@@ -2155,6 +3091,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprCat);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:list\n(", list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprCat;
@@ -2175,6 +3119,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeListCat);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ListCat;
@@ -2200,6 +3163,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprRepl);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:how_much_expr\n(", how_much_expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:to_repl_expr\n(", to_repl_expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprRepl;
@@ -2226,6 +3198,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeExprRangeAny);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:which_range\n(", which_range()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ExprRangeAny;
@@ -2250,6 +3230,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeRangeOne);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::RangeOne;
@@ -2274,6 +3262,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeRangeTwo);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::RangeTwo;
@@ -2292,6 +3289,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtList;
@@ -2320,6 +3336,16 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAnyFor);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:var\n(", var()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:items\n(", items()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtAnyFor;
@@ -2350,6 +3376,16 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtFor);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:var\n(", var()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:items\n(", items()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtFor;
@@ -2378,6 +3414,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtGenerateFor);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:label\n(", label()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:var\n(", var()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:items\n(", items()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtGenerateFor;
@@ -2408,6 +3455,16 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtIf);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_else\n(", stmt_else()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtIf;
@@ -2438,6 +3495,16 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtGenerateIf);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_else\n(", stmt_else()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtGenerateIf;
@@ -2463,6 +3530,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtWhile);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtWhile;
@@ -2489,6 +3565,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtBehavAssign);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtBehavAssign;
@@ -2511,6 +3596,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtContAssign);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtContAssign;
@@ -2529,6 +3623,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessPublic);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtMemberAccessPublic;
@@ -2547,6 +3648,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessProtected);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtMemberAccessProtected;
@@ -2565,6 +3673,13 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessPrivate);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtMemberAccessPrivate;
@@ -2590,6 +3705,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtSwitch);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtSwitch;
@@ -2616,6 +3740,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtSwitchz);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtSwitchz;
@@ -2641,6 +3774,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtCase);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtCase;
@@ -2667,6 +3809,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtDefault);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtDefault;
@@ -2687,6 +3837,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeScopeSwitch);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::ScopeSwitch;
@@ -2709,6 +3878,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtUsing);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:left\n(", left()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:right\n(", right()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtUsing;
@@ -2740,6 +3918,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtInstModule);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:module_ident\n(", module_ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_inst_list\n(", param_inst_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:inst_ident\n(", inst_ident()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:arg_inst_list\n(", arg_inst_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtInstModule;
@@ -2770,6 +3959,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtReturn);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtReturn;
@@ -2794,6 +3991,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtInitial);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtInitial;
@@ -2818,6 +4023,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysComb);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtAlwaysComb;
@@ -2845,6 +4058,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysBlk);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:edge_list\n(", edge_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtAlwaysBlk;
@@ -2874,6 +4096,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysFf);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:edge_list\n(", edge_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtAlwaysFf;
@@ -2900,6 +4131,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAssert);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtAssert;
@@ -2924,6 +4163,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAssume);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtAssume;
@@ -2948,6 +4195,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtCover);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtCover;
@@ -2972,6 +4227,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtRestrict);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtRestrict;
@@ -2996,6 +4259,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtStaticAssert);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::StmtStaticAssert;
@@ -3020,6 +4291,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodePosedgeInst);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::PosedgeInst;
@@ -3044,6 +4323,14 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeNegedgeInst);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::NegedgeInst;
@@ -3064,6 +4351,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeEdgeList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::EdgeList;
@@ -3095,6 +4401,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclCallable);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::DeclCallable;
@@ -3133,6 +4450,18 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclFunc);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::DeclFunc;
@@ -3164,6 +4493,18 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclProc);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _is_port(", _is_port, ")\n");
+		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::DeclProc;
@@ -3191,6 +4532,17 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclTask);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::DeclTask;
@@ -3216,6 +4568,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdentTermAndExtra);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident_terminal\n(", ident_terminal()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:expr_or_arg_inst_list\n(", expr_or_arg_inst_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::IdentTermAndExtra;
@@ -3238,6 +4599,25 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeIdentTermAndExtraList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::IdentTermAndExtraList;
@@ -3263,6 +4643,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclConstList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::DeclConstList;
@@ -3289,6 +4678,15 @@ public:		// functions
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclVarList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
 	virtual Type type() const
 	{
 		return Type::DeclVarList;

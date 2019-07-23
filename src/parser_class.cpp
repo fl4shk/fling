@@ -1429,32 +1429,203 @@ auto Parser::_parse_inst() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_inst),
+		runitp(ident_etc)))
+
+	auto s_module_ident = _pop_ast_child();
+
+	Child s_param_inst_list;
+
+	if (_one_opt_parse(one_req_seqp(param_inst_list)))
+	{
+		s_param_inst_list = _pop_ast_child();
+	}
+
+	Child s_inst_ident;
+
+	if (_one_opt_parse(one_req_seqp(ident)))
+	{
+		s_inst_ident = _pop_ast_child();
+	}
+
+	Child s_arg_inst_list;
+
+	if (_one_opt_parse(one_req_seqp(arg_inst_list)))
+	{
+		s_arg_inst_list = _pop_ast_child();
+	}
+
+	one_req_seqp(punct_semicolon).exec();
+
+	_push_ast_child(NodeStmtInstModule(_ls_src_code_chunk(ret),
+		move(s_module_ident), move(s_param_inst_list), move(s_inst_ident),
+		move(s_arg_inst_list)));
+
 	return ret;
 }
 
 auto Parser::_parse_param_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(punct_lbracket),
+		runitp(param_sublist)))
+
+	NodeParamList to_push(_ls_src_code_chunk(ret));
+	to_push.append(_pop_ast_child());
+
+	_partial_parse_any_list(to_push, _req_seq_parse(runitp(punct_comma),
+		runitp(param_sublist)));
+
+	_one_opt_parse(one_req_seqp(punct_comma));
+
+	one_req_seqp(punct_rbracket).exec();
+	_push_ast_child(move(to_push));
+
+	return ret;
 }
 auto Parser::_parse_param_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(pararg_type_sublist),
+		runitp(param_module_sublist), runitp(pararg_var_sublist)))
+
+	_one_opt_parse(_req_seq_parse(runitp(punct_comma),
+		runitp(param_sublist)));
+	_one_opt_parse(one_req_seqp(punct_comma));
+
+	return ret;
 }
 auto Parser::_parse_arg_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(punct_lbracket),
+		runitp(arg_sublist)))
+
+	NodeArgList to_push(_ls_src_code_chunk(ret));
+	to_push.append(_pop_ast_child());
+
+	_partial_parse_any_list(to_push, _req_seq_parse(runitp(punct_comma),
+		runitp(arg_sublist)));
+
+	_one_opt_parse(one_req_seqp(punct_comma));
+
+	one_req_seqp(punct_rbracket).exec();
+	_push_ast_child(move(to_push));
+
+	return ret;
 }
 auto Parser::_parse_arg_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(arg_port_sublist),
+		runitp(pararg_type_sublist)))
+
+	_one_opt_parse(_req_seq_parse(runitp(punct_comma),
+		runitp(arg_sublist)));
+	_one_opt_parse(one_req_seqp(punct_comma));
+
+	return ret;
 }
 auto Parser::_parse_arg_port_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	check_parse_named(port_dir, _req_or_parse(runitp(kw_input),
+		runitp(kw_output), runitp(kw_bidir)))
+
+	const auto first_valid = port_dir.first_valid();
+	port_dir.exec();
+	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+		.one_inst);
+
+	string s_port_dir;
+
+	if (the_up.parse_func_str() == "kw_input")
+	{
+		s_port_dir = "input";
+	}
+	else if (the_up.parse_func_str() == "kw_output")
+	{
+		s_port_dir = "output";
+	}
+	else // if (the_up.parse_func_str() == "kw_bidir")
+	{
+		s_port_dir = "bidir";
+	}
+
+	auto s_ident_term_and_extra_list = _pexec
+		(one_req_seqp(pararg_var_sublist));
+
+	_push_ast_child(NodePortArgSublist(_ls_src_code_chunk(ret),
+		s_port_dir, move(s_ident_term_and_extra_list)));
+	return ret;
 }
 auto Parser::_parse_pararg_var_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto ident_term_seq = one_req_seqp(ident_terminal);
+	const auto equals_expr_seq = _req_seq_parse(runitp(punct_assign),
+		runitp(expr));
+
+	check_parse_anon(_req_seq_parse(runitp(typename), ident_term_seq))
+
+	auto s_the_typename = _pexec(one_req_seqp(typename));
+
+	auto first_lex_state = _dup_lex_state();
+	auto first_ident = _pexec(ident_term_seq);
+
+	Child first_expr;
+
+	if (_one_opt_parse(equals_expr_seq))
+	{
+		first_expr = _pop_ast_child();
+	}
+
+
+	NodeIdentTermAndExtraList s_ident_term_and_extra_list
+		(_ls_src_code_chunk(ret));
+	s_ident_term_and_extra_list.append(_to_ast_child(NodeIdentTermAndExtra
+		(_ls_src_code_chunk(first_lex_state), move(first_ident),
+		move(first_expr))));
+
+	while (ident_term_seq.check())
+	{
+		auto s_ident_terminal = _pexec(ident_term_seq);
+
+		Child s_expr;
+		if (_one_opt_parse(equals_expr_seq))
+		{
+			s_expr = _pop_ast_child();
+		}
+		s_ident_term_and_extra_list.append(_to_ast_child
+			(NodeIdentTermAndExtra(s_ident_terminal->src_code_chunk(),
+			move(s_ident_terminal), move(s_expr))));
+	}
+
+	_push_ast_child(move(s_ident_term_and_extra_list));
+
+	return ret;
 }
 auto Parser::_parse_pararg_type_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(one_req_seqp(kw_type))
+
+	const auto num = _pop_num();
+
+	return ret;
 }
 auto Parser::_parse_param_module_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 auto Parser::_parse_ident_equals_typename_sublist() -> ParseRet
 {
@@ -1463,6 +1634,9 @@ auto Parser::_parse_param_inst_list() -> ParseRet
 {
 }
 
+auto Parser::_parse_arg_inst_list() -> ParseRet
+{
+}
 auto Parser::_parse_pos_pararg_inst_list() -> ParseRet
 {
 }

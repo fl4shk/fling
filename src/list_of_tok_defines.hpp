@@ -180,6 +180,7 @@ X(Num, "number") \
 \
 X(Comment, "comment") \
 X(Unknown, "unknown") \
+X(None, "none") \
 X(Done, "EOF") \
 /* -------- */ \
 
