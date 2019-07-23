@@ -50,10 +50,6 @@ private:		// variables
 	{
 		return ast::NodeBase::Child(new ChildType(std::move(to_convert)));
 	}
-	//inline auto _get_top_ast_child()
-	//{
-	//	return _ast_child_stack.top();
-	//}
 	inline auto _pop_ast_child()
 	{
 		auto&& ret = _ast_child_stack.top();
@@ -452,6 +448,7 @@ private:		// functions
 	ParseRet _parse_ident_etc();
 	ParseRet _parse_ident_member_access();
 	ParseRet _parse_ident_scope_access();
+	ParseRet _parse_ident_non_member_scope_access();
 	ParseRet _parse_ident_call();
 	ParseRet _parse_ident_no_param_overloaded_call();
 	ParseRet _parse_ident_param_member_overloaded_call();

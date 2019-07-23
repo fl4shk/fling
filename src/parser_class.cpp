@@ -72,6 +72,10 @@ auto Parser::parse_program() -> ParseRet
 	const auto seq = _opt_or_parse(runitp(package),
 		runitp(module));
 
+	if (!seq.check())
+	{
+		_ls_src_code_chunk(ret).err("Invalid program.");
+	}
 	while (seq.check())
 	{
 		seq.exec();
@@ -2548,10 +2552,7 @@ auto Parser::_parse_ident_etc() -> ParseRet
 	auto ret = _dup_lex_state();
 
 	simple_seq_parse_anon(_req_or_parse(runitp(ident_member_access),
-		runitp(ident_scope_access), runitp(ident_call),
-		runitp(ident_no_param_overloaded_call),
-		runitp(ident_param_member_overloaded_call),
-		runitp(ident_terminal)));
+		runitp(ident_scope_access), runitp(ident_non_member_scope_access)))
 
 	return ret;
 }
@@ -2559,10 +2560,10 @@ auto Parser::_parse_ident_member_access() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	check_parse_anon(_req_seq_parse(runitp(ident_etc),
+	check_parse_anon(_req_seq_parse(runitp(ident_non_member_scope_access),
 		runitp(punct_member_access), runitp(ident_etc)))
 
-	auto s_left = _pexec(one_req_seqp(ident_etc));
+	auto s_left = _pexec(one_req_seqp(ident_non_member_scope_access));
 
 	NodeIdentMemberAccess s_ident_member_access(_ls_src_code_chunk
 		(_dup_lex_state()));
@@ -2583,10 +2584,10 @@ auto Parser::_parse_ident_scope_access() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	check_parse_anon(_req_seq_parse(runitp(ident_etc),
+	check_parse_anon(_req_seq_parse(runitp(ident_non_member_scope_access),
 		runitp(punct_scope_access), runitp(ident_etc)))
 
-	auto s_left = _pexec(one_req_seqp(ident_etc));
+	auto s_left = _pexec(one_req_seqp(ident_non_member_scope_access));
 
 	NodeIdentScopeAccess s_ident_scope_access(_ls_src_code_chunk
 		(_dup_lex_state()));
@@ -2600,6 +2601,17 @@ auto Parser::_parse_ident_scope_access() -> ParseRet
 	to_push.append(move(s_right));
 
 	_push_ast_child(move(to_push));
+
+	return ret;
+}
+auto Parser::_parse_ident_non_member_scope_access() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(ident_call),
+		runitp(ident_no_param_overloaded_call),
+		runitp(ident_param_member_overloaded_call),
+		runitp(ident_terminal)))
 
 	return ret;
 }
@@ -2629,16 +2641,17 @@ auto Parser::_parse_ident_no_param_overloaded_call() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	simple_seq_parse_anon(_req_seq_parse(runitp(ident_etc),
+	simple_seq_parse_anon(_req_seq_parse(runitp(ident_terminal),
 		runitp(arg_inst_list)))
 
 	auto s_arg_inst_list = _pop_ast_child();
-	auto s_ident_etc = _pop_ast_child();
+	auto s_ident_terminal = _pop_ast_child();
 
 	Child s_param_inst_list;
 
-	_push_ast_child(NodeCall(_ls_src_code_chunk(ret), move(s_ident_etc),
-		move(s_param_inst_list), move(s_arg_inst_list)));
+	_push_ast_child(NodeCall(_ls_src_code_chunk(ret),
+		move(s_ident_terminal), move(s_param_inst_list),
+		move(s_arg_inst_list)));
 
 	return ret;
 }
@@ -2646,7 +2659,7 @@ auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	simple_seq_parse_anon(_req_seq_parse(runitp(ident_etc),
+	simple_seq_parse_anon(_req_seq_parse(runitp(ident_terminal),
 		runitp(punct_member_access), runitp(param_inst_list),
 		runitp(arg_inst_list)))
 

@@ -20,6 +20,7 @@ Tok Lexer::next_tok()
 
 void Lexer::_inner_next_tok()
 {
+	_set_tok(Tok::Unknown, false);
 	if (c() == '+')
 	{
 		_set_tok(Tok::Plus, true);
@@ -233,9 +234,15 @@ void Lexer::_inner_next_tok()
 			{
 				break;
 			}
+			else if (_state.x() >= _text->size())
+			{
+				_set_tok(Tok::Done, false);
+				break;
+			}
 			else
 			{
 				_state.set_s(_state.s() + static_cast<char>(c()));
+				_next_char();
 			}
 		}
 	}
