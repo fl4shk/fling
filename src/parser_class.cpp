@@ -2550,6 +2550,8 @@ auto Parser::_parse_expr_repl() -> ParseRet
 auto Parser::_parse_ident_etc() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+	printout("_parse_ident_etc():  ", just_test(), "\n");
+	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(_req_or_parse(runitp(ident_member_access),
 		runitp(ident_scope_access), runitp(ident_non_member_scope_access)))
@@ -2609,8 +2611,8 @@ auto Parser::_parse_ident_non_member_scope_access() -> ParseRet
 	auto ret = _dup_lex_state();
 
 	simple_seq_parse_anon(_req_or_parse(runitp(ident_call),
-		runitp(ident_no_param_overloaded_call),
-		runitp(ident_param_member_overloaded_call),
+		//runitp(ident_no_param_overloaded_call),
+		//runitp(ident_param_member_overloaded_call),
 		runitp(ident_terminal)))
 
 	return ret;
@@ -2675,6 +2677,8 @@ auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 auto Parser::_parse_ident_terminal() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+	printout("_parse_ident_terminal():  ", just_test(), "\n");
+	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(one_req_seqp(ident))
 
@@ -2691,6 +2695,9 @@ auto Parser::_parse_ident_terminal() -> ParseRet
 auto Parser::_parse_ident() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+
+	printout("_parse_ident_terminal():  ", just_test(), "\n");
+	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	if (just_test())
 	{

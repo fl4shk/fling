@@ -853,8 +853,8 @@ ident_scope_access:
 
 ident_non_member_scope_access:
 	ident_call
-	| ident_no_param_overloaded_call
-	| ident_param_member_overloaded_call
+	//| ident_no_param_overloaded_call
+	//| ident_param_member_overloaded_call
 	| ident_terminal
 	;
 
@@ -862,18 +862,17 @@ ident_call:
 	ident param_inst_list? arg_inst_list
 	;
 
-ident_no_param_overloaded_call:
-	ident_terminal arg_inst_list
-	;
-ident_param_member_overloaded_call:
-	ident_terminal
-		punct_member_access
-		param_inst_list arg_inst_list
-	;
+//ident_no_param_overloaded_call:
+//	ident_terminal arg_inst_list
+//	;
+//ident_param_member_overloaded_call:
+//	ident_terminal
+//		punct_member_access
+//		param_inst_list arg_inst_list
+//	;
 
 ident_terminal:
-	ident
-	range_suffix*
+	ident range_suffix*
 	;
 
 ident:
