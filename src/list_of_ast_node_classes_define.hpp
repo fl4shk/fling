@@ -23,6 +23,7 @@
 	X(NodeNumExpr, NumExpr) \
 	X(NodeSizedNumExpr, SizedNumExpr) \
 	X(NodeBracketPair, BracketPair) \
+	X(NodeParenPair, ParenPair) \
 	X(NodeHasString, HasString) \
 	X(NodeIdent, Ident) \
 	X(NodeConstString, ConstString) \
@@ -35,8 +36,10 @@
 	X(NodeCallableMember, CallableMember) \
 	X(NodeUnion, Union) \
 	X(NodeScopeUnion, ScopeUnion) \
-	X(NodeTypename, Typename) \
-	X(NodeType, Type) \
+	X(NodeParamPossibleTypename, ParamPossibleTypename) \
+	X(NodeNoParamPossibleTypename, NoParamPossibleTypename) \
+	X(NodeTypeof, Typeof) \
+	X(NodeTypeRange, TypeRange) \
 	X(NodeAuto, Auto) \
 	X(NodeVoid, Void) \
 	X(NodeUwire, Uwire) \

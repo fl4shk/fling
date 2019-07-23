@@ -726,6 +726,31 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(right)
 };
 
+class NodeParenPair : public NodeBase
+{
+public:		// functions
+	inline NodeParenPair(const SrcCodeChunk& s_src_code_chunk)
+		: NodeBase(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeParenPair);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::ParenPair;
+	}
+	virtual string name() const
+	{
+		return "ParenPair";
+	}
+};
+
 class NodeHasString : public NodeBase
 {
 protected:		// variables
@@ -1199,67 +1224,138 @@ public:		// functions
 	}
 };
 
-class NodeTypename : public NodeBase
+class NodeParamPossibleTypename : public NodeBase
 {
 protected:		// children
-	Child _ident_etc,
+	Child _primary,
 		_param_inst_list;
 public:		// functions
-	inline NodeTypename(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_etc,
+	inline NodeParamPossibleTypename(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_primary,
 		Child&& s_param_inst_list)
 		: NodeBase(s_src_code_chunk),
-		_ident_etc(std::move(s_ident_etc)),
+		_primary(std::move(s_primary)),
 		_param_inst_list(std::move(s_param_inst_list))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeTypename);
+	GEN_POST_CONSTRUCTOR(NodeParamPossibleTypename);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += sconcat("  child:ident_etc\n(", ident_etc()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:primary\n(", primary()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:param_inst_list\n(", param_inst_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::Typename;
+		return Type::ParamPossibleTypename;
 	}
 	virtual string name() const
 	{
-		return "Typename";
+		return "ParamPossibleTypename";
 	}
-	GEN_GETTER_BY_CON_REF(ident_etc)
-	GEN_SETTER_BY_RVAL_REF(ident_etc)
+	GEN_GETTER_BY_CON_REF(primary)
+	GEN_SETTER_BY_RVAL_REF(primary)
 	GEN_GETTER_BY_CON_REF(param_inst_list)
 	GEN_SETTER_BY_RVAL_REF(param_inst_list)
 };
 
-class NodeType : public NodeBase
+class NodeNoParamPossibleTypename : public NodeBase
 {
+protected:		// children
+	Child _primary;
 public:		// functions
-	inline NodeType(const SrcCodeChunk& s_src_code_chunk)
-		: NodeBase(s_src_code_chunk)
+	inline NodeNoParamPossibleTypename(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_primary)
+		: NodeBase(s_src_code_chunk),
+		_primary(std::move(s_primary))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeType);
+	GEN_POST_CONSTRUCTOR(NodeNoParamPossibleTypename);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
+		ret += sconcat("  child:primary\n(", primary()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::Type;
+		return Type::NoParamPossibleTypename;
 	}
 	virtual string name() const
 	{
-		return "Type";
+		return "NoParamPossibleTypename";
 	}
+	GEN_GETTER_BY_CON_REF(primary)
+	GEN_SETTER_BY_RVAL_REF(primary)
+};
+
+class NodeTypeof : public NodeBase
+{
+protected:		// children
+	Child _expr_or_typename;
+public:		// functions
+	inline NodeTypeof(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_expr_or_typename)
+		: NodeBase(s_src_code_chunk),
+		_expr_or_typename(std::move(s_expr_or_typename))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeTypeof);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:expr_or_typename\n(", expr_or_typename()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::Typeof;
+	}
+	virtual string name() const
+	{
+		return "Typeof";
+	}
+	GEN_GETTER_BY_CON_REF(expr_or_typename)
+	GEN_SETTER_BY_RVAL_REF(expr_or_typename)
+};
+
+class NodeTypeRange : public NodeBase
+{
+protected:		// children
+	Child _range_suffix;
+public:		// functions
+	inline NodeTypeRange(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_range_suffix)
+		: NodeBase(s_src_code_chunk),
+		_range_suffix(std::move(s_range_suffix))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeTypeRange);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:range_suffix\n(", range_suffix()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::TypeRange;
+	}
+	virtual string name() const
+	{
+		return "TypeRange";
+	}
+	GEN_GETTER_BY_CON_REF(range_suffix)
+	GEN_SETTER_BY_RVAL_REF(range_suffix)
 };
 
 class NodeAuto : public NodeBase

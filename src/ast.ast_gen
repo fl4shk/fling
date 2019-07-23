@@ -63,6 +63,7 @@ SizedNumExpr, NumExpr:
 BracketPair:
 	// right is only used when this is a multi-bit slice
 	child left, right;
+ParenPair:
 
 HasString:
 	initvar string _s;
@@ -92,10 +93,15 @@ Union:
 	child ident, scope, var_list;
 ScopeUnion, List:
 
-Typename:
-	child ident_etc, param_inst_list;
+ParamPossibleTypename:
+	child primary, param_inst_list;
+NoParamPossibleTypename:
+	child primary;
+Typeof:
+	child expr_or_typename;
+TypeRange:
+	child range_suffix;
 
-Type:
 Auto: Void:
 Uwire: Swire: Ubit: Sbit:
 Ubyte: Sbyte: Ushortint: Sshortint:

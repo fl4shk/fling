@@ -1190,8 +1190,9 @@ auto Parser::_parse_member_access_label() -> ParseRet
 	check_parse_named(to_check, _req_seq_parse(seq_or, seq_colon))
 
 	const auto first_valid = seq_or.first_valid();
-	const auto the_up = std::get<TheSeqParse::TheUnitParse>
-		(first_valid.one_inst);
+	seq_or.exec();
+	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+		.one_inst);
 	if (the_up.parse_func_str() == "kw_public")
 	{
 		_push_ast_child(NodeStmtMemberAccessPublic(_ls_src_code_chunk
@@ -1669,26 +1670,235 @@ auto Parser::_parse_param_module_sublist() -> ParseRet
 }
 auto Parser::_parse_pararg_ident_equals_typename_sublist() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto req_seq = one_req_seqp(ident);
+	const auto opt_seq = _req_seq_parse(runitp(punct_assign),
+		runitp(typename));
+	const auto full_seq = _req_seq_parse(req_seq, _opt_seq_parse(opt_seq));
+
+	check_parse_anon(full_seq)
+
+	BigNum to_push = 0;
+
+	{
+		auto s_ident = _pexec(req_seq);
+
+		Child s_extra;
+
+		if (opt_seq.check())
+		{
+			s_extra = _pexec(opt_seq);
+		}
+
+		_push_ast_child(NodeIdentTermEqualsExtra(s_ident->src_code_chunk(),
+			move(s_ident), move(s_extra)));
+	}
+
+
+	const auto comma_full_seq = _req_seq_parse(runitp(punct_comma),
+		full_seq);
+	
+	while (comma_full_seq.check())
+	{
+		auto s_ident = _pexec(_req_seq_parse(runitp(punct_comma),
+			req_seq));
+
+		Child s_extra;
+
+		if (opt_seq.check())
+		{
+			s_extra = _pexec(opt_seq);
+		}
+
+		_push_ast_child(NodeIdentTermEqualsExtra(s_ident->src_code_chunk(),
+			move(s_ident), move(s_extra)));
+		++to_push;
+	}
+
+	_push_num(to_push);
+
+	return ret;
 }
 auto Parser::_parse_param_inst_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto blank_seq = _req_seq_parse(runitp(punct_lbracket),
+		ounitp(punct_comma), runitp(punct_rbracket));
+	const auto full_seq = _req_seq_parse(runitp(punct_lbracket),
+		_req_or_parse(runitp(pos_pararg_inst_list),
+		runitp(named_pararg_inst_list)), ounitp(punct_comma),
+		runitp(punct_rbracket));
+
+	if (just_test())
+	{
+		if (blank_seq.check())
+		{
+			return _check_for_just_test(blank_seq);
+		}
+		else
+		{
+			return _check_for_just_test(full_seq);
+		}
+	}
+
+	if (blank_seq.check())
+	{
+		blank_seq.exec();
+		_push_ast_child(NodeBracketPair(_ls_src_code_chunk(ret), Child(),
+			Child()));
+	}
+	else
+	{
+		full_seq.exec();
+	}
+
+	return ret;
 }
 
 auto Parser::_parse_arg_inst_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto blank_seq = _req_seq_parse(runitp(punct_lparen),
+		ounitp(punct_comma), runitp(punct_rparen));
+	const auto full_seq = _req_seq_parse(runitp(punct_lparen),
+		_req_or_parse(runitp(pos_pararg_inst_list),
+		runitp(named_pararg_inst_list)), ounitp(punct_comma),
+		runitp(punct_rparen));
+
+	if (just_test())
+	{
+		if (blank_seq.check())
+		{
+			return _check_for_just_test(blank_seq);
+		}
+		else
+		{
+			return _check_for_just_test(full_seq);
+		}
+	}
+
+	if (blank_seq.check())
+	{
+		blank_seq.exec();
+		_push_ast_child(NodeParenPair(_ls_src_code_chunk(ret)));
+	}
+	else
+	{
+		full_seq.exec();
+	}
+
+	return ret;
 }
 auto Parser::_parse_pos_pararg_inst_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto expr_seq = one_req_seqp(expr);
+
+	simple_seq_parse_anon(expr_seq)
+
+	NodePosParamArgInstList to_push(_ls_src_code_chunk(ret));
+
+	to_push.append(_pop_ast_child());
+
+	_partial_parse_any_list(to_push, _req_seq_parse(runitp(punct_comma),
+		expr_seq));
+
+	_push_ast_child(move(to_push));
+
+	return ret;
 }
 auto Parser::_parse_named_pararg_inst_list() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto no_comma_seq = _req_seq_parse(runitp(ident),
+		runitp(punct_assign), runitp(expr));
+	const auto list_seq = _req_seq_parse(runitp(punct_comma),
+		no_comma_seq);
+
+	simple_seq_parse_anon(no_comma_seq)
+
+	NodeNamedParamArgInstList to_push(_ls_src_code_chunk(ret));
+
+	{
+		auto s_right = _pop_ast_child();
+		auto s_left = _pop_ast_child();
+		to_push.append(_to_ast_child(NodeOneParamArgInst(s_left
+			->src_code_chunk(), move(s_left), move(s_right))));
+	}
+
+	while (list_seq.check())
+	{
+		list_seq.exec();
+
+		auto s_right = _pop_ast_child();
+		auto s_left = _pop_ast_child();
+		to_push.append(_to_ast_child(NodeOneParamArgInst(s_left
+			->src_code_chunk(), move(s_left), move(s_right))));
+	}
+
+	_push_ast_child(move(to_push));
+
+	return ret;
 }
 
 auto Parser::_parse_typename() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(param_possible_typename),
+		runitp(no_param_possible_typename), runitp(typeof),
+		runitp(type_range)))
+
+	return ret;
 }
 auto Parser::_parse_param_possible_typename() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto or_seq = _req_or_parse(runitp(ident_etc),
+		runitp(kw_uwire), runitp(kw_swire), runitp(kw_ubit),
+		runitp(kw_sbit));
+	const auto param_seq = one_req_seqp(param_inst_list);
+
+	check_parse_anon(_req_seq_parse(or_seq, param_seq))
+
+	const auto first_valid = or_seq.first_valid();
+	or_seq.exec();
+	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+		.one_inst);
+
+	Child s_primary;
+	if (the_up.parse_func_str() == "ident_etc")
+	{
+		s_primary = _pop_ast_child();
+	}
+	else if (the_up.parse_func_str() == "kw_uwire")
+	{
+		s_primary = _to_ast_child(NodeUwire(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_swire")
+	{
+		s_primary = _to_ast_child(NodeSwire(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_ubit")
+	{
+		s_primary = _to_ast_child(NodeUbit(_ls_src_code_chunk(ret)));
+	}
+	else // if (the_up.parse_func_str() == "kw_sbit")
+	{
+		s_primary = _to_ast_child(NodeSbit(_ls_src_code_chunk(ret)));
+	}
+
+	auto s_param_inst_list = _pexec(param_seq);
+	_push_ast_child(NodeParamPossibleTypename(_ls_src_code_chunk(ret),
+		move(s_primary), move(s_param_inst_list)));
+
+	return ret;
 }
 auto Parser::_parse_no_param_possible_typename() -> ParseRet
 {
