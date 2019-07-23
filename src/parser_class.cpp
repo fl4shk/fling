@@ -1221,6 +1221,8 @@ auto Parser::_parse_member_access_label() -> ParseRet
 auto Parser::_parse_enum() -> ParseRet
 {
 	auto ret = _dup_lex_state();
+	//printout("_parse_enum():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(one_req_seqp(kw_enum))
 
@@ -1230,6 +1232,7 @@ auto Parser::_parse_enum() -> ParseRet
 	{
 		s_the_typename = _pop_ast_child();
 	}
+	//printout("testificate\n");
 
 	auto s_ident = _pexec(one_req_seqp(ident));
 	one_req_seqp(punct_lbrace).exec();
@@ -2550,8 +2553,8 @@ auto Parser::_parse_expr_repl() -> ParseRet
 auto Parser::_parse_ident_etc() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	printout("_parse_ident_etc():  ", just_test(), "\n");
-	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	//printout("_parse_ident_etc():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(_req_or_parse(runitp(ident_member_access),
 		runitp(ident_scope_access), runitp(ident_non_member_scope_access)))
@@ -2677,8 +2680,8 @@ auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 auto Parser::_parse_ident_terminal() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	printout("_parse_ident_terminal():  ", just_test(), "\n");
-	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	//printout("_parse_ident_terminal():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(one_req_seqp(ident))
 
@@ -2695,9 +2698,8 @@ auto Parser::_parse_ident_terminal() -> ParseRet
 auto Parser::_parse_ident() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-
-	printout("_parse_ident_terminal():  ", just_test(), "\n");
-	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	//printout("_parse_ident():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	if (just_test())
 	{
@@ -2804,6 +2806,7 @@ auto Parser::_parse_any_scope(const string& scope_type_str,
 	check_parse_anon(check_seq)
 
 	check_seq.exec();
+	//printout("testificate\n");
 
 	if ((!_partial_parse_any_list(to_push, list_seq))
 		&& (!end_seq.check()))
