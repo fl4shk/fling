@@ -1191,7 +1191,7 @@ auto Parser::_parse_member_access_label() -> ParseRet
 
 	const auto first_valid = seq_or.first_valid();
 	seq_or.exec();
-	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+	const auto& the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
 		.one_inst);
 	if (the_up.parse_func_str() == "kw_public")
 	{
@@ -1540,7 +1540,7 @@ auto Parser::_parse_arg_port_sublist() -> ParseRet
 
 	const auto first_valid = port_dir.first_valid();
 	port_dir.exec();
-	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+	const auto& the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
 		.one_inst);
 
 	string s_port_dir;
@@ -1869,7 +1869,7 @@ auto Parser::_parse_param_possible_typename() -> ParseRet
 
 	const auto first_valid = or_seq.first_valid();
 	or_seq.exec();
-	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+	const auto& the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
 		.one_inst);
 
 	Child s_primary;
@@ -1914,7 +1914,7 @@ auto Parser::_parse_no_param_possible_typename() -> ParseRet
 
 	const auto first_valid = or_seq.first_valid();
 	or_seq.exec();
-	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+	const auto& the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
 		.one_inst);
 
 	Child s_primary;
