@@ -5,18 +5,19 @@ ScopePackage, List:
 Module:
 	child ident, param_list, port_list, scope;
 ScopeModproc, List:
-TypeParamArgSublist, List:
-PortArgSublist:
+ParamArgTypeSublist:
+	child ident_term_equals_extra_list;
+ArgPortSublist:
 	initvar string _port_dir; 
 	child var_param_arg_sublist;
-VarParamArgSublist:
-	child the_typename, ident_term_and_extra_list;
+ParamArgVarSublist:
+	child the_typename, ident_term_equals_extra_list;
 
 
 
 // Modules are not types, but they can be used generically.
 ParamModuleSublist:
-	child ident_term_and_extra_list;
+	child ident_term_equals_extra_list;
 
 // List of ParamArgSublist's or ParamModuleList's
 ParamList, List:
@@ -317,11 +318,11 @@ DeclProc, DeclCallable:
 	initvar bool _is_port;
 DeclTask, DeclCallable:
 
-IdentTermAndExtra:
-	child ident_terminal, expr_or_arg_inst_list;
-IdentTermAndExtraList, List:
+IdentTermEqualsExtra:
+	child ident_terminal, extra;
+IdentTermEqualsExtraList, List:
 
 DeclConstList:
-	child the_typename, ident_term_and_extra_list;
+	child the_typename, ident_term_equals_extra_list;
 DeclVarList, DeclConstList:
 //DeclGenvar, DeclVar:

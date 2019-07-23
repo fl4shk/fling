@@ -778,20 +778,20 @@ auto Parser::_parse_const() -> ParseRet
 		s_the_typename = _pop_ast_child();
 	}
 
-	NodeIdentTermAndExtraList s_ident_term_and_extra_list
+	NodeIdentTermEqualsExtraList s_ident_term_equals_extra_list
 		(_ls_src_code_chunk(_dup_lex_state()));
 
 	const auto list_seq = one_req_seqp(one_const);
-	s_ident_term_and_extra_list.append(_pexec(list_seq));
+	s_ident_term_equals_extra_list.append(_pexec(list_seq));
 
-	_partial_parse_any_list(s_ident_term_and_extra_list,
+	_partial_parse_any_list(s_ident_term_equals_extra_list,
 		_req_seq_parse(runitp(punct_comma), list_seq));
 
 	one_req_seqp(punct_semicolon).exec();
 
 	_push_ast_child(NodeDeclConstList(_ls_src_code_chunk(ret),
 		move(s_the_typename),
-		_to_ast_child(move(s_ident_term_and_extra_list))));
+		_to_ast_child(move(s_ident_term_equals_extra_list))));
 
 	return ret;
 }
@@ -802,11 +802,11 @@ auto Parser::_parse_one_const() -> ParseRet
 	simple_seq_parse_anon(_req_seq_parse(runitp(ident_terminal),
 		runitp(punct_assign), runitp(expr)))
 	
-	auto s_expr_or_arg_inst_list = _pop_ast_child();
+	auto s_extra = _pop_ast_child();
 	auto s_ident_terminal = _pop_ast_child();
 
-	_push_ast_child(NodeIdentTermAndExtra(_ls_src_code_chunk(ret),
-		move(s_ident_terminal), move(s_expr_or_arg_inst_list)));
+	_push_ast_child(NodeIdentTermEqualsExtra(_ls_src_code_chunk(ret),
+		move(s_ident_terminal), move(s_extra)));
 
 	return ret;
 }
@@ -816,20 +816,20 @@ auto Parser::_parse_var() -> ParseRet
 
 	auto s_the_typename = _pexec(one_req_seqp(typename));
 
-	NodeIdentTermAndExtraList s_ident_term_and_extra_list
+	NodeIdentTermEqualsExtraList s_ident_term_equals_extra_list
 		(_ls_src_code_chunk(_dup_lex_state()));
 
 	const auto list_seq = one_req_seqp(one_var);
-	s_ident_term_and_extra_list.append(_pexec(list_seq));
+	s_ident_term_equals_extra_list.append(_pexec(list_seq));
 
-	_partial_parse_any_list(s_ident_term_and_extra_list,
+	_partial_parse_any_list(s_ident_term_equals_extra_list,
 		_req_seq_parse(runitp(punct_comma), list_seq));
 
 	one_req_seqp(punct_semicolon).exec();
 
 	_push_ast_child(NodeDeclVarList(_ls_src_code_chunk(ret),
 		move(s_the_typename),
-		_to_ast_child(move(s_ident_term_and_extra_list))));
+		_to_ast_child(move(s_ident_term_equals_extra_list))));
 
 	return ret;
 }
@@ -840,11 +840,11 @@ auto Parser::_parse_one_var() -> ParseRet
 	simple_seq_parse_anon(_req_seq_parse(runitp(ident_terminal),
 		runitp(punct_assign), runitp(expr)))
 	
-	auto s_expr_or_arg_inst_list = _pop_ast_child();
+	auto s_extra = _pop_ast_child();
 	auto s_ident_terminal = _pop_ast_child();
 
-	_push_ast_child(NodeIdentTermAndExtra(_ls_src_code_chunk(ret),
-		move(s_ident_terminal), move(s_expr_or_arg_inst_list)));
+	_push_ast_child(NodeIdentTermEqualsExtra(_ls_src_code_chunk(ret),
+		move(s_ident_terminal), move(s_extra)));
 
 	return ret;
 }
@@ -1075,7 +1075,7 @@ auto Parser::_parse_class() -> ParseRet
 	auto temp = _dup_lex_state();
 	const auto one_var_seq = one_req_seqp(one_var);
 
-	NodeIdentTermAndExtraList s_var_list(_ls_src_code_chunk(temp));
+	NodeIdentTermEqualsExtraList s_var_list(_ls_src_code_chunk(temp));
 
 	if (_one_opt_parse(one_var_seq))
 	{
@@ -1234,7 +1234,7 @@ auto Parser::_parse_enum() -> ParseRet
 	const auto value_seq = one_req_seqp(ident_terminal);
 	rwith(s_ident_terminal, _pexec(value_seq))
 	{
-		s_scope.append(_to_ast_child(NodeIdentTermAndExtra(s_scope
+		s_scope.append(_to_ast_child(NodeIdentTermEqualsExtra(s_scope
 			.src_code_chunk(), move(s_ident_terminal), Child())));
 	}
 
@@ -1242,7 +1242,7 @@ auto Parser::_parse_enum() -> ParseRet
 		value_seq);
 	while (value_list_seq.check())
 	{
-		s_scope.append(_to_ast_child(NodeIdentTermAndExtra
+		s_scope.append(_to_ast_child(NodeIdentTermEqualsExtra
 			(_ls_src_code_chunk(_dup_lex_state()), _pexec(value_list_seq),
 			Child())));
 	}
@@ -1256,14 +1256,14 @@ auto Parser::_parse_enum() -> ParseRet
 	if (const auto one_var_seq = one_req_seqp(one_var);
 		one_var_seq.check())
 	{
-		NodeIdentTermAndExtraList s_var_list_1(_ls_src_code_chunk
+		NodeIdentTermEqualsExtraList s_var_list_1(_ls_src_code_chunk
 			(_dup_lex_state()));
 		s_var_list_1.append(_pexec(one_var_seq));
 
 		_partial_parse_any_list(s_var_list_1, _req_seq_parse
 			(runitp(punct_comma), one_var_seq));
 
-		s_var_list.reset(new NodeIdentTermAndExtraList(move
+		s_var_list.reset(new NodeIdentTermEqualsExtraList(move
 			(s_var_list_1)));
 	}
 
@@ -1292,14 +1292,14 @@ auto Parser::_parse_union() -> ParseRet
 	if (const auto one_var_seq = one_req_seqp(one_var);
 		one_var_seq.check())
 	{
-		NodeIdentTermAndExtraList s_var_list_1(_ls_src_code_chunk
+		NodeIdentTermEqualsExtraList s_var_list_1(_ls_src_code_chunk
 			(_dup_lex_state()));
 		s_var_list_1.append(_pexec(one_var_seq));
 
 		_partial_parse_any_list(s_var_list_1, _req_seq_parse
 			(runitp(punct_comma), one_var_seq));
 
-		s_var_list.reset(new NodeIdentTermAndExtraList(move
+		s_var_list.reset(new NodeIdentTermEqualsExtraList(move
 			(s_var_list_1)));
 	}
 
@@ -1557,11 +1557,11 @@ auto Parser::_parse_arg_port_sublist() -> ParseRet
 		s_port_dir = "bidir";
 	}
 
-	auto s_ident_term_and_extra_list = _pexec
+	auto s_ident_term_equals_extra_list = _pexec
 		(one_req_seqp(pararg_var_sublist));
 
-	_push_ast_child(NodePortArgSublist(_ls_src_code_chunk(ret),
-		s_port_dir, move(s_ident_term_and_extra_list)));
+	_push_ast_child(NodeArgPortSublist(_ls_src_code_chunk(ret),
+		s_port_dir, move(s_ident_term_equals_extra_list)));
 	return ret;
 }
 auto Parser::_parse_pararg_var_sublist() -> ParseRet
@@ -1587,11 +1587,11 @@ auto Parser::_parse_pararg_var_sublist() -> ParseRet
 	}
 
 
-	NodeIdentTermAndExtraList s_ident_term_and_extra_list
+	NodeIdentTermEqualsExtraList s_ident_term_equals_extra_list
 		(_ls_src_code_chunk(ret));
-	s_ident_term_and_extra_list.append(_to_ast_child(NodeIdentTermAndExtra
-		(_ls_src_code_chunk(first_lex_state), move(first_ident),
-		move(first_expr))));
+	s_ident_term_equals_extra_list.append(_to_ast_child
+		(NodeIdentTermEqualsExtra(_ls_src_code_chunk(first_lex_state),
+		move(first_ident), move(first_expr))));
 
 	while (ident_term_seq.check())
 	{
@@ -1602,12 +1602,12 @@ auto Parser::_parse_pararg_var_sublist() -> ParseRet
 		{
 			s_expr = _pop_ast_child();
 		}
-		s_ident_term_and_extra_list.append(_to_ast_child
-			(NodeIdentTermAndExtra(s_ident_terminal->src_code_chunk(),
+		s_ident_term_equals_extra_list.append(_to_ast_child
+			(NodeIdentTermEqualsExtra(s_ident_terminal->src_code_chunk(),
 			move(s_ident_terminal), move(s_expr))));
 	}
 
-	_push_ast_child(move(s_ident_term_and_extra_list));
+	_push_ast_child(move(s_ident_term_equals_extra_list));
 
 	return ret;
 }
@@ -1617,7 +1617,25 @@ auto Parser::_parse_pararg_type_sublist() -> ParseRet
 
 	simple_seq_parse_anon(one_req_seqp(kw_type))
 
+	NodeIdentTermEqualsExtraList s_ident_term_equals_extra_list
+		(_ls_src_code_chunk(_dup_lex_state()));
+
+	one_req_seqp(pararg_ident_equals_typename_sublist).exec();
 	const auto num = _pop_num();
+	NodeList temp_list(_ls_src_code_chunk(ret));
+
+	for (size_t i=0; i<num; ++i)
+	{
+		temp_list.append(_pop_ast_child());
+	}
+	for (size_t i=temp_list.list.size(); i>0; --i)
+	{
+		s_ident_term_equals_extra_list.append(move(temp_list.list.at
+			(i - 1)));
+	}
+
+	_push_ast_child(NodeParamArgTypeSublist(_ls_src_code_chunk(ret),
+		_to_ast_child(move(s_ident_term_equals_extra_list))));
 
 	return ret;
 }
@@ -1625,9 +1643,31 @@ auto Parser::_parse_param_module_sublist() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
+	simple_seq_parse_anon(one_req_seqp(kw_module))
+
+	NodeIdentTermEqualsExtraList s_ident_term_equals_extra_list
+		(_ls_src_code_chunk(_dup_lex_state()));
+
+	one_req_seqp(pararg_ident_equals_typename_sublist).exec();
+	const auto num = _pop_num();
+	NodeList temp_list(_ls_src_code_chunk(ret));
+
+	for (size_t i=0; i<num; ++i)
+	{
+		temp_list.append(_pop_ast_child());
+	}
+	for (size_t i=temp_list.list.size(); i>0; --i)
+	{
+		s_ident_term_equals_extra_list.append(move(temp_list.list.at
+			(i - 1)));
+	}
+
+	_push_ast_child(NodeParamModuleSublist(_ls_src_code_chunk(ret),
+		_to_ast_child(move(s_ident_term_equals_extra_list))));
+
 	return ret;
 }
-auto Parser::_parse_ident_equals_typename_sublist() -> ParseRet
+auto Parser::_parse_pararg_ident_equals_typename_sublist() -> ParseRet
 {
 }
 auto Parser::_parse_param_inst_list() -> ParseRet

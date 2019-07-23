@@ -197,58 +197,53 @@ public:		// functions
 	}
 };
 
-class NodeTypeParamArgSublist : public NodeList
+class NodeParamArgTypeSublist : public NodeBase
 {
+protected:		// children
+	Child _ident_term_equals_extra_list;
 public:		// functions
-	inline NodeTypeParamArgSublist(const SrcCodeChunk& s_src_code_chunk)
-		: NodeList(s_src_code_chunk)
+	inline NodeParamArgTypeSublist(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_ident_term_equals_extra_list)
+		: NodeBase(s_src_code_chunk),
+		_ident_term_equals_extra_list(std::move(s_ident_term_equals_extra_list))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeTypeParamArgSublist);
+	GEN_POST_CONSTRUCTOR(NodeParamArgTypeSublist);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += "  list\n  (";
-		for (size_t i=0; i<list.size(); ++i)
-		{
-			ret += "    ";
-			ret += list.at(i)->dbg_to_string();
-			if ((i + 1) < list.size())
-			{
-				ret += ", ";
-			}
-			ret += "  )\n";
-		}
-		ret += "  )\n";
+		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::TypeParamArgSublist;
+		return Type::ParamArgTypeSublist;
 	}
 	virtual string name() const
 	{
-		return "TypeParamArgSublist";
+		return "ParamArgTypeSublist";
 	}
+	GEN_GETTER_BY_CON_REF(ident_term_equals_extra_list)
+	GEN_SETTER_BY_RVAL_REF(ident_term_equals_extra_list)
 };
 
-class NodePortArgSublist : public NodeBase
+class NodeArgPortSublist : public NodeBase
 {
 protected:		// variables
 	string _port_dir;
 protected:		// children
 	Child _var_param_arg_sublist;
 public:		// functions
-	inline NodePortArgSublist(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeArgPortSublist(const SrcCodeChunk& s_src_code_chunk,
 		const string& s_port_dir,
 		Child&& s_var_param_arg_sublist)
 		: NodeBase(s_src_code_chunk), _port_dir(s_port_dir),
 		_var_param_arg_sublist(std::move(s_var_param_arg_sublist))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodePortArgSublist);
+	GEN_POST_CONSTRUCTOR(NodeArgPortSublist);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -260,64 +255,64 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::PortArgSublist;
+		return Type::ArgPortSublist;
 	}
 	virtual string name() const
 	{
-		return "PortArgSublist";
+		return "ArgPortSublist";
 	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(port_dir)
 	GEN_GETTER_BY_CON_REF(var_param_arg_sublist)
 	GEN_SETTER_BY_RVAL_REF(var_param_arg_sublist)
 };
 
-class NodeVarParamArgSublist : public NodeBase
+class NodeParamArgVarSublist : public NodeBase
 {
 protected:		// children
 	Child _the_typename,
-		_ident_term_and_extra_list;
+		_ident_term_equals_extra_list;
 public:		// functions
-	inline NodeVarParamArgSublist(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeParamArgVarSublist(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename,
-		Child&& s_ident_term_and_extra_list)
+		Child&& s_ident_term_equals_extra_list)
 		: NodeBase(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename)),
-		_ident_term_and_extra_list(std::move(s_ident_term_and_extra_list))
+		_ident_term_equals_extra_list(std::move(s_ident_term_equals_extra_list))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeVarParamArgSublist);
+	GEN_POST_CONSTRUCTOR(NodeParamArgVarSublist);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::VarParamArgSublist;
+		return Type::ParamArgVarSublist;
 	}
 	virtual string name() const
 	{
-		return "VarParamArgSublist";
+		return "ParamArgVarSublist";
 	}
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
-	GEN_GETTER_BY_CON_REF(ident_term_and_extra_list)
-	GEN_SETTER_BY_RVAL_REF(ident_term_and_extra_list)
+	GEN_GETTER_BY_CON_REF(ident_term_equals_extra_list)
+	GEN_SETTER_BY_RVAL_REF(ident_term_equals_extra_list)
 };
 
 class NodeParamModuleSublist : public NodeBase
 {
 protected:		// children
-	Child _ident_term_and_extra_list;
+	Child _ident_term_equals_extra_list;
 public:		// functions
 	inline NodeParamModuleSublist(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_ident_term_and_extra_list)
+		Child&& s_ident_term_equals_extra_list)
 		: NodeBase(s_src_code_chunk),
-		_ident_term_and_extra_list(std::move(s_ident_term_and_extra_list))
+		_ident_term_equals_extra_list(std::move(s_ident_term_equals_extra_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeParamModuleSublist);
@@ -325,7 +320,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -337,8 +332,8 @@ public:		// functions
 	{
 		return "ParamModuleSublist";
 	}
-	GEN_GETTER_BY_CON_REF(ident_term_and_extra_list)
-	GEN_SETTER_BY_RVAL_REF(ident_term_and_extra_list)
+	GEN_GETTER_BY_CON_REF(ident_term_equals_extra_list)
+	GEN_SETTER_BY_RVAL_REF(ident_term_equals_extra_list)
 };
 
 class NodeParamList : public NodeList
@@ -4553,52 +4548,52 @@ public:		// functions
 	}
 };
 
-class NodeIdentTermAndExtra : public NodeBase
+class NodeIdentTermEqualsExtra : public NodeBase
 {
 protected:		// children
 	Child _ident_terminal,
-		_expr_or_arg_inst_list;
+		_extra;
 public:		// functions
-	inline NodeIdentTermAndExtra(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeIdentTermEqualsExtra(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_ident_terminal,
-		Child&& s_expr_or_arg_inst_list)
+		Child&& s_extra)
 		: NodeBase(s_src_code_chunk),
 		_ident_terminal(std::move(s_ident_terminal)),
-		_expr_or_arg_inst_list(std::move(s_expr_or_arg_inst_list))
+		_extra(std::move(s_extra))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeIdentTermAndExtra);
+	GEN_POST_CONSTRUCTOR(NodeIdentTermEqualsExtra);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:ident_terminal\n(", ident_terminal()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:expr_or_arg_inst_list\n(", expr_or_arg_inst_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:extra\n(", extra()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::IdentTermAndExtra;
+		return Type::IdentTermEqualsExtra;
 	}
 	virtual string name() const
 	{
-		return "IdentTermAndExtra";
+		return "IdentTermEqualsExtra";
 	}
 	GEN_GETTER_BY_CON_REF(ident_terminal)
 	GEN_SETTER_BY_RVAL_REF(ident_terminal)
-	GEN_GETTER_BY_CON_REF(expr_or_arg_inst_list)
-	GEN_SETTER_BY_RVAL_REF(expr_or_arg_inst_list)
+	GEN_GETTER_BY_CON_REF(extra)
+	GEN_SETTER_BY_RVAL_REF(extra)
 };
 
-class NodeIdentTermAndExtraList : public NodeList
+class NodeIdentTermEqualsExtraList : public NodeList
 {
 public:		// functions
-	inline NodeIdentTermAndExtraList(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeIdentTermEqualsExtraList(const SrcCodeChunk& s_src_code_chunk)
 		: NodeList(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeIdentTermAndExtraList);
+	GEN_POST_CONSTRUCTOR(NodeIdentTermEqualsExtraList);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4620,11 +4615,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::IdentTermAndExtraList;
+		return Type::IdentTermEqualsExtraList;
 	}
 	virtual string name() const
 	{
-		return "IdentTermAndExtraList";
+		return "IdentTermEqualsExtraList";
 	}
 };
 
@@ -4632,14 +4627,14 @@ class NodeDeclConstList : public NodeBase
 {
 protected:		// children
 	Child _the_typename,
-		_ident_term_and_extra_list;
+		_ident_term_equals_extra_list;
 public:		// functions
 	inline NodeDeclConstList(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename,
-		Child&& s_ident_term_and_extra_list)
+		Child&& s_ident_term_equals_extra_list)
 		: NodeBase(s_src_code_chunk),
 		_the_typename(std::move(s_the_typename)),
-		_ident_term_and_extra_list(std::move(s_ident_term_and_extra_list))
+		_ident_term_equals_extra_list(std::move(s_ident_term_equals_extra_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclConstList);
@@ -4648,7 +4643,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4662,8 +4657,8 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
-	GEN_GETTER_BY_CON_REF(ident_term_and_extra_list)
-	GEN_SETTER_BY_RVAL_REF(ident_term_and_extra_list)
+	GEN_GETTER_BY_CON_REF(ident_term_equals_extra_list)
+	GEN_SETTER_BY_RVAL_REF(ident_term_equals_extra_list)
 };
 
 class NodeDeclVarList : public NodeDeclConstList
@@ -4671,10 +4666,10 @@ class NodeDeclVarList : public NodeDeclConstList
 public:		// functions
 	inline NodeDeclVarList(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_the_typename,
-		Child&& s_ident_term_and_extra_list)
+		Child&& s_ident_term_equals_extra_list)
 		: NodeDeclConstList(s_src_code_chunk,
 		std::move(s_the_typename),
-		std::move(s_ident_term_and_extra_list))
+		std::move(s_ident_term_equals_extra_list))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclVarList);
@@ -4683,7 +4678,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:ident_term_and_extra_list\n(", ident_term_and_extra_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}

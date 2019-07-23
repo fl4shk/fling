@@ -8,9 +8,9 @@
 	X(NodeScopePackage, ScopePackage) \
 	X(NodeModule, Module) \
 	X(NodeScopeModproc, ScopeModproc) \
-	X(NodeTypeParamArgSublist, TypeParamArgSublist) \
-	X(NodePortArgSublist, PortArgSublist) \
-	X(NodeVarParamArgSublist, VarParamArgSublist) \
+	X(NodeParamArgTypeSublist, ParamArgTypeSublist) \
+	X(NodeArgPortSublist, ArgPortSublist) \
+	X(NodeParamArgVarSublist, ParamArgVarSublist) \
 	X(NodeParamModuleSublist, ParamModuleSublist) \
 	X(NodeParamList, ParamList) \
 	X(NodeArgList, ArgList) \
@@ -142,8 +142,8 @@
 	X(NodeDeclFunc, DeclFunc) \
 	X(NodeDeclProc, DeclProc) \
 	X(NodeDeclTask, DeclTask) \
-	X(NodeIdentTermAndExtra, IdentTermAndExtra) \
-	X(NodeIdentTermAndExtraList, IdentTermAndExtraList) \
+	X(NodeIdentTermEqualsExtra, IdentTermEqualsExtra) \
+	X(NodeIdentTermEqualsExtraList, IdentTermEqualsExtraList) \
 	X(NodeDeclConstList, DeclConstList) \
 	X(NodeDeclVarList, DeclVarList) \
 
