@@ -1902,90 +1902,635 @@ auto Parser::_parse_param_possible_typename() -> ParseRet
 }
 auto Parser::_parse_no_param_possible_typename() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto or_seq = _req_or_parse(runitp(kw_void), runitp(kw_auto),
+		runitp(kw_ubyte), runitp(kw_sbyte),
+		runitp(kw_ushortint), runitp(kw_sshortint),
+		runitp(kw_uint), runitp(kw_sint),
+		runitp(kw_ulongint), runitp(kw_slongint));
+
+	check_parse_anon(or_seq)
+
+	const auto first_valid = or_seq.first_valid();
+	or_seq.exec();
+	const auto the_up = std::get<TheSeqParse::TheUnitParse>(first_valid
+		.one_inst);
+
+	Child s_primary;
+
+	if (the_up.parse_func_str() == "kw_void")
+	{
+		s_primary = _to_ast_child(NodeVoid(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_auto")
+	{
+		s_primary = _to_ast_child(NodeAuto(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_ubyte")
+	{
+		s_primary = _to_ast_child(NodeUbyte(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_sbyte")
+	{
+		s_primary = _to_ast_child(NodeSbyte(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_ushortint")
+	{
+		s_primary = _to_ast_child(NodeUshortint(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_sshortint")
+	{
+		s_primary = _to_ast_child(NodeSshortint(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_uint")
+	{
+		s_primary = _to_ast_child(NodeUint(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_sint")
+	{
+		s_primary = _to_ast_child(NodeSint(_ls_src_code_chunk(ret)));
+	}
+	else if (the_up.parse_func_str() == "kw_ulongint")
+	{
+		s_primary = _to_ast_child(NodeUlongint(_ls_src_code_chunk(ret)));
+	}
+	else // if (the_up.parse_func_str() == "kw_slongint")
+	{
+		s_primary = _to_ast_child(NodeSlongint(_ls_src_code_chunk(ret)));
+	}
+
+	_push_ast_child(NodeNoParamPossibleTypename(_ls_src_code_chunk(ret),
+		move(s_primary)));
+
+	return ret;
 }
 auto Parser::_parse_typeof() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto seq = _req_seq_parse(runitp(kw_typeof),
+		runitp(punct_lparen), _req_or_parse(runitp(expr),
+		runitp(typename)), runitp(punct_rparen));
+
+	check_parse_anon(seq)
+	auto s_expr_or_typename = _pexec(seq);
+
+	_push_ast_child(NodeTypeof(_ls_src_code_chunk(ret),
+		move(s_expr_or_typename)));
+
+
+	return ret;
 }
 auto Parser::_parse_type_range() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(kw_range),
+		runitp(range_suffix)))
+
+	return ret;
 }
 auto Parser::_parse_range_suffix() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	check_parse_anon(_req_seq_parse(runitp(punct_lbracket), runitp(expr),
+		_opt_seq_parse(runitp(punct_colon), runitp(expr)),
+		runitp(punct_rbracket)))
+
+	auto s_left = _pexec(_req_seq_parse(runitp(punct_lbracket),
+		runitp(expr)));
+
+	if (const auto second_seq = _req_seq_parse(runitp(punct_colon),
+		runitp(expr)); second_seq.check())
+	{
+		auto s_right = _pexec(second_seq);
+		_push_ast_child(NodeExprRangeAny(_ls_src_code_chunk(ret),
+			_to_ast_child(NodeRangeTwo(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)))));
+	}
+	else
+	{
+		_push_ast_child(NodeExprRangeAny(_ls_src_code_chunk(ret),
+			_to_ast_child(NodeRangeOne(_ls_src_code_chunk(ret),
+			move(s_left)))));
+	}
+
+	return ret;
 }
 
 auto Parser::_parse_expr() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(inner_expr),
+		runitp(expr_logical)))
+
+	return ret;
 }
 auto Parser::_parse_inner_expr() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(expr_logical),
+		runitp(op_logical), runitp(expr)))
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+
+	switch (_pop_tok())
+	{
+	case Tok::LogAnd:
+		_push_ast_child(NodeExprBinopLogAnd(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::LogOr:
+		_push_ast_child(NodeExprBinopLogOr(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	default:
+		_ls_src_code_chunk(ret).err("Parser::_parse_inner_expr():  Eek!");
+	}
+
+	return ret;
 }
 auto Parser::_parse_op_logical() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::LogAnd, Tok::LogOr))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(vec.front().tok());
+	_push_tok(vec.front().tok());
+	return ret;
 }
 
 auto Parser::_parse_expr_logical() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(inner_expr_logical),
+		runitp(expr_compare)))
+
+	return ret;
 }
 auto Parser::_parse_inner_expr_logical() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(expr_compare),
+		runitp(op_compare), runitp(expr_logical)))
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+
+	switch (_pop_tok())
+	{
+	case Tok::CmpEq:
+		_push_ast_child(NodeExprBinopCmpEq(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::CmpNe:
+		_push_ast_child(NodeExprBinopCmpNe(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::CmpLt:
+		_push_ast_child(NodeExprBinopCmpLt(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::CmpGt:
+		_push_ast_child(NodeExprBinopCmpGt(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::CmpLe:
+		_push_ast_child(NodeExprBinopCmpLe(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::CmpGe:
+		_push_ast_child(NodeExprBinopCmpGe(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	default:
+		_ls_src_code_chunk(ret).err("Parser::_parse_inner_expr_logical():"
+			"  Eek!");
+	}
+
+	return ret;
 }
 auto Parser::_parse_op_compare() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::CmpEq, Tok::CmpNe, Tok::CmpLt,
+			Tok::CmpGt, Tok::CmpLe, Tok::CmpGe))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(vec.front().tok());
+	_push_tok(vec.front().tok());
+	return ret;
 }
 
 auto Parser::_parse_expr_compare() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(inner_expr_compare),
+		runitp(expr_add_sub)))
+
+	return ret;
 }
 auto Parser::_parse_inner_expr_compare() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(expr_add_sub),
+		runitp(op_plus_minus), runitp(expr_compare)))
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+
+	switch (_pop_tok())
+	{
+	case Tok::Plus:
+		_push_ast_child(NodeExprBinopPlus(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::Minus:
+		_push_ast_child(NodeExprBinopMinus(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	default:
+		_ls_src_code_chunk(ret).err("Parser::_parse_inner_expr_compare():"
+			"  Eek!");
+	}
+
+	return ret;
 }
 auto Parser::_parse_op_plus_minus() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::Plus, Tok::Minus))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(vec.front().tok());
+	_push_tok(vec.front().tok());
+	return ret;
 }
 
 auto Parser::_parse_expr_add_sub() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(inner_expr_add_sub),
+		runitp(expr_mul_div_mod_etc)))
+
+	return ret;
 }
 auto Parser::_parse_inner_expr_add_sub() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(expr_mul_div_mod_etc),
+		runitp(op_mul_div_mod_etc), runitp(expr_add_sub)))
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+
+	switch (_pop_tok())
+	{
+	case Tok::Mul:
+		_push_ast_child(NodeExprBinopMul(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::Div:
+		_push_ast_child(NodeExprBinopDiv(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::Mod:
+		_push_ast_child(NodeExprBinopMod(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::BitLsl:
+		_push_ast_child(NodeExprBinopBitLsl(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::BitLsr:
+		_push_ast_child(NodeExprBinopBitLsr(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::BitAsr:
+		_push_ast_child(NodeExprBinopBitAsr(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::BitAnd:
+		_push_ast_child(NodeExprBinopBitAnd(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::BitOr:
+		_push_ast_child(NodeExprBinopBitOr(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	case Tok::BitXor:
+		_push_ast_child(NodeExprBinopBitXor(_ls_src_code_chunk(ret),
+			move(s_left), move(s_right)));
+		break;
+	default:
+		_ls_src_code_chunk(ret).err("Parser::_parse_inner_expr_add_sub():"
+			"  Eek!");
+	}
+
+	return ret;
 }
 auto Parser::_parse_op_mul_div_mod_etc() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::Mul, Tok::Div, Tok::Mod,
+			Tok::BitLsl, Tok::BitLsr, Tok::BitAsr, Tok::BitAnd, Tok::BitOr,
+			Tok::BitXor))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(vec.front().tok());
+	_push_tok(vec.front().tok());
+	return ret;
 }
 
 auto Parser::_parse_expr_mul_div_mod_etc() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_or_parse(runitp(inner_expr_mul_div_mod_etc),
+		_req_seq_parse(runitp(punct_lparen), runitp(expr),
+		runitp(punct_rparen)),
+		runitp(dollar_global_clock),
+		runitp(dollar_pow_expr),
+		runitp(ident_etc),
+		runitp(num_expr),
+		runitp(const_str),
+		runitp(expr_pre_dollar_func_of_one),
+		runitp(expr_post_dollar_func_of_one),
+		runitp(expr_cat),
+		runitp(expr_repl)))
+
+	return ret;
 }
 auto Parser::_parse_inner_expr_mul_div_mod_etc() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(op_unary), runitp(expr)))
+
+	auto s_child = _pop_ast_child();
+
+	switch (_pop_tok())
+	{
+	case Tok::LogNot:
+		_push_ast_child(NodeExprUnopLogNot(_ls_src_code_chunk(ret),
+			move(s_child)));
+		break;
+	case Tok::BitNot:
+		_push_ast_child(NodeExprUnopBitNot(_ls_src_code_chunk(ret),
+			move(s_child)));
+		break;
+	case Tok::Plus:
+		_push_ast_child(NodeExprUnopPlus(_ls_src_code_chunk(ret),
+			move(s_child)));
+		break;
+	case Tok::Minus:
+		_push_ast_child(NodeExprUnopMinus(_ls_src_code_chunk(ret),
+			move(s_child)));
+		break;
+	default:
+		_ls_src_code_chunk(ret).err
+			("Parser::_parse_inner_expr_mul_div_mod_etc():  Eek!");
+	}
+
+	return ret;
 }
 auto Parser::_parse_op_unary() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::LogNot, Tok::BitNot, Tok::Plus,
+			Tok::Minus))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(vec.front().tok());
+	_push_tok(vec.front().tok());
+	return ret;
+
+	return ret;
 }
 
 auto Parser::_parse_dollar_global_clock() -> ParseRet
 {
+	CHECK_PREFIXED_ONE_TOK(Tok::KwDollarGlobalClock);
 }
 auto Parser::_parse_dollar_pow_expr() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::KwDollarPow))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(Tok::KwDollarPow);
+
+	_req_seq_parse(runitp(punct_lparen), runitp(expr), runitp(punct_comma),
+		runitp(expr), runitp(punct_rparen)).exec();
+
+	auto s_right = _pop_ast_child();
+	auto s_left = _pop_ast_child();
+
+	_push_ast_child(NodeExprBinopDollarPow(_ls_src_code_chunk(ret),
+		move(s_left), move(s_right)));
+
+	return ret;
+}
+auto Parser::_parse_num_expr() -> ParseRet
+{
+	auto ret = _dup_lex_state();
+
+	const auto opt_seq = _req_seq_parse(runitp(expr),
+		runitp(punct_apostrophe));
+	const auto req_seq = one_req_seqp(raw_num);
+
+	check_parse_anon(_req_seq_parse(_opt_seq_parse(opt_seq), req_seq))
+
+	if (opt_seq.check())
+	{
+		auto s_size = _pexec(opt_seq);
+		req_seq.exec();
+		_push_ast_child(NodeSizedNumExpr(_ls_src_code_chunk(ret),
+			_lex_state().n(), move(s_size)));
+	}
+	else
+	{
+		req_seq.exec();
+		_push_ast_child(NodeNumExpr(_ls_src_code_chunk(ret),
+			_lex_state().n()));
+	}
+
+	return ret;
+}
+auto Parser::_parse_raw_num() -> ParseRet
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::Num);
 }
 auto Parser::_parse_const_str() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	if (just_test())
+	{
+		if (_check_prefixed_tok_seq(Tok::String))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+
+	_expect(Tok::String);
+	_push_ast_child(NodeConstString(_ls_src_code_chunk(ret),
+		_lex_state().s()));
+	return ret;
 }
-auto Parser::_parse_expr_pre_dollar_func() -> ParseRet
+auto Parser::_parse_expr_pre_dollar_func_of_one() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(dollar_func_of_one),
+		runitp(punct_lparen), runitp(expr), runitp(punct_rparen)))
+	_finish_parse_expr_any_dollar_func_of_one(_ls_src_code_chunk(ret));
+
+	return ret;
 }
-auto Parser::_parse_expr_post_dollar_func() -> ParseRet
+auto Parser::_parse_expr_post_dollar_func_of_one() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	simple_seq_parse_anon(_req_seq_parse(runitp(expr),
+		runitp(dollar_func_of_one)))
+	_finish_parse_expr_any_dollar_func_of_one(_ls_src_code_chunk(ret));
+
+	return ret;
 }
 auto Parser::_parse_dollar_func_of_one() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto vec = _next_n_tokens(1, false);
+	if (just_test())
+	{
+		if (_check_or_tok(vec.front(), Tok::KwDollarUnsgn,
+			Tok::KwDollarSgn, Tok::KwDollarIsUnsgn, Tok::KwDollarIsSgn,
+			Tok::KwDollarRange, Tok::KwDollarSize, Tok::KwDollarFirst,
+			Tok::KwDollarLast, Tok::KwDollarHigh, Tok::KwDollarLow,
+			Tok::KwDollarClog2, Tok::KwDollarPast, Tok::KwDollarStable,
+			Tok::KwDollarRose, Tok::KwDollarFell))
+		{
+			return ret;
+		}
+		else
+		{
+			return ParseRet(nullptr);
+		}
+	}
+	_expect(vec.front().tok());
+	_push_tok(vec.front().tok());
+
+	return ret;
 }
+
 auto Parser::_parse_expr_cat() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	const auto req_seq = _req_seq_parse(runitp(kw_cat),
+		runitp(punct_lparen), runitp(expr));
+
+	simple_seq_parse_anon(req_seq)
+
+	auto s_first = _pop_ast_child();
+
+	NodeListCat s_list(s_first->src_code_chunk());
+	s_list.append(move(s_first));
+
+	_partial_parse_any_list(s_list, _req_seq_parse(runitp(punct_comma),
+		runitp(expr)));
+
+	one_req_seqp(punct_rparen).exec();
+
+	_push_ast_child(NodeExprCat(_ls_src_code_chunk(ret), _to_ast_child
+		(move(s_list))));
+
+	return ret;
 }
 auto Parser::_parse_expr_repl() -> ParseRet
 {
+	auto ret = _dup_lex_state();
+
+	return ret;
 }
 
 auto Parser::_parse_ident_etc() -> ParseRet
@@ -2171,5 +2716,77 @@ auto Parser::_parse_any_scope(const string& scope_type_str,
 	return ret;
 }
 
+void Parser::_finish_parse_expr_any_dollar_func_of_one
+	(const SrcCodeChunk& s_src_code_chunk)
+{
+	auto s_expr = _pop_ast_child();
+
+	switch (_pop_tok())
+	{
+	case Tok::KwDollarUnsgn:
+		_push_ast_child(NodeExprUnopDollarUnsgn(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarSgn:
+		_push_ast_child(NodeExprUnopDollarSgn(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarIsUnsgn:
+		_push_ast_child(NodeExprUnopDollarIsUnsgn(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarIsSgn:
+		_push_ast_child(NodeExprUnopDollarIsSgn(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarRange:
+		_push_ast_child(NodeExprUnopDollarRange(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarSize:
+		_push_ast_child(NodeExprUnopDollarSize(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarFirst:
+		_push_ast_child(NodeExprUnopDollarFirst(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarLast:
+		_push_ast_child(NodeExprUnopDollarLast(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarHigh:
+		_push_ast_child(NodeExprUnopDollarHigh(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarLow:
+		_push_ast_child(NodeExprUnopDollarLow(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarClog2:
+		_push_ast_child(NodeExprUnopDollarClog2(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarPast:
+		_push_ast_child(NodePseudoExprDollarPast(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarStable:
+		_push_ast_child(NodePseudoExprDollarStable(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarRose:
+		_push_ast_child(NodePseudoExprDollarRose(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	case Tok::KwDollarFell:
+		_push_ast_child(NodePseudoExprDollarFell(s_src_code_chunk,
+			move(s_expr)));
+		break;
+	default:
+		s_src_code_chunk.err("_finish_parse_expr_any_dollar_func_of_one"
+			"():  Eek!");
+	}
+}
 
 } // namespace frost_hdl

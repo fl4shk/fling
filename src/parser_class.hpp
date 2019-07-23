@@ -437,10 +437,12 @@ private:		// functions
 
 	ParseRet _parse_dollar_global_clock();
 	ParseRet _parse_dollar_pow_expr();
+	ParseRet _parse_num_expr();
+	ParseRet _parse_raw_num();
 	ParseRet _parse_const_str();
 
-	ParseRet _parse_expr_pre_dollar_func();
-	ParseRet _parse_expr_post_dollar_func();
+	ParseRet _parse_expr_pre_dollar_func_of_one();
+	ParseRet _parse_expr_post_dollar_func_of_one();
 	ParseRet _parse_dollar_func_of_one();
 	ParseRet _parse_expr_cat();
 	ParseRet _parse_expr_repl();
@@ -560,6 +562,24 @@ private:		// functions
 
 		return true;
 	}
+
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline bool _check_or_tok(const LexerState& vec_front,
+		FirstArgType&& first_tok, RemArgTypes&&... rem_tokens) const
+	{
+		if (vec_front.tok() == first_tok)
+		{
+			return true;
+		}
+		else if constexpr (sizeof...(rem_tokens) > 0)
+		{
+			return _check_or_tok(vec_front, rem_tokens...);
+		}
+		return false;
+	}
+
+	void _finish_parse_expr_any_dollar_func_of_one
+		(const SrcCodeChunk& s_src_code_chunk);
 
 };
 

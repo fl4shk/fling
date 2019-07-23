@@ -117,6 +117,7 @@ X(Plus, "+") \
 X(Minus, "-") \
 X(Mul, "*") \
 X(Div, "/") \
+X(Mod, "%") \
 \
 X(BitLsl, "<<") \
 X(BitLsr, ">>") \

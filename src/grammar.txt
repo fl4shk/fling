@@ -771,8 +771,8 @@ expr_mul_div_mod_etc:
 	| ident_etc
 	| num_expr
 	| const_str
-	| expr_pre_dollar_func
-	| expr_post_dollar_func
+	| expr_pre_dollar_func_of_one
+	| expr_post_dollar_func_of_one
 	| expr_cat
 	| expr_repl
 	;
@@ -795,16 +795,19 @@ dollar_pow_expr:
 	TokKwDollarPow punct_lparen expr punct_comma expr punct_rparen
 	;
 num_expr:
-	(expr punct_apostrophe)? TokNum
+	(expr punct_apostrophe)? raw_num
+	;
+raw_num:
+	TokNum
 	;
 const_str:
 	TokConstStr
 	;
 
-expr_pre_dollar_func:
+expr_pre_dollar_func_of_one:
 	dollar_func_of_one punct_lparen expr punct_rparen
 	;
-expr_post_dollar_func:
+expr_post_dollar_func_of_one:
 	expr dollar_func_of_one
 	;
 dollar_func_of_one:
@@ -812,7 +815,10 @@ dollar_func_of_one:
 	| TokKwDollarIsUnsgn | TokKwDollarIsSgn
 	| TokKwDollarRange | TokKwDollarSize
 	| TokKwDollarFirst | TokKwDollarLast
+	| TokKwDollarHigh | TokKwDollarLow
 	| TokKwDollarClog2
+	| TokKwDollarPast | TokKwDollarStable
+	| TokKwDollarRose | TokKwDollarFell
 	;
 
 expr_cat:
