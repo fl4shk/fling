@@ -856,8 +856,12 @@ auto Parser::_parse_using() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	simple_seq_parse_anon(_req_seq_parse(runitp(kw_using),
+	printout("_parse_using():  ", just_test(), "\n");
+	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+
+	check_parse_named(req_seq, _req_seq_parse(runitp(kw_using),
 		runitp(ident_terminal)))
+	req_seq.exec();
 
 	auto s_left = _pop_ast_child();
 	Child s_right;
@@ -2680,8 +2684,8 @@ auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 auto Parser::_parse_ident_terminal() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	//printout("_parse_ident_terminal():  ", just_test(), "\n");
-	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	printout("_parse_ident_terminal():  ", just_test(), "\n");
+	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(one_req_seqp(ident))
 
@@ -2698,8 +2702,8 @@ auto Parser::_parse_ident_terminal() -> ParseRet
 auto Parser::_parse_ident() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	//printout("_parse_ident():  ", just_test(), "\n");
-	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	printout("_parse_ident():  ", just_test(), "\n");
+	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	if (just_test())
 	{

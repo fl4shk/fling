@@ -3,18 +3,19 @@ package PkgAlu
 	//enum ubit [3] Opcode
 	// This syntax indicates that this `enum` is as small as it can be
 	// while still fitting everything.
-	enum Opcode
-	{
-		Add,
-		Adc,
-		Sub,
-		Sbc,
+	//enum Opcode
+	//{
+	//	Add,
+	//	Adc,
+	//	Sub,
+	//	Sbc,
 
-		And,
-		Or,
-		Xor,
-		Nor,
-	};
+	//	And,
+	//	Or,
+	//	Xor,
+	//	Nor,
+	//};
+		using DataInout = ubit[WIDTH];
 
 	class Bus[uint WIDTH]
 		//extends AluPorts[WIDTH=WIDTH]
