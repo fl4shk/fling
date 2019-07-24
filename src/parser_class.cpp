@@ -867,7 +867,7 @@ auto Parser::_parse_using() -> ParseRet
 	Child s_right;
 
 	if (_one_opt_parse(_req_seq_parse(runitp(punct_assign),
-		runitp(ident_etc))))
+		runitp(ident_terminal))))
 	{
 		s_right = _pop_ast_child();
 	}

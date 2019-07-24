@@ -516,6 +516,7 @@ private:		// functions
 	template<typename ParseSeqType>
 	inline bool _one_opt_parse(const ParseSeqType& parse_seq)
 	{
+		printout("_one_opt_parse():  ", parse_seq.check(), "\n");
 		if (parse_seq.check())
 		{
 			parse_seq.exec();
