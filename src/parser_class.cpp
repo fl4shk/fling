@@ -66,11 +66,11 @@ auto Parser::parse_program() -> ParseRet
 
 	//check_parse_named(seq, _opt_or_parse(runitp(package),
 	//	runitp(module)));
+	TheSeqParse::debug = true;
 
 	auto ret = _dup_lex_state();
 
-	const auto seq = _opt_or_parse(runitp(package),
-		runitp(module));
+	const auto seq = _opt_or_parse(runitp(package), runitp(module));
 
 	if (!seq.check())
 	{
@@ -856,8 +856,8 @@ auto Parser::_parse_using() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	printout("_parse_using():  ", just_test(), "\n");
-	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	//printout("_parse_using():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	check_parse_named(req_seq, _req_seq_parse(runitp(kw_using),
 		runitp(ident_terminal)))
@@ -867,7 +867,7 @@ auto Parser::_parse_using() -> ParseRet
 	Child s_right;
 
 	if (_one_opt_parse(_req_seq_parse(runitp(punct_assign),
-		runitp(ident_terminal))))
+		_req_or_parse(runitp(ident_etc), runitp(typename)))))
 	{
 		s_right = _pop_ast_child();
 	}
@@ -2618,8 +2618,8 @@ auto Parser::_parse_ident_non_member_scope_access() -> ParseRet
 	auto ret = _dup_lex_state();
 
 	simple_seq_parse_anon(_req_or_parse(runitp(ident_call),
-		//runitp(ident_no_param_overloaded_call),
-		//runitp(ident_param_member_overloaded_call),
+		runitp(ident_no_param_overloaded_call),
+		runitp(ident_param_member_overloaded_call),
 		runitp(ident_terminal)))
 
 	return ret;
@@ -2684,8 +2684,8 @@ auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
 auto Parser::_parse_ident_terminal() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	printout("_parse_ident_terminal():  ", just_test(), "\n");
-	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	//printout("_parse_ident_terminal():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	simple_seq_parse_anon(one_req_seqp(ident))
 
@@ -2702,8 +2702,8 @@ auto Parser::_parse_ident_terminal() -> ParseRet
 auto Parser::_parse_ident() -> ParseRet
 {
 	auto ret = _dup_lex_state();
-	printout("_parse_ident():  ", just_test(), "\n");
-	printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
+	//printout("_parse_ident():  ", just_test(), "\n");
+	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	if (just_test())
 	{
