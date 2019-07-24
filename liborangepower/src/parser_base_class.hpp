@@ -284,10 +284,12 @@ public:		// types
 				{
 					if (temp())
 					{
+						temp.set_just_test(false);
 						return true;
 					}
 					else
 					{
+						temp.set_just_test(false);
 						return false;
 					}
 				}
@@ -315,7 +317,6 @@ public:		// types
 						"\n");
 				}
 
-
 				if (temp.optional())
 				{
 					temp.set_just_test(true);
@@ -334,6 +335,7 @@ public:		// types
 								ret_from_func->pos_in_line(), "\n");
 						}
 					}
+					temp.set_just_test(false);
 				}
 				else
 				{
