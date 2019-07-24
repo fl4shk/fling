@@ -66,7 +66,8 @@ auto Parser::parse_program() -> ParseRet
 
 	//check_parse_named(seq, _opt_or_parse(runitp(package),
 	//	runitp(module)));
-	TheSeqParse::debug = true;
+	TheUnitParse::debug = true;
+	TheUnitParse::debug_tok_ident_map = &tok_ident_map;
 
 	auto ret = _dup_lex_state();
 
