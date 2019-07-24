@@ -407,7 +407,7 @@ one_var:
 	;
 
 using:
-	kw_using ident_terminal (punct_assign ident_etc)?
+	kw_using ident_etc (punct_assign typename)?
 		punct_semicolon
 	;
 
@@ -678,7 +678,7 @@ param_possible_typename:
 	(ident_etc
 		| kw_uwire | kw_swire
 		| kw_ubit | kw_sbit)
-		param_inst_list
+		param_inst_list?
 	;
 no_param_possible_typename:
 	kw_void | kw_auto

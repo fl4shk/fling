@@ -861,14 +861,14 @@ auto Parser::_parse_using() -> ParseRet
 	//printout(tok_ident_map.at(ret->tok()), " ", ret->s(), "\n");
 
 	check_parse_named(req_seq, _req_seq_parse(runitp(kw_using),
-		runitp(ident_terminal)))
+		runitp(ident_etc)))
 	req_seq.exec();
 
 	auto s_left = _pop_ast_child();
 	Child s_right;
 
 	if (_one_opt_parse(_req_seq_parse(runitp(punct_assign),
-		_req_or_parse(runitp(ident_etc), runitp(typename)))))
+		runitp(typename))))
 	{
 		s_right = _pop_ast_child();
 	}
@@ -1872,12 +1872,11 @@ auto Parser::_parse_param_possible_typename() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	const auto or_seq = _req_or_parse(runitp(ident_etc),
-		runitp(kw_uwire), runitp(kw_swire), runitp(kw_ubit),
-		runitp(kw_sbit));
+	const auto or_seq = _req_or_parse(runitp(ident_etc), runitp(kw_uwire),
+		runitp(kw_swire), runitp(kw_ubit), runitp(kw_sbit));
 	const auto param_seq = one_req_seqp(param_inst_list);
 
-	check_parse_anon(_req_seq_parse(or_seq, param_seq))
+	check_parse_anon(_req_seq_parse(or_seq, _opt_seq_parse(param_seq)))
 
 	const auto first_valid = or_seq.first_valid();
 	or_seq.exec();
@@ -1906,7 +1905,13 @@ auto Parser::_parse_param_possible_typename() -> ParseRet
 		s_primary = _to_ast_child(NodeSbit(_ls_src_code_chunk(ret)));
 	}
 
-	auto s_param_inst_list = _pexec(param_seq);
+	Child s_param_inst_list;
+
+	if (_one_opt_parse(param_seq))
+	{
+		s_param_inst_list = _pop_ast_child();
+	}
+
 	_push_ast_child(NodeParamPossibleTypename(_ls_src_code_chunk(ret),
 		move(s_primary), move(s_param_inst_list)));
 
