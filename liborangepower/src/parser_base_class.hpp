@@ -171,6 +171,9 @@ public:		// types
 			ParseRet parse_ret;
 			OneInst one_inst;
 		};
+	public:		// variables
+		static inline bool debug = false;
+		static inline const TokToStringMap* debug_tok_ident_map = nullptr;
 
 	protected:		// variables
 		DerivedType* _self = nullptr;
@@ -306,6 +309,13 @@ public:		// types
 			{
 				const auto& temp = std::get<TheUnitParse>(iter);
 
+				if (debug)
+				{
+					printout("_exec_one():  ", temp.parse_func_str(),
+						"\n");
+				}
+
+
 				if (temp.optional())
 				{
 					temp.set_just_test(true);
@@ -313,13 +323,27 @@ public:		// types
 					if (temp())
 					{
 						temp.set_just_test(false);
-						temp();
+						const auto ret_from_func = temp();
+
+						if (debug)
+						{
+							printout("success:  \"",
+								debug_tok_ident_map->at(ret->tok()),
+								"\", \"", ret->s(), "\"");
+						}
 					}
 				}
 				else
 				{
 					temp.set_just_test(false);
-					temp();
+					const auto ret_from_func = temp();
+
+					if (debug)
+					{
+						printout("success:  \"",
+							debug_tok_ident_map->at(ret->tok()),
+							"\", \"", ret->s(), "\"");
+					}
 				}
 			}
 			else
