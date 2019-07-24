@@ -18,6 +18,7 @@ public:		// types
 	using TokSet = ast::NodeBase::TokSet;
 
 	using TheMultiParse = Base::MultiParse<Parser>;
+	using TheUnitParse = Base::UnitParse<Parser>;
 	using TheSeqParse = Base::SeqParse<Parser>;
 	using ParseRet = typename TheMultiParse::ParseRet;
 	using ParseFunc = typename TheMultiParse::ParseFunc;
