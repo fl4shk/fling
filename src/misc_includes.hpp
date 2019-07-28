@@ -52,11 +52,8 @@ using liborangepower::containers::CircLinkedList;
 //#include <boost/mp11.hpp>
 //using namespace boost::mp11;
 using string = std::string;
-template<typename Type>
-using unique_ptr = std::unique_ptr<Type>;
-
-template<typename Type>
-using vector = std::vector<Type>;
+using std::unique_ptr;
+using std::vector;
 
 
 #endif		// src_misc_includes_hpp

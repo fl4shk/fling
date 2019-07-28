@@ -445,8 +445,7 @@ private:		// functions
 		return _lexer().src_code_chunk(lex_state.get());
 	}
 
-	template<typename ParseSeqType>
-	inline bool _one_opt_parse(const ParseSeqType& parse_seq,
+	inline bool _one_opt_parse(const TheSeqParse& parse_seq,
 		const string& exec_str, const string& no_exec_str)
 	{
 		if (parse_seq.check())
@@ -461,27 +460,26 @@ private:		// functions
 			return false;
 		}
 	}
-	template<typename ParseSeqType>
-	inline bool _one_opt_parse(const ParseSeqType& parse_seq)
+	inline void _push_one_opt_parse(const TheSeqParse& parse_seq)
 	{
 		//printout("_one_opt_parse():  ", parse_seq.check(), "\n");
 		if (parse_seq.check())
 		{
 			parse_seq.exec();
-			return true;
+			_push_num(true);
 		}
 		else
 		{
-			return false;
+			_push_num(false);
 		}
 	}
 
-	template<typename ParseSeqType>
 	inline ast::NodeBase::Child _get_one_opt_parse
-		(const ParseSeqType& parse_seq)
+		(const TheSeqParse& parse_seq)
 	{
-		if (_one_opt_parse(parse_seq))
+		if (parse_seq.check())
 		{
+			parse_seq.exec();
 			return _pop_ast_child();
 		}
 		return ast::NodeBase::Child();
@@ -505,15 +503,14 @@ private:		// functions
 	ParseRet _parse_any_scope(const string& scope_type_str,
 		const TheSeqParse& list_seq);
 
+	// pop after exec()
 	inline ast::NodeBase::Child _pexec(const TheSeqParse& seq)
 	{
 		seq.exec();
 		return _pop_ast_child();
 	}
 
-	template<typename AstNodeListType>
-	inline bool _list_pexec(AstNodeListType& ret,
-		const TheSeqParse& list_seq)
+	inline bool _list_pexec(NodeList& list, const TheSeqParse& list_seq)
 	{
 		if (!list_seq.check())
 		{
@@ -522,7 +519,7 @@ private:		// functions
 
 		while (list_seq.check())
 		{
-			ret.append(_pexec(list_seq));
+			list.append(_pexec(list_seq));
 		}
 
 		return true;

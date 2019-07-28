@@ -237,7 +237,7 @@ RangeTwo, LeftRightBase:
 StmtList, List:
 
 StmtAnyFor:
-	child var, items, stmt_list;
+	child var, items, scope;
 StmtFor, StmtAnyFor:
 StmtGenerateFor, StmtAnyFor:
 	child label;
@@ -259,12 +259,12 @@ StmtGenerateFor, StmtAnyFor:
 // }
 
 StmtIf:
-	child cond_expr, stmt_list, stmt_else;
+	child cond_expr, scope, stmt_else;
 
 StmtGenerateIf, StmtIf:
 
 StmtWhile:
-	child cond_expr, stmt_list;
+	child cond_expr, scope;
 
 
 StmtBehavAssign, LeftRightBase:
@@ -275,12 +275,12 @@ StmtMemberAccessProtected:
 StmtMemberAccessPrivate:
 
 StmtSwitch:
-	child expr, stmt_list;
+	child expr, scope;
 StmtSwitchz, StmtSwitch:
 StmtCase:
-	child expr, stmt_list;
+	child expr, scope;
 StmtDefault:
-	child stmt_list;
+	child scope;
 ScopeSwitch, List:
 
 StmtUsing, LeftRightBase:
@@ -290,13 +290,13 @@ StmtInstModule:
 StmtReturn:
 	child expr;
 StmtInitial:
-	child stmt_list;
+	child scope;
 StmtAlwaysComb:
-	child stmt_list;
+	child scope;
 StmtAlwaysBlk:
-	child edge_list, stmt_list;
+	child edge_list, scope;
 StmtAlwaysFf:
-	child edge_list, stmt_list;
+	child edge_list, scope;
 
 StmtAssert:
 	child expr;
@@ -316,7 +316,7 @@ NegedgeInst:
 EdgeList, List:
 
 DeclCallable:
-	child param_list, arg_list, ident_or_op, stmt_list;
+	child param_list, arg_list, ident_or_op, scope;
 
 DeclFunc, DeclCallable:
 	child the_typename;

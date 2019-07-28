@@ -3414,16 +3414,16 @@ class NodeStmtAnyFor : public NodeBase
 protected:		// children
 	Child _var,
 		_items,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeStmtAnyFor(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_var,
 		Child&& s_items,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_var(std::move(s_var)),
 		_items(std::move(s_items)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAnyFor);
@@ -3433,7 +3433,7 @@ public:		// functions
 		ret += name() + "\n(";
 		ret += sconcat("  child:var\n(", var()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:items\n(", items()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3449,8 +3449,8 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(var)
 	GEN_GETTER_BY_CON_REF(items)
 	GEN_SETTER_BY_RVAL_REF(items)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtFor : public NodeStmtAnyFor
@@ -3459,11 +3459,11 @@ public:		// functions
 	inline NodeStmtFor(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_var,
 		Child&& s_items,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeStmtAnyFor(s_src_code_chunk,
 		std::move(s_var),
 		std::move(s_items),
-		std::move(s_stmt_list))
+		std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtFor);
@@ -3473,7 +3473,7 @@ public:		// functions
 		ret += name() + "\n(";
 		ret += sconcat("  child:var\n(", var()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:items\n(", items()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3496,11 +3496,11 @@ public:		// functions
 		Child&& s_label,
 		Child&& s_var,
 		Child&& s_items,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeStmtAnyFor(s_src_code_chunk,
 		std::move(s_var),
 		std::move(s_items),
-		std::move(s_stmt_list)),
+		std::move(s_scope)),
 		_label(std::move(s_label))
 	{
 	}
@@ -3512,7 +3512,7 @@ public:		// functions
 		ret += sconcat("  child:label\n(", label()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:var\n(", var()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:items\n(", items()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3532,16 +3532,16 @@ class NodeStmtIf : public NodeBase
 {
 protected:		// children
 	Child _cond_expr,
-		_stmt_list,
+		_scope,
 		_stmt_else;
 public:		// functions
 	inline NodeStmtIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
-		Child&& s_stmt_list,
+		Child&& s_scope,
 		Child&& s_stmt_else)
 		: NodeBase(s_src_code_chunk),
 		_cond_expr(std::move(s_cond_expr)),
-		_stmt_list(std::move(s_stmt_list)),
+		_scope(std::move(s_scope)),
 		_stmt_else(std::move(s_stmt_else))
 	{
 	}
@@ -3551,7 +3551,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:stmt_else\n(", stmt_else()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
@@ -3566,8 +3566,8 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(cond_expr)
 	GEN_SETTER_BY_RVAL_REF(cond_expr)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 	GEN_GETTER_BY_CON_REF(stmt_else)
 	GEN_SETTER_BY_RVAL_REF(stmt_else)
 };
@@ -3577,11 +3577,11 @@ class NodeStmtGenerateIf : public NodeStmtIf
 public:		// functions
 	inline NodeStmtGenerateIf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
-		Child&& s_stmt_list,
+		Child&& s_scope,
 		Child&& s_stmt_else)
 		: NodeStmtIf(s_src_code_chunk,
 		std::move(s_cond_expr),
-		std::move(s_stmt_list),
+		std::move(s_scope),
 		std::move(s_stmt_else))
 	{
 	}
@@ -3591,7 +3591,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:stmt_else\n(", stmt_else()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
@@ -3610,14 +3610,14 @@ class NodeStmtWhile : public NodeBase
 {
 protected:		// children
 	Child _cond_expr,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeStmtWhile(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_cond_expr(std::move(s_cond_expr)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtWhile);
@@ -3626,7 +3626,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3640,8 +3640,8 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(cond_expr)
 	GEN_SETTER_BY_RVAL_REF(cond_expr)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtBehavAssign : public NodeLeftRightBase
@@ -3785,14 +3785,14 @@ class NodeStmtSwitch : public NodeBase
 {
 protected:		// children
 	Child _expr,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeStmtSwitch(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtSwitch);
@@ -3801,7 +3801,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3815,8 +3815,8 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtSwitchz : public NodeStmtSwitch
@@ -3824,10 +3824,10 @@ class NodeStmtSwitchz : public NodeStmtSwitch
 public:		// functions
 	inline NodeStmtSwitchz(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeStmtSwitch(s_src_code_chunk,
 		std::move(s_expr),
-		std::move(s_stmt_list))
+		std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtSwitchz);
@@ -3836,7 +3836,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3854,14 +3854,14 @@ class NodeStmtCase : public NodeBase
 {
 protected:		// children
 	Child _expr,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeStmtCase(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtCase);
@@ -3870,7 +3870,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3884,19 +3884,19 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtDefault : public NodeBase
 {
 protected:		// children
-	Child _stmt_list;
+	Child _scope;
 public:		// functions
 	inline NodeStmtDefault(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtDefault);
@@ -3904,7 +3904,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -3916,8 +3916,8 @@ public:		// functions
 	{
 		return "StmtDefault";
 	}
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeScopeSwitch : public NodeList
@@ -4073,12 +4073,12 @@ public:		// functions
 class NodeStmtInitial : public NodeBase
 {
 protected:		// children
-	Child _stmt_list;
+	Child _scope;
 public:		// functions
 	inline NodeStmtInitial(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtInitial);
@@ -4086,7 +4086,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4098,19 +4098,19 @@ public:		// functions
 	{
 		return "StmtInitial";
 	}
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtAlwaysComb : public NodeBase
 {
 protected:		// children
-	Child _stmt_list;
+	Child _scope;
 public:		// functions
 	inline NodeStmtAlwaysComb(const SrcCodeChunk& s_src_code_chunk,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysComb);
@@ -4118,7 +4118,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4130,22 +4130,22 @@ public:		// functions
 	{
 		return "StmtAlwaysComb";
 	}
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtAlwaysBlk : public NodeBase
 {
 protected:		// children
 	Child _edge_list,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeStmtAlwaysBlk(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_edge_list,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_edge_list(std::move(s_edge_list)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysBlk);
@@ -4154,7 +4154,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:edge_list\n(", edge_list()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4168,22 +4168,22 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(edge_list)
 	GEN_SETTER_BY_RVAL_REF(edge_list)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtAlwaysFf : public NodeBase
 {
 protected:		// children
 	Child _edge_list,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeStmtAlwaysFf(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_edge_list,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_edge_list(std::move(s_edge_list)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysFf);
@@ -4192,7 +4192,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:edge_list\n(", edge_list()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4206,8 +4206,8 @@ public:		// functions
 	}
 	GEN_GETTER_BY_CON_REF(edge_list)
 	GEN_SETTER_BY_RVAL_REF(edge_list)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeStmtAssert : public NodeBase
@@ -4477,18 +4477,18 @@ protected:		// children
 	Child _param_list,
 		_arg_list,
 		_ident_or_op,
-		_stmt_list;
+		_scope;
 public:		// functions
 	inline NodeDeclCallable(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_param_list(std::move(s_param_list)),
 		_arg_list(std::move(s_arg_list)),
 		_ident_or_op(std::move(s_ident_or_op)),
-		_stmt_list(std::move(s_stmt_list))
+		_scope(std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclCallable);
@@ -4499,7 +4499,7 @@ public:		// functions
 		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4517,8 +4517,8 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(arg_list)
 	GEN_GETTER_BY_CON_REF(ident_or_op)
 	GEN_SETTER_BY_RVAL_REF(ident_or_op)
-	GEN_GETTER_BY_CON_REF(stmt_list)
-	GEN_SETTER_BY_RVAL_REF(stmt_list)
+	GEN_GETTER_BY_CON_REF(scope)
+	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
 class NodeDeclFunc : public NodeDeclCallable
@@ -4531,12 +4531,12 @@ public:		// functions
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeDeclCallable(s_src_code_chunk,
 		std::move(s_param_list),
 		std::move(s_arg_list),
 		std::move(s_ident_or_op),
-		std::move(s_stmt_list)),
+		std::move(s_scope)),
 		_the_typename(std::move(s_the_typename))
 	{
 	}
@@ -4549,7 +4549,7 @@ public:		// functions
 		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4575,12 +4575,12 @@ public:		// functions
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeDeclCallable(s_src_code_chunk,
 		std::move(s_param_list),
 		std::move(s_arg_list),
 		std::move(s_ident_or_op),
-		std::move(s_stmt_list)), _is_port(s_is_port)
+		std::move(s_scope)), _is_port(s_is_port)
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclProc);
@@ -4592,7 +4592,7 @@ public:		// functions
 		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -4614,12 +4614,12 @@ public:		// functions
 		Child&& s_param_list,
 		Child&& s_arg_list,
 		Child&& s_ident_or_op,
-		Child&& s_stmt_list)
+		Child&& s_scope)
 		: NodeDeclCallable(s_src_code_chunk,
 		std::move(s_param_list),
 		std::move(s_arg_list),
 		std::move(s_ident_or_op),
-		std::move(s_stmt_list))
+		std::move(s_scope))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeDeclTask);
@@ -4630,7 +4630,7 @@ public:		// functions
 		ret += sconcat("  child:param_list\n(", param_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:arg_list\n(", arg_list()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:ident_or_op\n(", ident_or_op()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_list\n(", stmt_list()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
