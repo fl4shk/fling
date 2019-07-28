@@ -604,7 +604,7 @@ bool AstGen::_extends_from_list(const Node& node) const
 
 bool AstGen::_parse_node()
 {
-	if (just_test())
+	if (actual_just_test())
 	{
 		return _check_prefixed_tok_seq(Tok::Ident);
 	}
@@ -623,7 +623,7 @@ bool AstGen::_parse_node()
 }
 bool AstGen::_parse_extends()
 {
-	if (just_test())
+	if (actual_just_test())
 	{
 		return _check_prefixed_tok_seq(Tok::Comma);
 	}
@@ -638,7 +638,7 @@ bool AstGen::_parse_extends()
 }
 bool AstGen::_parse_var()
 {
-	if (just_test())
+	if (actual_just_test())
 	{
 		_check_prefixed_tok_seq(Tok::Ident);
 		return ((_lss.find_found().s() == "initvar")
@@ -683,7 +683,7 @@ bool AstGen::_parse_var()
 }
 bool AstGen::_parse_child()
 {
-	if (just_test())
+	if (actual_just_test())
 	{
 		_check_prefixed_tok_seq(Tok::Ident);
 		return (_lss.find_found().s() == "child");
