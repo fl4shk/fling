@@ -7,7 +7,6 @@
 #include "lexer_class.hpp"
 #include "err_warn_base_class.hpp"
 #include "ast_node_classes.hpp"
-#include "parser_base_class.hpp"
 
 namespace frost_hdl
 {
@@ -396,7 +395,13 @@ private:		// functions
 	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
 	//bool _parse_generate_any_for(ParseFunc parse_scope_func);
 	template<typename FirstArgType, typename... RemArgTypes>
-	inline void _append_msp(
+	inline void _append_msp(MapSeqParse& map_seq_parse,
+		const string& first_key, FirstArgType&& first_seq,
+		RemArgTypes&&... rem_args)
+	{
+		TheMultiParse::_append_msp(map_seq_parse, first_key, first_seq,
+			rem_args...);
+	}
 
 	inline auto _unit_parse(const string& s_parse_func_str,
 		ParseFunc s_parse_func, bool s_optional=false)
@@ -513,7 +518,8 @@ private:		// functions
 		return _pop_ast_child();
 	}
 
-	inline bool _list_pexec(NodeList& list, const TheSeqParse& list_seq)
+	inline bool _list_pexec(ast::NodeList& list,
+		const TheSeqParse& list_seq)
 	{
 		if (!list_seq.check())
 		{

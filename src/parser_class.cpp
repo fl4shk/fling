@@ -17,6 +17,8 @@ Parser::~Parser()
 #define named_fp(func) #func, fp(func)
 #define rseqp(func) _req_seq_parse(_unit_parse(named_fp(func), false))
 #define oseqp(func) _opt_seq_parse(_unit_parse(named_fp(func), false))
+#define named_rseqp(func) #func, rseqp(func)
+#define named_oseqp(func) #func, oseqp(func)
 #define make_msp MapSeqParse map_seq_parse
 #define msp(func) map_seq_parse[#func]
 
@@ -450,16 +452,17 @@ auto Parser::_parse_header_generate_for() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
-	set_msp_r(kw_generate);
-	set_msp_o(ident);
-	set_msp_r(header_for);
+	_append_msp(map_seq_parse,
+		named_rseqp(kw_generate),
+		named_oseqp(ident),
+		named_rseqp(header_for));
 
 	simple_seq_parse_if_jp_named(seq, _req_seq_parse(msp(kw_generate),
 		msp(ident), msp(header_for)))
 	else
 	{
 		msp(kw_generate).exec();
-		_push_num(_one_opt_parse(msp(ident)));
+		_push_one_opt_parse(msp(ident));
 		msp(header_for).exec();
 	}
 
@@ -594,9 +597,10 @@ auto Parser::_parse_contents_modproc() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
-	set_msp_o(param_list);
-	set_msp_r(arg_list);
-	set_msp_r(scope_modproc);
+	_append_msp(map_seq_parse,
+		named_oseqp(param_list),
+		named_rseqp(arg_list),
+		named_rseqp(scope_modproc));
 
 	simple_seq_parse_if_jp_named(seq, _req_seq_parse(msp(param_list),
 		msp(arg_list), msp(scope_modproc)))
@@ -614,10 +618,11 @@ auto Parser::_parse_proc() -> ParseRet
 	auto ret = _dup_lex_state();
 
 	make_msp;
-	set_msp_r(kw_proc);
-	msp(type) = _req_or_parse(rseqp(ident), rseqp(kw_port),
-		rseqp(const_str));
-	set_msp_r(contents_modproc);
+	_append_msp(map_seq_parse,
+		named_rseqp(kw_proc),
+		"type", _req_or_parse(rseqp(ident), rseqp(kw_port),
+			rseqp(const_str)),
+		named_rseqp(contents_modproc));
 
 	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(kw_proc), msp(type),
 		msp(contents_modproc)))
@@ -654,10 +659,6 @@ auto Parser::_parse_module() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 
-	//make_msp;
-	//set_msp_r(kw_module);
-	//set_msp_r(ident);
-	//set_msp_r(contents_modproc);
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_module), rseqp(ident),
 		rseqp(contents_modproc)))
 
@@ -709,9 +710,10 @@ auto Parser::_parse_contents_func_task() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
-	set_msp_o(param_list);
-	set_msp_r(arg_list);
-	set_msp_r(scope_behav);
+	_append_msp(map_seq_parse,
+		named_oseqp(param_list),
+		named_rseqp(arg_list),
+		named_rseqp(scope_behav));
 	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(param_list),
 		msp(arg_list), msp(scope_behav)))
 	else
@@ -727,10 +729,11 @@ auto Parser::_parse_func() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
-	set_msp_r(kw_func);
-	set_msp_r(typename);
-	msp(ident_or_op) = _req_or_parse(rseqp(ident), rseqp(const_str));
-	set_msp_r(contents_func_task);
+	_append_msp(map_seq_parse,
+		named_rseqp(kw_func),
+		named_rseqp(typename),
+		"ident_or_op", _req_or_parse(rseqp(ident), rseqp(const_str)),
+		named_rseqp(contents_func_task));
 
 	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(kw_func), msp(typename),
 		msp(ident_or_op), msp(contents_func_task)))
@@ -755,9 +758,10 @@ auto Parser::_parse_task() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
-	set_msp_r(kw_task);
-	msp(ident_or_op) = _req_or_parse(rseqp(ident), rseqp(const_str));
-	set_msp_r(contents_func_task);
+	_append_msp(map_seq_parse,
+		named_rseqp(kw_task),
+		"ident_or_op", _req_or_parse(rseqp(ident), rseqp(const_str)),
+		named_rseqp(contents_func_task));
 
 	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(kw_task),
 		msp(ident_or_op), msp(contents_func_task)))
@@ -814,12 +818,15 @@ auto Parser::_parse_const() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
-	set_msp_r(kw_const);
-	set_msp_o(typename);
-	set_msp_r(one_const);
-	msp(list_one_const) = _opt_list_parse(rseqp(punct_comma),
-		rseqp(one_const));
-	set_msp_r(punct_semicolon);
+
+	_append_msp(map_seq_parse,
+		named_rseqp(kw_const),
+		named_oseqp(typename),
+		named_rseqp(one_const),
+		"list_one_const", _opt_list_parse(rseqp(punct_comma),
+			rseqp(one_const)),
+		named_rseqp(punct_semicolon));
+
 	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(kw_const),
 		msp(typename), msp(one_const), msp(list_one_const),
 		msp(punct_semicolon)))
@@ -845,6 +852,20 @@ auto Parser::_parse_one_const() -> ParseRet
 {
 	auto ret = _dup_lex_state();
 	make_msp;
+	_append_msp(map_seq_parse,
+		named_rseqp(ident_terminal),
+		named_rseqp(punct_assign),
+		named_rseqp(expr));
+	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(ident_terminal),
+		msp(punct_assign), msp(expr)))
+	else
+	{
+		auto s_ident_terminal = _pexec(msp(ident_terminal));
+		msp(punct_assign).exec();
+		auto s_expr = _pexec(msp(expr));
+		_push_ast_child(NodeIdentTermEqualsExtra(_ls_src_code_chunk(ret),
+			move(s_ident_terminal), move(s_expr)));
+	}
 
 	return ret;
 }
