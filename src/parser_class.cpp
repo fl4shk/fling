@@ -19,8 +19,6 @@ Parser::~Parser()
 #define oseqp(func) _opt_seq_parse(_unit_parse(named_fp(func), false))
 #define make_msp MapSeqParse map_seq_parse
 #define msp(func) map_seq_parse[#func]
-#define set_msp_r(func) msp(func) = rseqp(func)
-#define set_msp_o(func) msp(func) = oseqp(func)
 
 #define check_parse_named(seq, some_req_seq_parse) \
 	const auto seq = some_req_seq_parse; \

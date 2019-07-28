@@ -395,6 +395,9 @@ private:		// functions
 
 	//bool _parse_generate_any_if(ParseFunc parse_scope_func);
 	//bool _parse_generate_any_for(ParseFunc parse_scope_func);
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline void _append_msp(
+
 	inline auto _unit_parse(const string& s_parse_func_str,
 		ParseFunc s_parse_func, bool s_optional=false)
 	{
