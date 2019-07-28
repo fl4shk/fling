@@ -3,19 +3,18 @@ package PkgAlu
 	//enum ubit [3] Opcode
 	// This syntax indicates that this `enum` is as small as it can be
 	// while still fitting everything.
-	//enum Opcode
-	//{
-	//	Add,
-	//	Adc,
-	//	Sub,
-	//	Sbc,
+	enum Opcode
+	{
+		Add,
+		Adc,
+		Sub,
+		Sbc,
 
-	//	And,
-	//	Or,
-	//	Xor,
-	//	Nor,
-	//};
-		using DataInout = ubit[WIDTH];
+		And,
+		Or,
+		Xor,
+		Nor,
+	};
 
 	class Bus[uint WIDTH]
 		//extends AluPorts[WIDTH=WIDTH]
@@ -30,13 +29,20 @@ package PkgAlu
 			ubit carry;
 			DataInout a, b;
 			Opcode opcode;
-		} in;
+		};
+
+		// If placed on a `bidir` port, this `class` (`Bus`, specifically)
+		// will have `in` as an `input` port.
+		input BusOut in;
 
 		packed class BusOut
 		{
 			ubit carry;
 			DataInout data;
-		} out;
+		};
+		// If placed on a `bidir` port, this `class` (`Bus`, specifically)
+		// will have `out` as an `output` port.
+		output BusOut out;
 
 		// This is like a constructor, but it's optional.  It's just a
 		// process.
@@ -135,7 +141,7 @@ module Alu[uint ALU_WIDTH]
 	// bus();
 }
 
-module Alu[uint WIDTH](bidir PkgAlu.Bus[WIDTH=WIDTH] bus)
+module Alu[uint WIDTH](bidir PkgAlu::Bus[WIDTH=WIDTH] bus)
 {
 	bus();
 }
@@ -145,7 +151,7 @@ module Alu
 	// This syntax means that the `class` placed on the bus of an
 	// instance of this `Alu` can be determined by the instantiation of
 	// this `Alu`.  Note that this syntax can only be used with ports.
-	bidir PkgAlu.Bus[] bus,
+	bidir PkgAlu::Bus[] bus,
 )
 {
 	//assign cat(bus.out.carry, bus.out.data) = bus();
@@ -157,7 +163,7 @@ module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 	input
 		DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
 		ubit i_carry_arr[ARR_SIZE],
-		PkgAlu.Opcode i_opcode_arr[ARR_SIZE],
+		PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
 
 	output
 		DataInout o_data_arr[ARR_SIZE],
@@ -188,7 +194,7 @@ module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
 	}
 }
 
-module VectorAlu(bidir PkgAlu.Bus[] bus_arr[])
+module VectorAlu(bidir PkgAlu::Bus[] bus_arr[])
 {
 	//generate lab for (i : bus_arr$range)
 	generate lab for (bus : bus_arr)

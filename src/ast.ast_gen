@@ -85,7 +85,7 @@ Extends:
 	initvar bool _is_virtual;
 	child the_typename;
 
-CallableMember:
+MemberCallable:
 	initvar bool _is_const, _is_virtual, _is_static;
 	child callable;
 

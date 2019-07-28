@@ -7,6 +7,7 @@
 #include "lexer_class.hpp"
 #include "err_warn_base_class.hpp"
 #include "ast_node_classes.hpp"
+#include "parser_base_class.hpp"
 
 namespace frost_hdl
 {
@@ -15,6 +16,8 @@ class Parser final : public ParserBase<Lexer>
 {
 public:		// types
 	using Base = ParserBase<Lexer>;
+	friend Base;
+
 	using TokSet = ast::NodeBase::TokSet;
 
 	using TheMultiParse = Base::MultiParse<Parser>;
@@ -22,6 +25,8 @@ public:		// types
 	using TheSeqParse = Base::SeqParse<Parser>;
 	using ParseRet = typename TheMultiParse::ParseRet;
 	using ParseFunc = typename TheMultiParse::ParseFunc;
+
+	using MapSeqParse = Base::MapSeqParse<TheSeqParse>;
 
 private:		// variables
 	ast::NodeBase::Child _ast_root;
@@ -164,74 +169,6 @@ private:		// functions
 	}
 
 
-	template<typename FirstFuncType, typename... RemFuncTypes>
-	auto _check_parse(FirstFuncType&& first_func,
-		RemFuncTypes&&... rem_funcs)
-	{
-		return Base::_check_parse(this, first_func, rem_funcs...);
-	}
-	template<typename FuncType>
-	static auto _check_parse(Parser* self,
-		const vector<FuncType>& func_vec)
-	{
-		return Base::_check_parse(self, func_vec);
-	}
-
-
-	template<typename FirstFuncType, typename... RemFuncTypes>
-	bool _opt_parse(FirstFuncType&& first_func,
-		RemFuncTypes&&... rem_funcs)
-	{
-		return Base::_opt_parse(this, first_func, rem_funcs...);
-	}
-	template<typename FuncType>
-	static bool _opt_parse(Parser* self,
-		const vector<FuncType>& func_vec)
-	{
-		return Base::_opt_parse(self, func_vec);
-	}
-
-
-	template<typename FirstFuncType, typename... RemFuncTypes>
-	void _req_parse(FirstFuncType&& first_func,
-		RemFuncTypes&&... rem_funcs)
-	{
-		Base::_req_parse(this, first_func, rem_funcs...);
-	}
-	template<typename FuncType>
-	static void _req_parse(Parser* self,
-		const vector<FuncType>& func_vec)
-	{
-		Base::_req_parse(self, func_vec);
-	}
-	template<typename FirstFuncType, typename... RemFuncTypes>
-	auto _get_req_parse(FirstFuncType&& first_func,
-		RemFuncTypes&&... rem_funcs)
-	{
-		Base::_req_parse(this, first_func, rem_funcs...);
-		return _pop_ast_child();
-	}
-	template<typename FuncType>
-	static auto _get_req_parse(Parser* self,
-		const vector<FuncType>& func_vec)
-	{
-		Base::_req_parse(self, func_vec);
-		return self->_pop_ast_child();
-	}
-
-
-	template<typename FirstFuncType, typename... RemFuncTypes>
-	void _req_parse_loop(FirstFuncType&& first_func,
-		RemFuncTypes&&... rem_funcs)
-	{
-		Base::_req_parse_loop(this, first_func, rem_funcs...);
-	}
-	template<typename FuncType>
-	static void _req_parse_loop(Parser* self,
-		const vector<FuncType>& func_vec)
-	{
-		Base::_req_parse_loop(self, func_vec);
-	}
 
 public:		// functions
 	ParseRet parse_program();
@@ -326,7 +263,7 @@ private:		// functions
 	ParseRet _parse_generate_package_if();
 	ParseRet _parse_generate_package_for();
 
-	ParseRet _parse_callable_member_prefix();
+	ParseRet _parse_member_callable_prefix();
 
 	ParseRet _parse_contents_modproc();
 	ParseRet _parse_proc();
@@ -371,7 +308,7 @@ private:		// functions
 	ParseRet _parse_extends();
 
 	ParseRet _parse_scope_class();
-	ParseRet _parse_callable_member();
+	ParseRet _parse_member_callable();
 	ParseRet _parse_generate_class();
 	ParseRet _parse_generate_class_if();
 	ParseRet _parse_generate_class_for();
@@ -488,11 +425,21 @@ private:		// functions
 	{
 		return TheMultiParse::_req_or_parse(this, first_arg, rem_args...);
 	}
-
-	inline ParseRet _dup_lex_state() const
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline auto _opt_list_parse(const FirstArgType& first_arg,
+		RemArgTypes&&... rem_args)
 	{
-		return ParseRet(new LexerState(_lex_state()));
+		return TheMultiParse::_opt_list_parse(this, first_arg,
+			rem_args...);
 	}
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline auto _req_list_parse(const FirstArgType& first_arg,
+		RemArgTypes&&... rem_args)
+	{
+		return TheMultiParse::_req_list_parse(this, first_arg,
+			rem_args...);
+	}
+
 	inline SrcCodeChunk _ls_src_code_chunk(const ParseRet& lex_state) const
 	{
 		return _lexer().src_code_chunk(lex_state.get());
@@ -517,7 +464,7 @@ private:		// functions
 	template<typename ParseSeqType>
 	inline bool _one_opt_parse(const ParseSeqType& parse_seq)
 	{
-		printout("_one_opt_parse():  ", parse_seq.check(), "\n");
+		//printout("_one_opt_parse():  ", parse_seq.check(), "\n");
 		if (parse_seq.check())
 		{
 			parse_seq.exec();
@@ -527,6 +474,17 @@ private:		// functions
 		{
 			return false;
 		}
+	}
+
+	template<typename ParseSeqType>
+	inline ast::NodeBase::Child _get_one_opt_parse
+		(const ParseSeqType& parse_seq)
+	{
+		if (_one_opt_parse(parse_seq))
+		{
+			return _pop_ast_child();
+		}
+		return ast::NodeBase::Child();
 	}
 
 	ParseRet _parse_generate_any_if(const string& parse_scope_func_str,
@@ -546,7 +504,7 @@ private:		// functions
 	}
 
 	template<typename AstNodeListType>
-	inline bool _partial_parse_any_list(AstNodeListType& ret,
+	inline bool _list_pexec(AstNodeListType& ret,
 		const TheSeqParse& list_seq)
 	{
 		if (!list_seq.check())
@@ -574,11 +532,15 @@ private:		// functions
 		{
 			return _check_or_tok(vec_front, rem_tokens...);
 		}
-		return false;
+		else
+		{
+			return false;
+		}
 	}
 
 	void _finish_parse_expr_any_dollar_func_of_one
 		(const SrcCodeChunk& s_src_code_chunk);
+
 
 };
 

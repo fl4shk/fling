@@ -2,6 +2,7 @@ program:
 	(
 		package
 		| module
+		| decl_cstm_type
 	)*
 	;
 
@@ -279,7 +280,7 @@ generate_package_for:
 	;
 
 
-callable_member_prefix:
+member_callable_prefix:
 	// Handled by lookahead
 	// TokKwConst, TokKwVirtual, TokKwStatic
 	;
@@ -463,7 +464,7 @@ decl_cstm_type:
 	;
 
 class:
-	kw_packed? kw_class ident param_list?
+	(kw_packed | kw_port)? kw_class ident param_list?
 		extends?
 		scope_class
 		(one_var
@@ -480,14 +481,15 @@ scope_class:
 			| member_access_label
 			| const
 			| var
+			| arg_port_sublist
 			| using
-			| callable_member
+			| member_callable
 			| decl_cstm_type
 		)*
 	punct_rbrace
 	;
-callable_member:
-	callable_member_prefix? decl_callable
+member_callable:
+	member_callable_prefix? decl_callable
 	;
 
 generate_class:
@@ -678,7 +680,7 @@ param_possible_typename:
 	(ident_etc
 		| kw_uwire | kw_swire
 		| kw_ubit | kw_sbit)
-		param_inst_list?
+		(param_inst_list | range_suffix)?
 	;
 no_param_possible_typename:
 	kw_void | kw_auto

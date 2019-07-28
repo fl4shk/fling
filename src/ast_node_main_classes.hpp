@@ -1096,7 +1096,7 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 };
 
-class NodeCallableMember : public NodeBase
+class NodeMemberCallable : public NodeBase
 {
 protected:		// variables
 	bool _is_const;
@@ -1105,7 +1105,7 @@ protected:		// variables
 protected:		// children
 	Child _callable;
 public:		// functions
-	inline NodeCallableMember(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeMemberCallable(const SrcCodeChunk& s_src_code_chunk,
 		const bool& s_is_const,
 		const bool& s_is_virtual,
 		const bool& s_is_static,
@@ -1116,7 +1116,7 @@ public:		// functions
 		_callable(std::move(s_callable))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeCallableMember);
+	GEN_POST_CONSTRUCTOR(NodeMemberCallable);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -1130,11 +1130,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::CallableMember;
+		return Type::MemberCallable;
 	}
 	virtual string name() const
 	{
-		return "CallableMember";
+		return "MemberCallable";
 	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(is_const)
 	GEN_GETTER_AND_SETTER_BY_CON_REF(is_virtual)

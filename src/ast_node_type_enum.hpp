@@ -34,7 +34,7 @@ enum class Type
 	Class,
 	ScopeClass,
 	Extends,
-	CallableMember,
+	MemberCallable,
 	Union,
 	ScopeUnion,
 	ParamPossibleTypename,
