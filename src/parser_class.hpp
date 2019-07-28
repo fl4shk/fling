@@ -486,6 +486,14 @@ private:		// functions
 		}
 		return ast::NodeBase::Child();
 	}
+	inline ast::NodeBase::Child _get_ast_child_if_pop_num()
+	{
+		if (_pop_num())
+		{
+			return _pop_ast_child();
+		}
+		return ast::NodeBase::Child();
+	}
 
 	ParseRet _parse_generate_any_if(const string& parse_scope_func_str,
 		ParseFunc parse_scope_func);
@@ -540,7 +548,6 @@ private:		// functions
 
 	void _finish_parse_expr_any_dollar_func_of_one
 		(const SrcCodeChunk& s_src_code_chunk);
-
 
 };
 

@@ -627,7 +627,26 @@ auto Parser::_parse_proc() -> ParseRet
 		const auto parse_func_str = msp["type"]
 			.first_valid_parse_func_str();
 		msp["type"].exec();
+
+		Child s_ident_or_op;
+		bool s_is_port = false;
+		if ((parse_func_str == "ident") || (parse_func_str == "const_str"))
+		{
+			s_ident_or_op = _pop_ast_child();
+		}
+		else // if (parse_func_str == "kw_port")
+		{
+			s_is_port = true;
+		}
+
 		msp["contents_modproc"].exec();
+		auto s_stmt_list = _pop_ast_child();
+		auto s_arg_list = _pop_ast_child();
+		auto s_param_list = _get_ast_child_if_pop_num();
+
+		_push_ast_child(NodeDeclProc(_ls_src_code_chunk(ret), s_is_port,
+			move(s_param_list), move(s_arg_list), move(s_ident_or_op),
+			move(s_stmt_list)));
 	}
 	return ret;
 }

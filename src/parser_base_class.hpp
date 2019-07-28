@@ -157,7 +157,7 @@ public:		// types
 	{
 	public:		// types
 		using TheUnitParse = UnitParse<DerivedType>;
-		using ParseRet = TheUnitParse::ParseRet;
+		using ParseRet = typename TheUnitParse::ParseRet;
 		using TheSeqParse = std::shared_ptr<SeqParse<DerivedType>>;
 		using OneInst = std::variant<bool, TheUnitParse, TheSeqParse>;
 		using Vec = std::vector<OneInst>;
@@ -392,13 +392,13 @@ public:		// types
 	{
 	public:		// typedefs
 		using Base = SeqParse<DerivedType>;
-		using TheUnitParse = Base::TheUnitParse;
-		using TheSeqParse = Base::TheSeqParse;
+		using TheUnitParse = typename Base::TheUnitParse;
+		using TheSeqParse = typename Base::TheSeqParse;
 		using ParseRet = typename Base::ParseRet;
+		using Vec = typename Base::Vec;
 
 	public:		// functions
-		OrParse(DerivedType* s_self, Base::Vec&& s_vec,
-			bool s_optional=false)
+		OrParse(DerivedType* s_self, Vec&& s_vec, bool s_optional=false)
 			: Base(s_self, std::move(s_vec), s_optional)
 		{
 		}
@@ -442,12 +442,13 @@ public:		// types
 	{
 	public:		// typedefs
 		using Base = SeqParse<DerivedType>;
-		using TheUnitParse = Base::TheUnitParse;
-		using TheSeqParse = Base::TheSeqParse;
+		using TheUnitParse = typename Base::TheUnitParse;
+		using TheSeqParse = typename Base::TheSeqParse;
 		using ParseRet = typename Base::ParseRet;
+		using Vec = typename Base::Vec;
 
 	public:		// functions
-		ListParse(DerivedType* s_self, Base::Vec&& s_vec,
+		ListParse(DerivedType* s_self, Vec&& s_vec,
 			bool s_optional=false)
 			: Base(s_self, std::move(s_vec), s_optional)
 		{
@@ -512,6 +513,7 @@ public:		// types
 		using TheSeqParse = SeqParse<DerivedType>;
 		using TheOrParse = OrParse<DerivedType>;
 		using TheListParse = ListParse<DerivedType>;
+		using Vec = typename TheSeqParse::Vec;
 
 	public:		// functions
 		static inline TheUnitParse _unit_parse(DerivedType* self,
@@ -523,7 +525,7 @@ public:		// types
 		}
 
 		template<typename FirstArgType, typename... RemArgTypes>
-		static inline void _inner_seq_parse(TheSeqParse::Vec& ret,
+		static inline void _inner_seq_parse(Vec& ret,
 			const FirstArgType& first_arg, RemArgTypes&&... rem_args)
 		{
 			using NoRefFirstArgType
@@ -545,21 +547,24 @@ public:		// types
 			else if constexpr (std::is_same<TrueFirstArgType,
 				TheSeqParse>())
 			{
-				using TempTheSeqParse = SeqParse<DerivedType>::TheSeqParse;
+				using TempTheSeqParse = typename SeqParse<DerivedType>
+					::TheSeqParse;
 				to_push = TempTheSeqParse(new SeqParse<DerivedType>
 					(first_arg));
 			}
 			else if constexpr (std::is_same<TrueFirstArgType,
 				TheOrParse>())
 			{
-				using TempTheSeqParse = SeqParse<DerivedType>::TheSeqParse;
+				using TempTheSeqParse = typename SeqParse<DerivedType>
+					::TheSeqParse;
 				to_push = TempTheSeqParse(new OrParse<DerivedType>
 					(first_arg));
 			}
 			else if constexpr (std::is_same<TrueFirstArgType,
 				TheListParse>())
 			{
-				using TempTheSeqParse = SeqParse<DerivedType>::TheSeqParse;
+				using TempTheSeqParse = typename SeqParse<DerivedType>
+					::TheSeqParse;
 				to_push = TempTheSeqParse(new ListParse<DerivedType>
 					(first_arg));
 			}
