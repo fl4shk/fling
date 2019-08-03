@@ -449,7 +449,8 @@ private:		// functions
 			rem_args...);
 	}
 
-	inline SrcCodeChunk _ls_src_code_chunk(const ParseRet& lex_state) const
+	inline SrcCodeChunk _ls_src_code_chunk
+		(const unique_ptr<LexerState>& lex_state) const
 	{
 		return _lexer().src_code_chunk(lex_state.get());
 	}
