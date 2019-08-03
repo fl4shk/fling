@@ -789,6 +789,7 @@ bool Parser::_parse_generate_behav_for()
 
 bool Parser::_parse_const()
 {
+	auto ls = _dup_lex_state();
 	make_msp;
 
 	_append_msp(map_seq_parse,
@@ -813,7 +814,7 @@ bool Parser::_parse_const()
 		_list_pexec(s_ident_term_equals_extra_list, msp(list_one_const));
 
 		msp(punct_semicolon).exec();
-		_push_ast_child(NodeDeclConstList(_ls_src_code_chunk(ret),
+		_push_ast_child(NodeDeclConstList(_ls_src_code_chunk(ls),
 			move(s_the_typename),
 			_to_ast_child(move(s_ident_term_equals_extra_list))));
 	}
@@ -860,11 +861,11 @@ bool Parser::_parse_var()
 
 		if (msp(list).check())
 		{
-			const auto s_list_amount = _pexec<BigNum>(s_var_list);
+			const auto s_list_amount = _pexec<BigNum>(s_rem_var_list);
 
 			for (decltype(s_list_amount) i=0; i<s_list_amount; ++i)
 			{
-				s_var_list.push_back(_pop_ast_child());
+				s_rem_var_list.push_back(_pop_ast_child());
 			}
 		}
 
