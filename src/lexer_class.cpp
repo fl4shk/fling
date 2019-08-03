@@ -158,7 +158,25 @@ void Lexer::_inner_next_tok()
 	}
 	else if (c() == '.')
 	{
-		_set_tok(Tok::MemberAccess, true);
+		_next_char();
+
+		if (c() == '.')
+		{
+			_next_char();
+
+			if (c() == '.')
+			{
+				_set_tok(Tok::ParamPack, true);
+			}
+			else
+			{
+				_set_tok(Tok::Unknown, false);
+			}
+		}
+		else
+		{
+			_set_tok(Tok::MemberAccess, false);
+		}
 	}
 	else if (c() == '#')
 	{

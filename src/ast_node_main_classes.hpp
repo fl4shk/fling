@@ -199,12 +199,15 @@ public:		// functions
 
 class NodeParamArgTypeSublist : public NodeBase
 {
+protected:		// variables
+	bool _param_pack;
 protected:		// children
 	Child _ident_term_equals_extra_list;
 public:		// functions
 	inline NodeParamArgTypeSublist(const SrcCodeChunk& s_src_code_chunk,
+		const bool& s_param_pack,
 		Child&& s_ident_term_equals_extra_list)
-		: NodeBase(s_src_code_chunk),
+		: NodeBase(s_src_code_chunk), _param_pack(s_param_pack),
 		_ident_term_equals_extra_list(std::move(s_ident_term_equals_extra_list))
 	{
 	}
@@ -213,6 +216,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
+		ret += sconcat("  _param_pack(", _param_pack, ")\n");
 		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
@@ -225,6 +229,7 @@ public:		// functions
 	{
 		return "ParamArgTypeSublist";
 	}
+	GEN_GETTER_AND_SETTER_BY_CON_REF(param_pack)
 	GEN_GETTER_BY_CON_REF(ident_term_equals_extra_list)
 	GEN_SETTER_BY_RVAL_REF(ident_term_equals_extra_list)
 };
@@ -268,14 +273,17 @@ public:		// functions
 
 class NodeParamArgVarSublist : public NodeBase
 {
+protected:		// variables
+	bool _param_pack;
 protected:		// children
 	Child _the_typename,
 		_ident_term_equals_extra_list;
 public:		// functions
 	inline NodeParamArgVarSublist(const SrcCodeChunk& s_src_code_chunk,
+		const bool& s_param_pack,
 		Child&& s_the_typename,
 		Child&& s_ident_term_equals_extra_list)
-		: NodeBase(s_src_code_chunk),
+		: NodeBase(s_src_code_chunk), _param_pack(s_param_pack),
 		_the_typename(std::move(s_the_typename)),
 		_ident_term_equals_extra_list(std::move(s_ident_term_equals_extra_list))
 	{
@@ -285,6 +293,7 @@ public:		// functions
 	{
 		string ret;
 		ret += name() + "\n(";
+		ret += sconcat("  _param_pack(", _param_pack, ")\n");
 		ret += sconcat("  child:the_typename\n(", the_typename()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:ident_term_equals_extra_list\n(", ident_term_equals_extra_list()->dbg_to_string(), "\n)\n");
 		ret += ")";
@@ -298,6 +307,7 @@ public:		// functions
 	{
 		return "ParamArgVarSublist";
 	}
+	GEN_GETTER_AND_SETTER_BY_CON_REF(param_pack)
 	GEN_GETTER_BY_CON_REF(the_typename)
 	GEN_SETTER_BY_RVAL_REF(the_typename)
 	GEN_GETTER_BY_CON_REF(ident_term_equals_extra_list)

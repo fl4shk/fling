@@ -70,7 +70,7 @@ Parser::~Parser()
 using std::move;
 using Child = ast::NodeBase::Child;
 
-auto Parser::parse_program() -> ParseRet
+bool Parser::parse_program()
 {
 	//const FuncVec func_vec({fp(_parse_package), fp(_parse_module)});
 
@@ -117,307 +117,312 @@ auto Parser::parse_program() -> ParseRet
 	_expect(one_tok); \
 	return ret
 
-auto Parser::_parse_kw_if() -> ParseRet
+bool Parser::_parse_kw_if()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwIf);
 }
-auto Parser::_parse_kw_else() -> ParseRet
+bool Parser::_parse_kw_else()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwElse);
 }
-auto Parser::_parse_kw_for() -> ParseRet
+bool Parser::_parse_kw_for()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwFor);
 }
-auto Parser::_parse_kw_generate() -> ParseRet
+bool Parser::_parse_kw_generate()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwGenerate);
 }
-auto Parser::_parse_kw_package() -> ParseRet
+bool Parser::_parse_kw_package()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPackage);
 }
-auto Parser::_parse_kw_port() -> ParseRet
+bool Parser::_parse_kw_port()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPort);
 }
-auto Parser::_parse_kw_proc() -> ParseRet
+bool Parser::_parse_kw_proc()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwProc);
 }
-auto Parser::_parse_kw_func() -> ParseRet
+bool Parser::_parse_kw_func()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwFunc);
 }
-auto Parser::_parse_kw_task() -> ParseRet
+bool Parser::_parse_kw_task()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwTask);
 }
-auto Parser::_parse_kw_module() -> ParseRet
+bool Parser::_parse_kw_module()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwModule);
 }
-auto Parser::_parse_kw_const() -> ParseRet
+bool Parser::_parse_kw_const()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwConst);
 }
-auto Parser::_parse_kw_range() -> ParseRet
+bool Parser::_parse_kw_range()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwRange);
 }
-auto Parser::_parse_kw_cat() -> ParseRet
+bool Parser::_parse_kw_cat()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwCat);
 }
-auto Parser::_parse_kw_repl() -> ParseRet
+bool Parser::_parse_kw_repl()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwRepl);
 }
-auto Parser::_parse_kw_using() -> ParseRet
+bool Parser::_parse_kw_using()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUsing);
 }
-auto Parser::_parse_kw_while() -> ParseRet
+bool Parser::_parse_kw_while()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwWhile);
 }
-auto Parser::_parse_kw_switch() -> ParseRet
+bool Parser::_parse_kw_switch()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitch);
 }
-auto Parser::_parse_kw_switchz() -> ParseRet
+bool Parser::_parse_kw_switchz()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwitchz);
 }
-auto Parser::_parse_kw_case() -> ParseRet
+bool Parser::_parse_kw_case()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwCase);
 }
-auto Parser::_parse_kw_default() -> ParseRet
+bool Parser::_parse_kw_default()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwDefault);
 }
-auto Parser::_parse_kw_return() -> ParseRet
+bool Parser::_parse_kw_return()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwReturn);
 }
-auto Parser::_parse_kw_packed() -> ParseRet
+bool Parser::_parse_kw_packed()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPacked);
 }
-auto Parser::_parse_kw_class() -> ParseRet
+bool Parser::_parse_kw_class()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwClass);
 }
-auto Parser::_parse_kw_virtual() -> ParseRet
+bool Parser::_parse_kw_virtual()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwVirtual);
 }
-auto Parser::_parse_kw_extends() -> ParseRet
+bool Parser::_parse_kw_extends()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwExtends);
 }
-auto Parser::_parse_kw_public() -> ParseRet
+bool Parser::_parse_kw_public()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPublic);
 }
-auto Parser::_parse_kw_protected() -> ParseRet
+bool Parser::_parse_kw_protected()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwProtected);
 }
-auto Parser::_parse_kw_private() -> ParseRet
+bool Parser::_parse_kw_private()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPrivate);
 }
-auto Parser::_parse_kw_enum() -> ParseRet
+bool Parser::_parse_kw_enum()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwEnum);
 }
-auto Parser::_parse_kw_union() -> ParseRet
+bool Parser::_parse_kw_union()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUnion);
 }
-auto Parser::_parse_kw_assign() -> ParseRet
+bool Parser::_parse_kw_assign()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAssign);
 }
-auto Parser::_parse_kw_initial() -> ParseRet
+bool Parser::_parse_kw_initial()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInitial);
 }
-auto Parser::_parse_kw_always_comb() -> ParseRet
+bool Parser::_parse_kw_always_comb()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysComb);
 }
-auto Parser::_parse_kw_always_blk() -> ParseRet
+bool Parser::_parse_kw_always_blk()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysBlk);
 }
-auto Parser::_parse_kw_always_ff() -> ParseRet
+bool Parser::_parse_kw_always_ff()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAlwaysFf);
 }
-auto Parser::_parse_kw_posedge() -> ParseRet
+bool Parser::_parse_kw_posedge()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwPosedge);
 }
-auto Parser::_parse_kw_negedge() -> ParseRet
+bool Parser::_parse_kw_negedge()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwNegedge);
 }
-auto Parser::_parse_kw_inst() -> ParseRet
+bool Parser::_parse_kw_inst()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInst);
 }
-auto Parser::_parse_kw_input() -> ParseRet
+bool Parser::_parse_kw_input()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwInput);
 }
-auto Parser::_parse_kw_output() -> ParseRet
+bool Parser::_parse_kw_output()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwOutput);
 }
-auto Parser::_parse_kw_bidir() -> ParseRet
+bool Parser::_parse_kw_bidir()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwBidir);
 }
-auto Parser::_parse_kw_type() -> ParseRet
+bool Parser::_parse_kw_type()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwType);
 }
-auto Parser::_parse_kw_uwire() -> ParseRet
+bool Parser::_parse_kw_uwire()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUwire);
 }
-auto Parser::_parse_kw_swire() -> ParseRet
+bool Parser::_parse_kw_swire()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSwire);
 }
-auto Parser::_parse_kw_ubit() -> ParseRet
+bool Parser::_parse_kw_ubit()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUbit);
 }
-auto Parser::_parse_kw_sbit() -> ParseRet
+bool Parser::_parse_kw_sbit()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSbit);
 }
-auto Parser::_parse_kw_void() -> ParseRet
+bool Parser::_parse_kw_void()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwVoid);
 }
-auto Parser::_parse_kw_auto() -> ParseRet
+bool Parser::_parse_kw_auto()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwAuto);
 }
-auto Parser::_parse_kw_ubyte() -> ParseRet
+bool Parser::_parse_kw_ubyte()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUbyte);
 }
-auto Parser::_parse_kw_sbyte() -> ParseRet
+bool Parser::_parse_kw_sbyte()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSbyte);
 }
-auto Parser::_parse_kw_ushortint() -> ParseRet
+bool Parser::_parse_kw_ushortint()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUshortint);
 }
-auto Parser::_parse_kw_sshortint() -> ParseRet
+bool Parser::_parse_kw_sshortint()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSshortint);
 }
-auto Parser::_parse_kw_uint() -> ParseRet
+bool Parser::_parse_kw_uint()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUint);
 }
-auto Parser::_parse_kw_sint() -> ParseRet
+bool Parser::_parse_kw_sint()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSint);
 }
-auto Parser::_parse_kw_ulongint() -> ParseRet
+bool Parser::_parse_kw_ulongint()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwUlongint);
 }
-auto Parser::_parse_kw_slongint() -> ParseRet
+bool Parser::_parse_kw_slongint()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwSlongint);
 }
-auto Parser::_parse_kw_typeof() -> ParseRet
+bool Parser::_parse_kw_typeof()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::KwTypeof);
 }
 
-auto Parser::_parse_punct_lparen() -> ParseRet
+bool Parser::_parse_punct_lparen()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LParen);
 }
-auto Parser::_parse_punct_rparen() -> ParseRet
+bool Parser::_parse_punct_rparen()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RParen);
 }
-auto Parser::_parse_punct_lbracket() -> ParseRet
+bool Parser::_parse_punct_lbracket()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LBracket);
 }
-auto Parser::_parse_punct_rbracket() -> ParseRet
+bool Parser::_parse_punct_rbracket()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RBracket);
 }
-auto Parser::_parse_punct_lbrace() -> ParseRet
+bool Parser::_parse_punct_lbrace()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::LBrace);
 }
-auto Parser::_parse_punct_rbrace() -> ParseRet
+bool Parser::_parse_punct_rbrace()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::RBrace);
 }
-auto Parser::_parse_punct_comma() -> ParseRet
+bool Parser::_parse_punct_comma()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Comma);
 }
-auto Parser::_parse_punct_semicolon() -> ParseRet
+bool Parser::_parse_punct_semicolon()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Semicolon);
 }
-auto Parser::_parse_punct_colon() -> ParseRet
+bool Parser::_parse_punct_colon()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Colon);
 }
-auto Parser::_parse_punct_apostrophe() -> ParseRet
+bool Parser::_parse_punct_apostrophe()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Apostrophe);
 }
-auto Parser::_parse_punct_assign() -> ParseRet
+bool Parser::_parse_punct_assign()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::Assign);
 }
-auto Parser::_parse_punct_member_access() -> ParseRet
+bool Parser::_parse_punct_member_access()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::MemberAccess);
 }
-auto Parser::_parse_punct_scope_access() -> ParseRet
+bool Parser::_parse_punct_scope_access()
 {
 	CHECK_PREFIXED_ONE_TOK(Tok::ScopeAccess);
 }
-auto Parser::_parse_header_if() -> ParseRet
+bool Parser::_parse_punct_param_pack()
+{
+	CHECK_PREFIXED_ONE_TOK(Tok::ParamPack);
+}
+
+bool Parser::_parse_header_if()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_if), rseqp(punct_lparen),
 		rseqp(expr), rseqp(punct_rparen)))
 	return ret;
 }
-auto Parser::_parse_header_else_if() -> ParseRet
+bool Parser::_parse_header_else_if()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_else), rseqp(header_if)))
 	return ret;
 }
-auto Parser::_parse_header_else() -> ParseRet
+bool Parser::_parse_header_else()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(rseqp(kw_else))
 	return ret;
 }
-auto Parser::_parse_header_for() -> ParseRet
+bool Parser::_parse_header_for()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_for),
@@ -427,28 +432,28 @@ auto Parser::_parse_header_for() -> ParseRet
 	return ret;
 }
 
-auto Parser::_parse_header_generate_if() -> ParseRet
+bool Parser::_parse_header_generate_if()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_generate),
 		rseqp(header_if)))
 	return ret;
 }
-auto Parser::_parse_header_else_generate_if() -> ParseRet
+bool Parser::_parse_header_else_generate_if()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_else),
 		rseqp(header_generate_if)))
 	return ret;
 }
-auto Parser::_parse_header_else_generate() -> ParseRet
+bool Parser::_parse_header_else_generate()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_else),
 		rseqp(kw_generate)))
 	return ret;
 }
-auto Parser::_parse_header_generate_for() -> ParseRet
+bool Parser::_parse_header_generate_for()
 {
 	auto ret = _dup_lex_state();
 	make_msp;
@@ -469,7 +474,7 @@ auto Parser::_parse_header_generate_for() -> ParseRet
 	return ret;
 }
 
-auto Parser::_parse_package() -> ParseRet
+bool Parser::_parse_package()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_package), rseqp(ident),
@@ -484,7 +489,7 @@ auto Parser::_parse_package() -> ParseRet
 	}
 	return ret;
 }
-auto Parser::_parse_scope_package() -> ParseRet
+bool Parser::_parse_scope_package()
 {
 	return _parse_any_scope<NodeScopePackage>("scope_package",
 		_req_list_parse(_req_or_parse(rseqp(generate_package),
@@ -492,23 +497,23 @@ auto Parser::_parse_scope_package() -> ParseRet
 		rseqp(decl_callable), rseqp(decl_cstm_type))));
 }
 
-auto Parser::_parse_generate_package() -> ParseRet
+bool Parser::_parse_generate_package()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_package_if),
 		rseqp(generate_package_for)))
 	return ret;
 }
-auto Parser::_parse_generate_package_if() -> ParseRet
+bool Parser::_parse_generate_package_if()
 {
 	return _parse_generate_any_if(named_fp(generate_package_if));
 }
-auto Parser::_parse_generate_package_for() -> ParseRet
+bool Parser::_parse_generate_package_for()
 {
 	return _parse_generate_any_for(named_fp(generate_package_for));
 }
 
-auto Parser::_parse_member_callable_prefix() -> ParseRet
+bool Parser::_parse_member_callable_prefix()
 {
 	auto ret = _dup_lex_state();
 
@@ -593,7 +598,7 @@ auto Parser::_parse_member_callable_prefix() -> ParseRet
 	return ret;
 }
 
-auto Parser::_parse_contents_modproc() -> ParseRet
+bool Parser::_parse_contents_modproc()
 {
 	auto ret = _dup_lex_state();
 	make_msp;
@@ -613,7 +618,7 @@ auto Parser::_parse_contents_modproc() -> ParseRet
 
 	return ret;
 }
-auto Parser::_parse_proc() -> ParseRet
+bool Parser::_parse_proc()
 {
 	auto ret = _dup_lex_state();
 
@@ -655,7 +660,7 @@ auto Parser::_parse_proc() -> ParseRet
 	}
 	return ret;
 }
-auto Parser::_parse_module() -> ParseRet
+bool Parser::_parse_module()
 {
 	auto ret = _dup_lex_state();
 
@@ -675,7 +680,7 @@ auto Parser::_parse_module() -> ParseRet
 	return ret;
 }
 
-auto Parser::_parse_scope_modproc() -> ParseRet
+bool Parser::_parse_scope_modproc()
 {
 	return _parse_any_scope<NodeScopeModproc>("scope_modproc",
 		_req_list_parse(_req_or_parse(rseqp(generate_modproc),
@@ -683,30 +688,30 @@ auto Parser::_parse_scope_modproc() -> ParseRet
 		rseqp(decl_callable), rseqp(decl_cstm_type),
 		rseqp(hardware_block))));
 }
-auto Parser::_parse_generate_modproc() -> ParseRet
+bool Parser::_parse_generate_modproc()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_modproc_if),
 		rseqp(generate_modproc_for)))
 	return ret;
 }
-auto Parser::_parse_generate_modproc_if() -> ParseRet
+bool Parser::_parse_generate_modproc_if()
 {
 	return _parse_generate_any_if(named_fp(generate_modproc_if));
 }
-auto Parser::_parse_generate_modproc_for() -> ParseRet
+bool Parser::_parse_generate_modproc_for()
 {
 	return _parse_generate_any_for(named_fp(generate_modproc_for));
 }
 
-auto Parser::_parse_decl_callable() -> ParseRet
+bool Parser::_parse_decl_callable()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(func), rseqp(task),
 		rseqp(proc)))
 	return ret;
 }
-auto Parser::_parse_contents_func_task() -> ParseRet
+bool Parser::_parse_contents_func_task()
 {
 	auto ret = _dup_lex_state();
 	make_msp;
@@ -725,7 +730,7 @@ auto Parser::_parse_contents_func_task() -> ParseRet
 
 	return ret;
 }
-auto Parser::_parse_func() -> ParseRet
+bool Parser::_parse_func()
 {
 	auto ret = _dup_lex_state();
 	make_msp;
@@ -754,7 +759,7 @@ auto Parser::_parse_func() -> ParseRet
 
 	return ret;
 }
-auto Parser::_parse_task() -> ParseRet
+bool Parser::_parse_task()
 {
 	auto ret = _dup_lex_state();
 	make_msp;
@@ -782,12 +787,12 @@ auto Parser::_parse_task() -> ParseRet
 	return ret;
 }
 
-auto Parser::_parse_scope_behav() -> ParseRet
+bool Parser::_parse_scope_behav()
 {
 	return _parse_any_scope<NodeScopeBehav>("scope_behav",
 		_req_list_parse(rseqp(inner_scope_behav)));
 }
-auto Parser::_parse_inner_scope_behav() -> ParseRet
+bool Parser::_parse_inner_scope_behav()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_behav),
@@ -798,25 +803,24 @@ auto Parser::_parse_inner_scope_behav() -> ParseRet
 	return ret;
 }
 
-auto Parser::_parse_generate_behav() -> ParseRet
+bool Parser::_parse_generate_behav()
 {
 	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_behav_if),
 		rseqp(generate_behav_for)))
 	return ret;
 }
-auto Parser::_parse_generate_behav_if() -> ParseRet
+bool Parser::_parse_generate_behav_if()
 {
 	return _parse_generate_any_if(named_fp(generate_behav_if));
 }
-auto Parser::_parse_generate_behav_for() -> ParseRet
+bool Parser::_parse_generate_behav_for()
 {
 	return _parse_generate_any_for(named_fp(generate_behav_for));
 }
 
-auto Parser::_parse_const() -> ParseRet
+bool Parser::_parse_const()
 {
-	auto ret = _dup_lex_state();
 	make_msp;
 
 	_append_msp(map_seq_parse,
@@ -845,12 +849,10 @@ auto Parser::_parse_const() -> ParseRet
 			move(s_the_typename),
 			_to_ast_child(move(s_ident_term_equals_extra_list))));
 	}
-
-	return ret;
 }
-auto Parser::_parse_one_const() -> ParseRet
+bool Parser::_parse_one_const()
 {
-	auto ret = _dup_lex_state();
+	auto ls = _dup_lex_state();
 	make_msp;
 	_append_msp(map_seq_parse,
 		named_rseqp(ident_terminal),
@@ -863,571 +865,315 @@ auto Parser::_parse_one_const() -> ParseRet
 		auto s_ident_terminal = _pexec(msp(ident_terminal));
 		msp(punct_assign).exec();
 		auto s_expr = _pexec(msp(expr));
-		_push_ast_child(NodeIdentTermEqualsExtra(_ls_src_code_chunk(ret),
+		_push_ast_child(NodeIdentTermEqualsExtra(_ls_src_code_chunk(ls),
 			move(s_ident_terminal), move(s_expr)));
 	}
 
-	return ret;
 }
-auto Parser::_parse_var() -> ParseRet
+bool Parser::_parse_var()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
+	auto ls = _dup_lex_state();
+	make_msp;
+	_append_msp(map_seq_parse,
+		named_rseqp(typename),
+		named_rseqp(one_var),
+		"list", _req_list_parse(rseqp(punct_comma), rseqp(one_var)),
+		named_rseqp(punct_semicolon));
+	simple_seq_parse_if_jp_anon(_req_seq_parse(msp(typename),
+		msp(one_var), _opt_seq_parse(msp(list)), msp(punct_semicolon)))
+	else
+	{
+		auto s_the_typename = _pexec(msp(typename));
+	}
 }
-auto Parser::_parse_one_var() -> ParseRet
+bool Parser::_parse_one_var()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_using() -> ParseRet
+bool Parser::_parse_using()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_stmt_assign() -> ParseRet
+bool Parser::_parse_stmt_assign()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_if() -> ParseRet
+bool Parser::_parse_stmt_if()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_for() -> ParseRet
+bool Parser::_parse_stmt_for()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_while() -> ParseRet
+bool Parser::_parse_stmt_while()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_switch() -> ParseRet
+bool Parser::_parse_stmt_switch()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_switchz() -> ParseRet
+bool Parser::_parse_stmt_switchz()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_scope_switch() -> ParseRet
+bool Parser::_parse_scope_switch()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_case() -> ParseRet
+bool Parser::_parse_stmt_case()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_default() -> ParseRet
+bool Parser::_parse_stmt_default()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_stmt_return() -> ParseRet
+bool Parser::_parse_stmt_return()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_decl_cstm_type() -> ParseRet
+bool Parser::_parse_decl_cstm_type()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_class() -> ParseRet
+bool Parser::_parse_class()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_extends() -> ParseRet
+bool Parser::_parse_extends()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_scope_class() -> ParseRet
+bool Parser::_parse_scope_class()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_member_callable() -> ParseRet
+bool Parser::_parse_member_callable()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_generate_class() -> ParseRet
+bool Parser::_parse_generate_class()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_generate_class_if() -> ParseRet
+bool Parser::_parse_generate_class_if()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_generate_class_for() -> ParseRet
+bool Parser::_parse_generate_class_for()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_member_access_label() -> ParseRet
+bool Parser::_parse_member_access_label()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_enum() -> ParseRet
+bool Parser::_parse_enum()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_union() -> ParseRet
+bool Parser::_parse_union()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_hardware_block() -> ParseRet
+bool Parser::_parse_hardware_block()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_cont_assign() -> ParseRet
+bool Parser::_parse_cont_assign()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_initial() -> ParseRet
+bool Parser::_parse_initial()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_always_comb() -> ParseRet
+bool Parser::_parse_always_comb()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_always_blk() -> ParseRet
+bool Parser::_parse_always_blk()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_always_ff() -> ParseRet
+bool Parser::_parse_always_ff()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_edge_list() -> ParseRet
+bool Parser::_parse_edge_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_posedge_inst() -> ParseRet
+bool Parser::_parse_posedge_inst()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_negedge_inst() -> ParseRet
+bool Parser::_parse_negedge_inst()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_inst() -> ParseRet
+bool Parser::_parse_inst()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_param_list() -> ParseRet
+bool Parser::_parse_param_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_param_sublist() -> ParseRet
+bool Parser::_parse_param_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_arg_list() -> ParseRet
+bool Parser::_parse_arg_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_arg_sublist() -> ParseRet
+bool Parser::_parse_arg_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_arg_port_sublist() -> ParseRet
+bool Parser::_parse_arg_port_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_pararg_var_sublist() -> ParseRet
+bool Parser::_parse_pararg_var_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_pararg_type_sublist() -> ParseRet
+bool Parser::_parse_pararg_type_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_param_module_sublist() -> ParseRet
+bool Parser::_parse_param_module_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_pararg_ident_equals_typename_sublist() -> ParseRet
+bool Parser::_parse_pararg_ident_equals_typename_sublist()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_param_inst_list() -> ParseRet
+bool Parser::_parse_param_inst_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_arg_inst_list() -> ParseRet
+bool Parser::_parse_arg_inst_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_pos_pararg_inst_list() -> ParseRet
+bool Parser::_parse_pos_pararg_inst_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_named_pararg_inst_list() -> ParseRet
+bool Parser::_parse_named_pararg_inst_list()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_typename() -> ParseRet
+bool Parser::_parse_typename()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_param_possible_typename() -> ParseRet
+bool Parser::_parse_param_possible_typename()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_no_param_possible_typename() -> ParseRet
+bool Parser::_parse_no_param_possible_typename()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_typeof() -> ParseRet
+bool Parser::_parse_typeof()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_type_range() -> ParseRet
+bool Parser::_parse_type_range()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_range_suffix() -> ParseRet
+bool Parser::_parse_range_suffix()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_expr() -> ParseRet
+bool Parser::_parse_expr()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_inner_expr() -> ParseRet
+bool Parser::_parse_inner_expr()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_op_logical() -> ParseRet
+bool Parser::_parse_op_logical()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_expr_logical() -> ParseRet
+bool Parser::_parse_expr_logical()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_inner_expr_logical() -> ParseRet
+bool Parser::_parse_inner_expr_logical()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_op_compare() -> ParseRet
+bool Parser::_parse_op_compare()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_expr_compare() -> ParseRet
+bool Parser::_parse_expr_compare()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_inner_expr_compare() -> ParseRet
+bool Parser::_parse_inner_expr_compare()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_op_plus_minus() -> ParseRet
+bool Parser::_parse_op_plus_minus()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_expr_add_sub() -> ParseRet
+bool Parser::_parse_expr_add_sub()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_inner_expr_add_sub() -> ParseRet
+bool Parser::_parse_inner_expr_add_sub()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_op_mul_div_mod_etc() -> ParseRet
+bool Parser::_parse_op_mul_div_mod_etc()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_expr_mul_div_mod_etc() -> ParseRet
+bool Parser::_parse_expr_mul_div_mod_etc()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_inner_expr_mul_div_mod_etc() -> ParseRet
+bool Parser::_parse_inner_expr_mul_div_mod_etc()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_op_unary() -> ParseRet
+bool Parser::_parse_op_unary()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_dollar_global_clock() -> ParseRet
+bool Parser::_parse_dollar_global_clock()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_dollar_pow_expr() -> ParseRet
+bool Parser::_parse_dollar_pow_expr()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_num_expr() -> ParseRet
+bool Parser::_parse_num_expr()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_raw_num() -> ParseRet
+bool Parser::_parse_raw_num()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_const_str() -> ParseRet
+bool Parser::_parse_const_str()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_expr_pre_dollar_func_of_one() -> ParseRet
+bool Parser::_parse_expr_pre_dollar_func_of_one()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_expr_post_dollar_func_of_one() -> ParseRet
+bool Parser::_parse_expr_post_dollar_func_of_one()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_dollar_func_of_one() -> ParseRet
+bool Parser::_parse_dollar_func_of_one()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_expr_cat() -> ParseRet
+bool Parser::_parse_expr_cat()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_expr_repl() -> ParseRet
+bool Parser::_parse_expr_repl()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
-auto Parser::_parse_ident_etc() -> ParseRet
+bool Parser::_parse_ident_etc()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_member_access() -> ParseRet
+bool Parser::_parse_ident_member_access()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_scope_access() -> ParseRet
+bool Parser::_parse_ident_scope_access()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_non_member_scope_access() -> ParseRet
+bool Parser::_parse_ident_non_member_scope_access()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_call() -> ParseRet
+bool Parser::_parse_ident_call()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_no_param_overloaded_call() -> ParseRet
+bool Parser::_parse_ident_no_param_overloaded_call()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_param_member_overloaded_call() -> ParseRet
+bool Parser::_parse_ident_param_member_overloaded_call()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident_terminal() -> ParseRet
+bool Parser::_parse_ident_terminal()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_ident() -> ParseRet
+bool Parser::_parse_ident()
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
-auto Parser::_parse_generate_any_if(const string& parse_scope_func_str,
-	ParseFunc parse_scope_func) -> ParseRet
+bool Parser::_parse_generate_any_if(const string& parse_scope_func_str,
+	ParseFunc parse_scope_func)
 {
-	auto ret = _dup_lex_state();
-	return ret;
 }
-auto Parser::_parse_generate_any_for(const string& parse_scope_func_str,
-	ParseFunc parse_scope_func) -> ParseRet
+bool Parser::_parse_generate_any_for(const string& parse_scope_func_str,
+	ParseFunc parse_scope_func)
 {
-	auto ret = _dup_lex_state();
-
-	return ret;
 }
 
 template<typename AstNodeScopeType>
-auto Parser::_parse_any_scope(const string& scope_type_str,
-	const TheSeqParse& list_seq) -> ParseRet
+bool Parser::_parse_any_scope(const string& scope_type_str,
+	const TheSeqParse& list_seq)
 {
-	auto ret = _dup_lex_state();
-	return ret;
 }
 
 void Parser::_finish_parse_expr_any_dollar_func_of_one

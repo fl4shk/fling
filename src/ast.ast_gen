@@ -6,11 +6,13 @@ Module:
 	child ident, param_list, port_list, scope;
 ScopeModproc, List:
 ParamArgTypeSublist:
+	initvar bool _param_pack;
 	child ident_term_equals_extra_list;
 ArgPortSublist:
-	initvar string _port_dir; 
+	initvar string _port_dir;
 	child var_param_arg_sublist;
 ParamArgVarSublist:
+	initvar bool _param_pack;
 	child the_typename, ident_term_equals_extra_list;
 
 
@@ -19,7 +21,7 @@ ParamArgVarSublist:
 ParamModuleSublist:
 	child ident_term_equals_extra_list;
 
-// List of ParamArgSublist's or ParamModuleList's
+// List of ParamArgVarSublist's or ParamModuleList's
 ParamList, List:
 ArgList, List:
 

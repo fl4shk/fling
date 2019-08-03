@@ -217,6 +217,9 @@ punct_member_access:
 punct_scope_access:
 	'::'
 	;
+punct_param_pack:
+	'...'
+	;
 
 header_if:
 	kw_if punct_lparen expr punct_rparen
@@ -622,8 +625,8 @@ arg_port_sublist:
 
 pararg_var_sublist:
 	typename
-	ident_terminal (punct_assign expr)?
-	(punct_comma ident_terminal (punct_assign expr)?)*
+	punct_param_pack? ident_terminal (punct_assign expr)?
+	(punct_comma punct_param_pack? ident_terminal (punct_assign expr)?)*
 	;
 
 pararg_type_sublist:
@@ -637,8 +640,8 @@ param_module_sublist:
 	;
 
 pararg_ident_equals_typename_sublist:
-	ident (punct_assign typename)?
-	(punct_comma ident (punct_assign typename)?)*
+	punct_param_pack? ident (punct_assign typename)?
+	(punct_comma punct_param_pack? ident (punct_assign typename)?)*
 	;
 
 param_inst_list:

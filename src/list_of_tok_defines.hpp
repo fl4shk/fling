@@ -147,6 +147,7 @@ X(Assign, "=") \
 /* -------- */ \
 X(MemberAccess, ".") \
 X(ScopeAccess, "::") \
+X(ParamPack, "...") \
 \
 X(Pound, "#") \
 X(Comma, ",") \
