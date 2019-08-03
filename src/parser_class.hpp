@@ -513,10 +513,22 @@ private:		// functions
 		const TheSeqParse& list_seq);
 
 	// pop after exec()
-	inline ast::NodeBase::Child _pexec(const TheSeqParse& seq)
+	template<typename Type=ast::NodeBase::Child>
+	inline Type _pexec(const TheSeqParse& seq)
 	{
 		seq.exec();
-		return _pop_ast_child();
+
+		static_assert(std::is_same<Type, ast::NodeBase::Child>()
+			|| std::is_same<Type, BigNum>());
+
+		if constexpr (std::is_same<Type, ast::NodeBase::Child>())
+		{
+			return _pop_ast_child();
+		}
+		else
+		{
+			return _pop_num();
+		}
 	}
 
 	inline bool _list_pexec(ast::NodeList& list,

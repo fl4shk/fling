@@ -492,9 +492,9 @@ bool Parser::_parse_package()
 bool Parser::_parse_scope_package()
 {
 	return _parse_any_scope<NodeScopePackage>("scope_package",
-		_req_list_parse(_req_or_parse(rseqp(generate_package),
-		rseqp(package), rseqp(module), rseqp(const), rseqp(using),
-		rseqp(decl_callable), rseqp(decl_cstm_type))));
+		_req_or_parse(rseqp(generate_package), rseqp(package),
+		rseqp(module), rseqp(const), rseqp(using), rseqp(decl_callable),
+		rseqp(decl_cstm_type)));
 }
 
 bool Parser::_parse_generate_package()
@@ -683,10 +683,10 @@ bool Parser::_parse_module()
 bool Parser::_parse_scope_modproc()
 {
 	return _parse_any_scope<NodeScopeModproc>("scope_modproc",
-		_req_list_parse(_req_or_parse(rseqp(generate_modproc),
+		_req_or_parse(rseqp(generate_modproc),
 		rseqp(module), rseqp(const), rseqp(var), rseqp(using),
 		rseqp(decl_callable), rseqp(decl_cstm_type),
-		rseqp(hardware_block))));
+		rseqp(hardware_block)));
 }
 bool Parser::_parse_generate_modproc()
 {
@@ -790,7 +790,7 @@ bool Parser::_parse_task()
 bool Parser::_parse_scope_behav()
 {
 	return _parse_any_scope<NodeScopeBehav>("scope_behav",
-		_req_list_parse(rseqp(inner_scope_behav)));
+		_req_or_parse(rseqp(inner_scope_behav)));
 }
 bool Parser::_parse_inner_scope_behav()
 {
@@ -884,6 +884,19 @@ bool Parser::_parse_var()
 	else
 	{
 		auto s_the_typename = _pexec(msp(typename));
+		auto s_first_var = _pexec(msp(one_var));
+
+		std::vector<Child> s_var_list;
+
+		if (msp(list).check())
+		{
+			const auto s_list_amount = _pexec<BigNum>(s_var_list);
+
+			for (decltype(s_list_amount) i=0; i<s_list_amount; ++i)
+			{
+				s_var_list.push_back(_pop_ast_child());
+			}
+		}
 	}
 }
 bool Parser::_parse_one_var()
