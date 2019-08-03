@@ -26,13 +26,13 @@ Parser::~Parser()
 	const auto seq = some_req_seq_parse; \
 	if (actual_just_test()) \
 	{ \
-		return _check_for_just_test(seq); \
+		return seq.check(); \
 	}
 
 #define check_parse_anon(some_req_seq_parse) \
 	if (actual_just_test()) \
 	{ \
-		return _check_for_just_test(some_req_seq_parse); \
+		return some_req_seq_parse.check(); \
 	}
 
 #define simple_seq_parse_named(seq, some_req_seq_parse) \
@@ -460,6 +460,7 @@ bool Parser::_parse_header_generate_for()
 
 bool Parser::_parse_package()
 {
+	auto ls = _dup_lex_state();
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_package), rseqp(ident),
 		rseqp(scope_package)))
 
@@ -467,7 +468,7 @@ bool Parser::_parse_package()
 	{
 		auto scope_package = _pop_ast_child();
 		auto ident = _pop_ast_child();
-		_push_ast_child(NodePackage(_ls_src_code_chunk(ret),
+		_push_ast_child(NodePackage(_ls_src_code_chunk(ls),
 			move(ident), move(scope_package)));
 	}
 	return true;
@@ -497,7 +498,7 @@ bool Parser::_parse_generate_package_for()
 
 bool Parser::_parse_member_callable_prefix()
 {
-	auto lex_state = _dup_lex_state();
+	auto ls = _dup_lex_state();
 
 	const auto vec = _next_n_tokens(3, false);
 	bool is_const = false;
@@ -575,7 +576,6 @@ bool Parser::_parse_member_callable_prefix()
 
 bool Parser::_parse_contents_modproc()
 {
-	auto ret = _dup_lex_state();
 	make_msp;
 	_append_msp(map_seq_parse,
 		named_oseqp(param_list),
@@ -590,12 +590,11 @@ bool Parser::_parse_contents_modproc()
 		msp(arg_list).exec();
 		msp(scope_modproc).exec();
 	}
-
-	return ret;
+	return true;
 }
 bool Parser::_parse_proc()
 {
-	auto ret = _dup_lex_state();
+	auto ls = _dup_lex_state();
 
 	make_msp;
 	_append_msp(map_seq_parse,
@@ -610,7 +609,7 @@ bool Parser::_parse_proc()
 	{
 		msp(kw_proc).exec();
 
-		const auto parse_func_str = msp(type).first_valid_parse_func_str();
+		const auto parse_func_str = msp(type).fv_parse_func_str();
 		msp(type).exec();
 
 		Child s_ident_or_op;
@@ -629,15 +628,15 @@ bool Parser::_parse_proc()
 		auto s_arg_list = _pop_ast_child();
 		auto s_param_list = _get_ast_child_if_pop_num();
 
-		_push_ast_child(NodeDeclProc(_ls_src_code_chunk(ret), s_is_port,
+		_push_ast_child(NodeDeclProc(_ls_src_code_chunk(ls), s_is_port,
 			move(s_param_list), move(s_arg_list), move(s_ident_or_op),
 			move(s_scope)));
 	}
-	return ret;
+	return true;
 }
 bool Parser::_parse_module()
 {
-	auto ret = _dup_lex_state();
+	auto ls = _dup_lex_state();
 
 	simple_seq_parse_anon(_req_seq_parse(rseqp(kw_module), rseqp(ident),
 		rseqp(contents_modproc)))
@@ -648,11 +647,10 @@ bool Parser::_parse_module()
 		auto s_arg_list = _pop_ast_child();
 		auto s_param_list = _get_ast_child_if_pop_num();
 		auto s_ident = _pop_ast_child();
-		_push_ast_child(NodeModule(_ls_src_code_chunk(ret), move(s_ident),
+		_push_ast_child(NodeModule(_ls_src_code_chunk(ls), move(s_ident),
 			move(s_param_list), move(s_arg_list), move(s_scope)));
 	}
-
-	return ret;
+	return true;
 }
 
 bool Parser::_parse_scope_modproc()
@@ -665,10 +663,9 @@ bool Parser::_parse_scope_modproc()
 }
 bool Parser::_parse_generate_modproc()
 {
-	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_modproc_if),
 		rseqp(generate_modproc_for)))
-	return ret;
+	return true;
 }
 bool Parser::_parse_generate_modproc_if()
 {
@@ -681,14 +678,12 @@ bool Parser::_parse_generate_modproc_for()
 
 bool Parser::_parse_decl_callable()
 {
-	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(func), rseqp(task),
 		rseqp(proc)))
-	return ret;
+	return true;
 }
 bool Parser::_parse_contents_func_task()
 {
-	auto ret = _dup_lex_state();
 	make_msp;
 	_append_msp(map_seq_parse,
 		named_oseqp(param_list),
@@ -703,11 +698,11 @@ bool Parser::_parse_contents_func_task()
 		msp(scope_behav).exec();
 	}
 
-	return ret;
+	return true;
 }
 bool Parser::_parse_func()
 {
-	auto ret = _dup_lex_state();
+	auto ls = _dup_lex_state();
 	make_msp;
 	_append_msp(map_seq_parse,
 		named_rseqp(kw_func),
@@ -727,16 +722,16 @@ bool Parser::_parse_func()
 		auto s_scope = _pop_ast_child();
 		auto s_arg_list = _pop_ast_child();
 		auto s_param_list = _get_ast_child_if_pop_num();
-		_push_ast_child(NodeDeclFunc(_ls_src_code_chunk(ret),
+		_push_ast_child(NodeDeclFunc(_ls_src_code_chunk(ls),
 			move(s_the_typename), move(s_param_list), move(s_arg_list),
 			move(s_ident_or_op), move(s_scope)));
 	}
 
-	return ret;
+	return true;
 }
 bool Parser::_parse_task()
 {
-	auto ret = _dup_lex_state();
+	auto ls = _dup_lex_state();
 	make_msp;
 	_append_msp(map_seq_parse,
 		named_rseqp(kw_task),
@@ -754,12 +749,12 @@ bool Parser::_parse_task()
 		auto s_scope = _pop_ast_child();
 		auto s_arg_list = _pop_ast_child();
 		auto s_param_list = _get_ast_child_if_pop_num();
-		_push_ast_child(NodeDeclTask(_ls_src_code_chunk(ret),
+		_push_ast_child(NodeDeclTask(_ls_src_code_chunk(ls),
 			move(s_param_list), move(s_arg_list), move(s_ident_or_op),
 			move(s_scope)));
 	}
 
-	return ret;
+	return true;
 }
 
 bool Parser::_parse_scope_behav()
@@ -769,21 +764,19 @@ bool Parser::_parse_scope_behav()
 }
 bool Parser::_parse_inner_scope_behav()
 {
-	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_behav),
 		rseqp(const), rseqp(var), rseqp(using), rseqp(stmt_assign),
 		rseqp(stmt_if), rseqp(stmt_for), rseqp(stmt_while),
 		rseqp(stmt_switch), rseqp(stmt_switchz), rseqp(stmt_return),
 		rseqp(ident_etc), rseqp(decl_cstm_type), rseqp(scope_behav)))
-	return ret;
+	return true;
 }
 
 bool Parser::_parse_generate_behav()
 {
-	auto ret = _dup_lex_state();
 	simple_seq_parse_anon(_req_or_parse(rseqp(generate_behav_if),
 		rseqp(generate_behav_for)))
-	return ret;
+	return true;
 }
 bool Parser::_parse_generate_behav_if()
 {
@@ -824,6 +817,7 @@ bool Parser::_parse_const()
 			move(s_the_typename),
 			_to_ast_child(move(s_ident_term_equals_extra_list))));
 	}
+	return true;
 }
 bool Parser::_parse_one_const()
 {
@@ -844,6 +838,7 @@ bool Parser::_parse_one_const()
 			move(s_ident_terminal), move(s_expr)));
 	}
 
+	return true;
 }
 bool Parser::_parse_var()
 {
@@ -872,7 +867,11 @@ bool Parser::_parse_var()
 				s_var_list.push_back(_pop_ast_child());
 			}
 		}
+
+		msp(punct_semicolon).exec();
 	}
+
+	return true;
 }
 bool Parser::_parse_one_var()
 {
