@@ -886,7 +886,7 @@ bool Parser::_parse_var()
 		auto s_the_typename = _pexec(msp(typename));
 		auto s_first_var = _pexec(msp(one_var));
 
-		std::vector<Child> s_var_list;
+		std::vector<Child> s_rem_var_list;
 
 		if (msp(list).check())
 		{
