@@ -927,37 +927,156 @@ bool Parser::_parse_stmt_for()
 		rsp(scope_behav)))
 	else
 	{
-		
+		rsp(header_for).exec();
+		auto s_items = _pop_ast_child();
+		auto s_var = _pop_ast_child();
+		auto s_scope = _pexec(rsp(scope_behav));
+		_push_ast_child(NodeStmtFor(_ls_src_code_chunk(ls), move(s_items),
+			move(s_var), move(s_scope)));
 	}
 	return true;
 }
 bool Parser::_parse_stmt_while()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_named(seq, _req_seq_parse(rsp(kw_while),
+		rsp(punct_lparen), rsp(expr), rsp(punct_rparen), rsp(scope_behav)))
+	else
+	{
+		seq.exec();
+		auto s_scope = _pop_ast_child();
+		auto s_cond_expr = _pop_ast_child();
+		_push_ast_child(NodeStmtWhile(_ls_src_code_chunk(ls),
+			move(s_cond_expr), move(s_scope)));
+	}
+	return true;
 }
 bool Parser::_parse_stmt_switch()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_named(seq, _req_seq_parse(rsp(kw_switch),
+		rsp(punct_lparen), rsp(expr), rsp(punct_rparen),
+		rsp(scope_switch)))
+	else
+	{
+		seq.exec();
+		auto s_scope = _pop_ast_child();
+		auto s_expr = _pop_ast_child();
+		_push_ast_child(NodeStmtSwitch(_ls_src_code_chunk(ls),
+			move(s_expr), move(s_scope)));
+	}
+	return true;
 }
 bool Parser::_parse_stmt_switchz()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_named(seq, _req_seq_parse(rsp(kw_switchz),
+		rsp(punct_lparen), rsp(expr), rsp(punct_rparen),
+		rsp(scope_switch)))
+	else
+	{
+		seq.exec();
+		auto s_scope = _pop_ast_child();
+		auto s_expr = _pop_ast_child();
+		_push_ast_child(NodeStmtSwitchz(_ls_src_code_chunk(ls),
+			move(s_expr), move(s_scope)));
+	}
+	return true;
 }
 bool Parser::_parse_scope_switch()
 {
+	return _parse_any_scope<NodeScopeSwitch>("scope_switch",
+		_req_or_parse(rsp(stmt_case), rsp(stmt_default)));
 }
 bool Parser::_parse_stmt_case()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_named(seq, _req_seq_parse(rsp(kw_case),
+		rsp(expr), rsp(punct_colon), rsp(inner_scope_behav)))
+	else
+	{
+		seq.exec();
+		auto s_scope = _pop_ast_child();
+		auto s_expr = _pop_ast_child();
+		_push_ast_child(NodeStmtCase(_ls_src_code_chunk(ls), move(s_expr),
+			move(s_scope)));
+	}
+	return true;
 }
 bool Parser::_parse_stmt_default()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_named(seq, _req_seq_parse(rsp(kw_default),
+		rsp(punct_colon), rsp(inner_scope_behav)))
+	else
+	{
+		seq.exec();
+		auto s_scope = _pop_ast_child();
+		_push_ast_child(NodeStmtDefault(_ls_src_code_chunk(ls),
+			move(s_scope)));
+	}
+	return true;
 }
 bool Parser::_parse_stmt_return()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_named(seq, _req_seq_parse(rsp(kw_return),
+		rsp(expr), rsp(punct_semicolon)))
+	else
+	{
+		auto s_expr = _pexec(seq);
+		_push_ast_child(NodeStmtReturn(_ls_src_code_chunk(ls),
+			move(s_expr)));
+	}
+	return true;
 }
 
 bool Parser::_parse_decl_cstm_type()
 {
+	simple_seq_parse_anon(_req_or_parse(rsp(class), rsp(enum), rsp(union)))
+	return true;
 }
 bool Parser::_parse_class()
 {
+	auto ls = _dup_lex_state();
+	simple_seq_parse_if_jp_anon(_req_seq_parse(osp(kw_packed),
+		rsp(kw_class), rsp(ident), osp(param_list), osp(extends),
+		rsp(scope_class),
+		_opt_seq_parse(rsp(one_var), _opt_list_parse(rsp(punct_comma),
+			rsp(one_var))),
+		rsp(punct_semicolon)))
+	else
+	{
+		bool s_packed = false;
+		if (rsp(kw_packed).check())
+		{
+			s_packed = true;
+			rsp(kw_packed).exec();
+		}
+		rsp(kw_class).exec();
+		auto s_ident = _pexec(rsp(ident));
+		auto s_param_list = _get_one_opt_parse(rsp(param_list));
+		auto s_extends = _get_one_opt_parse(rsp(extends));
+		auto s_scope = _pexec(rsp(scope_class));
+
+		bool has_s_var_list = false;
+		Child s_var_list_child;
+		if (rsp(one_var).check())
+		{
+			NodeIdentTermEqualsExtraList
+				s_var_list(_ls_src_code_chunk(_dup_lex_state()));
+			s_var_list.append(_pexec(rsp(one_var)));
+			_list_pexec(s_var_list, _req_seq_parse(rsp(punct_comma),
+				rsp(one_var)));
+			s_var_list_child = _to_ast_child(move(s_var_list));
+		}
+		rsp(punct_semicolon).exec();
+
+		_push_ast_child(NodeClass(_ls_src_code_chunk(ls), s_packed,
+			move(s_ident), move(s_param_list), move(s_extends),
+			move(s_scope), move(s_var_list_child)));
+	}
+	return true;
 }
 bool Parser::_parse_extends()
 {

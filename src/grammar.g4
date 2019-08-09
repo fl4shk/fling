@@ -467,7 +467,7 @@ decl_cstm_type:
 	;
 
 class:
-	(kw_packed | kw_port)? kw_class ident param_list?
+	kw_packed? kw_class ident param_list?
 		extends?
 		scope_class
 		(one_var
