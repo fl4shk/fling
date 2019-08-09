@@ -484,15 +484,41 @@ private:		// functions
 		}
 	}
 
-	inline ast::NodeBase::Child _get_one_opt_parse
-		(const TheSeqParse& parse_seq)
+	template<typename Type=ast::NodeBase::Child>
+	inline Type _get_one_opt_parse(const TheSeqParse& parse_seq)
 	{
+		static_assert(std::is_same<Type, ast::NodeBase::Child>()
+			|| std::is_same<Type, BigNum>()
+			|| std::is_same<Type, string>());
+
 		if (parse_seq.check())
 		{
 			parse_seq.exec();
-			return _pop_ast_child();
+			if constexpr (std::is_same<Type, ast::NodeBase::Child>())
+			{
+				return _pop_ast_child();
+			}
+			else if constexpr (std::is_same<Type, BigNum>())
+			{
+				return _pop_num();
+			}
+			else
+			{
+				return _pop_str();
+			}
 		}
-		return ast::NodeBase::Child();
+		if constexpr (std::is_same<Type, ast::NodeBase::Child>())
+		{
+			return ast::NodeBase::Child();
+		}
+		else if constexpr (std::is_same<Type, BigNum>())
+		{
+			return 0;
+		}
+		else
+		{
+			return string();
+		}
 	}
 	inline ast::NodeBase::Child _get_ast_child_if_pop_num()
 	{
