@@ -98,13 +98,13 @@ auto Parser::parse_program() -> ParseRet
 }
 
 #define CHECK_PREFIXED_ONE_TOK(one_tok) \
-	auto ls = _dup_lex_state();
+	auto ls = _dup_lex_state(); \
 	if (actual_just_test()) \
 	{ \
 		return (_check_prefixed_tok_seq(one_tok)); \
 	} \
 	_expect(one_tok); \
-	return ParseRet(true, *_ls, _lex_state());
+	return ParseRet(true, *_ls, TokSet({one_tok}));
 
 auto Parser::_parse_kw_if() -> ParseRet
 {
