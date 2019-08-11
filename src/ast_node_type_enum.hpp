@@ -150,4 +150,7 @@ enum class Type
 	IdentTermEqualsExtraList,
 	DeclConstList,
 	DeclVarList,
+	Modport,
+	ModportSubList,
+	IdentList,
 };

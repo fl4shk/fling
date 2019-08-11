@@ -24,6 +24,9 @@ kw_package:
 kw_port:
 	TokKwPort
 	;
+kw_modport:
+	TokKwModport
+	;
 kw_proc:
 	TokKwProc
 	;
@@ -485,11 +488,28 @@ scope_class:
 			| const
 			| var
 			| arg_port_sublist
+			| modport
 			| using
 			| member_callable
 			| decl_cstm_type
 		)*
 	punct_rbrace
+	;
+
+modport:
+	kw_modport ident
+	punct_lparen
+		inner_modport
+		(punct_comma inner_modport)*
+		punct_comma?
+	punct_rparen punct_semicolon
+	;
+inner_modport:
+	(kw_input
+	| kw_output
+	| kw_bidir)
+	ident
+	(punct_comma ident)*
 	;
 member_callable:
 	member_callable_prefix? decl_callable

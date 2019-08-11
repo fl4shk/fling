@@ -146,3 +146,6 @@ virtual void visitIdentTermEqualsExtra(NodeIdentTermEqualsExtra* node) = 0;
 virtual void visitIdentTermEqualsExtraList(NodeIdentTermEqualsExtraList* node) = 0;
 virtual void visitDeclConstList(NodeDeclConstList* node) = 0;
 virtual void visitDeclVarList(NodeDeclVarList* node) = 0;
+virtual void visitModport(NodeModport* node) = 0;
+virtual void visitModportSubList(NodeModportSubList* node) = 0;
+virtual void visitIdentList(NodeIdentList* node) = 0;

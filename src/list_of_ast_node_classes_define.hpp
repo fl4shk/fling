@@ -149,4 +149,7 @@
 	X(NodeIdentTermEqualsExtraList, IdentTermEqualsExtraList) \
 	X(NodeDeclConstList, DeclConstList) \
 	X(NodeDeclVarList, DeclVarList) \
+	X(NodeModport, Modport) \
+	X(NodeModportSubList, ModportSubList) \
+	X(NodeIdentList, IdentList) \
 

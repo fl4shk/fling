@@ -20,7 +20,7 @@ syn keyword frost_hdl_keyword		typeof
 syn keyword frost_hdl_keyword		class self union enum using
 syn keyword frost_hdl_keyword		public protected private extends
 syn keyword frost_hdl_keyword		packed
-syn keyword frost_hdl_keyword		func task proc port return
+syn keyword frost_hdl_keyword		func task proc port modport return
 syn keyword frost_hdl_keyword		virtual static
 syn keyword frost_hdl_keyword		package module inst
 syn keyword frost_hdl_keyword		input output bidir

@@ -239,13 +239,13 @@ class NodeArgPortSublist : public NodeBase
 protected:		// variables
 	string _port_dir;
 protected:		// children
-	Child _var_param_arg_sublist;
+	Child _param_arg_var_sublist;
 public:		// functions
 	inline NodeArgPortSublist(const SrcCodeChunk& s_src_code_chunk,
 		const string& s_port_dir,
-		Child&& s_var_param_arg_sublist)
+		Child&& s_param_arg_var_sublist)
 		: NodeBase(s_src_code_chunk), _port_dir(s_port_dir),
-		_var_param_arg_sublist(std::move(s_var_param_arg_sublist))
+		_param_arg_var_sublist(std::move(s_param_arg_var_sublist))
 	{
 	}
 	GEN_POST_CONSTRUCTOR(NodeArgPortSublist);
@@ -254,7 +254,7 @@ public:		// functions
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  _port_dir(", _port_dir, ")\n");
-		ret += sconcat("  child:var_param_arg_sublist\n(", var_param_arg_sublist()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:param_arg_var_sublist\n(", param_arg_var_sublist()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
@@ -267,8 +267,8 @@ public:		// functions
 		return "ArgPortSublist";
 	}
 	GEN_GETTER_AND_SETTER_BY_CON_REF(port_dir)
-	GEN_GETTER_BY_CON_REF(var_param_arg_sublist)
-	GEN_SETTER_BY_RVAL_REF(var_param_arg_sublist)
+	GEN_GETTER_BY_CON_REF(param_arg_var_sublist)
+	GEN_SETTER_BY_RVAL_REF(param_arg_var_sublist)
 };
 
 class NodeParamArgVarSublist : public NodeBase
@@ -4795,6 +4795,124 @@ public:		// functions
 	virtual string name() const
 	{
 		return "DeclVarList";
+	}
+};
+
+class NodeModport : public NodeList
+{
+protected:		// children
+	Child _ident;
+public:		// functions
+	inline NodeModport(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_ident)
+		: NodeList(s_src_code_chunk),
+		_ident(std::move(s_ident))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeModport);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident\n(", ident()->dbg_to_string(), "\n)\n");
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::Modport;
+	}
+	virtual string name() const
+	{
+		return "Modport";
+	}
+	GEN_GETTER_BY_CON_REF(ident)
+	GEN_SETTER_BY_RVAL_REF(ident)
+};
+
+class NodeModportSubList : public NodeBase
+{
+protected:		// variables
+	string _port_dir;
+protected:		// children
+	Child _ident_list;
+public:		// functions
+	inline NodeModportSubList(const SrcCodeChunk& s_src_code_chunk,
+		const string& s_port_dir,
+		Child&& s_ident_list)
+		: NodeBase(s_src_code_chunk), _port_dir(s_port_dir),
+		_ident_list(std::move(s_ident_list))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeModportSubList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  _port_dir(", _port_dir, ")\n");
+		ret += sconcat("  child:ident_list\n(", ident_list()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::ModportSubList;
+	}
+	virtual string name() const
+	{
+		return "ModportSubList";
+	}
+	GEN_GETTER_AND_SETTER_BY_CON_REF(port_dir)
+	GEN_GETTER_BY_CON_REF(ident_list)
+	GEN_SETTER_BY_RVAL_REF(ident_list)
+};
+
+class NodeIdentList : public NodeList
+{
+public:		// functions
+	inline NodeIdentList(const SrcCodeChunk& s_src_code_chunk)
+		: NodeList(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeIdentList);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += "  list\n  (";
+		for (size_t i=0; i<list.size(); ++i)
+		{
+			ret += "    ";
+			ret += list.at(i)->dbg_to_string();
+			if ((i + 1) < list.size())
+			{
+				ret += ", ";
+			}
+			ret += "  )\n";
+		}
+		ret += "  )\n";
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::IdentList;
+	}
+	virtual string name() const
+	{
+		return "IdentList";
 	}
 };
 

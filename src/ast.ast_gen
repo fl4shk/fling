@@ -10,7 +10,7 @@ ParamArgTypeSublist:
 	child ident_term_equals_extra_list;
 ArgPortSublist:
 	initvar string _port_dir;
-	child var_param_arg_sublist;
+	child param_arg_var_sublist;
 ParamArgVarSublist:
 	initvar bool _param_pack;
 	child the_typename, ident_term_equals_extra_list;
@@ -334,3 +334,9 @@ DeclConstList:
 	child the_typename, ident_term_equals_extra_list;
 DeclVarList, DeclConstList:
 //DeclGenvar, DeclVar:
+Modport, List:
+	child ident;
+ModportSubList:
+	initvar string _port_dir;
+	child ident_list;
+IdentList, List:
