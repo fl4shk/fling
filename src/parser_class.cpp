@@ -101,7 +101,8 @@ auto Parser::parse_program() -> ParseRet
 	auto ls = _dup_lex_state(); \
 	if (actual_just_test()) \
 	{ \
-		return (_check_prefixed_tok_seq(one_tok)); \
+		return (ParseRet(_check_prefixed_tok_seq(one_tok), *_ls, \
+			TokSet({one_tok}))); \
 	} \
 	_expect(one_tok); \
 	return ParseRet(true, *_ls, TokSet({one_tok}));
