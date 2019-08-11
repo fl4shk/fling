@@ -61,8 +61,10 @@ Parser::~Parser()
 using std::move;
 using Child = ast::NodeBase::Child;
 
-bool Parser::parse_program()
+auto Parser::parse_program() -> ParseRet
 {
+	auto ls = _dup_lex_state();
+
 	//const FuncVec func_vec({fp(_parse_package), fp(_parse_module)});
 
 	//while (_opt_parse(this, func_vec))
@@ -82,24 +84,27 @@ bool Parser::parse_program()
 
 	if (!seq.check())
 	{
-		_ls_src_code_chunk(ret).err("Invalid program.");
+		_ls_src_code_chunk(ls).err("Invalid program.");
 	}
+	_list_pexec(*_ast_root, seq);
+
 	while (seq.check())
 	{
 		seq.exec();
 		_ast_root->append(_pop_ast_child());
 	}
 
-	return true;
+	return ParseRet(true, _lex_state(), _lex_state());
 }
 
 #define CHECK_PREFIXED_ONE_TOK(one_tok) \
+	auto ls = _dup_lex_state();
 	if (actual_just_test()) \
 	{ \
 		return (_check_prefixed_tok_seq(one_tok)); \
 	} \
 	_expect(one_tok); \
-	return true
+	return ParseRet(true, *_ls, _lex_state());
 
 auto Parser::_parse_kw_if() -> ParseRet
 {
