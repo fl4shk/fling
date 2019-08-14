@@ -103,6 +103,7 @@ Typeof:
 	child expr_or_typename;
 TypeRange:
 	child range_suffix;
+RangeSuffix:
 
 Auto: Void:
 Uwire: Swire: Ubit: Sbit:
@@ -201,6 +202,7 @@ ExprUnopDollarSgn, ExprUnopBase:
 ExprUnopDollarIsUnsgn, ExprUnopBase:
 ExprUnopDollarIsSgn, ExprUnopBase:
 ExprUnopDollarRange, ExprUnopBase:
+ExprUnopDollarRevrange, ExprUnopBase:
 ExprUnopDollarSize, ExprUnopBase:
 ExprUnopDollarFirst, ExprUnopBase:
 ExprUnopDollarLast, ExprUnopBase:

@@ -1,0 +1,248 @@
+#ifndef src_pt_visitor_class_hpp
+#define src_pt_visitor_class_hpp
+
+// src/pt_visitor_class.hpp
+
+#include "misc_includes.hpp"
+#include "err_warn_base_class.hpp"
+#include "ast_node_classes.hpp"
+#include "parsed_src_code_class.hpp"
+#include "gen_src/FrostHdlGrammarLexer.h"
+#include "gen_src/FrostHdlGrammarParser.h"
+#include "gen_src/FrostHdlGrammarVisitor.h"
+
+namespace frost_hdl
+{
+
+class PtVisitor final : public FrostHdlGrammarVisitor, public ErrWarnBase
+{
+public:		// types
+	using Parser = FrostHdlGrammarParser;
+	using ListParsedSrcCode = vector<unique_ptr<ParsedSrcCode>>;
+	using VisitorRetType = antlrcpp::Any;
+	using SmallNum = uintmax_t;
+
+private:		// variables
+	ast::NodeBase::Child _ast_root;
+	vector<string> _filename_vec;
+	size_t _filename_index;
+	ListParsedSrcCode _list_parsed_src_code;
+
+	#define LIST_FOR_GEN_STACK(X) \
+		X(BigNum, const BigNum&, num) \
+		X(string, string, str) \
+
+	#include "gen_stacks_stuff.hpp"
+	#undef LIST_FOR_GEN_STACK
+
+	std::stack<ast::NodeBase::Child> _ast_child_stack;
+
+	inline void _push_ast_child(ast::NodeBase::Child&& to_push)
+	{
+		_ast_child_stack.push(std::move(to_push));
+	}
+	template<typename ChildType>
+	inline void _push_ast_child(ChildType&& to_push)
+	{
+		_push_ast_child(ast::NodeBase::Child(new ChildType(std::move
+			(to_push))));
+	}
+	template<typename ChildType>
+	inline auto _to_ast_child(ChildType&& to_convert)
+	{
+		return ast::NodeBase::Child(new ChildType(std::move(to_convert)));
+	}
+	inline auto _pop_ast_child()
+	{
+		auto&& ret = _ast_child_stack.top();
+		_ast_child_stack.pop();
+		return std::move(ret);
+	}
+
+	inline void _push_num(const BigNum& to_push)
+	{
+		_stacks.push_num(to_push);
+	}
+	inline auto _get_top_num()
+	{
+		return _stacks.get_top_num();
+	}
+	inline auto _pop_num()
+	{
+		return _stacks.pop_num();
+	}
+
+	inline void _push_str(const string& to_push)
+	{
+		_stacks.push_str(to_push);
+	}
+	inline auto _get_top_str()
+	{
+		return _stacks.get_top_str();
+	}
+	inline auto _pop_str()
+	{
+		return _stacks.pop_str();
+	}
+
+
+public:		// functions
+	PtVisitor(vector<string>&& s_filename_vec);
+	~PtVisitor();
+
+	int run();
+
+	GEN_GETTER_BY_CON_REF(ast_root)
+private:		// visitor functions
+	#define vfunc(which_node) \
+		VisitorRetType visit##which_node \
+			(Parser::which_node##Context *ctx)
+
+	vfunc(Program);
+	vfunc(HeaderIf);
+	vfunc(HeaderElseIf);
+	vfunc(HeaderElse);
+
+	vfunc(HeaderFor);
+
+	vfunc(HeaderGenerateIf);
+	vfunc(HeaderElseGenerateIf);
+	vfunc(HeaderElseGenerate);
+	vfunc(HeaderGenerateFor);
+
+	vfunc(Package);
+	vfunc(ScopePackage);
+	vfunc(GeneratePackage);
+	vfunc(GeneratePackageIf);
+	vfunc(GeneratePackageFor);
+
+	vfunc(MemberCallablePrefix);
+	vfunc(ContentsModproc);
+	vfunc(Proc);
+	vfunc(Module);
+	vfunc(ProcIdentEtc);
+	vfunc(ScopeModproc);
+	vfunc(GenerateModproc);
+	vfunc(GenerateModprocIf);
+	vfunc(GenerateModprocFor);
+
+	vfunc(DeclCallable);
+	vfunc(ContentsFuncTask);
+	vfunc(Func);
+	vfunc(FuncTaskIdentEtc);
+	vfunc(Task);
+	vfunc(ScopeBehav);
+	vfunc(InnerScopeBehav);
+	vfunc(GenerateBehav);
+	vfunc(GenerateBehavIf);
+	vfunc(GenerateBehavFor);
+
+	vfunc(FrostConst);
+	vfunc(OneConst);
+	vfunc(Var);
+	vfunc(OneVar);
+
+	vfunc(FrostUsing);
+	vfunc(StmtAssign);
+	vfunc(StmtIf);
+	vfunc(StmtFor);
+	vfunc(StmtWhile);
+	vfunc(StmtSwitch);
+	vfunc(StmtSwitchz);
+	vfunc(ScopeSwitch);
+	vfunc(StmtCase);
+	vfunc(StmtDefault);
+	vfunc(StmtReturn);
+
+	vfunc(DeclCstmType);
+	vfunc(FrostClass);
+	vfunc(Extends);
+	vfunc(ScopeClass);
+	vfunc(Modport);
+	vfunc(InnerModport);
+	vfunc(MemberCallable);
+	vfunc(GenerateClass);
+	vfunc(GenerateClassIf);
+	vfunc(GenerateClassFor);
+	vfunc(MemberAccessLabel);
+
+	vfunc(FrostEnum);
+	vfunc(FrostUnion);
+
+	vfunc(HardwareBlock);
+	vfunc(ContAssign);
+	vfunc(Initial);
+	vfunc(AlwaysComb);
+	vfunc(AlwaysBlk);
+	vfunc(AlwaysFf);
+	vfunc(Dff);
+	vfunc(EdgeList);
+	vfunc(PosedgeInst);
+	vfunc(NegedgeInst);
+	vfunc(Inst);
+
+	vfunc(ParamList);
+	vfunc(ParamSublist);
+	vfunc(ArgList);
+	vfunc(ArgSublist);
+	vfunc(ArgPortSublist);
+	vfunc(ParargVarSublist);
+	vfunc(ParargTypeSublist);
+	vfunc(ParamModuleSublist);
+	vfunc(ParargIdentEqualsTypenameSublist);
+	vfunc(ParamInstList);
+	vfunc(ArgInstList);
+	vfunc(PosParargInstList);
+	vfunc(NamedParargInstList);
+
+	vfunc(FrostTypename);
+	vfunc(ParamPossibleTypename);
+	vfunc(NoParamPossibleTypename);
+	vfunc(Typeof);
+	vfunc(TypeRange);
+	vfunc(RangeSuffix);
+
+	vfunc(Expr);
+	vfunc(LogicalOp);
+	vfunc(LogicalExpr);
+	vfunc(CompareOp);
+	vfunc(CompareExpr);
+	vfunc(AddSubOp);
+	vfunc(AddSubExpr);
+	vfunc(MulDivModEtcOp);
+	vfunc(MulDivModEtcExpr);
+	vfunc(UnaryOp);
+	vfunc(DollarGlobalClock);
+	vfunc(DollarPowExpr);
+	vfunc(NumExpr);
+	vfunc(RawNum);
+	vfunc(ConstStr);
+	vfunc(PreDollarFuncOfOneExpr);
+	vfunc(PostDollarFuncOfOneExpr);
+	vfunc(DollarFuncOfOne);
+	vfunc(CatExpr);
+	vfunc(ReplExpr);
+
+	vfunc(IdentEtc);
+	vfunc(IdentMemberAccess);
+	vfunc(IdentScopeAccess);
+	vfunc(IdentNonMemberScopeAccess);
+	vfunc(IdentCall);
+	vfunc(IdentNoParamOverloadedCall);
+	vfunc(IdentParamMemberOverloadedCall);
+	vfunc(IdentTerminal);
+	vfunc(AnyRangeSuffix);
+	vfunc(Ident);
+
+
+
+
+
+	#undef vfunc
+
+};
+
+} // namespace frost_hdl
+
+
+#endif		// src_pt_visitor_class_hpp

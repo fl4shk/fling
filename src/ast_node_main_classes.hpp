@@ -1368,6 +1368,31 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(range_suffix)
 };
 
+class NodeRangeSuffix : public NodeBase
+{
+public:		// functions
+	inline NodeRangeSuffix(const SrcCodeChunk& s_src_code_chunk)
+		: NodeBase(s_src_code_chunk)
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeRangeSuffix);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::RangeSuffix;
+	}
+	virtual string name() const
+	{
+		return "RangeSuffix";
+	}
+};
+
 class NodeAuto : public NodeBase
 {
 public:		// functions
@@ -2781,6 +2806,34 @@ public:		// functions
 	virtual string name() const
 	{
 		return "ExprUnopDollarRange";
+	}
+};
+
+class NodeExprUnopDollarRevrange : public NodeExprUnopBase
+{
+public:		// functions
+	inline NodeExprUnopDollarRevrange(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_child)
+		: NodeExprUnopBase(s_src_code_chunk,
+		std::move(s_child))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarRevrange);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:child\n(", child()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::ExprUnopDollarRevrange;
+	}
+	virtual string name() const
+	{
+		return "ExprUnopDollarRevrange";
 	}
 };
 

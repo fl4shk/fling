@@ -1,0 +1,905 @@
+program:
+	(
+		package
+		| module
+		| decl_cstm_type
+	)*
+	;
+
+kw_if:
+	TokKwIf
+	;
+kw_else:
+	TokKwElse
+	;
+kw_for:
+	TokKwFor
+	;
+kw_generate:
+	TokKwGenerate
+	;
+kw_package:
+	TokKwPackage
+	;
+kw_port:
+	TokKwPort
+	;
+kw_modport:
+	TokKwModport
+	;
+kw_proc:
+	TokKwProc
+	;
+kw_func:
+	TokKwFunc
+	;
+kw_task:
+	TokKwTask
+	;
+kw_module:
+	TokKwModule
+	;
+kw_const:
+	TokKwConst
+	;
+kw_range:
+	TokKwRange
+	;
+kw_cat:
+	TokKwCat
+	;
+kw_repl:
+	TokKwRepl
+	;
+kw_using:
+	TokKwUsing
+	;
+kw_while:
+	TokKwWhile
+	;
+kw_switch:
+	TokKwSwitch
+	;
+kw_switchz:
+	TokKwSwitchz
+	;
+kw_case:
+	TokKwCase
+	;
+kw_default:
+	TokKwDefault
+	;
+kw_return:
+	TokKwReturn
+	;
+kw_packed:
+	TokKwPacked
+	;
+kw_class:
+	TokKwClass
+	;
+kw_virtual:
+	TokKwVirtual
+	;
+kw_extends:
+	TokKwExtends
+	;
+kw_public:
+	TokKwPublic
+	;
+kw_protected:
+	TokKwProtected
+	;
+kw_private:
+	TokKwPrivate
+	;
+kw_enum:
+	TokKwEnum
+	;
+kw_union:
+	TokKwUnion
+	;
+kw_assign:
+	TokKwAssign
+	;
+kw_initial:
+	TokKwInitial
+	;
+kw_always_comb:
+	TokKwAlwaysComb
+	;
+kw_always_blk:
+	TokKwAlwaysBlk
+	;
+kw_always_ff:
+	TokKwAlwaysFf
+	;
+kw_posedge:
+	TokKwPosedge
+	;
+kw_negedge:
+	TokKwNegedge
+	;
+kw_inst:
+	TokKwInst
+	;
+kw_input:
+	TokKwInput
+	;
+kw_output:
+	TokKwOutput
+	;
+kw_bidir:
+	TokKwBidir
+	;
+kw_type:
+	TokKwType
+	;
+
+kw_uwire:
+	TokKwUwire
+	;
+kw_swire:
+	TokKwSwire
+	;
+kw_ubit:
+	TokKwUbit
+	;
+kw_sbit:
+	TokKwSbit
+	;
+kw_void:
+	TokKwVoid
+	;
+kw_auto:
+	TokKwAuto
+	;
+kw_ubyte:
+	TokKwUbyte
+	;
+kw_sbyte:
+	TokKwSbyte
+	;
+kw_ushortint:
+	TokKwUshortint
+	;
+kw_sshortint:
+	TokKwSshortint
+	;
+kw_uint:
+	TokKwUint
+	;
+kw_sint:
+	TokKwSint
+	;
+kw_ulongint:
+	TokKwUlongint
+	;
+kw_slongint:
+	TokKwSlongint
+	;
+kw_typeof:
+	TokKwTypeof
+	;
+punct_lparen:
+	'('
+	;
+punct_rparen:
+	')'
+	;
+punct_lbracket:
+	'['
+	;
+punct_rbracket:
+	']'
+	;
+punct_lbrace:
+	'{'
+	;
+punct_rbrace:
+	'}'
+	;
+punct_comma:
+	','
+	;
+punct_semicolon:
+	';'
+	;
+punct_colon:
+	':'
+	;
+punct_apostrophe:
+	'\''
+	;
+punct_assign:
+	'='
+	;
+punct_member_access:
+	'.'
+	;
+punct_scope_access:
+	'::'
+	;
+punct_param_pack:
+	'...'
+	;
+
+header_if:
+	kw_if punct_lparen expr punct_rparen
+	;
+header_else_if:
+	kw_else header_if
+	;
+header_else:
+	kw_else
+	;
+
+header_for:
+	kw_for punct_lparen ident punct_colon (expr | type_range) punct_rparen
+	;
+
+header_generate_if:
+	kw_generate header_if
+	;
+header_else_generate_if:
+	kw_else header_generate_if
+	;
+header_else_generate:
+	kw_else kw_generate
+	;
+header_generate_for:
+	kw_generate ident? header_for
+	;
+
+
+package:
+	kw_package ident
+		scope_package
+	;
+
+scope_package:
+	punct_lbrace
+		(
+			generate_package
+			| package
+			| module
+			| const
+			| using
+			| decl_callable
+			| decl_cstm_type
+		)*
+	punct_rbrace
+	;
+
+
+generate_package:
+	generate_package_if
+	| generate_package_for
+	;
+generate_package_if:
+	header_generate_if scope_package
+	(header_else_generate_if scope_package)*
+	(header_else_generate scope_package)?
+	;
+generate_package_for:
+	header_generate_for scope_package
+	;
+
+
+member_callable_prefix:
+	// Handled by lookahead
+	// TokKwConst, TokKwVirtual, TokKwStatic
+	;
+
+contents_modproc:
+	param_list? arg_list
+		scope_modproc
+	;
+
+proc:
+	kw_proc (ident | kw_port | const_str)
+		contents_modproc
+	;
+module:
+	kw_module ident
+		contents_modproc
+	;
+
+
+scope_modproc:
+	punct_lbrace
+		(
+			generate_modproc
+			| module
+			| const
+			| var
+			| using
+			| decl_callable
+			| decl_cstm_type
+			| hardware_block
+		)*
+	punct_rbrace
+	;
+
+generate_modproc:
+	generate_modproc_if
+	| generate_modproc_for
+	;
+generate_modproc_if:
+	header_generate_if scope_modproc
+	(header_else_generate_if scope_modproc)*
+	(header_else_generate scope_modproc)?
+	;
+generate_modproc_for:
+	header_generate_for scope_modproc
+	;
+
+decl_callable:
+	func
+	| task
+	| proc
+	;
+
+contents_func_task:
+	param_list? arg_list
+		scope_behav
+	;
+
+func:
+	kw_func typename (ident | const_str)
+		contents_func_task
+	;
+task:
+	kw_task (ident | const_str)
+		contents_func_task
+	;
+
+scope_behav:
+	punct_lbrace
+		(
+			inner_scope_behav
+		)*
+	punct_rbrace
+	;
+inner_scope_behav:
+	generate_behav
+	| const
+	| var
+	| using
+	| stmt_assign
+	| stmt_if
+	| stmt_for
+	| stmt_while
+	| stmt_switch
+	| stmt_switchz
+	| stmt_return
+	| ident_etc
+	| decl_cstm_type
+	| scope_behav
+	;
+
+
+generate_behav:
+	generate_behav_if
+	| generate_behav_for
+	;
+generate_behav_if:
+	header_generate_if scope_behav
+	(header_else_generate_if scope_behav)*
+	(header_else_generate scope_behav)?
+	;
+
+generate_behav_for:
+	header_generate_for scope_behav
+	;
+
+const:
+	kw_const typename?
+		one_const
+		(punct_comma one_const)*
+		punct_semicolon
+	;
+one_const:
+	ident_terminal punct_assign expr
+	;
+
+var:
+	typename
+		one_var
+		(punct_comma one_var)*
+		punct_semicolon
+	;
+one_var:
+	ident_terminal ((punct_assign expr) | arg_inst_list)?
+	;
+
+using:
+	kw_using ident_etc (punct_assign typename)?
+		punct_semicolon
+	;
+
+stmt_assign:
+	expr punct_assign expr punct_semicolon
+	;
+stmt_if:
+	header_if scope_behav
+	(header_else_if scope_behav)*
+	(header_else scope_behav)?
+	;
+
+stmt_for:
+	header_for
+		scope_behav
+	;
+
+stmt_while:
+	kw_while punct_lparen expr punct_rparen
+		scope_behav
+	;
+stmt_switch:
+	kw_switch punct_lparen expr punct_rparen
+		scope_switch
+	;
+stmt_switchz:
+	kw_switchz punct_lparen expr punct_rparen
+		scope_switch
+	;
+scope_switch:
+	punct_lbrace
+		(
+			stmt_case
+			| stmt_default
+		)*
+	punct_rbrace
+	;
+stmt_case:
+	kw_case expr punct_colon inner_scope_behav
+	;
+stmt_default:
+	kw_default punct_colon inner_scope_behav
+	;
+stmt_return:
+	kw_return expr punct_semicolon
+	;
+
+
+decl_cstm_type:
+	class
+	| enum
+	| union
+	;
+
+class:
+	kw_packed? kw_class ident param_list?
+		extends?
+		scope_class
+		(one_var
+		(punct_comma one_var)*)? punct_semicolon
+	;
+extends:
+	kw_virtual? kw_extends typename
+	;
+
+scope_class:
+	punct_lbrace
+		(
+			generate_class
+			| member_access_label
+			| const
+			| var
+			| arg_port_sublist
+			| modport
+			| using
+			| member_callable
+			| decl_cstm_type
+		)*
+	punct_rbrace
+	;
+
+modport:
+	kw_modport ident
+	punct_lparen
+		inner_modport
+		(punct_comma inner_modport)*
+		punct_comma?
+	punct_rparen punct_semicolon
+	;
+inner_modport:
+	(kw_input
+	| kw_output
+	| kw_bidir)
+	ident
+	(punct_comma ident)*
+	;
+member_callable:
+	member_callable_prefix? decl_callable
+	;
+
+generate_class:
+	generate_class_if
+	| generate_class_for
+	;
+generate_class_if:
+	header_generate_if scope_class
+	(header_else_generate_if scope_class)*
+	(header_else_generate scope_class)?
+	;
+generate_class_for:
+	header_generate_for scope_class
+
+member_access_label:
+	(kw_public | kw_protected | kw_private) punct_colon
+	;
+
+enum:
+	kw_enum typename? ident
+	punct_lbrace
+		ident_terminal
+		(punct_comma ident_terminal)
+		punct_comma?
+	punct_rbrace
+		(one_var
+		(punct_comma one_var)*)? punct_semicolon
+	;
+
+union:
+	kw_union ident
+	punct_lbrace
+		var*;
+	punct_rbrace
+		(one_var
+		(punct_comma one_var)*)? punct_semicolon;
+	;
+
+
+// Top-level contents of a `module` or a `proc`.
+hardware_block:
+	cont_assign
+	| initial
+	| always_comb
+	| always_blk
+	| always_ff
+
+	// Inside a `proc`, this is still valid.  This means that `module`s can
+	// be instantiated inside of `class`es' `proc`s.
+	| inst
+
+	// This needs to be a proc call, but that's a semantic analysis
+	// problem.
+	| ident_etc
+	;
+
+cont_assign:
+	kw_assign expr punct_assign expr punct_semicolon
+	;
+initial:
+	kw_initial inner_scope_behav
+	;
+always_comb:
+	kw_always_comb inner_scope_behav
+	;
+always_blk:
+	kw_always_blk edge_list
+		inner_scope_behav
+	;
+always_ff:
+	kw_always_ff edge_list
+		inner_scope_behav
+	;
+edge_list:
+	punct_lparen
+		(posedge_inst | negedge_inst)
+		(punct_comma (posedge_inst | negedge_inst))*
+	punct_rparen
+	;
+posedge_inst:
+	kw_posedge expr
+	;
+negedge_inst:
+	kw_negedge expr
+	;
+
+inst:
+	kw_inst ident_etc param_inst_list?
+		ident? arg_inst_list? punct_semicolon
+	;
+
+
+param_list:
+	punct_lbracket
+		param_sublist
+		(punct_comma param_sublist)*
+		(punct_comma)?
+	punct_rbracket
+	;
+
+param_sublist:
+	(pararg_type_sublist
+	| param_module_sublist
+	| pararg_var_sublist)
+	(punct_comma param_sublist)?
+	(punct_comma)?
+	;
+
+arg_list:
+	punct_lparen
+		(arg_sublist
+		(punct_comma arg_sublist)*)?
+		(punct_comma)?
+	punct_rparen
+	;
+
+arg_sublist:
+	(arg_port_sublist
+	| pararg_type_sublist)
+	(punct_comma arg_sublist)?
+	(punct_comma)?
+	;
+
+arg_port_sublist:
+	(kw_input
+	| kw_output
+	| kw_bidir)
+	pararg_var_sublist
+	;
+
+pararg_var_sublist:
+	typename
+	punct_param_pack? ident_terminal (punct_assign expr)?
+	(punct_comma punct_param_pack? ident_terminal (punct_assign expr)?)*
+	;
+
+pararg_type_sublist:
+	kw_type
+	pararg_ident_equals_typename_sublist
+	;
+
+param_module_sublist:
+	kw_module
+	pararg_ident_equals_typename_sublist
+	;
+
+pararg_ident_equals_typename_sublist:
+	punct_param_pack? ident (punct_assign typename)?
+	(punct_comma punct_param_pack? ident (punct_assign typename)?)*
+	;
+
+param_inst_list:
+	punct_lbracket
+		(
+			pos_pararg_inst_list
+			| named_pararg_inst_list
+		)?
+		(punct_comma)?
+	punct_rbracket
+	;
+arg_inst_list:
+	punct_lparen
+		(
+			pos_pararg_inst_list
+			| named_pararg_inst_list
+		)?
+		(punct_comma)?
+	punct_rparen
+	;
+
+pos_pararg_inst_list:
+	expr
+	(punct_comma expr)*
+	;
+named_pararg_inst_list:
+	ident punct_assign expr
+	(punct_comma ident punct_assign expr)*
+	;
+
+
+typename:
+	param_possible_typename
+	| no_param_possible_typename
+	| typeof
+	| type_range
+	;
+param_possible_typename:
+	(ident_etc
+		| kw_uwire | kw_swire
+		| kw_ubit | kw_sbit)
+		(param_inst_list | range_suffix)?
+	;
+no_param_possible_typename:
+	kw_void | kw_auto
+	| kw_ubyte | kw_sbyte
+	| kw_ushortint | kw_sshortint
+	| kw_uint | kw_sint
+	| kw_ulongint | kw_slongint
+	;
+typeof:
+	kw_typeof
+	punct_lparen
+		(expr | typename)
+	punct_rparen
+	;
+type_range:
+	kw_range
+	range_suffix
+	;
+
+range_suffix:
+	punct_lbracket
+		expr (punct_colon expr)?
+	punct_rbracket
+	;
+
+expr:
+	inner_expr
+	| expr_logical
+	;
+inner_expr:
+	expr_logical op_logical expr
+	;
+op_logical:
+	TokLogAnd
+	| TokLogOr
+	;
+
+expr_logical:
+	inner_expr_logical
+	| expr_compare
+	;
+inner_expr_logical:
+	expr_compare op_compare expr_logical
+	;
+op_compare:
+	TokCmpEq
+	| TokCmpNe
+	| TokCmpLt
+	| TokCmpGt
+	| TokCmpLe
+	| TokCmpGe
+	;
+
+expr_compare:
+	inner_expr_compare
+	| expr_add_sub
+	;
+inner_expr_compare:
+	expr_add_sub op_plus_minus expr_compare
+	;
+op_plus_minus:
+	TokPlus
+	| TokMinus
+	;
+
+expr_add_sub:
+	inner_expr_add_sub
+	| expr_mul_div_mod_etc
+	;
+inner_expr_add_sub:
+	expr_mul_div_mod_etc op_mul_div_mod_etc expr_add_sub
+	;
+op_mul_div_mod_etc:
+	TokMul
+	| TokDiv
+	| TokMod
+	| TokBitLsl
+	| TokBitLsr
+	| TokBitAsr
+	| TokBitAnd
+	| TokBitOr
+	| TokBitXor
+	;
+
+expr_mul_div_mod_etc:
+	inner_expr_mul_div_mod_etc
+	| punct_lparen expr punct_rparen
+	| dollar_global_clock
+	| dollar_pow_expr
+	| ident_etc
+	| num_expr
+	| const_str
+	| expr_pre_dollar_func_of_one
+	| expr_post_dollar_func_of_one
+	| expr_cat
+	| expr_repl
+	;
+
+inner_expr_mul_div_mod_etc:
+	op_unary expr
+	;
+op_unary:
+	TokLogNot
+	| TokBitNot
+	| TokPlus
+	| TokMinus
+	;
+
+dollar_global_clock:
+	TokKwDollarGlobalClock
+	;
+
+dollar_pow_expr:
+	TokKwDollarPow punct_lparen expr punct_comma expr punct_rparen
+	;
+num_expr:
+	(expr punct_apostrophe)? raw_num
+	;
+raw_num:
+	TokNum
+	;
+const_str:
+	TokConstStr
+	;
+
+expr_pre_dollar_func_of_one:
+	dollar_func_of_one punct_lparen expr punct_rparen
+	;
+expr_post_dollar_func_of_one:
+	expr dollar_func_of_one
+	;
+dollar_func_of_one:
+	TokKwDollarUnsgn | TokKwDollarSgn
+	| TokKwDollarIsUnsgn | TokKwDollarIsSgn
+	| TokKwDollarRange | TokKwDollarSize
+	| TokKwDollarFirst | TokKwDollarLast
+	| TokKwDollarHigh | TokKwDollarLow
+	| TokKwDollarClog2
+	| TokKwDollarPast | TokKwDollarStable
+	| TokKwDollarRose | TokKwDollarFell
+	;
+
+expr_cat:
+	kw_cat
+	punct_lparen
+		expr
+		(punct_comma expr)*
+	punct_rparen
+	;
+expr_repl:
+	kw_repl
+	punct_lparen
+		expr punct_comma expr
+	punct_rparen
+	;
+
+
+
+ident_etc:
+	ident_member_access
+	| ident_scope_access
+	| ident_non_member_scope_access
+	;
+
+
+ident_member_access:
+	ident_non_member_scope_access punct_member_access ident_etc
+	;
+ident_scope_access:
+	ident_non_member_scope_access punct_scope_access ident_etc
+	;
+
+ident_non_member_scope_access:
+	ident_call
+	| ident_no_param_overloaded_call
+	| ident_param_member_overloaded_call
+	| ident_terminal
+	;
+
+ident_call:
+	ident param_inst_list? arg_inst_list
+	;
+
+ident_no_param_overloaded_call:
+	ident_terminal arg_inst_list
+	;
+ident_param_member_overloaded_call:
+	ident_terminal
+		punct_member_access
+		param_inst_list arg_inst_list
+	;
+
+ident_terminal:
+	ident range_suffix*
+	;
+
+ident:
+	TokIdent
+	;

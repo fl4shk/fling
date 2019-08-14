@@ -4,6 +4,7 @@
 // src/src_code_chunk_class.hpp
 
 #include "misc_includes.hpp"
+#include <ANTLRErrorListener.h>
 #include "misc_types.hpp"
 //#include "general_allocator_class.hpp"
 
@@ -15,11 +16,14 @@ class SrcCodeChunk
 {
 private:		// variables
 	string _filename;
+	antlr4::ParserRuleContext* _ctx = nullptr;
 	string _text;
 	size_t _src_line = 0, _src_pos_in_line = 0;
 
 public:		// functions
 	SrcCodeChunk();
+	explicit SrcCodeChunk(const string& s_filename,
+		antlr4::ParserRuleContext* s_ctx);
 	explicit SrcCodeChunk(const string& s_filename,
 		const string& s_text, size_t s_src_line,
 		size_t s_src_pos_in_line);

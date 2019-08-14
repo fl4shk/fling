@@ -1,0 +1,27 @@
+#include "pt_visitor_class.hpp"
+
+namespace frost_hdl
+{
+using namespace ast;
+using Child = NodeBase::Child;
+
+PtVisitor::PtVisitor(vector<string>&& s_filename_vec)
+	: _filename_vec(move(s_filename_vec))
+{
+	for (const auto& iter : _filename_vec)
+	{
+		_list_parsed_src_code.reset(new ParsedSrcCode(iter));
+	}
+
+	_ast_root.reset(new NodeProgram(SrcCodeChunk()));
+}
+PtVisitor::~PtVisitor()
+{
+}
+
+int PtVisitor::run()
+{
+}
+
+
+} // namespace frost_hdl

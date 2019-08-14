@@ -40,6 +40,7 @@
 	X(NodeNoParamPossibleTypename, NoParamPossibleTypename) \
 	X(NodeTypeof, Typeof) \
 	X(NodeTypeRange, TypeRange) \
+	X(NodeRangeSuffix, RangeSuffix) \
 	X(NodeAuto, Auto) \
 	X(NodeVoid, Void) \
 	X(NodeUwire, Uwire) \
@@ -89,6 +90,7 @@
 	X(NodeExprUnopDollarIsUnsgn, ExprUnopDollarIsUnsgn) \
 	X(NodeExprUnopDollarIsSgn, ExprUnopDollarIsSgn) \
 	X(NodeExprUnopDollarRange, ExprUnopDollarRange) \
+	X(NodeExprUnopDollarRevrange, ExprUnopDollarRevrange) \
 	X(NodeExprUnopDollarSize, ExprUnopDollarSize) \
 	X(NodeExprUnopDollarFirst, ExprUnopDollarFirst) \
 	X(NodeExprUnopDollarLast, ExprUnopDollarLast) \

@@ -6,7 +6,7 @@
 #include "misc_includes.hpp"
 #include "src_code_chunk_class.hpp"
 #include "expr_value_class.hpp"
-#include "lexer_class.hpp"
+//#include "lexer_class.hpp"
 
 
 namespace frost_hdl
@@ -37,7 +37,6 @@ class Visitor;
 class NodeBase
 {
 public:		// types
-	using TokSet = std::set<Tok>;
 	using Child = unique_ptr<NodeBase>;
 
 	#include "ast_node_type_enum.hpp"

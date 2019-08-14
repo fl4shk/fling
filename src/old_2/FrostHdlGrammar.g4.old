@@ -1,0 +1,860 @@
+grammar FrostHdlGrammar;
+
+// Parser Rules
+program:
+	(
+		package
+		| module
+		| declCstmType
+	)*
+	EOF
+	;
+
+
+headerIf:
+	TokKwIf '(' expr ')'
+	;
+headerElseIf:
+	TokKwElse TokKwIf '(' expr ')'
+	;
+headerElse:
+	TokKwElse
+	;
+
+headerFor:
+	TokKwFor '(' ident ':' (expr | typeRange) ')'
+	;
+
+headerGenerateIf:
+	TokKwGenerate headerIf
+	;
+headerElseGenerateIf:
+	TokKwElse headerGenerateIf
+	;
+headerElseGenerate:
+	TokKwElse TokKwGenerate
+	;
+headerGenerateFor:
+	TokKwGenerate ident? headerFor
+	;
+
+package:
+	TokKwPackage ident
+		scopePackage
+	;
+
+scopePackage:
+	'{'
+		(
+			generatePackage
+			| package
+			| module
+			| frostConst
+			| frostUsing
+			| declCallable
+			| declCstmType
+		)*
+	'}'
+	;
+generatePackage:
+	generatePackageIf
+	| generatePackageFor
+	;
+
+generatePackageIf:
+	headerGenerateIf scopePackage
+	(headerElseGenerateIf scopePackage)*
+	(headerElseGenerate scopePackage)?
+	;
+generatePackageFor:
+	headerGenerateFor scopePackage
+	;
+
+memberCallablePrefix:
+	TokKwConst
+	| (TokKwConst TokKwVirtual)
+	| (TokKwConst TokKwStatic)
+	| (TokKwConst TokKwVirtual TokKwStatic)
+	| (TokKwConst TokKwStatic TokKwVirtual)
+	| TokKwVirtual
+	| (TokKwVirtual TokKwConst)
+	| (TokKwVirtual TokKwStatic)
+	| (TokKwVirtual TokKwConst TokKwStatic)
+	| (TokKwVirtual TokKwStatic TokKwConst)
+	| TokKwStatic
+	| (TokKwStatic TokKwConst)
+	| (TokKwStatic TokKwVirtual)
+	| (TokKwStatic TokKwConst TokKwVirtual)
+	| (TokKwStatic TokKwVirtual TokKwConst)
+	;
+
+contentsModproc:
+	paramList? argList
+		scopeModproc
+	;
+
+proc:
+	TokKwProc procIdentEtc
+		contentsModproc
+	;
+module:
+	TokKwModule ident
+		contentsModproc
+	;
+
+procIdentEtc:
+	(ident | TokKwPort | constStr)
+	;
+
+scopeModproc:
+	'{'
+		(
+			generateModproc
+			| module
+			| frostConst
+			| var
+			| frostUsing
+			| declCallable
+			| declCstmType
+			| hardwareBlock
+		)*
+	'}'
+	;
+
+generateModproc:
+	generateModprocIf
+	| generateModprocFor
+	;
+
+generateModprocIf:
+	headerGenerateIf scopeModproc
+	(headerElseGenerateIf scopeModproc)*
+	(headerElseGenerate scopeModproc)?
+	;
+generateModprocFor:
+	headerGenerateFor scopeModproc
+	;
+
+declCallable:
+	func
+	| task
+	| proc
+	;
+
+contentsFuncTask:
+	paramList? argList
+		scopeBehav
+	;
+
+func:
+	TokKwFunc frostTypename funcTaskIdentEtc
+		contentsFuncTask
+	;
+
+funcTaskIdentEtc:
+	ident | constStr
+	;
+
+task:
+	TokKwTask funcTaskIdentEtc
+		contentsFuncTask
+	;
+
+scopeBehav:
+	'{'
+		innerScopeBehav*
+	'}'
+	;
+
+innerScopeBehav:
+	generateBehav
+	| frostConst
+	| var
+	| frostUsing
+	| stmtAssign
+	| stmtIf
+	| stmtFor
+	| stmtWhile
+	| stmtSwitch
+	| stmtSwitchz
+	| stmtReturn
+	| identEtc
+	| declCstmType
+	| scopeBehav
+	;
+
+
+generateBehav:
+	generateBehavIf
+	| generateBehavFor
+	;
+generateBehavIf:
+	headerGenerateIf scopeBehav
+	(headerElseGenerateIf scopeBehav)*
+	(headerElseGenerate scopeBehav)?
+	;
+
+generateBehavFor:
+	headerGenerateFor scopeBehav
+	;
+
+frostConst:
+	TokKwConst frostTypename?
+		oneConst
+		(',' oneConst)* 
+		';'
+	;
+oneConst:
+	identTerminal '=' expr
+	;
+
+var:
+	frostTypename
+		oneVar
+		(',' oneVar)*
+		';'
+	;
+
+oneVar:
+	identTerminal (('=' expr) | argInstList)?
+	;
+
+frostUsing:
+	TokKwUsing identEtc ('=' frostTypename)?
+		';'
+	;
+
+stmtAssign:
+	expr '=' expr ';'
+	;
+stmtIf:
+	headerIf scopeBehav
+	(headerElseIf scopeBehav)*
+	(headerElse scopeBehav)?
+	;
+
+stmtFor:
+	headerFor
+		scopeBehav
+	;
+
+stmtWhile:
+	TokKwWhile '(' expr ')'
+		scopeBehav
+	;
+stmtSwitch:
+	TokKwSwitch '(' expr ')'
+		scopeSwitch
+	;
+stmtSwitchz:
+	TokKwSwitchz '(' expr ')'
+		scopeSwitch
+	;
+
+scopeSwitch:
+	'{'
+		(
+			stmtCase
+			| stmtDefault
+		)*
+	'}'
+	;
+stmtCase:
+	TokKwCase expr ':' innerScopeBehav
+	;
+stmtDefault:
+	TokKwDefault ':' innerScopeBehav
+	;
+
+stmtReturn:
+	TokKwReturn expr ';'
+	;
+
+declCstmType:
+	frostClass
+	| frostEnum
+	| frostUnion
+	;
+
+frostClass:
+	TokKwPacked? TokKwClass ident paramList?
+		extends?
+		scopeClass
+		(oneVar
+		(',' oneVar)*)? ';'
+	;
+extends:
+	TokKwVirtual? TokKwExtends frostTypename
+	;
+
+scopeClass:
+	'{'
+		(
+			generateClass
+			| memberAccessLabel
+			| frostConst
+			| var
+			| argPortSublist
+			| modport
+			| frostUsing
+			| memberCallable
+			| declCstmType
+		)*
+	'}'
+	;
+
+modport:
+	TokKwModport ident
+	'('
+		innerModport
+		(',' innerModport)*
+		(',')?
+	')' ';'
+	;
+
+innerModport:
+	(TokKwInput
+	| TokKwOutput
+	| TokKwBidir)
+	ident
+	(',' ident)*
+	;
+
+memberCallable:
+	memberCallablePrefix? declCallable
+	;
+
+generateClass:
+	generateClassIf
+	| generateClassFor
+	;
+generateClassIf:
+	headerGenerateIf scopeClass
+	(headerElseGenerateIf scopeClass)*
+	(headerElseGenerate scopeClass)?
+	;
+generateClassFor:
+	headerGenerateFor scopeClass
+	;
+
+memberAccessLabel:
+	(TokKwPublic | TokKwPrivate | TokKwProtected) ':'
+	;
+
+frostEnum:
+	TokKwEnum frostTypename? ident
+	'{'
+		identTerminal
+		(',' identTerminal)
+		(',')?
+	'}'
+		(oneVar
+		(',' oneVar)*)? ';'
+	;
+
+frostUnion:
+	TokKwUnion ident
+	'{'
+		var*
+	'}'
+		(oneVar
+		(',' oneVar)*)? ';'
+	;
+
+hardwareBlock:
+	contAssign
+	| initial
+	| alwaysComb
+	| alwaysBlk
+	| alwaysFf
+	| dff
+	| inst
+
+	// This needs to be a proc call
+	| identEtc
+	;
+
+contAssign:
+	TokKwAssign expr '=' expr ';'
+	;
+initial:
+	TokKwInitial innerScopeBehav
+	;
+alwaysComb:
+	TokKwAlwaysComb innerScopeBehav
+	;
+alwaysBlk:
+	TokKwAlwaysBlk edgeList
+		innerScopeBehav
+	;
+alwaysFf:
+	TokKwAlwaysFf edgeList
+		innerScopeBehav
+	;
+dff:
+	TokKwDff expr
+		innerScopeBehav
+	;
+
+edgeList:
+	'('
+		(posedgeInst | negedgeInst)
+		(',' (posedgeInst | negedgeInst))*
+	')'
+	;
+posedgeInst:
+	TokKwPosedge expr
+	;
+negedgeInst:
+	TokKwNegedge expr
+	;
+inst:
+	TokKwInst identEtc paramInstList?
+		ident? argInstList? ';'
+	;
+
+paramList:
+	'['
+		paramSublist
+		(',' paramSublist)*
+		(',')?
+	']'
+	;
+
+paramSublist:
+	(parargTypeSublist
+	| paramModuleSublist
+	| parargVarSublist)
+	;
+
+argList:
+	'('
+		(argSublist
+		(',' argSublist)*)?
+		(',')?
+	')'
+	;
+argSublist:
+	(argPortSublist
+	| parargTypeSublist)
+	;
+
+argPortSublist:
+	(TokKwInput
+	| TokKwOutput
+	| TokKwBidir)
+	parargVarSublist
+	;
+parargVarSublist:
+	frostTypename
+	TokParamPack? identTerminal ('=' expr)?
+	(',' TokParamPack? identTerminal ('=' expr)?)*
+	;
+parargTypeSublist:
+	TokKwType
+	parargIdentEqualsTypenameSublist
+	;
+paramModuleSublist:
+	TokKwModule
+	parargIdentEqualsTypenameSublist
+	;
+parargIdentEqualsTypenameSublist:
+	TokParamPack? ident ('=' frostTypename)?
+	(',' TokParamPack? ident ('=' frostTypename)?)*
+	;
+
+paramInstList:
+	'['
+		(
+			posParargInstList
+			| namedParargInstList
+		)?
+		(',')?
+	']'
+	;
+
+argInstList:
+	'('
+		(
+			posParargInstList
+			| namedParargInstList
+		)?
+		(',')?
+	')'
+	;
+
+posParargInstList:
+	expr
+	(',' expr)*
+	;
+namedParargInstList:
+	ident '=' expr
+	(',' ident '=' expr)*
+	;
+
+frostTypename:
+	paramPossibleTypename
+	| noParamPossibleTypename
+	| typeof
+	| typeRange
+	;
+paramPossibleTypename:
+	(identEtc
+		| TokKwUwire | TokKwSwire
+		| TokKwUbit | TokKwSbit)
+		(paramInstList | rangeSuffix)?
+	;
+noParamPossibleTypename:
+	TokKwVoid | TokKwAuto
+	| TokKwUbyte | TokKwSbyte
+	| TokKwUshortint | TokKwSshortint
+	| TokKwUint | TokKwSint
+	| TokKwUlongint | TokKwSlongint
+	;
+typeof:
+	TokKwTypeof
+	'('
+		(expr | frostTypename)
+	')'
+	;
+
+typeRange:
+	TokKwRange
+	rangeSuffix
+	;
+
+rangeSuffix:
+	'['
+		expr (':' expr)?
+	']'
+	;
+
+expr:
+	logicalExpr logicalOp expr 
+	| logicalExpr
+	;
+logicalOp:
+	TokLogAnd
+	| TokLogOr
+	;
+
+logicalExpr:
+	compareExpr compareOp logicalExpr
+	;
+compareOp:
+	TokCmpEq
+	| TokCmpNe
+	| TokCmpLt
+	| TokCmpGt
+	| TokCmpLe
+	| TokCmpGe
+	;
+
+compareExpr:
+	addSubExpr addSubOp compareExpr
+	| addSubExpr
+	;
+addSubOp:
+	TokPlus
+	| TokMinus
+	;
+
+addSubExpr:
+	mulDivModEtcExpr mulDivModEtcOp addSubExpr
+	| mulDivModEtcExpr
+	;
+mulDivModEtcOp:
+	TokMul
+	| TokDiv
+	| TokMod
+	| TokBitLsl
+	| TokBitLsr
+	| TokBitAsr
+	| TokBitAnd
+	| TokBitOr
+	| TokBitXor
+	;
+
+mulDivModEtcExpr:
+	unaryOp expr
+	| '(' expr ')'
+	| dollarGlobalClock
+	| dollarPowExpr
+	| identEtc
+	| numExpr
+	| constStr
+	| preDollarFuncOfOneExpr
+	| postDollarFuncOfOneExpr
+	| catExpr
+	| replExpr
+	;
+
+unaryOp:
+	TokLogNot
+	| TokBitNot
+	| TokPlus
+	| TokMinus
+	;
+dollarGlobalClock:
+	TokKwDollarGlobalClock
+	;
+dollarPowExpr:
+	TokKwDollarPow '(' expr ',' expr ')'
+	;
+
+numExpr:
+	((rawNum | identEtc) '\'')? rawNum
+	;
+rawNum:
+	TokDecNum
+	| TokHexNum
+	| TokOctNum
+	| TokBinNum
+	;
+constStr:
+	TokConstStr
+	;
+preDollarFuncOfOneExpr:
+	dollarFuncOfOne '(' identEtc ')'
+	;
+postDollarFuncOfOneExpr:
+	identEtc dollarFuncOfOne
+	;
+dollarFuncOfOne:
+	TokKwDollarUnsgn | TokKwDollarSgn
+	| TokKwDollarIsUnsgn | TokKwDollarIsSgn
+	| TokKwDollarRange | TokKwDollarSize
+	| TokKwDollarFirst | TokKwDollarLast
+	| TokKwDollarHigh | TokKwDollarLow
+	| TokKwDollarClog2
+	| TokKwDollarPast | TokKwDollarStable
+	| TokKwDollarRose | TokKwDollarFell
+	;
+
+catExpr:
+	TokKwCat
+	'('
+		expr
+		(',' expr)*
+	')'
+	;
+replExpr:
+	TokKwRepl
+	'('
+		expr ',' expr
+	')'
+	;
+
+identEtc:
+	identMemberAccess
+	| identScopeAccess
+	| identNonMemberScopeAccess
+	;
+
+identMemberAccess:
+	identNonMemberScopeAccess '.' identEtc
+	;
+identScopeAccess:
+	identNonMemberScopeAccess '::' identEtc
+	;
+
+identNonMemberScopeAccess:
+	identCall
+	| identNoParamOverloadedCall
+	| identParamMemberOverloadedCall
+	| identTerminal
+	;
+
+identCall:
+	ident paramInstList? argInstList
+	;
+identNoParamOverloadedCall:
+	identTerminal argInstList
+	;
+identParamMemberOverloadedCall:
+	identTerminal
+		'.'
+		paramInstList argInstList
+		;
+
+identTerminal:
+	ident
+	anyRangeSuffix*
+	;
+anyRangeSuffix:
+	rangeSuffix
+	| ('[' expr (TokPlusColon | TokMinusColon) expr ']')
+	;
+ident:
+	TokIdent
+	;
+
+// Lexer Rules
+
+LexWhitespace: (' ' | '\t' | '\n') -> skip ;
+LexLineComment: '//' (~ '\n')* -> skip ;
+
+TokConstStr: '"' (('\\' '"') | ('\\' '"'))*  '"' ;
+
+TokDecNum: [0-9] [0-9_]* ;
+TokHexNum: '0x' [0-9A-Fa-f_]+ ;
+TokOctNum: '0o' [0-7_]+ ;
+TokBinNum: '0b' [0-1_]+ ;
+
+TokParamPack: '...' ;
+
+TokLParen: '(' ;
+TokRParen: ')' ;
+TokLBrace: '[' ;
+TokRBrace: ']' ;
+TokLBracket: '{' ;
+TokRBracket: '}' ;
+
+TokMemberAccess: '.' ;
+TokScopeAccess: '::' ;
+
+TokPlusColon: '+:' ;
+TokMinusColon: '-:' ;
+
+TokQuote: '"' ;
+TokApostrophe: '\'';
+
+TokQmark: '?' ;
+TokColon: ':' ;
+TokSemicolon: ';' ;
+
+TokLogAnd: '&&' ;
+TokLogOr: '||' ;
+
+TokCmpEq: '==' ;
+TokCmpNe: '!= ';
+TokCmpLt: '<' ;
+TokCmpGt: '>' ;
+TokCmpLe: '<=' ;
+TokCmpGe: '>=' ;
+
+TokPlus: '+' ;
+TokMinus: '-' ;
+
+TokMul: '*' ;
+TokDiv: '/' ;
+TokMod: '%' ;
+
+TokBitAnd: '&' ;
+TokBitOr: '|' ;
+TokBitXor: '^' ;
+
+TokBitLsl: '<<' ;
+TokBitLsr: '>>' ;
+TokBitAsr: '>>>' ;
+
+TokLogNot: '!' ;
+TokBitNot: '~' ;
+
+TokKwIf: 'if' ;
+TokKwElse: 'else' ;
+TokKwFor: 'for' ;
+TokKwWhile: 'while' ;
+TokKwSwitch: 'switch' ;
+TokKwSwitchz: 'switchz' ;
+TokKwCase: 'case' ;
+TokKwDefault: 'default' ;
+TokKwReturn: 'return' ;
+
+TokKwGenerate: 'generate' ;
+TokKwPacked: 'packed' ;
+
+TokKwPackage: 'package' ;
+
+TokKwModule: 'module' ;
+TokKwProc: 'proc' ;
+TokKwPort: 'port' ;
+
+TokKwConst: 'const' ;
+TokKwVirtual: 'virtual' ;
+TokKwStatic: 'static' ;
+
+TokKwFunc: 'func' ;
+TokKwTask: 'task' ;
+TokKwUsing: 'using' ;
+
+TokKwClass: 'class' ;
+TokKwExtends: 'extends' ;
+TokKwModport: 'modport' ;
+
+TokKwInput: 'input' ;
+TokKwOutput: 'output' ;
+TokKwBidir: 'bidir' ;
+
+TokKwPublic: 'public' ;
+TokKwProtected: 'protected' ;
+TokKwPrivate: 'private' ;
+TokKwNew: 'new' ;
+
+TokKwEnum: 'enum' ;
+TokKwUnion: 'union' ;
+
+TokKwAssign: 'assign' ;
+TokKwInitial: 'initial' ;
+TokKwAlwaysComb: 'always_comb' ;
+TokKwAlwaysBlk: 'always_blk' ;
+TokKwAlwaysFf: 'always_ff' ;
+TokKwDff: 'dff' ;
+
+TokKwPosedge: 'posedge' ;
+TokKwNegedge: 'negedge' ;
+
+TokKwAssert: 'assert' ;
+TokKwAssume: 'assume' ;
+TokKwCover: 'cover' ;
+TokKwProperty: 'property' ;
+
+TokKwInst: 'inst' ;
+TokKwType: 'type' ;
+
+TokKwUwire: 'uwire' ;
+TokKwSwire: 'swire' ;
+TokKwUbit: 'ubit' ;
+TokKwSbit: 'sbit' ;
+
+TokKwVoid: 'void' ;
+TokKwAuto: 'auto' ;
+
+TokKwUbyte: 'ubyte' ;
+TokKwSbyte: 'sbyte' ;
+TokKwUshortint: 'ushortint' ;
+TokKwSshortint: 'sshortint' ;
+TokKwUint: 'uint' ;
+TokKwSint: 'sint' ;
+TokKwUlongint: 'ulongint' ;
+TokKwSlongint: 'slongint' ;
+
+TokKwTypeof: 'typeof' ;
+TokKwRange: 'range' ;
+
+TokKwDollarGlobalClock: '$global_clock' ;
+TokKwDollarPow: '$pow' ;
+
+TokKwDollarUnsgn: '$unsgn' ;
+TokKwDollarSgn: '$sgn' ;
+TokKwDollarIsUnsgn: '$is_unsgn' ;
+TokKwDollarIsSgn: '$is_sgn' ;
+TokKwDollarRange: '$range' ;
+TokKwDollarSize: '$size' ;
+TokKwDollarFirst: '$first' ;
+TokKwDollarLast: '$last' ;
+TokKwDollarHigh: '$high' ;
+TokKwDollarLow: '$low' ;
+TokKwDollarClog2: '$clog2' ;
+TokKwDollarPast: '$past' ;
+TokKwDollarStable: '$stable' ;
+TokKwDollarRose: '$rose' ;
+TokKwDollarFell: '$fell' ;
+
+TokKwCat: 'cat' ;
+TokKwRepl: 'repl' ;
+
+
+TokIdent: [A-Za-z_] ([A-Za-z_0-9])* ;
+
+TokOther: . ;
