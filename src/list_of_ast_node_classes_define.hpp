@@ -85,10 +85,10 @@
 	X(NodeExprUnopBitNot, ExprUnopBitNot) \
 	X(NodeExprUnopPlus, ExprUnopPlus) \
 	X(NodeExprUnopMinus, ExprUnopMinus) \
-	X(NodeExprUnopDollarUnsgn, ExprUnopDollarUnsgn) \
-	X(NodeExprUnopDollarSgn, ExprUnopDollarSgn) \
-	X(NodeExprUnopDollarIsUnsgn, ExprUnopDollarIsUnsgn) \
-	X(NodeExprUnopDollarIsSgn, ExprUnopDollarIsSgn) \
+	X(NodeExprUnopDollarUnsigned, ExprUnopDollarUnsigned) \
+	X(NodeExprUnopDollarSigned, ExprUnopDollarSigned) \
+	X(NodeExprUnopDollarIsUnsigned, ExprUnopDollarIsUnsigned) \
+	X(NodeExprUnopDollarIsSigned, ExprUnopDollarIsSigned) \
 	X(NodeExprUnopDollarRange, ExprUnopDollarRange) \
 	X(NodeExprUnopDollarRevrange, ExprUnopDollarRevrange) \
 	X(NodeExprUnopDollarSize, ExprUnopDollarSize) \

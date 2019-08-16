@@ -2669,16 +2669,16 @@ public:		// functions
 	}
 };
 
-class NodeExprUnopDollarUnsgn : public NodeExprUnopBase
+class NodeExprUnopDollarUnsigned : public NodeExprUnopBase
 {
 public:		// functions
-	inline NodeExprUnopDollarUnsgn(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeExprUnopDollarUnsigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
 		: NodeExprUnopBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarUnsgn);
+	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarUnsigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2689,24 +2689,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarUnsgn;
+		return Type::ExprUnopDollarUnsigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarUnsgn";
+		return "ExprUnopDollarUnsigned";
 	}
 };
 
-class NodeExprUnopDollarSgn : public NodeExprUnopBase
+class NodeExprUnopDollarSigned : public NodeExprUnopBase
 {
 public:		// functions
-	inline NodeExprUnopDollarSgn(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeExprUnopDollarSigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
 		: NodeExprUnopBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarSgn);
+	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarSigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2717,24 +2717,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarSgn;
+		return Type::ExprUnopDollarSigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarSgn";
+		return "ExprUnopDollarSigned";
 	}
 };
 
-class NodeExprUnopDollarIsUnsgn : public NodeExprUnopBase
+class NodeExprUnopDollarIsUnsigned : public NodeExprUnopBase
 {
 public:		// functions
-	inline NodeExprUnopDollarIsUnsgn(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeExprUnopDollarIsUnsigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
 		: NodeExprUnopBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsUnsgn);
+	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsUnsigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2745,24 +2745,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarIsUnsgn;
+		return Type::ExprUnopDollarIsUnsigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarIsUnsgn";
+		return "ExprUnopDollarIsUnsigned";
 	}
 };
 
-class NodeExprUnopDollarIsSgn : public NodeExprUnopBase
+class NodeExprUnopDollarIsSigned : public NodeExprUnopBase
 {
 public:		// functions
-	inline NodeExprUnopDollarIsSgn(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeExprUnopDollarIsSigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
 		: NodeExprUnopBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsSgn);
+	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsSigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2773,11 +2773,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarIsSgn;
+		return Type::ExprUnopDollarIsSigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarIsSgn";
+		return "ExprUnopDollarIsSigned";
 	}
 };
 

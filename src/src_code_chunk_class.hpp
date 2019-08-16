@@ -53,7 +53,6 @@ public:		// functions
 
 
 	GEN_GETTER_BY_CON_REF(filename)
-	GEN_GETTER_BY_VAL(ctx)
 	GEN_GETTER_BY_CON_REF(text)
 	GEN_GETTER_BY_VAL(src_line)
 	GEN_GETTER_BY_VAL(src_pos_in_line)

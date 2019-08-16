@@ -33,7 +33,8 @@
 #include "liborangepower_src/linked_list_classes.hpp"
 #include "liborangepower_src/range_funcs.hpp"
 #include "liborangepower_src/lexer_base_class.hpp"
-//#include "liborangepower_src/no_state_parser_base_class.hpp"
+//#include "liborangepower_src/opt_as_func_arg_parser_base_class.hpp"
+#include "liborangepower_src/parse_tree_base_class.hpp"
 
 using namespace liborangepower::misc_output;
 using namespace liborangepower::misc_input;
@@ -51,9 +52,13 @@ using liborangepower::containers::CircLinkedList;
 
 //#include <boost/mp11.hpp>
 //using namespace boost::mp11;
-using string = std::string;
+using std::string;
 using std::unique_ptr;
 using std::vector;
+using std::map;
+using std::set;
+using std::variant;
 
+using std::is_same;
 
 #endif		// src_misc_includes_hpp

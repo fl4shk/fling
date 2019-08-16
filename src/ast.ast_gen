@@ -197,10 +197,10 @@ ExprUnopBitNot, ExprUnopBase:
 ExprUnopPlus, ExprUnopBase:
 ExprUnopMinus, ExprUnopBase:
 
-ExprUnopDollarUnsgn, ExprUnopBase:
-ExprUnopDollarSgn, ExprUnopBase:
-ExprUnopDollarIsUnsgn, ExprUnopBase:
-ExprUnopDollarIsSgn, ExprUnopBase:
+ExprUnopDollarUnsigned, ExprUnopBase:
+ExprUnopDollarSigned, ExprUnopBase:
+ExprUnopDollarIsUnsigned, ExprUnopBase:
+ExprUnopDollarIsSigned, ExprUnopBase:
 ExprUnopDollarRange, ExprUnopBase:
 ExprUnopDollarRevrange, ExprUnopBase:
 ExprUnopDollarSize, ExprUnopBase:

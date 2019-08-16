@@ -12,49 +12,50 @@ program:
 
 
 header_if:
-	TokKwIf '(' expr ')'
+	'if' '(' expr ')'
 	;
 header_else_if:
-	TokKwElse TokKwIf '(' expr ')'
+	'else' 'if' '(' expr ')'
 	;
 header_else:
-	TokKwElse
+	'else'
 	;
 
 header_for:
-	TokKwFor '(' ident ':' (expr | type_range) ')'
+	'for' '(' ident ':' (expr | type_range) ')'
 	;
 
 header_generate_if:
-	TokKwGenerate header_if
+	'generate' header_if
 	;
 header_else_generate_if:
-	TokKwElse header_generate_if
+	'else' header_generate_if
 	;
 header_else_generate:
-	TokKwElse TokKwGenerate
+	'else' 'generate'
 	;
 header_generate_for:
-	TokKwGenerate ident? header_for
+	'generate' ident? header_for
 	;
 
 package:
-	TokKwPackage ident
+	'package' ident
 		scope_package
 	;
 
 scope_package:
 	'{'
-		(
-			generate_package
-			| package
-			| module
-			| const
-			| using
-			| decl_callable
-			| decl_cstm_type
-		)*
+		scope_package_item*
 	'}'
+	;
+scope_package_item:
+	generate_package
+	| package
+	| module
+	| const
+	| using
+	| decl_callable
+	| decl_cstm_type
 	;
 generate_package:
 	generate_package_if
@@ -63,8 +64,14 @@ generate_package:
 
 generate_package_if:
 	header_generate_if scope_package
-	(header_else_generate_if scope_package)*
-	(header_else_generate scope_package)?
+	generate_package_else_if*
+	generate_package_else?
+	;
+generate_package_else_if:
+	header_else_generate_if scope_package
+	;
+generate_package_else:
+	header_else_generate scope_package
 	;
 generate_package_for:
 	header_generate_for scope_package
@@ -94,31 +101,35 @@ contents_modproc:
 	;
 
 proc:
-	TokKwProc proc_ident_etc
+	'proc' proc_ident_etc
 		contents_modproc
 	;
 module:
-	TokKwModule ident
+	'module' ident
 		contents_modproc
 	;
 
 proc_ident_etc:
-	(ident | TokKwPort | const_str)
+	(ident | kw_port | const_str)
+	;
+kw_port:
+	TokKwPort
 	;
 
 scope_modproc:
 	'{'
-		(
-			generate_modproc
-			| module
-			| const
-			| var
-			| using
-			| decl_callable
-			| decl_cstm_type
-			| hardware_block
-		)*
+		scope_modproc_item*
 	'}'
+	;
+scope_modproc_item:
+	generate_modproc
+	| module
+	| const
+	| var
+	| using
+	| decl_callable
+	| decl_cstm_type
+	| hardware_block
 	;
 
 generate_modproc:
@@ -128,8 +139,14 @@ generate_modproc:
 
 generate_modproc_if:
 	header_generate_if scope_modproc
-	(header_else_generate_if scope_modproc)*
-	(header_else_generate scope_modproc)?
+	generate_modproc_else_if*
+	generate_modproc_else?
+	;
+generate_modproc_else_if:
+	header_else_generate_if scope_modproc
+	;
+generate_modproc_else:
+	header_else_generate scope_modproc
 	;
 generate_modproc_for:
 	header_generate_for scope_modproc
@@ -147,7 +164,7 @@ contents_func_task:
 	;
 
 func:
-	TokKwFunc typename func_task_ident_etc
+	'func' typename func_task_ident_etc
 		contents_func_task
 	;
 
@@ -156,28 +173,29 @@ func_task_ident_etc:
 	;
 
 task:
-	TokKwTask func_task_ident_etc
+	'task' func_task_ident_etc
 		contents_func_task
 	;
 
 scope_behav:
 	'{'
-		inner_scope_behav*
+		scope_behav_item*
 	'}'
 	;
 
-inner_scope_behav:
+scope_behav_item:
 	generate_behav
 	| const
 	| var
 	| using
-	| stmt_assign
-	| stmt_if
-	| stmt_for
-	| stmt_while
-	| stmt_switch
-	| stmt_switchz
-	| stmt_return
+	| assign_stmt
+	| if_stmt
+	| for_stmt
+	| while_stmt
+	| switch_stmt
+	| switchz_stmt
+	| return_stmt
+	| dollar_resize_stmt
 	| ident_etc
 	| decl_cstm_type
 	| scope_behav
@@ -190,8 +208,14 @@ generate_behav:
 	;
 generate_behav_if:
 	header_generate_if scope_behav
-	(header_else_generate_if scope_behav)*
-	(header_else_generate scope_behav)?
+	generate_behav_else_if*
+	generate_behav_else?
+	;
+generate_behav_else_if:
+	header_else_generate_if scope_behav
+	;
+generate_behav_else:
+	header_else_generate scope_behav
 	;
 
 generate_behav_for:
@@ -199,7 +223,7 @@ generate_behav_for:
 	;
 
 const:
-	TokKwConst typename?
+	'const' typename?
 		one_const
 		(',' one_const)* 
 		';'
@@ -220,54 +244,67 @@ one_var:
 	;
 
 using:
-	TokKwUsing ident_etc ('=' typename)?
+	'using' ident_etc ('=' typename)?
 		';'
 	;
 
-stmt_assign:
-	expr '=' expr ';'
+assign_stmt:
+	valid_lhs_expr '=' expr ';'
 	;
-stmt_if:
+if_stmt:
 	header_if scope_behav
-	(header_else_if scope_behav)*
-	(header_else scope_behav)?
+	stmt_else_if*
+	stmt_else?
+	;
+stmt_else_if:
+	header_else_if scope_behav
+	;
+stmt_else:
+	header_else scope_behav
 	;
 
-stmt_for:
+for_stmt:
 	header_for
 		scope_behav
 	;
 
-stmt_while:
-	TokKwWhile '(' expr ')'
+while_stmt:
+	'while' '(' expr ')'
 		scope_behav
 	;
-stmt_switch:
-	TokKwSwitch '(' expr ')'
+switch_stmt:
+	'switch' '(' expr ')'
 		scope_switch
 	;
-stmt_switchz:
-	TokKwSwitchz '(' expr ')'
+switchz_stmt:
+	'switchz' '(' expr ')'
 		scope_switch
 	;
 
 scope_switch:
 	'{'
-		(
-			stmt_case
-			| stmt_default
-		)*
+		scope_switch_item*
 	'}'
 	;
-stmt_case:
-	TokKwCase expr ':' inner_scope_behav
+scope_switch_item:
+	case_stmt
+	| default_stmt
 	;
-stmt_default:
-	TokKwDefault ':' inner_scope_behav
+case_stmt:
+	'case' expr ':' scope_behav_item
+	;
+default_stmt:
+	'default' ':' scope_behav_item
 	;
 
-stmt_return:
-	TokKwReturn expr ';'
+return_stmt:
+	'return' expr ';'
+	;
+
+// For compile-time arrays, which can have different sizes.
+dollar_resize_stmt:
+	'$resize' '(' ident_etc ',' expr ')' ';'
+	| ident_etc '$resize' '(' expr ')' ';'
 	;
 
 decl_cstm_type:
@@ -277,34 +314,35 @@ decl_cstm_type:
 	;
 
 class:
-	TokKwPacked? TokKwClass ident param_list?
+	TokKwPacked? 'class' ident param_list?
 		extends?
 		scope_class
 		(one_var
 		(',' one_var)*)? ';'
 	;
 extends:
-	TokKwVirtual? TokKwExtends typename
+	TokKwVirtual? 'extends' typename
 	;
 
 scope_class:
 	'{'
-		(
-			generate_class
-			| member_access_label
-			| const
-			| var
-			| arg_port_sublist
-			| modport
-			| using
-			| member_callable
-			| decl_cstm_type
-		)*
+		scope_class_item*
 	'}'
+	;
+scope_class_item:
+	generate_class
+	| member_access_label
+	| const
+	| var
+	| arg_port_sublist
+	| modport
+	| using
+	| member_callable
+	| decl_cstm_type
 	;
 
 modport:
-	TokKwModport ident
+	'modport' ident
 	'('
 		inner_modport
 		(',' inner_modport)*
@@ -313,11 +351,8 @@ modport:
 	;
 
 inner_modport:
-	(TokKwInput
-	| TokKwOutput
-	| TokKwBidir)
-	ident
-	(',' ident)*
+	(TokKwInput | TokKwOutput | TokKwBidir)
+	ident (',' ident)*
 	;
 
 member_callable:
@@ -330,8 +365,14 @@ generate_class:
 	;
 generate_class_if:
 	header_generate_if scope_class
-	(header_else_generate_if scope_class)*
-	(header_else_generate scope_class)?
+	generate_class_else_if*
+	generate_class_else?
+	;
+generate_class_else_if:
+	header_else_generate_if scope_class
+	;
+generate_class_else:
+	header_else_generate scope_class
 	;
 generate_class_for:
 	header_generate_for scope_class
@@ -342,10 +383,10 @@ member_access_label:
 	;
 
 enum:
-	TokKwEnum typename? ident
+	'enum' typename? ident
 	'{'
 		ident_terminal
-		(',' ident_terminal)
+		(',' ident_terminal)*
 		(',')?
 	'}'
 		(one_var
@@ -353,7 +394,7 @@ enum:
 	;
 
 union:
-	TokKwUnion ident
+	TokKwPacked? 'union' ident
 	'{'
 		var*
 	'}'
@@ -375,41 +416,44 @@ hardware_block:
 	;
 
 cont_assign:
-	TokKwAssign expr '=' expr ';'
+	'assign' valid_lhs_expr '=' expr ';'
 	;
 initial:
-	TokKwInitial inner_scope_behav
+	'initial' scope_behav_item
 	;
 always_comb:
-	TokKwAlwaysComb inner_scope_behav
+	'always_comb' scope_behav_item
 	;
 always_blk:
-	TokKwAlwaysBlk edge_list
-		inner_scope_behav
+	'always_blk' edge_list
+		scope_behav_item
 	;
 always_ff:
-	TokKwAlwaysFf edge_list
-		inner_scope_behav
+	'always_ff' edge_list
+		scope_behav_item
 	;
 dff:
-	TokKwDff expr
-		inner_scope_behav
+	'dff' expr
+		scope_behav_item
 	;
 
 edge_list:
 	'('
-		(posedge_inst | negedge_inst)
-		(',' (posedge_inst | negedge_inst))*
+		edge_list_item
+		(',' edge_list_item)*
 	')'
 	;
+edge_list_item:
+	posedge_inst | negedge_inst
+	;
 posedge_inst:
-	TokKwPosedge expr
+	'posedge' expr
 	;
 negedge_inst:
-	TokKwNegedge expr
+	'negedge' expr
 	;
 inst:
-	TokKwInst ident_etc param_inst_list?
+	'inst' ident_etc param_inst_list?
 		ident? arg_inst_list? ';'
 	;
 
@@ -429,38 +473,44 @@ param_sublist:
 
 arg_list:
 	'('
-		(arg_sublist
-		(',' arg_sublist)*)?
-		(',')?
+		(
+			arg_sublist
+			(',' arg_sublist)*
+			(',')?
+		)?
 	')'
 	;
 arg_sublist:
-	(arg_port_sublist
-	| pararg_type_sublist)
+	arg_port_sublist
+	| pararg_type_sublist
 	;
 
 arg_port_sublist:
-	(TokKwInput
-	| TokKwOutput
-	| TokKwBidir)
+	(TokKwInput | TokKwOutput | TokKwBidir)
 	pararg_var_sublist
 	;
 pararg_var_sublist:
 	typename
-	TokParamPack? ident_terminal ('=' expr)?
-	(',' TokParamPack? ident_terminal ('=' expr)?)*
+	pararg_var_sublist_item
+	(',' pararg_var_sublist_item)*
+	;
+pararg_var_sublist_item:
+	ident_terminal (TokParamPack | ('=' expr))?
 	;
 pararg_type_sublist:
-	TokKwType
+	'type'
 	pararg_ident_equals_typename_sublist
 	;
 param_module_sublist:
-	TokKwModule
+	'module'
 	pararg_ident_equals_typename_sublist
 	;
 pararg_ident_equals_typename_sublist:
-	TokParamPack? ident ('=' typename)?
-	(',' TokParamPack? ident ('=' typename)?)*
+	pararg_ident_equals_typename_sublist_item
+	(',' pararg_ident_equals_typename_sublist_item)*
+	;
+pararg_ident_equals_typename_sublist_item:
+	ident (TokParamPack | ('=' typename))?
 	;
 
 param_inst_list:
@@ -468,8 +518,8 @@ param_inst_list:
 		(
 			pos_pararg_inst_list
 			| named_pararg_inst_list
+			(',')?
 		)?
-		(',')?
 	']'
 	;
 
@@ -478,8 +528,8 @@ arg_inst_list:
 		(
 			pos_pararg_inst_list
 			| named_pararg_inst_list
+			(',')?
 		)?
-		(',')?
 	')'
 	;
 
@@ -488,8 +538,11 @@ pos_pararg_inst_list:
 	(',' expr)*
 	;
 named_pararg_inst_list:
+	named_pararg_inst_list_item
+	(',' named_pararg_inst_list_item)*
+	;
+named_pararg_inst_list_item:
 	'.' ident '(' expr ')'
-	(',' '.' ident '(' expr ')' )*
 	;
 
 typename:
@@ -512,14 +565,14 @@ no_param_possible_typename:
 	| TokKwUlongint | TokKwSlongint
 	;
 typeof:
-	TokKwTypeof
+	'typeof'
 	'('
 		(expr | typename)
 	')'
 	;
 
 type_range:
-	TokKwRange
+	'range'
 	range_suffix
 	;
 
@@ -530,120 +583,136 @@ range_suffix:
 	;
 
 expr:
-	logical_expr logical_op expr 
+	logical_expr
+		(TokLogAnd | TokLogOr)
+		expr 
 	| logical_expr
-	;
-logical_op:
-	TokLogAnd
-	| TokLogOr
 	;
 
 logical_expr:
-	compare_expr compare_op logical_expr
+	logical_expr_first_choice
+	| typeof (TokCmpEq | TokCmpNe) typeof
+	| compare_expr
 	;
-compare_op:
-	TokCmpEq
-	| TokCmpNe
-	| TokCmpLt
-	| TokCmpGt
-	| TokCmpLe
-	| TokCmpGe
+logical_expr_first_choice:
+	compare_expr
+		(TokCmpEq | TokCmpNe
+		| TokCmpLt | TokCmpGt
+		| TokCmpLe | TokCmpGe)
+		logical_expr
 	;
 
 compare_expr:
-	add_sub_expr add_sub_op compare_expr
+	compare_expr_first_choice
 	| add_sub_expr
 	;
-add_sub_op:
-	TokPlus
-	| TokMinus
+compare_expr_first_choice:
+	add_sub_expr
+		(TokPlus | TokMinus)
+		compare_expr
 	;
 
 add_sub_expr:
-	mul_div_mod_etc_expr mul_div_mod_etc_op add_sub_expr
+	add_sub_expr_first_choice
 	| mul_div_mod_etc_expr
 	;
-mul_div_mod_etc_op:
-	TokMul
-	| TokDiv
-	| TokMod
-	| TokBitLsl
-	| TokBitLsr
-	| TokBitAsr
-	| TokBitAnd
-	| TokBitOr
-	| TokBitXor
+add_sub_expr_first_choice:
+	mul_div_mod_etc_expr 
+		(TokMul | TokDiv | TokMod
+		| TokBitLsl | TokBitLsr | TokBitAsr
+		| TokBitAnd | TokBitOr | TokBitXor)
+		add_sub_expr
 	;
 
 mul_div_mod_etc_expr:
-	unary_op expr
-	| '(' expr ')'
+	unary_expr
+	| paren_expr
 	| dollar_global_clock
 	| dollar_pow_expr
-	| ident_etc
+	| pre_dollar_func_of_one_expr
+	| post_dollar_func_of_one_expr
+	| valid_lhs_expr
 	| num_expr
 	| const_str
-	| pre_dollar_func_of_oneExpr
-	| post_dollar_func_of_oneExpr
 	| cat_expr
 	| repl_expr
 	;
 
-unary_op:
-	TokLogNot
-	| TokBitNot
-	| TokPlus
-	| TokMinus
+unary_expr:
+	(TokLogNot | TokBitNot
+	| TokPlus | TokMinus)
+	expr
+	;
+paren_expr:
+	'(' expr ')'
 	;
 dollar_global_clock:
-	TokKwDollarGlobalClock
+	'$global_clock'
 	;
 dollar_pow_expr:
-	TokKwDollarPow '(' expr ',' expr ')'
+	'$pow' '(' expr ',' expr ')'
 	;
 
 num_expr:
-	((raw_num | ident_etc | ( '(' expr ')' )) '\'')? raw_num
+	((raw_num | ident_etc |  paren_expr) '\'')? raw_num
 	;
 raw_num:
-	TokDecNum
-	| TokHexNum
-	| TokOctNum
-	| TokBinNum
+	TokDecNum | TokHexNum | TokOctNum | TokBinNum
 	;
 const_str:
 	TokConstStr
 	;
-pre_dollar_func_of_oneExpr:
-	dollar_func_of_one '(' ident_etc ')'
+pre_dollar_func_of_one_expr:
+	expr_dollar_func_of_one '(' ident_etc ')'
 	;
-post_dollar_func_of_oneExpr:
-	ident_etc dollar_func_of_one
+post_dollar_func_of_one_expr:
+	ident_etc expr_dollar_func_of_one
 	;
-dollar_func_of_one:
-	TokKwDollarUnsgn | TokKwDollarSgn
-	| TokKwDollarIsUnsgn | TokKwDollarIsSgn
+expr_dollar_func_of_one:
+	TokKwDollarUnsigned | TokKwDollarSigned
+	| TokKwDollarIsUnsigned | TokKwDollarIsSigned
 	| TokKwDollarRange | TokKwDollarRevrange
 	| TokKwDollarSize
-	| TokKwDollarFirst | TokKwDollarLast
+	| valid_lhs_expr_dollar_func_of_one
 	| TokKwDollarHigh | TokKwDollarLow
 	| TokKwDollarClog2
 	| TokKwDollarPast | TokKwDollarStable
 	| TokKwDollarRose | TokKwDollarFell
 	;
+valid_lhs_expr_dollar_func_of_one
+	TokKwDollarFirst | TokKwDollarLast
+	;
+pre_dollar_func_of_one_valid_lhs_expr:
+	valid_lhs_expr_dollar_func_of_one '(' ident_etc ')'
+	;
+post_dollar_func_of_one_valid_lhs_expr:
+	ident_etc valid_lhs_expr_dollar_func_of_one
+	;
+
+pre_dollar_func_of_one_valid_lhs_expr:
+	valid_lhs_expr_dollar_func_of_one '(' ident_etc ')'
+	;
+post_dollar_func_of_one_valid_lhs_expr:
+	ident_etc valid_lhs_expr_dollar_func_of_one
+	;
 
 cat_expr:
-	TokKwCat
+	'cat'
 	'('
 		expr
 		(',' expr)*
 	')'
 	;
+valid_lhs_expr:
+	pre_dollar_func_of_one_valid_lhs_expr
+	| post_dollar_func_of_one_valid_lhs_expr
+	| ident_etc
+	| 'cat' '(' valid_lhs_expr (',' valid_lhs_expr)* ')'
+	;
+
+// Replicate
 repl_expr:
-	TokKwRepl
-	'('
-		expr ',' expr
-	')'
+	'repl' '(' expr ',' expr ')'
 	;
 
 ident_etc:
@@ -674,8 +743,7 @@ ident_no_param_overloaded_call:
 	;
 ident_param_member_overloaded_call:
 	ident_terminal
-		'.'
-		param_inst_list arg_inst_list
+		'.' param_inst_list arg_inst_list
 		;
 
 ident_terminal:
@@ -836,13 +904,14 @@ TokKwRange: 'range' ;
 TokKwDollarGlobalClock: '$global_clock' ;
 TokKwDollarPow: '$pow' ;
 
-TokKwDollarUnsgn: '$unsgn' ;
-TokKwDollarSgn: '$sgn' ;
-TokKwDollarIsUnsgn: '$is_unsgn' ;
-TokKwDollarIsSgn: '$is_sgn' ;
+TokKwDollarUnsigned: '$unsigned' ;
+TokKwDollarSigned: '$signed' ;
+TokKwDollarIsUnsigned: '$is_unsigned' ;
+TokKwDollarIsSigned: '$is_signed' ;
 TokKwDollarRange: '$range' ;
 TokKwDollarRevrange: '$revrange' ;
 TokKwDollarSize: '$size' ;
+TokKwDollarResize: '$resize' ;
 TokKwDollarFirst: '$first' ;
 TokKwDollarLast: '$last' ;
 TokKwDollarHigh: '$high' ;

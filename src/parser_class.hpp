@@ -6,7 +6,7 @@
 #include "misc_includes.hpp"
 #include "lexer_class.hpp"
 #include "ast_node_classes.hpp"
-#include "no_state_parser_base_class.hpp"
+#include "opt_as_func_arg_parser_base_class.hpp"
 #include "err_warn_base_class.hpp"
 
 namespace frost_hdl
@@ -14,6 +14,9 @@ namespace frost_hdl
 
 class Parser final : public NoStateParserBase<Lexer>, public ErrWarnBase
 {
+public:		// types
+	using ParseRet = typename NoStateParserBase<Lexer>::ParseRet;
+
 private:		// variables
 	ast::NodeBase::Child _ast_root;
 	vector<string> _filename_vec;
