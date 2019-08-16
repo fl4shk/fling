@@ -70,10 +70,16 @@ public:		// types
 		GEN_GETTER_BY_CON_REF(lex_two_states_vec)
 		GEN_GETTER_BY_CON_REF(tok_set)
 	};
+
+	template<typename DerivedType>
+	class UnitParse
+	{
+	public:		// types
+	};
 protected:		// variables
 	LexerType _lexer;
+
 public:		// functions
-	
 protected:		// functions
 };
 
