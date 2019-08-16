@@ -20,9 +20,9 @@ const std::map<Tok, string> tok_ident_map
 	{Tok::Unknown, "unknown"},
 	{Tok::Done, "done"},
 };
-Tok Lexer::next_tok()
+void Lexer::next_tok()
 {
-	return _next_tok(Tok::Comment);
+	_next_tok(Tok::Comment);
 }
 
 void Lexer::_inner_next_tok()
@@ -60,13 +60,13 @@ void Lexer::_inner_next_tok()
 		{
 			string temp;
 			temp = static_cast<char>(c());
-			_state.set_s(temp);
+			state().set_s(temp);
 		}
 		_next_char();
 
 		for (; isalnum(c()) || (c() == '_'); _next_char())
 		{
-			_state.set_s(_state.s() + static_cast<char>(c()));
+			state().set_s(state().s() + static_cast<char>(c()));
 		}
 		_set_tok(Tok::Ident, false);
 	}
@@ -170,7 +170,7 @@ void Lexer::_inner_next_tok()
 
 
 AstGen::AstGen(std::vector<string>&& s_filename_vec)
-	: ParserBase<Lexer>(std::move(s_filename_vec))
+	: StatefulParserBase<Lexer>(std::move(s_filename_vec))
 {
 }
 AstGen::~AstGen()

@@ -25,20 +25,20 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Lexer)
 	~Lexer();
 
-	Tok next_tok();
-	inline auto src_code_chunk(State* state=nullptr) const
+	void next_tok();
+	inline auto src_code_chunk(const TwoStates* two_states=nullptr) const
 	{
-		return LexerBase<Tok>::src_code_chunk<SrcCodeChunk>(state);
+		return LexerBase<Tok>::src_code_chunk<SrcCodeChunk>(two_states);
 	}
 
 private:		// functions
 	void _inner_next_tok();
 };
 
-class AstGen final : public ParserBase<Lexer>
+class AstGen final : public StatefulParserBase<Lexer>
 {
 public:		// types
-	using Base = ParserBase<Lexer>;
+	using Base = StatefulParserBase<Lexer>;
 	using TokSet = std::set<Tok>;
 
 	friend Base;
