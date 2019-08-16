@@ -20,6 +20,7 @@ public:		// types
 	};
 
 	using TwoStates = typename LexerType::TwoStates;
+	using TokType = typename LexerType::TokType;
 
 	class ParseRet final
 	{
@@ -75,6 +76,8 @@ public:		// types
 	class UnitParse
 	{
 	public:		// types
+		using ParseFunc = ParseRet (DerivedType::*)(Opt opt);
+	private:		// variables
 	};
 protected:		// variables
 	LexerType _lexer;
