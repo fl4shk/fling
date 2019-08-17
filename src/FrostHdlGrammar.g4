@@ -2,12 +2,13 @@ grammar FrostHdlGrammar;
 
 // Parser Rules
 program:
-	(
-		package
-		| module
-		| decl_cstm_type
-	)*
+	program_item*
 	EOF
+	;
+program_item:
+	package
+	| module
+	| decl_cstm_type
 	;
 
 
