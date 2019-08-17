@@ -20,7 +20,8 @@ class ParseTreeBase
 {
 public:		// types
 	using Child = std::unique_ptr<ParseTreeBase>;
-	using DataElem = std::variant<bool, std::string, bignum::BigNum, TokType>;
+	using DataElem = std::variant<bool, std::string, bignum::BigNum,
+		TokType>;
 
 private:		// variables
 	SrcCodeChunkType _src_code_chunk;
@@ -33,7 +34,7 @@ public:		// functions
 		: _src_code_chunk(s_src_code_chunk)
 	{
 	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ParseTreeBase);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(ParseTreeBase);
 	virtual inline ~ParseTreeBase() = default;
 
 	GEN_GETTER_BY_CON_REF(src_code_chunk)
