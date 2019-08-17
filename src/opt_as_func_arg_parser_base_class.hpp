@@ -83,6 +83,13 @@ protected:		// variables
 	LexerType _lexer;
 
 public:		// functions
+	inline OptAsFuncArgParserBase(const string& s_filename, string* s_text)
+		: _lexer(s_filename, s_text)
+	{
+	}
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(OptAsFuncArgParserBase);
+	virtual inline ~OptAsFuncArgParserBase() = default;
+
 protected:		// functions
 };
 
