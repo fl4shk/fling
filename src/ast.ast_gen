@@ -88,7 +88,7 @@ Extends:
 	child the_typename;
 
 MemberCallable:
-	initvar bool _is_const, _is_virtual, _is_static;
+	initvar bool _is_const, _is_virtual, _is_static, _is_ref;
 	child callable;
 
 Union:
@@ -115,102 +115,56 @@ PosParamArgInstList, List:
 NamedParamArgInstList, List:
 OneParamArgInst, LeftRightBase:
 
-//// Expression parsing
-//expr:
-//	exprLogical
-//	| exprLogical TokOpLogical expr 
-//	;
-//
-//exprLogical:
-//	exprCompare
-//	| exprCompare TokOpCompare exprLogical 
-//	;
-//
-//exprCompare:
-//	exprAddSub
-//	| exprAddSub TokPlus exprCompare
-//	| exprAddSub TokMinus exprCompare
-//	;
-//
-//exprAddSub:
-//	exprMulDivModEtc
-//	| exprMulDivModEtc TokOpMulDivMod exprAddSub
-//	| exprMulDivModEtc TokOpBitwise exprAddSub
-//	;
-//
-//exprMulDivModEtc:
-//	exprPlusUnary
-//	| exprMinusUnary
-//	| exprLogNot
-//	| exprBitNot
-//	| exprCastUnsgn
-//	| exprCastSgn
-//	| exprClog2
-//	//| exprPow
-//	| numExpr
-//	| identExpr
-//	| '(' expr ')'
-//	;
-
-//// Expressions
-//TokOpLogical: ('&&' | '||') ;
-//TokOpCompare: ('==' | '!=' | '<' | '>' | '<=' | '>=') ;
-//TokPlus: '+' ;
-//TokMinus: '-' ;
-//TokOpMulDivMod: ('*' | '/' | '%') ;
-//TokOpBitwise: ('&' | '|' | '^' | '<<' | '>>' | '>>>') ;
-//TokBitInvert: '~' ;
-
 ExprBase:
 	//noinitvar ExprValue value;
-ExprBinopBase, ExprBase:
+BinopExprBase, ExprBase:
 	child left, right;
-ExprUnopBase, ExprBase:
+UnopExprBase, ExprBase:
 	child child;
 
-ExprBinopLogAnd, ExprBinopBase:
-ExprBinopLogOr, ExprBinopBase:
+BinopExprLogAnd, BinopExprBase:
+BinopExprLogOr, BinopExprBase:
 
-ExprBinopCmpEq, ExprBinopBase:
-ExprBinopCmpNe, ExprBinopBase:
-ExprBinopCmpLt, ExprBinopBase:
-ExprBinopCmpGt, ExprBinopBase:
-ExprBinopCmpLe, ExprBinopBase:
-ExprBinopCmpGe, ExprBinopBase:
+BinopExprCmpEq, BinopExprBase:
+BinopExprCmpNe, BinopExprBase:
+BinopExprCmpLt, BinopExprBase:
+BinopExprCmpGt, BinopExprBase:
+BinopExprCmpLe, BinopExprBase:
+BinopExprCmpGe, BinopExprBase:
 
-ExprBinopPlus, ExprBinopBase:
-ExprBinopMinus, ExprBinopBase:
+BinopExprPlus, BinopExprBase:
+BinopExprMinus, BinopExprBase:
 
-ExprBinopMul, ExprBinopBase:
-ExprBinopDiv, ExprBinopBase:
-ExprBinopMod, ExprBinopBase:
+BinopExprMul, BinopExprBase:
+BinopExprDiv, BinopExprBase:
+BinopExprMod, BinopExprBase:
 
-ExprBinopBitAnd, ExprBinopBase:
-ExprBinopBitOr, ExprBinopBase:
-ExprBinopBitXor, ExprBinopBase:
-ExprBinopBitLsl, ExprBinopBase:
-ExprBinopBitLsr, ExprBinopBase:
-ExprBinopBitAsr, ExprBinopBase:
+BinopExprBitAnd, BinopExprBase:
+BinopExprBitOr, BinopExprBase:
+BinopExprBitXor, BinopExprBase:
+BinopExprBitLsl, BinopExprBase:
+BinopExprBitLsr, BinopExprBase:
+BinopExprBitAsr, BinopExprBase:
 
-ExprUnopLogNot, ExprUnopBase:
-ExprUnopBitNot, ExprUnopBase:
-ExprUnopPlus, ExprUnopBase:
-ExprUnopMinus, ExprUnopBase:
+UnopExprLogNot, UnopExprBase:
+UnopExprBitNot, UnopExprBase:
+UnopExprPlus, UnopExprBase:
+UnopExprMinus, UnopExprBase:
 
-ExprUnopDollarUnsigned, ExprUnopBase:
-ExprUnopDollarSigned, ExprUnopBase:
-ExprUnopDollarIsUnsigned, ExprUnopBase:
-ExprUnopDollarIsSigned, ExprUnopBase:
-ExprUnopDollarRange, ExprUnopBase:
-ExprUnopDollarRevrange, ExprUnopBase:
-ExprUnopDollarSize, ExprUnopBase:
-ExprUnopDollarFirst, ExprUnopBase:
-ExprUnopDollarLast, ExprUnopBase:
-ExprUnopDollarHigh, ExprUnopBase:
-ExprUnopDollarLow, ExprUnopBase:
-ExprUnopDollarClog2, ExprUnopBase:
+UnopExprDollarUnsigned, UnopExprBase:
+UnopExprDollarSigned, UnopExprBase:
+UnopExprDollarIsUnsigned, UnopExprBase:
+UnopExprDollarIsSigned, UnopExprBase:
+UnopExprDollarRange, UnopExprBase:
+UnopExprDollarRevrange, UnopExprBase:
+UnopExprDollarSize, UnopExprBase:
+UnopExprDollarFirst, UnopExprBase:
+UnopExprDollarLast, UnopExprBase:
+UnopExprDollarHigh, UnopExprBase:
+UnopExprDollarLow, UnopExprBase:
+UnopExprDollarClog2, UnopExprBase:
 
-ExprBinopDollarPow, ExprBinopBase:
+BinopExprDollarPow, BinopExprBase:
 
 PseudoExprDollarBase:
 	child child;
@@ -221,15 +175,15 @@ PseudoExprDollarFell, PseudoExprDollarBase:
 PseudoExprDollarGlobalClock:
 
 
-ExprUnopTypeof, ExprUnopBase:
-ExprCat, ExprBase:
+UnopExprTypeof, UnopExprBase:
+CatExpr, ExprBase:
 	child list;
 ListCat, List:
 
-ExprRepl, ExprBase:
+ReplExpr, ExprBase:
 	child how_much_expr, to_repl_expr;
 
-ExprRangeAny, ExprBase:
+RangeExprAny, ExprBase:
 	child which_range;
 RangeOne:
 	child child;
@@ -240,10 +194,10 @@ RangeTwo, LeftRightBase:
 
 StmtList, List:
 
-StmtAnyFor:
+AnyForStmt:
 	child var, items, scope;
-StmtFor, StmtAnyFor:
-StmtGenerateFor, StmtAnyFor:
+ForStmt, AnyForStmt:
+GenerateForStmt, AnyForStmt:
 	child label;
 
 // generate if (...)
@@ -262,55 +216,57 @@ StmtGenerateFor, StmtAnyFor:
 // 	...
 // }
 
-StmtIf:
-	child cond_expr, scope, stmt_else;
+IfStmt:
+	child cond_expr, scope, else_stmt;
 
-StmtGenerateIf, StmtIf:
+GenerateIfStmt, IfStmt:
 
-StmtWhile:
+WhileStmt:
 	child cond_expr, scope;
 
 
-StmtBehavAssign, LeftRightBase:
-StmtContAssign, LeftRightBase:
+BehavAssignStmt, LeftRightBase:
+ContAssignStmt, LeftRightBase:
 
-StmtMemberAccessPublic:
-StmtMemberAccessProtected:
-StmtMemberAccessPrivate:
+MemberAccessPublicStmt:
+MemberAccessProtectedStmt:
+MemberAccessPrivateStmt:
 
-StmtSwitch:
+SwitchStmt:
 	child expr, scope;
-StmtSwitchz, StmtSwitch:
-StmtCase:
+SwitchzStmt, SwitchStmt:
+ExprCaseItem:
 	child expr, scope;
-StmtDefault:
+DefaultCaseItem:
 	child scope;
 ScopeSwitch, List:
 
-StmtUsing, LeftRightBase:
+UsingStmt, LeftRightBase:
 
-StmtInstModule:
+InstModuleStmt:
 	child module_ident, param_inst_list, inst_ident, arg_inst_list;
-StmtReturn:
+ReturnStmt:
 	child expr;
-StmtInitial:
+DollarResizeStmt:
+	child ident_etc, expr;
+InitialBlock:
 	child scope;
-StmtAlwaysComb:
+AlwaysCombBlock:
 	child scope;
-StmtAlwaysBlk:
+AlwaysBlkBlock:
 	child edge_list, scope;
-StmtAlwaysFf:
+AlwaysFfBlock:
 	child edge_list, scope;
 
-StmtAssert:
+AssertStmt:
 	child expr;
-StmtAssume:
+AssumeStmt:
 	child expr;
-StmtCover:
+CoverStmt:
 	child expr;
-StmtRestrict:
+RestrictStmt:
 	child expr;
-StmtStaticAssert:
+StaticAssertStmt:
 	child expr;
 
 PosedgeInst:

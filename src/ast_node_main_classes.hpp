@@ -1112,6 +1112,7 @@ protected:		// variables
 	bool _is_const;
 	bool _is_virtual;
 	bool _is_static;
+	bool _is_ref;
 protected:		// children
 	Child _callable;
 public:		// functions
@@ -1119,10 +1120,12 @@ public:		// functions
 		const bool& s_is_const,
 		const bool& s_is_virtual,
 		const bool& s_is_static,
+		const bool& s_is_ref,
 		Child&& s_callable)
 		: NodeBase(s_src_code_chunk), _is_const(s_is_const),
 		_is_virtual(s_is_virtual),
 		_is_static(s_is_static),
+		_is_ref(s_is_ref),
 		_callable(std::move(s_callable))
 	{
 	}
@@ -1134,6 +1137,7 @@ public:		// functions
 		ret += sconcat("  _is_const(", _is_const, ")\n");
 		ret += sconcat("  _is_virtual(", _is_virtual, ")\n");
 		ret += sconcat("  _is_static(", _is_static, ")\n");
+		ret += sconcat("  _is_ref(", _is_ref, ")\n");
 		ret += sconcat("  child:callable\n(", callable()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
@@ -1149,6 +1153,7 @@ public:		// functions
 	GEN_GETTER_AND_SETTER_BY_CON_REF(is_const)
 	GEN_GETTER_AND_SETTER_BY_CON_REF(is_virtual)
 	GEN_GETTER_AND_SETTER_BY_CON_REF(is_static)
+	GEN_GETTER_AND_SETTER_BY_CON_REF(is_ref)
 	GEN_GETTER_BY_CON_REF(callable)
 	GEN_SETTER_BY_RVAL_REF(callable)
 };
@@ -1898,13 +1903,13 @@ public:		// functions
 	}
 };
 
-class NodeExprBinopBase : public NodeExprBase
+class NodeBinopExprBase : public NodeExprBase
 {
 protected:		// children
 	Child _left,
 		_right;
 public:		// functions
-	inline NodeExprBinopBase(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBase(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
 		: NodeExprBase(s_src_code_chunk),
@@ -1912,7 +1917,7 @@ public:		// functions
 		_right(std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBase);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBase);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -1924,11 +1929,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBase;
+		return Type::BinopExprBase;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBase";
+		return "BinopExprBase";
 	}
 	GEN_GETTER_BY_CON_REF(left)
 	GEN_SETTER_BY_RVAL_REF(left)
@@ -1936,18 +1941,18 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(right)
 };
 
-class NodeExprUnopBase : public NodeExprBase
+class NodeUnopExprBase : public NodeExprBase
 {
 protected:		// children
 	Child _child;
 public:		// functions
-	inline NodeExprUnopBase(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprBase(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
 		: NodeExprBase(s_src_code_chunk),
 		_child(std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopBase);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprBase);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -1958,28 +1963,28 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopBase;
+		return Type::UnopExprBase;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopBase";
+		return "UnopExprBase";
 	}
 	GEN_GETTER_BY_CON_REF(child)
 	GEN_SETTER_BY_RVAL_REF(child)
 };
 
-class NodeExprBinopLogAnd : public NodeExprBinopBase
+class NodeBinopExprLogAnd : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopLogAnd(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprLogAnd(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopLogAnd);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprLogAnd);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -1991,26 +1996,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopLogAnd;
+		return Type::BinopExprLogAnd;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopLogAnd";
+		return "BinopExprLogAnd";
 	}
 };
 
-class NodeExprBinopLogOr : public NodeExprBinopBase
+class NodeBinopExprLogOr : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopLogOr(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprLogOr(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopLogOr);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprLogOr);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2022,26 +2027,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopLogOr;
+		return Type::BinopExprLogOr;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopLogOr";
+		return "BinopExprLogOr";
 	}
 };
 
-class NodeExprBinopCmpEq : public NodeExprBinopBase
+class NodeBinopExprCmpEq : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopCmpEq(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprCmpEq(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpEq);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprCmpEq);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2053,26 +2058,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopCmpEq;
+		return Type::BinopExprCmpEq;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopCmpEq";
+		return "BinopExprCmpEq";
 	}
 };
 
-class NodeExprBinopCmpNe : public NodeExprBinopBase
+class NodeBinopExprCmpNe : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopCmpNe(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprCmpNe(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpNe);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprCmpNe);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2084,26 +2089,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopCmpNe;
+		return Type::BinopExprCmpNe;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopCmpNe";
+		return "BinopExprCmpNe";
 	}
 };
 
-class NodeExprBinopCmpLt : public NodeExprBinopBase
+class NodeBinopExprCmpLt : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopCmpLt(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprCmpLt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpLt);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprCmpLt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2115,26 +2120,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopCmpLt;
+		return Type::BinopExprCmpLt;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopCmpLt";
+		return "BinopExprCmpLt";
 	}
 };
 
-class NodeExprBinopCmpGt : public NodeExprBinopBase
+class NodeBinopExprCmpGt : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopCmpGt(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprCmpGt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpGt);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprCmpGt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2146,26 +2151,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopCmpGt;
+		return Type::BinopExprCmpGt;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopCmpGt";
+		return "BinopExprCmpGt";
 	}
 };
 
-class NodeExprBinopCmpLe : public NodeExprBinopBase
+class NodeBinopExprCmpLe : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopCmpLe(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprCmpLe(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpLe);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprCmpLe);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2177,26 +2182,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopCmpLe;
+		return Type::BinopExprCmpLe;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopCmpLe";
+		return "BinopExprCmpLe";
 	}
 };
 
-class NodeExprBinopCmpGe : public NodeExprBinopBase
+class NodeBinopExprCmpGe : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopCmpGe(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprCmpGe(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopCmpGe);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprCmpGe);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2208,26 +2213,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopCmpGe;
+		return Type::BinopExprCmpGe;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopCmpGe";
+		return "BinopExprCmpGe";
 	}
 };
 
-class NodeExprBinopPlus : public NodeExprBinopBase
+class NodeBinopExprPlus : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopPlus(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprPlus(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopPlus);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprPlus);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2239,26 +2244,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopPlus;
+		return Type::BinopExprPlus;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopPlus";
+		return "BinopExprPlus";
 	}
 };
 
-class NodeExprBinopMinus : public NodeExprBinopBase
+class NodeBinopExprMinus : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopMinus(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprMinus(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopMinus);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprMinus);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2270,26 +2275,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopMinus;
+		return Type::BinopExprMinus;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopMinus";
+		return "BinopExprMinus";
 	}
 };
 
-class NodeExprBinopMul : public NodeExprBinopBase
+class NodeBinopExprMul : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopMul(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprMul(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopMul);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprMul);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2301,26 +2306,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopMul;
+		return Type::BinopExprMul;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopMul";
+		return "BinopExprMul";
 	}
 };
 
-class NodeExprBinopDiv : public NodeExprBinopBase
+class NodeBinopExprDiv : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopDiv(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprDiv(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopDiv);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprDiv);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2332,26 +2337,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopDiv;
+		return Type::BinopExprDiv;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopDiv";
+		return "BinopExprDiv";
 	}
 };
 
-class NodeExprBinopMod : public NodeExprBinopBase
+class NodeBinopExprMod : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopMod(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprMod(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopMod);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprMod);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2363,26 +2368,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopMod;
+		return Type::BinopExprMod;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopMod";
+		return "BinopExprMod";
 	}
 };
 
-class NodeExprBinopBitAnd : public NodeExprBinopBase
+class NodeBinopExprBitAnd : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopBitAnd(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBitAnd(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBitAnd);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBitAnd);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2394,26 +2399,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBitAnd;
+		return Type::BinopExprBitAnd;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBitAnd";
+		return "BinopExprBitAnd";
 	}
 };
 
-class NodeExprBinopBitOr : public NodeExprBinopBase
+class NodeBinopExprBitOr : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopBitOr(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBitOr(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBitOr);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBitOr);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2425,26 +2430,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBitOr;
+		return Type::BinopExprBitOr;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBitOr";
+		return "BinopExprBitOr";
 	}
 };
 
-class NodeExprBinopBitXor : public NodeExprBinopBase
+class NodeBinopExprBitXor : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopBitXor(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBitXor(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBitXor);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBitXor);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2456,26 +2461,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBitXor;
+		return Type::BinopExprBitXor;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBitXor";
+		return "BinopExprBitXor";
 	}
 };
 
-class NodeExprBinopBitLsl : public NodeExprBinopBase
+class NodeBinopExprBitLsl : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopBitLsl(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBitLsl(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBitLsl);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBitLsl);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2487,26 +2492,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBitLsl;
+		return Type::BinopExprBitLsl;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBitLsl";
+		return "BinopExprBitLsl";
 	}
 };
 
-class NodeExprBinopBitLsr : public NodeExprBinopBase
+class NodeBinopExprBitLsr : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopBitLsr(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBitLsr(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBitLsr);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBitLsr);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2518,26 +2523,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBitLsr;
+		return Type::BinopExprBitLsr;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBitLsr";
+		return "BinopExprBitLsr";
 	}
 };
 
-class NodeExprBinopBitAsr : public NodeExprBinopBase
+class NodeBinopExprBitAsr : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopBitAsr(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprBitAsr(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopBitAsr);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprBitAsr);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2549,24 +2554,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopBitAsr;
+		return Type::BinopExprBitAsr;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopBitAsr";
+		return "BinopExprBitAsr";
 	}
 };
 
-class NodeExprUnopLogNot : public NodeExprUnopBase
+class NodeUnopExprLogNot : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopLogNot(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprLogNot(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopLogNot);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprLogNot);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2577,24 +2582,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopLogNot;
+		return Type::UnopExprLogNot;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopLogNot";
+		return "UnopExprLogNot";
 	}
 };
 
-class NodeExprUnopBitNot : public NodeExprUnopBase
+class NodeUnopExprBitNot : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopBitNot(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprBitNot(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopBitNot);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprBitNot);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2605,24 +2610,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopBitNot;
+		return Type::UnopExprBitNot;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopBitNot";
+		return "UnopExprBitNot";
 	}
 };
 
-class NodeExprUnopPlus : public NodeExprUnopBase
+class NodeUnopExprPlus : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopPlus(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprPlus(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopPlus);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprPlus);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2633,24 +2638,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopPlus;
+		return Type::UnopExprPlus;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopPlus";
+		return "UnopExprPlus";
 	}
 };
 
-class NodeExprUnopMinus : public NodeExprUnopBase
+class NodeUnopExprMinus : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopMinus(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprMinus(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopMinus);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprMinus);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2661,24 +2666,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopMinus;
+		return Type::UnopExprMinus;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopMinus";
+		return "UnopExprMinus";
 	}
 };
 
-class NodeExprUnopDollarUnsigned : public NodeExprUnopBase
+class NodeUnopExprDollarUnsigned : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarUnsigned(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarUnsigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarUnsigned);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarUnsigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2689,24 +2694,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarUnsigned;
+		return Type::UnopExprDollarUnsigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarUnsigned";
+		return "UnopExprDollarUnsigned";
 	}
 };
 
-class NodeExprUnopDollarSigned : public NodeExprUnopBase
+class NodeUnopExprDollarSigned : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarSigned(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarSigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarSigned);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarSigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2717,24 +2722,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarSigned;
+		return Type::UnopExprDollarSigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarSigned";
+		return "UnopExprDollarSigned";
 	}
 };
 
-class NodeExprUnopDollarIsUnsigned : public NodeExprUnopBase
+class NodeUnopExprDollarIsUnsigned : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarIsUnsigned(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarIsUnsigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsUnsigned);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarIsUnsigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2745,24 +2750,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarIsUnsigned;
+		return Type::UnopExprDollarIsUnsigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarIsUnsigned";
+		return "UnopExprDollarIsUnsigned";
 	}
 };
 
-class NodeExprUnopDollarIsSigned : public NodeExprUnopBase
+class NodeUnopExprDollarIsSigned : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarIsSigned(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarIsSigned(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarIsSigned);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarIsSigned);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2773,24 +2778,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarIsSigned;
+		return Type::UnopExprDollarIsSigned;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarIsSigned";
+		return "UnopExprDollarIsSigned";
 	}
 };
 
-class NodeExprUnopDollarRange : public NodeExprUnopBase
+class NodeUnopExprDollarRange : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarRange(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarRange(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarRange);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarRange);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2801,24 +2806,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarRange;
+		return Type::UnopExprDollarRange;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarRange";
+		return "UnopExprDollarRange";
 	}
 };
 
-class NodeExprUnopDollarRevrange : public NodeExprUnopBase
+class NodeUnopExprDollarRevrange : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarRevrange(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarRevrange(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarRevrange);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarRevrange);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2829,24 +2834,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarRevrange;
+		return Type::UnopExprDollarRevrange;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarRevrange";
+		return "UnopExprDollarRevrange";
 	}
 };
 
-class NodeExprUnopDollarSize : public NodeExprUnopBase
+class NodeUnopExprDollarSize : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarSize(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarSize(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarSize);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarSize);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2857,24 +2862,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarSize;
+		return Type::UnopExprDollarSize;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarSize";
+		return "UnopExprDollarSize";
 	}
 };
 
-class NodeExprUnopDollarFirst : public NodeExprUnopBase
+class NodeUnopExprDollarFirst : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarFirst(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarFirst(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarFirst);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarFirst);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2885,24 +2890,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarFirst;
+		return Type::UnopExprDollarFirst;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarFirst";
+		return "UnopExprDollarFirst";
 	}
 };
 
-class NodeExprUnopDollarLast : public NodeExprUnopBase
+class NodeUnopExprDollarLast : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarLast(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarLast(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarLast);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarLast);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2913,24 +2918,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarLast;
+		return Type::UnopExprDollarLast;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarLast";
+		return "UnopExprDollarLast";
 	}
 };
 
-class NodeExprUnopDollarHigh : public NodeExprUnopBase
+class NodeUnopExprDollarHigh : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarHigh(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarHigh(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarHigh);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarHigh);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2941,24 +2946,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarHigh;
+		return Type::UnopExprDollarHigh;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarHigh";
+		return "UnopExprDollarHigh";
 	}
 };
 
-class NodeExprUnopDollarLow : public NodeExprUnopBase
+class NodeUnopExprDollarLow : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarLow(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarLow(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarLow);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarLow);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2969,24 +2974,24 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarLow;
+		return Type::UnopExprDollarLow;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarLow";
+		return "UnopExprDollarLow";
 	}
 };
 
-class NodeExprUnopDollarClog2 : public NodeExprUnopBase
+class NodeUnopExprDollarClog2 : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopDollarClog2(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprDollarClog2(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopDollarClog2);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprDollarClog2);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -2997,26 +3002,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopDollarClog2;
+		return Type::UnopExprDollarClog2;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopDollarClog2";
+		return "UnopExprDollarClog2";
 	}
 };
 
-class NodeExprBinopDollarPow : public NodeExprBinopBase
+class NodeBinopExprDollarPow : public NodeBinopExprBase
 {
 public:		// functions
-	inline NodeExprBinopDollarPow(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBinopExprDollarPow(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
-		: NodeExprBinopBase(s_src_code_chunk,
+		: NodeBinopExprBase(s_src_code_chunk,
 		std::move(s_left),
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprBinopDollarPow);
+	GEN_POST_CONSTRUCTOR(NodeBinopExprDollarPow);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3028,11 +3033,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprBinopDollarPow;
+		return Type::BinopExprDollarPow;
 	}
 	virtual string name() const
 	{
-		return "ExprBinopDollarPow";
+		return "BinopExprDollarPow";
 	}
 };
 
@@ -3205,16 +3210,16 @@ public:		// functions
 	}
 };
 
-class NodeExprUnopTypeof : public NodeExprUnopBase
+class NodeUnopExprTypeof : public NodeUnopExprBase
 {
 public:		// functions
-	inline NodeExprUnopTypeof(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUnopExprTypeof(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_child)
-		: NodeExprUnopBase(s_src_code_chunk,
+		: NodeUnopExprBase(s_src_code_chunk,
 		std::move(s_child))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprUnopTypeof);
+	GEN_POST_CONSTRUCTOR(NodeUnopExprTypeof);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3225,26 +3230,26 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprUnopTypeof;
+		return Type::UnopExprTypeof;
 	}
 	virtual string name() const
 	{
-		return "ExprUnopTypeof";
+		return "UnopExprTypeof";
 	}
 };
 
-class NodeExprCat : public NodeExprBase
+class NodeCatExpr : public NodeExprBase
 {
 protected:		// children
 	Child _list;
 public:		// functions
-	inline NodeExprCat(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeCatExpr(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_list)
 		: NodeExprBase(s_src_code_chunk),
 		_list(std::move(s_list))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprCat);
+	GEN_POST_CONSTRUCTOR(NodeCatExpr);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3255,11 +3260,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprCat;
+		return Type::CatExpr;
 	}
 	virtual string name() const
 	{
-		return "ExprCat";
+		return "CatExpr";
 	}
 	GEN_GETTER_BY_CON_REF(list)
 	GEN_SETTER_BY_RVAL_REF(list)
@@ -3302,13 +3307,13 @@ public:		// functions
 	}
 };
 
-class NodeExprRepl : public NodeExprBase
+class NodeReplExpr : public NodeExprBase
 {
 protected:		// children
 	Child _how_much_expr,
 		_to_repl_expr;
 public:		// functions
-	inline NodeExprRepl(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeReplExpr(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_how_much_expr,
 		Child&& s_to_repl_expr)
 		: NodeExprBase(s_src_code_chunk),
@@ -3316,7 +3321,7 @@ public:		// functions
 		_to_repl_expr(std::move(s_to_repl_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprRepl);
+	GEN_POST_CONSTRUCTOR(NodeReplExpr);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3328,11 +3333,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprRepl;
+		return Type::ReplExpr;
 	}
 	virtual string name() const
 	{
-		return "ExprRepl";
+		return "ReplExpr";
 	}
 	GEN_GETTER_BY_CON_REF(how_much_expr)
 	GEN_SETTER_BY_RVAL_REF(how_much_expr)
@@ -3340,18 +3345,18 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(to_repl_expr)
 };
 
-class NodeExprRangeAny : public NodeExprBase
+class NodeRangeExprAny : public NodeExprBase
 {
 protected:		// children
 	Child _which_range;
 public:		// functions
-	inline NodeExprRangeAny(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeRangeExprAny(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_which_range)
 		: NodeExprBase(s_src_code_chunk),
 		_which_range(std::move(s_which_range))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeExprRangeAny);
+	GEN_POST_CONSTRUCTOR(NodeRangeExprAny);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3362,11 +3367,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::ExprRangeAny;
+		return Type::RangeExprAny;
 	}
 	virtual string name() const
 	{
-		return "ExprRangeAny";
+		return "RangeExprAny";
 	}
 	GEN_GETTER_BY_CON_REF(which_range)
 	GEN_SETTER_BY_RVAL_REF(which_range)
@@ -3472,14 +3477,14 @@ public:		// functions
 	}
 };
 
-class NodeStmtAnyFor : public NodeBase
+class NodeAnyForStmt : public NodeBase
 {
 protected:		// children
 	Child _var,
 		_items,
 		_scope;
 public:		// functions
-	inline NodeStmtAnyFor(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeAnyForStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_var,
 		Child&& s_items,
 		Child&& s_scope)
@@ -3489,7 +3494,7 @@ public:		// functions
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAnyFor);
+	GEN_POST_CONSTRUCTOR(NodeAnyForStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3502,11 +3507,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtAnyFor;
+		return Type::AnyForStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtAnyFor";
+		return "AnyForStmt";
 	}
 	GEN_GETTER_BY_CON_REF(var)
 	GEN_SETTER_BY_RVAL_REF(var)
@@ -3516,20 +3521,20 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtFor : public NodeStmtAnyFor
+class NodeForStmt : public NodeAnyForStmt
 {
 public:		// functions
-	inline NodeStmtFor(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeForStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_var,
 		Child&& s_items,
 		Child&& s_scope)
-		: NodeStmtAnyFor(s_src_code_chunk,
+		: NodeAnyForStmt(s_src_code_chunk,
 		std::move(s_var),
 		std::move(s_items),
 		std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtFor);
+	GEN_POST_CONSTRUCTOR(NodeForStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3542,32 +3547,32 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtFor;
+		return Type::ForStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtFor";
+		return "ForStmt";
 	}
 };
 
-class NodeStmtGenerateFor : public NodeStmtAnyFor
+class NodeGenerateForStmt : public NodeAnyForStmt
 {
 protected:		// children
 	Child _label;
 public:		// functions
-	inline NodeStmtGenerateFor(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeGenerateForStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_label,
 		Child&& s_var,
 		Child&& s_items,
 		Child&& s_scope)
-		: NodeStmtAnyFor(s_src_code_chunk,
+		: NodeAnyForStmt(s_src_code_chunk,
 		std::move(s_var),
 		std::move(s_items),
 		std::move(s_scope)),
 		_label(std::move(s_label))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtGenerateFor);
+	GEN_POST_CONSTRUCTOR(NodeGenerateForStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3581,101 +3586,101 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtGenerateFor;
+		return Type::GenerateForStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtGenerateFor";
+		return "GenerateForStmt";
 	}
 	GEN_GETTER_BY_CON_REF(label)
 	GEN_SETTER_BY_RVAL_REF(label)
 };
 
-class NodeStmtIf : public NodeBase
+class NodeIfStmt : public NodeBase
 {
 protected:		// children
 	Child _cond_expr,
 		_scope,
-		_stmt_else;
+		_else_stmt;
 public:		// functions
-	inline NodeStmtIf(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeIfStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_scope,
-		Child&& s_stmt_else)
+		Child&& s_else_stmt)
 		: NodeBase(s_src_code_chunk),
 		_cond_expr(std::move(s_cond_expr)),
 		_scope(std::move(s_scope)),
-		_stmt_else(std::move(s_stmt_else))
+		_else_stmt(std::move(s_else_stmt))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtIf);
+	GEN_POST_CONSTRUCTOR(NodeIfStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_else\n(", stmt_else()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:else_stmt\n(", else_stmt()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::StmtIf;
+		return Type::IfStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtIf";
+		return "IfStmt";
 	}
 	GEN_GETTER_BY_CON_REF(cond_expr)
 	GEN_SETTER_BY_RVAL_REF(cond_expr)
 	GEN_GETTER_BY_CON_REF(scope)
 	GEN_SETTER_BY_RVAL_REF(scope)
-	GEN_GETTER_BY_CON_REF(stmt_else)
-	GEN_SETTER_BY_RVAL_REF(stmt_else)
+	GEN_GETTER_BY_CON_REF(else_stmt)
+	GEN_SETTER_BY_RVAL_REF(else_stmt)
 };
 
-class NodeStmtGenerateIf : public NodeStmtIf
+class NodeGenerateIfStmt : public NodeIfStmt
 {
 public:		// functions
-	inline NodeStmtGenerateIf(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeGenerateIfStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_scope,
-		Child&& s_stmt_else)
-		: NodeStmtIf(s_src_code_chunk,
+		Child&& s_else_stmt)
+		: NodeIfStmt(s_src_code_chunk,
 		std::move(s_cond_expr),
 		std::move(s_scope),
-		std::move(s_stmt_else))
+		std::move(s_else_stmt))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtGenerateIf);
+	GEN_POST_CONSTRUCTOR(NodeGenerateIfStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
 		ret += name() + "\n(";
 		ret += sconcat("  child:cond_expr\n(", cond_expr()->dbg_to_string(), "\n)\n");
 		ret += sconcat("  child:scope\n(", scope()->dbg_to_string(), "\n)\n");
-		ret += sconcat("  child:stmt_else\n(", stmt_else()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:else_stmt\n(", else_stmt()->dbg_to_string(), "\n)\n");
 		ret += ")";
 		return ret;
 	}
 	virtual Type type() const
 	{
-		return Type::StmtGenerateIf;
+		return Type::GenerateIfStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtGenerateIf";
+		return "GenerateIfStmt";
 	}
 };
 
-class NodeStmtWhile : public NodeBase
+class NodeWhileStmt : public NodeBase
 {
 protected:		// children
 	Child _cond_expr,
 		_scope;
 public:		// functions
-	inline NodeStmtWhile(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeWhileStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_cond_expr,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
@@ -3683,7 +3688,7 @@ public:		// functions
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtWhile);
+	GEN_POST_CONSTRUCTOR(NodeWhileStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3695,11 +3700,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtWhile;
+		return Type::WhileStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtWhile";
+		return "WhileStmt";
 	}
 	GEN_GETTER_BY_CON_REF(cond_expr)
 	GEN_SETTER_BY_RVAL_REF(cond_expr)
@@ -3707,10 +3712,10 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtBehavAssign : public NodeLeftRightBase
+class NodeBehavAssignStmt : public NodeLeftRightBase
 {
 public:		// functions
-	inline NodeStmtBehavAssign(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeBehavAssignStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
 		: NodeLeftRightBase(s_src_code_chunk,
@@ -3718,7 +3723,7 @@ public:		// functions
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtBehavAssign);
+	GEN_POST_CONSTRUCTOR(NodeBehavAssignStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3730,18 +3735,18 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtBehavAssign;
+		return Type::BehavAssignStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtBehavAssign";
+		return "BehavAssignStmt";
 	}
 };
 
-class NodeStmtContAssign : public NodeLeftRightBase
+class NodeContAssignStmt : public NodeLeftRightBase
 {
 public:		// functions
-	inline NodeStmtContAssign(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeContAssignStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
 		: NodeLeftRightBase(s_src_code_chunk,
@@ -3749,7 +3754,7 @@ public:		// functions
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtContAssign);
+	GEN_POST_CONSTRUCTOR(NodeContAssignStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3761,22 +3766,22 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtContAssign;
+		return Type::ContAssignStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtContAssign";
+		return "ContAssignStmt";
 	}
 };
 
-class NodeStmtMemberAccessPublic : public NodeBase
+class NodeMemberAccessPublicStmt : public NodeBase
 {
 public:		// functions
-	inline NodeStmtMemberAccessPublic(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeMemberAccessPublicStmt(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessPublic);
+	GEN_POST_CONSTRUCTOR(NodeMemberAccessPublicStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3786,22 +3791,22 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtMemberAccessPublic;
+		return Type::MemberAccessPublicStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtMemberAccessPublic";
+		return "MemberAccessPublicStmt";
 	}
 };
 
-class NodeStmtMemberAccessProtected : public NodeBase
+class NodeMemberAccessProtectedStmt : public NodeBase
 {
 public:		// functions
-	inline NodeStmtMemberAccessProtected(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeMemberAccessProtectedStmt(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessProtected);
+	GEN_POST_CONSTRUCTOR(NodeMemberAccessProtectedStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3811,22 +3816,22 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtMemberAccessProtected;
+		return Type::MemberAccessProtectedStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtMemberAccessProtected";
+		return "MemberAccessProtectedStmt";
 	}
 };
 
-class NodeStmtMemberAccessPrivate : public NodeBase
+class NodeMemberAccessPrivateStmt : public NodeBase
 {
 public:		// functions
-	inline NodeStmtMemberAccessPrivate(const SrcCodeChunk& s_src_code_chunk)
+	inline NodeMemberAccessPrivateStmt(const SrcCodeChunk& s_src_code_chunk)
 		: NodeBase(s_src_code_chunk)
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtMemberAccessPrivate);
+	GEN_POST_CONSTRUCTOR(NodeMemberAccessPrivateStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3836,21 +3841,21 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtMemberAccessPrivate;
+		return Type::MemberAccessPrivateStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtMemberAccessPrivate";
+		return "MemberAccessPrivateStmt";
 	}
 };
 
-class NodeStmtSwitch : public NodeBase
+class NodeSwitchStmt : public NodeBase
 {
 protected:		// children
 	Child _expr,
 		_scope;
 public:		// functions
-	inline NodeStmtSwitch(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeSwitchStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
@@ -3858,7 +3863,7 @@ public:		// functions
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtSwitch);
+	GEN_POST_CONSTRUCTOR(NodeSwitchStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3870,11 +3875,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtSwitch;
+		return Type::SwitchStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtSwitch";
+		return "SwitchStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
@@ -3882,18 +3887,18 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtSwitchz : public NodeStmtSwitch
+class NodeSwitchzStmt : public NodeSwitchStmt
 {
 public:		// functions
-	inline NodeStmtSwitchz(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeSwitchzStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr,
 		Child&& s_scope)
-		: NodeStmtSwitch(s_src_code_chunk,
+		: NodeSwitchStmt(s_src_code_chunk,
 		std::move(s_expr),
 		std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtSwitchz);
+	GEN_POST_CONSTRUCTOR(NodeSwitchzStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3905,21 +3910,21 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtSwitchz;
+		return Type::SwitchzStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtSwitchz";
+		return "SwitchzStmt";
 	}
 };
 
-class NodeStmtCase : public NodeBase
+class NodeExprCaseItem : public NodeBase
 {
 protected:		// children
 	Child _expr,
 		_scope;
 public:		// functions
-	inline NodeStmtCase(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeExprCaseItem(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
@@ -3927,7 +3932,7 @@ public:		// functions
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtCase);
+	GEN_POST_CONSTRUCTOR(NodeExprCaseItem);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3939,11 +3944,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtCase;
+		return Type::ExprCaseItem;
 	}
 	virtual string name() const
 	{
-		return "StmtCase";
+		return "ExprCaseItem";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
@@ -3951,18 +3956,18 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtDefault : public NodeBase
+class NodeDefaultCaseItem : public NodeBase
 {
 protected:		// children
 	Child _scope;
 public:		// functions
-	inline NodeStmtDefault(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeDefaultCaseItem(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtDefault);
+	GEN_POST_CONSTRUCTOR(NodeDefaultCaseItem);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -3973,11 +3978,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtDefault;
+		return Type::DefaultCaseItem;
 	}
 	virtual string name() const
 	{
-		return "StmtDefault";
+		return "DefaultCaseItem";
 	}
 	GEN_GETTER_BY_CON_REF(scope)
 	GEN_SETTER_BY_RVAL_REF(scope)
@@ -4020,10 +4025,10 @@ public:		// functions
 	}
 };
 
-class NodeStmtUsing : public NodeLeftRightBase
+class NodeUsingStmt : public NodeLeftRightBase
 {
 public:		// functions
-	inline NodeStmtUsing(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeUsingStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_left,
 		Child&& s_right)
 		: NodeLeftRightBase(s_src_code_chunk,
@@ -4031,7 +4036,7 @@ public:		// functions
 		std::move(s_right))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtUsing);
+	GEN_POST_CONSTRUCTOR(NodeUsingStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4043,15 +4048,15 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtUsing;
+		return Type::UsingStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtUsing";
+		return "UsingStmt";
 	}
 };
 
-class NodeStmtInstModule : public NodeBase
+class NodeInstModuleStmt : public NodeBase
 {
 protected:		// children
 	Child _module_ident,
@@ -4059,7 +4064,7 @@ protected:		// children
 		_inst_ident,
 		_arg_inst_list;
 public:		// functions
-	inline NodeStmtInstModule(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeInstModuleStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_module_ident,
 		Child&& s_param_inst_list,
 		Child&& s_inst_ident,
@@ -4071,7 +4076,7 @@ public:		// functions
 		_arg_inst_list(std::move(s_arg_inst_list))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtInstModule);
+	GEN_POST_CONSTRUCTOR(NodeInstModuleStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4085,11 +4090,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtInstModule;
+		return Type::InstModuleStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtInstModule";
+		return "InstModuleStmt";
 	}
 	GEN_GETTER_BY_CON_REF(module_ident)
 	GEN_SETTER_BY_RVAL_REF(module_ident)
@@ -4101,18 +4106,18 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(arg_inst_list)
 };
 
-class NodeStmtReturn : public NodeBase
+class NodeReturnStmt : public NodeBase
 {
 protected:		// children
 	Child _expr;
 public:		// functions
-	inline NodeStmtReturn(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeReturnStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtReturn);
+	GEN_POST_CONSTRUCTOR(NodeReturnStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4123,28 +4128,66 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtReturn;
+		return Type::ReturnStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtReturn";
+		return "ReturnStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
-class NodeStmtInitial : public NodeBase
+class NodeDollarResizeStmt : public NodeBase
+{
+protected:		// children
+	Child _ident_etc,
+		_expr;
+public:		// functions
+	inline NodeDollarResizeStmt(const SrcCodeChunk& s_src_code_chunk,
+		Child&& s_ident_etc,
+		Child&& s_expr)
+		: NodeBase(s_src_code_chunk),
+		_ident_etc(std::move(s_ident_etc)),
+		_expr(std::move(s_expr))
+	{
+	}
+	GEN_POST_CONSTRUCTOR(NodeDollarResizeStmt);
+	virtual string dbg_to_string() const
+	{
+		string ret;
+		ret += name() + "\n(";
+		ret += sconcat("  child:ident_etc\n(", ident_etc()->dbg_to_string(), "\n)\n");
+		ret += sconcat("  child:expr\n(", expr()->dbg_to_string(), "\n)\n");
+		ret += ")";
+		return ret;
+	}
+	virtual Type type() const
+	{
+		return Type::DollarResizeStmt;
+	}
+	virtual string name() const
+	{
+		return "DollarResizeStmt";
+	}
+	GEN_GETTER_BY_CON_REF(ident_etc)
+	GEN_SETTER_BY_RVAL_REF(ident_etc)
+	GEN_GETTER_BY_CON_REF(expr)
+	GEN_SETTER_BY_RVAL_REF(expr)
+};
+
+class NodeInitialBlock : public NodeBase
 {
 protected:		// children
 	Child _scope;
 public:		// functions
-	inline NodeStmtInitial(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeInitialBlock(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtInitial);
+	GEN_POST_CONSTRUCTOR(NodeInitialBlock);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4155,28 +4198,28 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtInitial;
+		return Type::InitialBlock;
 	}
 	virtual string name() const
 	{
-		return "StmtInitial";
+		return "InitialBlock";
 	}
 	GEN_GETTER_BY_CON_REF(scope)
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtAlwaysComb : public NodeBase
+class NodeAlwaysCombBlock : public NodeBase
 {
 protected:		// children
 	Child _scope;
 public:		// functions
-	inline NodeStmtAlwaysComb(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeAlwaysCombBlock(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysComb);
+	GEN_POST_CONSTRUCTOR(NodeAlwaysCombBlock);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4187,23 +4230,23 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtAlwaysComb;
+		return Type::AlwaysCombBlock;
 	}
 	virtual string name() const
 	{
-		return "StmtAlwaysComb";
+		return "AlwaysCombBlock";
 	}
 	GEN_GETTER_BY_CON_REF(scope)
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtAlwaysBlk : public NodeBase
+class NodeAlwaysBlkBlock : public NodeBase
 {
 protected:		// children
 	Child _edge_list,
 		_scope;
 public:		// functions
-	inline NodeStmtAlwaysBlk(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeAlwaysBlkBlock(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_edge_list,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
@@ -4211,7 +4254,7 @@ public:		// functions
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysBlk);
+	GEN_POST_CONSTRUCTOR(NodeAlwaysBlkBlock);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4223,11 +4266,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtAlwaysBlk;
+		return Type::AlwaysBlkBlock;
 	}
 	virtual string name() const
 	{
-		return "StmtAlwaysBlk";
+		return "AlwaysBlkBlock";
 	}
 	GEN_GETTER_BY_CON_REF(edge_list)
 	GEN_SETTER_BY_RVAL_REF(edge_list)
@@ -4235,13 +4278,13 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtAlwaysFf : public NodeBase
+class NodeAlwaysFfBlock : public NodeBase
 {
 protected:		// children
 	Child _edge_list,
 		_scope;
 public:		// functions
-	inline NodeStmtAlwaysFf(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeAlwaysFfBlock(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_edge_list,
 		Child&& s_scope)
 		: NodeBase(s_src_code_chunk),
@@ -4249,7 +4292,7 @@ public:		// functions
 		_scope(std::move(s_scope))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAlwaysFf);
+	GEN_POST_CONSTRUCTOR(NodeAlwaysFfBlock);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4261,11 +4304,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtAlwaysFf;
+		return Type::AlwaysFfBlock;
 	}
 	virtual string name() const
 	{
-		return "StmtAlwaysFf";
+		return "AlwaysFfBlock";
 	}
 	GEN_GETTER_BY_CON_REF(edge_list)
 	GEN_SETTER_BY_RVAL_REF(edge_list)
@@ -4273,18 +4316,18 @@ public:		// functions
 	GEN_SETTER_BY_RVAL_REF(scope)
 };
 
-class NodeStmtAssert : public NodeBase
+class NodeAssertStmt : public NodeBase
 {
 protected:		// children
 	Child _expr;
 public:		// functions
-	inline NodeStmtAssert(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeAssertStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAssert);
+	GEN_POST_CONSTRUCTOR(NodeAssertStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4295,28 +4338,28 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtAssert;
+		return Type::AssertStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtAssert";
+		return "AssertStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
-class NodeStmtAssume : public NodeBase
+class NodeAssumeStmt : public NodeBase
 {
 protected:		// children
 	Child _expr;
 public:		// functions
-	inline NodeStmtAssume(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeAssumeStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtAssume);
+	GEN_POST_CONSTRUCTOR(NodeAssumeStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4327,28 +4370,28 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtAssume;
+		return Type::AssumeStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtAssume";
+		return "AssumeStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
-class NodeStmtCover : public NodeBase
+class NodeCoverStmt : public NodeBase
 {
 protected:		// children
 	Child _expr;
 public:		// functions
-	inline NodeStmtCover(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeCoverStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtCover);
+	GEN_POST_CONSTRUCTOR(NodeCoverStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4359,28 +4402,28 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtCover;
+		return Type::CoverStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtCover";
+		return "CoverStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
-class NodeStmtRestrict : public NodeBase
+class NodeRestrictStmt : public NodeBase
 {
 protected:		// children
 	Child _expr;
 public:		// functions
-	inline NodeStmtRestrict(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeRestrictStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtRestrict);
+	GEN_POST_CONSTRUCTOR(NodeRestrictStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4391,28 +4434,28 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtRestrict;
+		return Type::RestrictStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtRestrict";
+		return "RestrictStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)
 };
 
-class NodeStmtStaticAssert : public NodeBase
+class NodeStaticAssertStmt : public NodeBase
 {
 protected:		// children
 	Child _expr;
 public:		// functions
-	inline NodeStmtStaticAssert(const SrcCodeChunk& s_src_code_chunk,
+	inline NodeStaticAssertStmt(const SrcCodeChunk& s_src_code_chunk,
 		Child&& s_expr)
 		: NodeBase(s_src_code_chunk),
 		_expr(std::move(s_expr))
 	{
 	}
-	GEN_POST_CONSTRUCTOR(NodeStmtStaticAssert);
+	GEN_POST_CONSTRUCTOR(NodeStaticAssertStmt);
 	virtual string dbg_to_string() const
 	{
 		string ret;
@@ -4423,11 +4466,11 @@ public:		// functions
 	}
 	virtual Type type() const
 	{
-		return Type::StmtStaticAssert;
+		return Type::StaticAssertStmt;
 	}
 	virtual string name() const
 	{
-		return "StmtStaticAssert";
+		return "StaticAssertStmt";
 	}
 	GEN_GETTER_BY_CON_REF(expr)
 	GEN_SETTER_BY_RVAL_REF(expr)

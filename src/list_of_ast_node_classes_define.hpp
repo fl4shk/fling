@@ -60,86 +60,87 @@
 	X(NodeNamedParamArgInstList, NamedParamArgInstList) \
 	X(NodeOneParamArgInst, OneParamArgInst) \
 	X(NodeExprBase, ExprBase) \
-	X(NodeExprBinopBase, ExprBinopBase) \
-	X(NodeExprUnopBase, ExprUnopBase) \
-	X(NodeExprBinopLogAnd, ExprBinopLogAnd) \
-	X(NodeExprBinopLogOr, ExprBinopLogOr) \
-	X(NodeExprBinopCmpEq, ExprBinopCmpEq) \
-	X(NodeExprBinopCmpNe, ExprBinopCmpNe) \
-	X(NodeExprBinopCmpLt, ExprBinopCmpLt) \
-	X(NodeExprBinopCmpGt, ExprBinopCmpGt) \
-	X(NodeExprBinopCmpLe, ExprBinopCmpLe) \
-	X(NodeExprBinopCmpGe, ExprBinopCmpGe) \
-	X(NodeExprBinopPlus, ExprBinopPlus) \
-	X(NodeExprBinopMinus, ExprBinopMinus) \
-	X(NodeExprBinopMul, ExprBinopMul) \
-	X(NodeExprBinopDiv, ExprBinopDiv) \
-	X(NodeExprBinopMod, ExprBinopMod) \
-	X(NodeExprBinopBitAnd, ExprBinopBitAnd) \
-	X(NodeExprBinopBitOr, ExprBinopBitOr) \
-	X(NodeExprBinopBitXor, ExprBinopBitXor) \
-	X(NodeExprBinopBitLsl, ExprBinopBitLsl) \
-	X(NodeExprBinopBitLsr, ExprBinopBitLsr) \
-	X(NodeExprBinopBitAsr, ExprBinopBitAsr) \
-	X(NodeExprUnopLogNot, ExprUnopLogNot) \
-	X(NodeExprUnopBitNot, ExprUnopBitNot) \
-	X(NodeExprUnopPlus, ExprUnopPlus) \
-	X(NodeExprUnopMinus, ExprUnopMinus) \
-	X(NodeExprUnopDollarUnsigned, ExprUnopDollarUnsigned) \
-	X(NodeExprUnopDollarSigned, ExprUnopDollarSigned) \
-	X(NodeExprUnopDollarIsUnsigned, ExprUnopDollarIsUnsigned) \
-	X(NodeExprUnopDollarIsSigned, ExprUnopDollarIsSigned) \
-	X(NodeExprUnopDollarRange, ExprUnopDollarRange) \
-	X(NodeExprUnopDollarRevrange, ExprUnopDollarRevrange) \
-	X(NodeExprUnopDollarSize, ExprUnopDollarSize) \
-	X(NodeExprUnopDollarFirst, ExprUnopDollarFirst) \
-	X(NodeExprUnopDollarLast, ExprUnopDollarLast) \
-	X(NodeExprUnopDollarHigh, ExprUnopDollarHigh) \
-	X(NodeExprUnopDollarLow, ExprUnopDollarLow) \
-	X(NodeExprUnopDollarClog2, ExprUnopDollarClog2) \
-	X(NodeExprBinopDollarPow, ExprBinopDollarPow) \
+	X(NodeBinopExprBase, BinopExprBase) \
+	X(NodeUnopExprBase, UnopExprBase) \
+	X(NodeBinopExprLogAnd, BinopExprLogAnd) \
+	X(NodeBinopExprLogOr, BinopExprLogOr) \
+	X(NodeBinopExprCmpEq, BinopExprCmpEq) \
+	X(NodeBinopExprCmpNe, BinopExprCmpNe) \
+	X(NodeBinopExprCmpLt, BinopExprCmpLt) \
+	X(NodeBinopExprCmpGt, BinopExprCmpGt) \
+	X(NodeBinopExprCmpLe, BinopExprCmpLe) \
+	X(NodeBinopExprCmpGe, BinopExprCmpGe) \
+	X(NodeBinopExprPlus, BinopExprPlus) \
+	X(NodeBinopExprMinus, BinopExprMinus) \
+	X(NodeBinopExprMul, BinopExprMul) \
+	X(NodeBinopExprDiv, BinopExprDiv) \
+	X(NodeBinopExprMod, BinopExprMod) \
+	X(NodeBinopExprBitAnd, BinopExprBitAnd) \
+	X(NodeBinopExprBitOr, BinopExprBitOr) \
+	X(NodeBinopExprBitXor, BinopExprBitXor) \
+	X(NodeBinopExprBitLsl, BinopExprBitLsl) \
+	X(NodeBinopExprBitLsr, BinopExprBitLsr) \
+	X(NodeBinopExprBitAsr, BinopExprBitAsr) \
+	X(NodeUnopExprLogNot, UnopExprLogNot) \
+	X(NodeUnopExprBitNot, UnopExprBitNot) \
+	X(NodeUnopExprPlus, UnopExprPlus) \
+	X(NodeUnopExprMinus, UnopExprMinus) \
+	X(NodeUnopExprDollarUnsigned, UnopExprDollarUnsigned) \
+	X(NodeUnopExprDollarSigned, UnopExprDollarSigned) \
+	X(NodeUnopExprDollarIsUnsigned, UnopExprDollarIsUnsigned) \
+	X(NodeUnopExprDollarIsSigned, UnopExprDollarIsSigned) \
+	X(NodeUnopExprDollarRange, UnopExprDollarRange) \
+	X(NodeUnopExprDollarRevrange, UnopExprDollarRevrange) \
+	X(NodeUnopExprDollarSize, UnopExprDollarSize) \
+	X(NodeUnopExprDollarFirst, UnopExprDollarFirst) \
+	X(NodeUnopExprDollarLast, UnopExprDollarLast) \
+	X(NodeUnopExprDollarHigh, UnopExprDollarHigh) \
+	X(NodeUnopExprDollarLow, UnopExprDollarLow) \
+	X(NodeUnopExprDollarClog2, UnopExprDollarClog2) \
+	X(NodeBinopExprDollarPow, BinopExprDollarPow) \
 	X(NodePseudoExprDollarBase, PseudoExprDollarBase) \
 	X(NodePseudoExprDollarPast, PseudoExprDollarPast) \
 	X(NodePseudoExprDollarStable, PseudoExprDollarStable) \
 	X(NodePseudoExprDollarRose, PseudoExprDollarRose) \
 	X(NodePseudoExprDollarFell, PseudoExprDollarFell) \
 	X(NodePseudoExprDollarGlobalClock, PseudoExprDollarGlobalClock) \
-	X(NodeExprUnopTypeof, ExprUnopTypeof) \
-	X(NodeExprCat, ExprCat) \
+	X(NodeUnopExprTypeof, UnopExprTypeof) \
+	X(NodeCatExpr, CatExpr) \
 	X(NodeListCat, ListCat) \
-	X(NodeExprRepl, ExprRepl) \
-	X(NodeExprRangeAny, ExprRangeAny) \
+	X(NodeReplExpr, ReplExpr) \
+	X(NodeRangeExprAny, RangeExprAny) \
 	X(NodeRangeOne, RangeOne) \
 	X(NodeRangeTwo, RangeTwo) \
 	X(NodeStmtList, StmtList) \
-	X(NodeStmtAnyFor, StmtAnyFor) \
-	X(NodeStmtFor, StmtFor) \
-	X(NodeStmtGenerateFor, StmtGenerateFor) \
-	X(NodeStmtIf, StmtIf) \
-	X(NodeStmtGenerateIf, StmtGenerateIf) \
-	X(NodeStmtWhile, StmtWhile) \
-	X(NodeStmtBehavAssign, StmtBehavAssign) \
-	X(NodeStmtContAssign, StmtContAssign) \
-	X(NodeStmtMemberAccessPublic, StmtMemberAccessPublic) \
-	X(NodeStmtMemberAccessProtected, StmtMemberAccessProtected) \
-	X(NodeStmtMemberAccessPrivate, StmtMemberAccessPrivate) \
-	X(NodeStmtSwitch, StmtSwitch) \
-	X(NodeStmtSwitchz, StmtSwitchz) \
-	X(NodeStmtCase, StmtCase) \
-	X(NodeStmtDefault, StmtDefault) \
+	X(NodeAnyForStmt, AnyForStmt) \
+	X(NodeForStmt, ForStmt) \
+	X(NodeGenerateForStmt, GenerateForStmt) \
+	X(NodeIfStmt, IfStmt) \
+	X(NodeGenerateIfStmt, GenerateIfStmt) \
+	X(NodeWhileStmt, WhileStmt) \
+	X(NodeBehavAssignStmt, BehavAssignStmt) \
+	X(NodeContAssignStmt, ContAssignStmt) \
+	X(NodeMemberAccessPublicStmt, MemberAccessPublicStmt) \
+	X(NodeMemberAccessProtectedStmt, MemberAccessProtectedStmt) \
+	X(NodeMemberAccessPrivateStmt, MemberAccessPrivateStmt) \
+	X(NodeSwitchStmt, SwitchStmt) \
+	X(NodeSwitchzStmt, SwitchzStmt) \
+	X(NodeExprCaseItem, ExprCaseItem) \
+	X(NodeDefaultCaseItem, DefaultCaseItem) \
 	X(NodeScopeSwitch, ScopeSwitch) \
-	X(NodeStmtUsing, StmtUsing) \
-	X(NodeStmtInstModule, StmtInstModule) \
-	X(NodeStmtReturn, StmtReturn) \
-	X(NodeStmtInitial, StmtInitial) \
-	X(NodeStmtAlwaysComb, StmtAlwaysComb) \
-	X(NodeStmtAlwaysBlk, StmtAlwaysBlk) \
-	X(NodeStmtAlwaysFf, StmtAlwaysFf) \
-	X(NodeStmtAssert, StmtAssert) \
-	X(NodeStmtAssume, StmtAssume) \
-	X(NodeStmtCover, StmtCover) \
-	X(NodeStmtRestrict, StmtRestrict) \
-	X(NodeStmtStaticAssert, StmtStaticAssert) \
+	X(NodeUsingStmt, UsingStmt) \
+	X(NodeInstModuleStmt, InstModuleStmt) \
+	X(NodeReturnStmt, ReturnStmt) \
+	X(NodeDollarResizeStmt, DollarResizeStmt) \
+	X(NodeInitialBlock, InitialBlock) \
+	X(NodeAlwaysCombBlock, AlwaysCombBlock) \
+	X(NodeAlwaysBlkBlock, AlwaysBlkBlock) \
+	X(NodeAlwaysFfBlock, AlwaysFfBlock) \
+	X(NodeAssertStmt, AssertStmt) \
+	X(NodeAssumeStmt, AssumeStmt) \
+	X(NodeCoverStmt, CoverStmt) \
+	X(NodeRestrictStmt, RestrictStmt) \
+	X(NodeStaticAssertStmt, StaticAssertStmt) \
 	X(NodePosedgeInst, PosedgeInst) \
 	X(NodeNegedgeInst, NegedgeInst) \
 	X(NodeEdgeList, EdgeList) \

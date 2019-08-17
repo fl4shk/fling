@@ -78,21 +78,25 @@ generate_package_for:
 	;
 
 member_callable_prefix:
-	TokKwConst
-	| (TokKwConst TokKwVirtual)
-	| (TokKwConst TokKwStatic)
-	| (TokKwConst TokKwVirtual TokKwStatic)
-	| (TokKwConst TokKwStatic TokKwVirtual)
-	| TokKwVirtual
-	| (TokKwVirtual TokKwConst)
-	| (TokKwVirtual TokKwStatic)
-	| (TokKwVirtual TokKwConst TokKwStatic)
-	| (TokKwVirtual TokKwStatic TokKwConst)
-	| TokKwStatic
-	| (TokKwStatic TokKwConst)
-	| (TokKwStatic TokKwVirtual)
-	| (TokKwStatic TokKwConst TokKwVirtual)
-	| (TokKwStatic TokKwVirtual TokKwConst)
+	non_ref_member_callable_prefix*
+	| (kw_virtual kw_ref)
+	| (kw_ref kw_virtual)
+	| kw_ref
+	;
+non_ref_member_callable_prefix:
+	kw_const | kw_virtual | kw_static
+	;
+kw_const:
+	'const'
+	;
+kw_virtual:
+	'virtual'
+	;
+kw_static:
+	'static'
+	;
+kw_ref:
+	'ref'
 	;
 
 contents_modproc:
@@ -113,7 +117,7 @@ proc_ident_etc:
 	(ident | kw_port | const_str)
 	;
 kw_port:
-	TokKwPort
+	'port'
 	;
 
 scope_modproc:
@@ -287,13 +291,13 @@ scope_switch:
 	'}'
 	;
 scope_switch_item:
-	case_stmt
-	| default_stmt
+	expr_case_item
+	| default_case_item
 	;
-case_stmt:
+expr_case_item:
 	'case' expr ':' scope_behav_item
 	;
-default_stmt:
+default_case_item:
 	'default' ':' scope_behav_item
 	;
 
@@ -542,7 +546,7 @@ named_pararg_inst_list:
 	(',' named_pararg_inst_list_item)*
 	;
 named_pararg_inst_list_item:
-	'.' ident '(' expr ')'
+	ident '(' expr ')'
 	;
 
 typename:
@@ -842,6 +846,7 @@ TokKwPort: 'port' ;
 TokKwConst: 'const' ;
 TokKwVirtual: 'virtual' ;
 TokKwStatic: 'static' ;
+TokKwRef: 'ref' ;
 
 TokKwFunc: 'func' ;
 TokKwTask: 'task' ;

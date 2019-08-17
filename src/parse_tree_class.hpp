@@ -9,16 +9,7 @@
 namespace frost_hdl
 {
 
-class ParseTree final : public ParseTreeBase<SrcCodeChunk, Tok>
-{
-public:		// functions
-	inline ParseTree(const SrcCodeChunk& s_src_code_chunk)
-		: ParseTreeBase<SrcCodeChunk, Tok>(s_src_code_chunk)
-	{
-	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ParseTree);
-	inline ~ParseTree() = default;
-};
+using ParseTree = ParseTreeBase<SrcCodeChunk, Tok>;
 
 } // namespace frost_hdl
 

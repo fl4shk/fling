@@ -190,309 +190,7 @@ void AstGen::run()
 	{
 		for (const auto& node : _node_vec)
 		{
-			osprintout(f, "class Node", node.ident);
-			if (node.extends.size() != 0)
-			{
-				osprintout(f, " : public Node", node.extends);
-			}
-			else
-			{
-				osprintout(f, " : public NodeBase");
-			}
-			osprintout(f, "\n");
-			osprintout(f, "{\n");
-
-			if (node.var_vec.size() != 0)
-			{
-				bool start = true, was_protected = false;
-
-				for (const auto& var : node.var_vec)
-				{
-					if (start)
-					{
-						if (var.is_protected())
-						{
-							osprintout(f, "protected:\t\t// variables\n");
-						}
-						else // if (!var.is_protected())
-						{
-							osprintout(f, "public:\t\t// variables\n");
-						}
-						start = false;
-					}
-					else // if (!start)
-					{
-						if (var.is_protected() != was_protected)
-						{
-							if (var.is_protected())
-							{
-								osprintout(f, "protected:\t\t// ",
-									"variables\n");
-							}
-							else // if (!var.is_protected())
-							{
-								osprintout(f, "public:\t\t// variables\n");
-							}
-						}
-					}
-					osprintout(f, "\t", var.type, " ", var.ident, ";\n");
-
-					was_protected = var.is_protected();
-				}
-			}
-			if (node.children.size() != 0)
-			{
-				osprintout(f, "protected:\t\t// children\n");
-
-				osprintout(f, "\tChild ");
-
-				for (size_t i=0; i<node.children.size(); ++i)
-				{
-					osprintout(f, "_", node.children.at(i));
-					if ((i + 1) != node.children.size())
-					{
-						osprintout(f, ",\n\t\t");
-					}
-					else
-					{
-						osprintout(f, ";\n");
-					}
-				}
-			}
-
-			const auto ext_children = _extended_children(node);
-			const auto ext_var_vec = _extended_var_vec(node);
-			std::vector<string> ext_only_children;
-			std::vector<Var> own_init_vec, ext_init_vec, ext_only_init_vec;
-
-			for (size_t i=node.children.size(); i<ext_children.size(); ++i)
-			{
-				ext_only_children.push_back(ext_children.at(i));
-			}
-
-			for (const auto& var : node.var_vec)
-			{
-				if (var.init)
-				{
-					own_init_vec.push_back(var);
-				}
-			}
-			for (const auto& var : ext_var_vec)
-			{
-				if (var.init)
-				{
-					ext_init_vec.push_back(var);
-				}
-			}
-			for (size_t i=node.var_vec.size(); i<ext_var_vec.size(); ++i)
-			{
-				const auto& var = ext_var_vec.at(i);
-				if (var.init)
-				{
-					ext_only_init_vec.push_back(var);
-				}
-			}
-
-			osprintout(f, "public:\t\t// functions\n");
-			osprintout(f, "\tinline Node", node.ident, "(const ",
-				"SrcCodeChunk& s_src_code_chunk");
-			//--------
-			// Var args
-			if (ext_init_vec.size() != 0)
-			{
-				osprintout(f, ",\n\t\t");
-				for (size_t i=0; i<ext_init_vec.size(); ++i)
-				{
-					const auto& var = ext_init_vec.at(i);
-					osprintout(f, "const ", var.type, "& ");
-
-					osprintout(f, var.init_ident());
-
-					if ((i + 1) != ext_init_vec.size())
-					{
-						osprintout(f, ",\n\t\t");
-					}
-				}
-			}
-			//--------
-
-			//--------
-			// Child args
-			if (ext_children.size() != 0)
-			{
-				osprintout(f, ",\n\t\t");
-				for (size_t i=0; i<ext_children.size(); ++i)
-				{
-					osprintout(f, "Child&& s_", ext_children.at(i));
-
-					if ((i + 1) != ext_children.size())
-					{
-						osprintout(f, ",\n\t\t");
-					}
-				}
-			}
-			//--------
-
-			osprintout(f, ")\n");
-
-			if (node.extends.size() == 0)
-			{
-				osprintout(f, "\t\t: NodeBase(s_src_code_chunk)");
-			}
-			else if (node.extends == "List")
-			{
-				osprintout(f, "\t\t: NodeList(s_src_code_chunk)");
-			}
-			else
-			{
-				osprintout(f, "\t\t: Node", node.extends,
-					"(s_src_code_chunk");
-
-				if (ext_only_init_vec.size() != 0)
-				{
-					osprintout(f, ",\n\t\t");
-
-					for (size_t i=0; i<ext_only_init_vec.size(); ++i)
-					{
-						const auto& var = ext_only_init_vec.at(i);
-
-						osprintout(f, var.init_ident());
-						if ((i + 1) != ext_only_init_vec.size())
-						{
-							osprintout(f, ",\n\t\t");
-						}
-					}
-				}
-				if (ext_only_children.size() != 0)
-				{
-					osprintout(f, ",\n\t\t");
-
-					for (size_t i=0; i<ext_only_children.size(); ++i)
-					{
-						const auto& child = ext_only_children.at(i);
-
-						osprintout(f, "std::move(s_", child, ")");
-
-						if ((i + 1) != ext_only_children.size())
-						{
-							osprintout(f, ",\n\t\t");
-						}
-					}
-				}
-				osprintout(f, ")");
-			}
-			if (own_init_vec.size() != 0)
-			{
-				osprintout(f, ", ");
-
-				for (size_t i=0; i<own_init_vec.size(); ++i)
-				{
-					const auto& var = own_init_vec.at(i);
-
-					osprintout(f, var.ident, "(", var.init_ident(), ")");
-
-					if ((i + 1) != own_init_vec.size())
-					{
-						osprintout(f, ",\n\t\t");
-					}
-				}
-			}
-			if (node.children.size() != 0)
-			{
-				osprintout(f, ",\n\t\t");
-
-				for (size_t i=0; i<node.children.size(); ++i)
-				{
-					const auto& child = node.children.at(i);
-					osprintout(f,
-						"_", child, "(std::move(s_", child, "))");
-					if ((i + 1) != node.children.size())
-					{
-						osprintout(f, ",\n\t\t");
-					}
-				}
-			}
-			osprintout(f, "\n");
-
-			osprintout(f, "\t{\n");
-
-			osprintout(f, "\t}\n");
-			osprintout(f,
-				"\tGEN_POST_CONSTRUCTOR(Node", node.ident, ");\n");
-			osprintout(f, "\tvirtual string dbg_to_string() const\n",
-				"\t{\n",
-				"\t\tstring ret;\n",
-				"\t\tret += name() + \"\\n(\";\n");
-
-
-			WTab t1(this);
-			WTab t2(&t1);
-			WTab t3(&t2);
-			WTab t4(&t3);
-			for (const auto& iter : ext_var_vec)
-			{
-				osprintout(f,
-					"\t\tret += sconcat(\"  ",
-					iter.ident,
-					"(\", ",
-					iter.ident, ", ",
-					"\")\\n\");\n");
-			}
-			for (const auto& iter : ext_children)
-			{
-				osprintout(f,
-					"\t\tret += sconcat(\"  child:",
-					iter,
-					"\\n(\", ",
-					iter, "()->dbg_to_string(), ",
-					"\"\\n)\\n\");\n");
-			}
-			if (_extends_from_list(node))
-			{
-				osprintout(f,
-					t2.run("ret += \"  list\\n  (\";\n"),
-					t2.run("for (size_t i=0; i<list.size(); ++i)\n"),
-					t2.run("{\n"),
-					t3.run("ret += \"    \";\n"),
-					t3.run("ret += list.at(i)->dbg_to_string();\n"),
-					t3.run("if ((i + 1) < list.size())\n"),
-					t3.run("{\n"),
-					t4.run("ret += \", \";\n"),
-					t3.run("}\n"),
-					t3.run("ret += \"  )\\n\";\n"),
-					t2.run("}\n"),
-					t2.run("ret += \"  )\\n\";\n"));
-			}
-			osprintout(f,
-				"\t\tret += \")\";\n",
-				"\t\treturn ret;\n",
-				"\t}\n");
-
-			osprintout(f,
-				"\tvirtual Type type() const\n",
-				"\t{\n",
-				"\t\treturn Type::", node.ident, ";\n",
-				"\t}\n",
-				"\tvirtual string name() const\n",
-				"\t{\n",
-				"\t\treturn \"", node.ident, "\";\n",
-				"\t}\n");
-
-			for (const auto& var : node.var_vec)
-			{
-				if (var.is_protected())
-				{
-					osprintout(f, "\tGEN_GETTER_AND_SETTER_BY_CON_REF(",
-						var.ident.substr(1), ")\n");
-				}
-			}
-			for (const auto& child : node.children)
-			{
-				osprintout(f, "\tGEN_GETTER_BY_CON_REF(", child, ")\n",
-					"\tGEN_SETTER_BY_RVAL_REF(", child, ")\n");
-			}
-
-			osprintout(f, "};\n\n");
+			_write_node_to_cxx_source_file(f, node);
 		}
 	}
 	rwith(f, std::ofstream("list_of_ast_node_classes_define.hpp"))
@@ -602,6 +300,313 @@ bool AstGen::_extends_from_list(const Node& node) const
 	}
 }
 
+void AstGen::_write_node_to_cxx_source_file(std::ofstream& f,
+	const Node& node)
+{
+	const auto ext_children = _extended_children(node);
+	const auto ext_var_vec = _extended_var_vec(node);
+	std::vector<string> ext_only_children;
+	std::vector<Var> own_init_vec, ext_init_vec, ext_only_init_vec;
+
+	for (size_t i=node.children.size(); i<ext_children.size(); ++i)
+	{
+		ext_only_children.push_back(ext_children.at(i));
+	}
+
+	for (const auto& var : node.var_vec)
+	{
+		if (var.init)
+		{
+			own_init_vec.push_back(var);
+		}
+	}
+	for (const auto& var : ext_var_vec)
+	{
+		if (var.init)
+		{
+			ext_init_vec.push_back(var);
+		}
+	}
+	for (size_t i=node.var_vec.size(); i<ext_var_vec.size(); ++i)
+	{
+		const auto& var = ext_var_vec.at(i);
+		if (var.init)
+		{
+			ext_only_init_vec.push_back(var);
+		}
+	}
+	osprintout(f, "class Node", node.ident);
+	if (node.extends.size() != 0)
+	{
+		osprintout(f, " : public Node", node.extends);
+	}
+	else
+	{
+		osprintout(f, " : public NodeBase");
+	}
+	osprintout(f, "\n");
+	osprintout(f, "{\n");
+
+	if (node.var_vec.size() != 0)
+	{
+		bool start = true, was_protected = false;
+
+		for (const auto& var : node.var_vec)
+		{
+			if (start)
+			{
+				if (var.is_protected())
+				{
+					osprintout(f, "protected:\t\t// variables\n");
+				}
+				else // if (!var.is_protected())
+				{
+					osprintout(f, "public:\t\t// variables\n");
+				}
+				start = false;
+			}
+			else // if (!start)
+			{
+				if (var.is_protected() != was_protected)
+				{
+					if (var.is_protected())
+					{
+						osprintout(f, "protected:\t\t// ",
+							"variables\n");
+					}
+					else // if (!var.is_protected())
+					{
+						osprintout(f, "public:\t\t// variables\n");
+					}
+				}
+			}
+			osprintout(f, "\t", var.type, " ", var.ident, ";\n");
+
+			was_protected = var.is_protected();
+		}
+	}
+	if (node.children.size() != 0)
+	{
+		osprintout(f, "protected:\t\t// children\n");
+
+		osprintout(f, "\tChild ");
+
+		for (size_t i=0; i<node.children.size(); ++i)
+		{
+			osprintout(f, "_", node.children.at(i));
+			if ((i + 1) != node.children.size())
+			{
+				osprintout(f, ",\n\t\t");
+			}
+			else
+			{
+				osprintout(f, ";\n");
+			}
+		}
+	}
+
+
+	osprintout(f, "public:\t\t// functions\n");
+	osprintout(f, "\tinline Node", node.ident, "(const ",
+		"SrcCodeChunk& s_src_code_chunk");
+	//--------
+	// Var args
+	if (ext_init_vec.size() != 0)
+	{
+		osprintout(f, ",\n\t\t");
+		for (size_t i=0; i<ext_init_vec.size(); ++i)
+		{
+			const auto& var = ext_init_vec.at(i);
+			osprintout(f, "const ", var.type, "& ");
+
+			osprintout(f, var.init_ident());
+
+			if ((i + 1) != ext_init_vec.size())
+			{
+				osprintout(f, ",\n\t\t");
+			}
+		}
+	}
+	//--------
+
+	//--------
+	// Child args
+	if (ext_children.size() != 0)
+	{
+		osprintout(f, ",\n\t\t");
+		for (size_t i=0; i<ext_children.size(); ++i)
+		{
+			osprintout(f, "Child&& s_", ext_children.at(i));
+
+			if ((i + 1) != ext_children.size())
+			{
+				osprintout(f, ",\n\t\t");
+			}
+		}
+	}
+	//--------
+
+	osprintout(f, ")\n");
+
+	if (node.extends.size() == 0)
+	{
+		osprintout(f, "\t\t: NodeBase(s_src_code_chunk)");
+	}
+	else if (node.extends == "List")
+	{
+		osprintout(f, "\t\t: NodeList(s_src_code_chunk)");
+	}
+	else
+	{
+		osprintout(f, "\t\t: Node", node.extends,
+			"(s_src_code_chunk");
+
+		if (ext_only_init_vec.size() != 0)
+		{
+			osprintout(f, ",\n\t\t");
+
+			for (size_t i=0; i<ext_only_init_vec.size(); ++i)
+			{
+				const auto& var = ext_only_init_vec.at(i);
+
+				osprintout(f, var.init_ident());
+				if ((i + 1) != ext_only_init_vec.size())
+				{
+					osprintout(f, ",\n\t\t");
+				}
+			}
+		}
+		if (ext_only_children.size() != 0)
+		{
+			osprintout(f, ",\n\t\t");
+
+			for (size_t i=0; i<ext_only_children.size(); ++i)
+			{
+				const auto& child = ext_only_children.at(i);
+
+				osprintout(f, "std::move(s_", child, ")");
+
+				if ((i + 1) != ext_only_children.size())
+				{
+					osprintout(f, ",\n\t\t");
+				}
+			}
+		}
+		osprintout(f, ")");
+	}
+	if (own_init_vec.size() != 0)
+	{
+		osprintout(f, ", ");
+
+		for (size_t i=0; i<own_init_vec.size(); ++i)
+		{
+			const auto& var = own_init_vec.at(i);
+
+			osprintout(f, var.ident, "(", var.init_ident(), ")");
+
+			if ((i + 1) != own_init_vec.size())
+			{
+				osprintout(f, ",\n\t\t");
+			}
+		}
+	}
+	if (node.children.size() != 0)
+	{
+		osprintout(f, ",\n\t\t");
+
+		for (size_t i=0; i<node.children.size(); ++i)
+		{
+			const auto& child = node.children.at(i);
+			osprintout(f,
+				"_", child, "(std::move(s_", child, "))");
+			if ((i + 1) != node.children.size())
+			{
+				osprintout(f, ",\n\t\t");
+			}
+		}
+	}
+	osprintout(f, "\n");
+
+	osprintout(f, "\t{\n");
+
+	osprintout(f, "\t}\n");
+	osprintout(f,
+		"\tGEN_POST_CONSTRUCTOR(Node", node.ident, ");\n");
+	osprintout(f, "\tvirtual string dbg_to_string() const\n",
+		"\t{\n",
+		"\t\tstring ret;\n",
+		"\t\tret += name() + \"\\n(\";\n");
+
+
+	WTab t1(this);
+	WTab t2(&t1);
+	WTab t3(&t2);
+	WTab t4(&t3);
+	for (const auto& iter : ext_var_vec)
+	{
+		osprintout(f,
+			"\t\tret += sconcat(\"  ",
+			iter.ident,
+			"(\", ",
+			iter.ident, ", ",
+			"\")\\n\");\n");
+	}
+	for (const auto& iter : ext_children)
+	{
+		osprintout(f,
+			"\t\tret += sconcat(\"  child:",
+			iter,
+			"\\n(\", ",
+			iter, "()->dbg_to_string(), ",
+			"\"\\n)\\n\");\n");
+	}
+	if (_extends_from_list(node))
+	{
+		osprintout(f,
+			t2.run("ret += \"  list\\n  (\";\n"),
+			t2.run("for (size_t i=0; i<list.size(); ++i)\n"),
+			t2.run("{\n"),
+			t3.run("ret += \"    \";\n"),
+			t3.run("ret += list.at(i)->dbg_to_string();\n"),
+			t3.run("if ((i + 1) < list.size())\n"),
+			t3.run("{\n"),
+			t4.run("ret += \", \";\n"),
+			t3.run("}\n"),
+			t3.run("ret += \"  )\\n\";\n"),
+			t2.run("}\n"),
+			t2.run("ret += \"  )\\n\";\n"));
+	}
+	osprintout(f,
+		"\t\tret += \")\";\n",
+		"\t\treturn ret;\n",
+		"\t}\n");
+
+	osprintout(f,
+		"\tvirtual Type type() const\n",
+		"\t{\n",
+		"\t\treturn Type::", node.ident, ";\n",
+		"\t}\n",
+		"\tvirtual string name() const\n",
+		"\t{\n",
+		"\t\treturn \"", node.ident, "\";\n",
+		"\t}\n");
+
+	for (const auto& var : node.var_vec)
+	{
+		if (var.is_protected())
+		{
+			osprintout(f, "\tGEN_GETTER_AND_SETTER_BY_CON_REF(",
+				var.ident.substr(1), ")\n");
+		}
+	}
+	for (const auto& child : node.children)
+	{
+		osprintout(f, "\tGEN_GETTER_BY_CON_REF(", child, ")\n",
+			"\tGEN_SETTER_BY_RVAL_REF(", child, ")\n");
+	}
+
+	osprintout(f, "};\n\n");
+}
 bool AstGen::_parse_node()
 {
 	if (actual_just_test())

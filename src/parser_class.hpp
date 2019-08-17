@@ -12,44 +12,34 @@
 namespace frost_hdl
 {
 
-class Parser final : public NoStateParserBase<Lexer>, public ErrWarnBase
+class Parser final : public OptAsFuncArgParserBase<Lexer>
 {
 public:		// types
-	using ParseRet = typename NoStateParserBase<Lexer>::ParseRet;
+	using ParseRet = typename OptAsFuncArgParserBase<Lexer>::ParseRet;
 
 private:		// variables
-	ast::NodeBase::Child _ast_root;
-	vector<string> _filename_vec;
+	//ast::NodeBase::Child _ast_root;
+	unique_ptr<ParseTree> _pt_root;
 	size_t _filename_index;
 
 	#define LIST_FOR_GEN_STACK(X) \
-		X(BigNum, cosnt BigNum&, num) \
+		X(BigNum, const BigNum&, num) \
 		X(string, string, str) \
 		X(Tok, Tok, tok) \
 
 	#include "gen_stacks_stuff.hpp"
 	#undef LIST_FOR_GEN_STACK
-	std::stack<ast::NodeBase::Child> _ast_child_stack;
 
-	inline void _push_ast_child(ast::NodeBase::Child&& to_push)
+
+	std::stack<ParseTree> _pt_stack;
+	inline void _push_pt(ParseTree&& to_push)
 	{
-		_ast_child_stack.push(std::move(to_push));
+		_pt_stack.push(std::move(to_push));
 	}
-	template<typename ChildType>
-	inline void _push_ast_child(ChildType&& to_push)
+	inline auto _pop_pt()
 	{
-		_push_ast_child(ast::NodeBase::Child(new ChildType(std::move
-			(to_push))));
-	}
-	template<typename ChildType>
-	inline auto _to_ast_child(ChildType&& to_convert)
-	{
-		return ast::NodeBase::Child(new ChildType(std::move(to_convert)));
-	}
-	inline auto _pop_ast_child()
-	{
-		auto&& ret = _ast_child_stack.top();
-		_ast_child_stack.pop();
+		auto&& ret = _pt_stack.top();
+		_pt_stack.pop();
 		return std::move(ret);
 	}
 

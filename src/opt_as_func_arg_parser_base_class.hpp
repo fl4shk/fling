@@ -14,7 +14,6 @@ class OptAsFuncArgParserBase
 public:		// types
 	enum class Opt
 	{
-		ParseAsFarAsPossible,
 		JustParse,
 		Exec,
 	};
@@ -72,25 +71,62 @@ public:		// types
 		GEN_GETTER_BY_CON_REF(tok_set)
 	};
 
-	template<typename DerivedType>
-	class UnitParse
-	{
-	public:		// types
-		using ParseFunc = ParseRet (DerivedType::*)(Opt opt);
-	private:		// variables
-	};
+	//template<typename DerivedType>
+	//friend class SeqParse;
+
+	//template<typename DerivedType>
+	//class SeqParse
+	//{
+	//public:		// types
+	//	using ParseFunc = ParseRet (DerivedType::*)(Opt opt);
+	//	using SomeSeqParse = std::shared_ptr<SeqParse<DerivedType>>;
+	//	using OneInst = std::variant<bool, ParseFunc, SomeSeqParse>;
+	//	using Vec = std::vector<OneInst>;
+
+	//protected:		// variables
+	//	DerivedType* _self = nullptr;
+	//	std::string _ident;
+	//	Vec _vec;
+	//	bool _optional = false;
+	//public:		// functions
+	//	SeqParse(DerivedType* s_self, Vec&& s_vec, bool s_optional=false)
+	//		: _self(s_self), _ident(""), _vec(s_vec), _optional(s_optional)
+	//	{
+	//	}
+	//	SeqParse(DerivedType* s_self, const std::string& s_ident,
+	//		Vec&& s_vec, bool s_optional=false)
+	//		: _self(s_self), _ident(s_ident), _vec(s_vec),
+	//		_optional(s_optional)
+	//	{
+	//	}
+	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(SeqParse);
+	//	virtual ~SeqParse() = default;
+
+	//	virtual ParseRet operator () (Opt opt) const
+	//	{
+	//		switch (opt)
+	//		{
+	//		case Opt::JustParse:
+	//			
+	//		case Opt::Exec:
+	//			for (const
+	//		default:
+	//			return ParseRet();
+	//		}
+	//	}
+	//};
+
 protected:		// variables
 	LexerType _lexer;
 
 public:		// functions
-	inline OptAsFuncArgParserBase(const string& s_filename, string* s_text)
+	inline OptAsFuncArgParserBase(const std::string& s_filename,
+		std::string* s_text)
 		: _lexer(s_filename, s_text)
 	{
 	}
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(OptAsFuncArgParserBase);
 	virtual inline ~OptAsFuncArgParserBase() = default;
-
-protected:		// functions
 };
 
 } // namespace frost_hdl

@@ -143,6 +143,8 @@ private:		// functions
 	std::vector<string> _extended_children(const Node& node) const;
 	std::vector<Var> _extended_var_vec(const Node& node) const;
 	bool _extends_from_list(const Node& node) const;
+	void _write_node_to_cxx_source_file(std::ofstream& f,
+		const Node& node);
 	inline std::string _msg_for_expect(Tok tok,
 		const LexerState& lex_state) const
 	{
