@@ -8,6 +8,7 @@
 #include "ast_node_classes.hpp"
 #include "opt_as_func_arg_parser_base_class.hpp"
 #include "err_warn_base_class.hpp"
+#include "parse_tree_class.hpp"
 
 namespace frost_hdl
 {
@@ -83,6 +84,8 @@ private:		// variables
 	}
 
 public:		// functions
+	Parser();
+	~Parser();
 };
 
 } // namespace frost_hdl

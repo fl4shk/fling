@@ -694,13 +694,6 @@ post_dollar_func_of_one_valid_lhs_expr:
 	ident_etc valid_lhs_expr_dollar_func_of_one
 	;
 
-pre_dollar_func_of_one_valid_lhs_expr:
-	valid_lhs_expr_dollar_func_of_one '(' ident_etc ')'
-	;
-post_dollar_func_of_one_valid_lhs_expr:
-	ident_etc valid_lhs_expr_dollar_func_of_one
-	;
-
 cat_expr:
 	'cat'
 	'('
