@@ -33,7 +33,7 @@
 #include "liborangepower_src/linked_list_classes.hpp"
 #include "liborangepower_src/range_funcs.hpp"
 #include "liborangepower_src/lexer_base_class.hpp"
-//#include "liborangepower_src/opt_as_func_arg_parser_base_class.hpp"
+#include "liborangepower_src/opt_as_func_arg_parser_base_class.hpp"
 #include "liborangepower_src/parse_tree_base_class.hpp"
 
 using namespace liborangepower::misc_output;

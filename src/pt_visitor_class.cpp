@@ -6,17 +6,18 @@ namespace frost_hdl
 
 PtVisitor::PtVisitor()
 {
-	#include "list_of_parse_tree_nodes_define.hpp"
-	#define X(node) \
-		_func_map[#node] = &PtVisitor::_visit_##node;
-	LIST_OF_PARSE_TREE_NODES(X)
-	#undef X
-	#undef LIST_OF_PARSE_TREE_NODES
+	//#include "list_of_parse_tree_nodes_define.hpp"
+	//#define X(node) \
+	//	_func_map[#node] = &PtVisitor::_visit_##node;
+	//LIST_OF_PARSE_TREE_NODES(X)
+	//#undef X
+	//#undef LIST_OF_PARSE_TREE_NODES
+	_func_map["program"] = &PtVisitor::_visit_program;
 }
 
 void PtVisitor::_accept(ParseTree* tree)
 {
-	tree->ident()
+	(this->*_func_map.at(tree->ident()))(tree);
 }
 
 using std::holds_alternative;

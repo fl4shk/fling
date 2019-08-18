@@ -6,7 +6,6 @@
 #include "misc_includes.hpp"
 #include "lexer_class.hpp"
 #include "ast_node_classes.hpp"
-#include "opt_as_func_arg_parser_base_class.hpp"
 #include "err_warn_base_class.hpp"
 #include "parse_tree_class.hpp"
 
@@ -16,12 +15,13 @@ namespace frost_hdl
 class Parser final : public OptAsFuncArgParserBase<Lexer>
 {
 public:		// types
-	using ParseRet = typename OptAsFuncArgParserBase<Lexer>::ParseRet;
+	using Base = OptAsFuncArgParserBase<Lexer>;
+	using Opt = typename Base::Opt;
+	using ParseRet = typename Base::ParseRet;
 
 private:		// variables
 	//ast::NodeBase::Child _ast_root;
 	unique_ptr<ParseTree> _pt_root;
-	size_t _filename_index;
 
 	#define LIST_FOR_GEN_STACK(X) \
 		X(BigNum, const BigNum&, num) \
@@ -35,22 +35,18 @@ private:		// variables
 	std::stack<ParseTree> _pt_stack;
 	inline void _push_pt(ParseTree&& to_push)
 	{
-		_pt_stack.push(std::move(to_push));
+		_pt_stack.push(move(to_push));
 	}
 	inline auto _pop_pt()
 	{
 		auto&& ret = _pt_stack.top();
 		_pt_stack.pop();
-		return std::move(ret);
+		return move(ret);
 	}
 
 	inline void _push_num(const BigNum& to_push)
 	{
 		_stacks.push_num(to_push);
-	}
-	inline auto _get_top_num()
-	{
-		return _stacks.get_top_num();
 	}
 	inline auto _pop_num()
 	{
@@ -61,10 +57,6 @@ private:		// variables
 	{
 		_stacks.push_str(to_push);
 	}
-	inline auto _get_top_str()
-	{
-		return _stacks.get_top_str();
-	}
 	inline auto _pop_str()
 	{
 		return _stacks.pop_str();
@@ -74,18 +66,22 @@ private:		// variables
 	{
 		_stacks.push_tok(to_push);
 	}
-	inline auto _get_top_tok()
-	{
-		return _stacks.get_top_tok();
-	}
 	inline auto _pop_tok()
 	{
 		return _stacks.pop_tok();
 	}
 
 public:		// functions
-	Parser();
+	Parser(const string& s_filename, string* s_text);
 	~Parser();
+
+private:		// functions
+	#include "list_of_parse_tree_nodes_define.hpp"
+	#define X(node) \
+		ParseRet _parse_##node(Opt opt);
+	LIST_OF_PARSE_TREE_NODES(X)
+	#undef X
+	#undef LIST_OF_PARSE_TREE_NODES
 };
 
 } // namespace frost_hdl
