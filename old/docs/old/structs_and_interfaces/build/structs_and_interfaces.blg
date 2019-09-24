@@ -1,0 +1,5 @@
+[0] Config.pm:304> INFO - This is Biber 2.12
+[0] Config.pm:307> INFO - Logfile is 'build/structs_and_interfaces.blg'
+[17] biber:315> INFO - === Sun Mar 17, 2019, 13:40:25
+[33] Biber.pm:371> INFO - Reading 'build/structs_and_interfaces.bcf'
+[75] Utils.pm:193> WARN - No data sources defined!

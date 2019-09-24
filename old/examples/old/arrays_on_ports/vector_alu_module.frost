@@ -1,0 +1,205 @@
+package PkgAlu
+{
+	//enum ubit [3] Opcode
+	// This syntax indicates that this `enum` is as small as it can be
+	// while still fitting everything.
+	enum Opcode
+	{
+		Add,
+		Adc,
+		Sub,
+		Sbc,
+
+		And,
+		Or,
+		Xor,
+		Nor,
+	};
+
+	class Bus[uint WIDTH]
+		//extends AluPorts[WIDTH=WIDTH]
+	{
+		using DataInout = ubit[WIDTH];
+		//using DataInout = ubit[WIDTH - 1:0];
+		//using DataInout = ubit[HIGH=WIDTH - 1, LOW=0];
+		//using DataInout = ubit[HIGH=WIDTH - 1, LOW=0, ASC=0];
+
+		packed class BusIn
+		{
+			ubit carry;
+			DataInout a, b;
+			Opcode opcode;
+		};
+
+		// If placed on a `bidir` port, this `class` (`Bus`, specifically)
+		// will have `in` as an `input` port.
+		input BusOut in;
+
+		packed class BusOut
+		{
+			ubit carry;
+			DataInout data;
+		};
+		// If placed on a `bidir` port, this `class` (`Bus`, specifically)
+		// will have `out` as an `output` port.
+		output BusOut out;
+
+		// This is like a constructor, but it's optional.  It's just a
+		// process.
+		proc port
+		(
+			input
+				ubit i_carry,
+				DataInout i_a, i_b,
+				Opcode i_opcode,
+
+			output
+				ubit o_carry,
+				DataInout o_data,
+		)
+		{
+			// How this will be compiled is as follows.
+			// `input` ports cannot be written to.
+			// `output` ports can be read from and written to.
+			// `bidir` ports can be read from and written to.
+			// The semantics are identical to `module` ports, but in the
+			// generated Verilog, everything will be inlined without
+			// creation of any new `module`s.
+			// Recursion is possible, but must have a depth that is
+			// identified at compile time.
+			// There are not really any other constraints.
+			assign in = cat(i_carry, i_a, i_b, i_opcode);
+			assign cat(o_carry, o_data) = out;
+		}
+
+		// This is a process.
+		proc "()" ()
+		{
+			assign out = self();
+		}
+
+		// Function object
+		// Operator overloading syntax is similar to that of VHDL; that
+		// means that "()" is the operator being overloaded.
+		const func BusOut "()" ()
+		{
+			using Opcode;
+
+			switch (in.opcode)
+			{
+			case Add:
+				return cat(1'0b0, in.a) + cat(1'0b0, in.b);
+			case Adc:
+				return cat(1'0b0, in.a) + cat(1'0b0, in.b) + in.carry;
+			case Sub:
+				return cat(1'0b0, in.a) + cat(1'0b0, ~in.b) + 1'0b1;
+			case Sbc:
+				return cat(1'0b0, in.a) + cat(1'0b0, ~in.b) + in.carry;
+
+			case And:
+				return cat(1'0b0, (in.a & in.b));
+			case Or:
+				return cat(1'0b0, (in.a | in.b));
+			case Xor:
+				return cat(1'0b0, (in.a ^ in.b));
+			case Nor:
+				return cat(1'0b0, ~(in.a | in.b));
+			}
+		}
+	};
+}
+
+module Alu[uint ALU_WIDTH]
+(
+	input
+		ubit i_carry,
+		// Built-in types (`ubit`, `bits`, `wireu`, and `wires`) have a
+		// parameter defined for them already called `WIDTH` with a default
+		// value of `1` and type `uint`.  Other parameters of these types
+		// include `HIGH` and `LOW` as well as `D_OR_A`, and they are 
+		// available to be set with the generics syntax.
+		// Verilog-style syntax is preferred, however.
+		ubit[WIDTH=ALU_WIDTH] i_a, i_b,
+		Opcode i_opcode,
+
+	output
+		ubit o_carry,
+		ubit[ALU_WIDTH] o_data,
+)
+{
+	using PkgAlu;
+	Bus[WIDTH=ALU_WIDTH] bus(i_carry=i_carry, i_a=i_a, i_b=i_b,
+		i_opcode=i_opcode, o_carry=o_carry, o_data=o_data);
+	// Alternatively, the ports can be connected later (for example, with a
+	// generate loop).
+	// Bus[WIDTH=ALU_WIDTH] bus;
+	// bus.port(i_carry=i_carry, i_a=i_a, i_b=i_b,
+	// 	i_opcode=i_opcode, o_carry=o_carry, o_data=o_data);
+
+	inst Alu(bus=bus);
+	// Alternatively, one can do this to get the same result:
+	// bus();
+}
+
+module Alu[uint WIDTH](bidir PkgAlu::Bus[WIDTH=WIDTH] bus)
+{
+	bus();
+}
+
+module Alu
+(
+	// This syntax means that the `class` placed on the bus of an
+	// instance of this `Alu` can be determined by the instantiation of
+	// this `Alu`.  Note that this syntax can only be used with ports.
+	bidir PkgAlu::Bus[] bus,
+)
+{
+	//assign cat(bus.out.carry, bus.out.data) = bus();
+	bus();
+}
+
+module VectorAlu[uint ALU_WIDTH, ARR_SIZE]
+(
+	input
+		DataInout i_a_arr[ARR_SIZE], i_b_arr[ARR_SIZE],
+		ubit i_carry_arr[ARR_SIZE],
+		PkgAlu::Opcode i_opcode_arr[ARR_SIZE],
+
+	output
+		DataInout o_data_arr[ARR_SIZE],
+		ubit o_carry_arr[ARR_SIZE],
+		| op_genvar
+)
+{
+	using DataInout = ubit[WIDTH=ALU_WIDTH];
+	//generate lab for (i : ports_arr$range)
+	// The label is optional, but you won't be able to access the insides
+	// from outside without it.
+	generate for (i : range(ARR_SIZE))
+	{
+		inst Alu[WIDTH=ALU_WIDTH]
+
+		// This identifier is optional because it is totally unnecessary in
+		// most cases.  Of course, a name is required in the generated
+		// Verilog.
+		alu
+		(
+			i_a=i_a_arr[i], i_b=i_b_arr[i],
+			i_carry=i_carry_arr[i],
+			i_opcodei_opcode_arr[i],
+
+			o_data=o_data_arr[i],
+			o_carry=o_carry_arr[i],
+		);
+	}
+}
+
+module VectorAlu(bidir PkgAlu::Bus[] bus_arr[])
+{
+	//generate lab for (i : bus_arr$range)
+	generate lab for (bus : bus_arr)
+	{
+		//inst Alu alu(bus=bus_arr[i]);
+		inst Alu(bus=bus);
+	}
+}

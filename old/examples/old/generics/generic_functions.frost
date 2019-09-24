@@ -1,0 +1,52 @@
+package PkgAlu
+{
+	//--------
+	func DataInout add [type DataInout](input DataInout a, b)
+	{
+		return a + b;
+	}
+	//--------
+
+	//--------
+	// If you call `add(intu, a, b)` where `a` and `b` are both of type
+	// `intu`, this `func`tion will NOT be called, and instead the first
+	// one will be.
+	func DataOut add[type DataOut](input auto a, input auto b)
+	{
+		return a + b;
+	}
+	//--------
+
+	//--------
+	// `a` and `b` can be different types so long as both `a = b` and 
+	// `a + b` are valid operations.  Vectors and `packed` `class`es are
+	// compatible with one another in that sense.
+	func auto add(input auto a, b)
+	{
+		return a + b;
+	}
+
+	// This function is different from the one above and only requires
+	// `a + b` to be a valid operation.
+	func auto add(input auto a, input auto b)
+	{
+		return a + b;
+	}
+	//--------
+
+	//--------
+	// Non-member `void` `func`tions must have at least one `output` or
+	// `inout` argument.
+	func void add(output auto o_sum, input auto a, b)
+	{
+		o_sum = a + b;
+	}
+	//--------
+
+	//--------
+	func auto sub(input auto a, input auto b)
+	{
+		return a - b;
+	}
+	//--------
+}

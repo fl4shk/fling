@@ -1,0 +1,249 @@
+#ifndef src_frost_statement_class_hpp
+#define src_frost_statement_class_hpp
+
+// src/frost_statement_class.hpp
+
+#include "misc_includes.hpp"
+#include "misc_types.hpp"
+#include "scoped_table_classes.hpp"
+//#include "symbol_class.hpp"
+#include "frost_lhs_type_class.hpp"
+#include "expression_class.hpp"
+#include "misc_utility_funcs.hpp"
+
+namespace frost_hdl
+{
+
+#define GEN_EXPR_GETTER(name, index) \
+	inline Expression* name() const \
+	{ \
+		return _exprs.at(index); \
+	}
+
+// Base class for a statement (primarily for the insides of an
+// "FrostModule", but also intended for use inside of an
+// "FrostFunction")
+class FrostStatement
+{
+public:		// types
+	typedef typename ScopedUnnamedTable<FrostStatement>::Node TableNode;
+
+
+	// How a "Symbol" is driven
+	enum class DriverType
+	{
+		None,
+		ContAssign,
+		BehavBlockInitial,
+		BehavBlockAlwaysComb,
+		BehavBlockAlwaysSeq,
+	};
+
+
+	// Pretty much only relevant for "always_seq"
+	enum class EdgeSensType
+	{
+		None,
+		Posedge,
+		Negedge
+	};
+
+protected:		// variables
+	// Component "Expression"s.
+	std::vector<Expression*> _exprs;
+
+public:		// functions
+	FrostStatement() = default;
+
+	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatement, delete, default);
+
+	virtual ~FrostStatement() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::None;
+	}
+
+
+	//// Only some classes derived from "FrostStatement" need for this to
+	//// sometimes return a message other than "nullptr".  The returned
+	//// message will be used as (part of?) an error message if it is not a
+	//// "nullptr".
+	//virtual SavedString is_valid() const;
+
+
+	//// This function takes the "top" parameter so that assignments inside
+	//// of behavioral blocks can know whether to output blocking assignments
+	//// ("=") or non-blocking assignments ("<=").
+	//virtual SavedString to_hdl_source(TableNode* top) const;
+
+
+protected:		// functions
+	// Require at LEAST one argument
+	template<typename FirstArgType, typename... RemArgTypes>
+	inline void _set_exprs(FirstArgType&& first_expr,
+		RemArgTypes&&... rem_exprs)
+	{
+		_exprs.push_back(first_expr);
+
+		if constexpr (sizeof...(rem_exprs) > 0)
+		{
+			_set_exprs(rem_exprs...);
+		}
+	}
+
+};
+
+// Continuous assignment ("assign")
+class FrostStmtContAssign : public FrostStatement
+{
+public:		// functions
+	//FrostStmtContAssign() = default;
+	FrostStmtContAssign(Expression* s_ident_expr, Expression* s_rhs);
+
+	virtual ~FrostStmtContAssign() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::ContAssign;
+	}
+
+	//SavedString to_hdl_source(TableNode* top) const;
+
+
+	GEN_EXPR_GETTER(ident_expr, 0)
+	GEN_EXPR_GETTER(rhs, 1)
+};
+
+// Base class for "initial", "always_comb", and "always_seq".
+class FrostStmtBaseBehavBlock : public FrostStatement
+{
+public:		// functions
+	FrostStmtBaseBehavBlock() = default;
+
+	virtual ~FrostStmtBaseBehavBlock() = default;
+
+	SavedString to_hdl_source(TableNode* top) const;
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const
+//	{
+//		return nullptr;
+//	}
+};
+
+// "initial"
+class FrostStmtBehavBlockInitial : public FrostStmtBaseBehavBlock
+{
+public:		// functions
+	FrostStmtBehavBlockInitial() = default;
+
+	virtual ~FrostStmtBehavBlockInitial() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::BehavBlockInitial;
+	}
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const
+//	{
+//		return dup_str("initial");
+//	}
+};
+
+// "always_comb"
+class FrostStmtBehavBlockAlwaysComb : public FrostStmtBaseBehavBlock
+{
+public:		// functions
+	FrostStmtBehavBlockAlwaysComb() = default;
+
+	virtual ~FrostStmtBehavBlockAlwaysComb() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::BehavBlockAlwaysComb;
+	}
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const
+//	{
+//		return dup_str("always @(*)");
+//	}
+};
+
+// "always_seq"
+class FrostStmtBehavBlockAlwaysSeq : public FrostStmtBaseBehavBlock
+{
+private:		// variables
+	EdgeSensType _edge_sens_type = EdgeSensType::None;
+
+public:		// functions
+	FrostStmtBehavBlockAlwaysSeq(EdgeSensType s_edge_sens_type,
+		Expression* s_ident_expr);
+
+	virtual ~FrostStmtBehavBlockAlwaysSeq() = default;
+
+	virtual DriverType driver_type() const
+	{
+		return DriverType::BehavBlockAlwaysSeq;
+	}
+
+
+	GEN_EXPR_GETTER(ident_expr, 0)
+
+//protected:		// functions
+//	virtual SavedString _output_behav_block_str() const;
+};
+
+
+// Behavioral assignment operator.  Can become either a blocking or a
+// non-blocking assignment depending on whether it was in an "initial",
+// "always_comb", or "always_seq" block.
+//
+// This is *not* used for the statements inside the parentheses of an
+// "FrostStmtForLoop"!  For that, you'll want
+// "FrostStmtForLoopAssign".
+//
+// This is also *not* used for the insides of a non-task
+// "FrostFunction".
+class FrostStmtBehavAssign : public FrostStatement
+{
+public:		// functions
+	FrostStmtBehavAssign(Expression* s_ident_expr, Expression* s_rhs);
+
+	virtual ~FrostStmtBehavAssign() = default;
+
+	//virtual DstHdlStatement* to_dst_hdl_statement() const;
+
+	GEN_EXPR_GETTER(ident_expr, 0)
+	GEN_EXPR_GETTER(rhs, 1)
+};
+
+// "if" statement by itself.
+class FrostStmtBehavIf : public FrostStatement
+{
+public:		// functions
+	FrostStmtBehavIf(Expression* s_condition_expr);
+};
+
+// "else" statement.
+
+// "if-elseif-else chain" 
+
+
+
+class FrostStatementTable : public ScopedUnnamedTable<FrostStatement>
+{
+public:		// functions
+	FrostStatementTable() = default;
+	GEN_GENERIC_CM_CONSTRUCTORS_AND_ASSIGN(FrostStatementTable, delete, default);
+	virtual ~FrostStatementTable() = default;
+};
+
+#undef GEN_EXPR_GETTER
+
+} // namespace frost_hdl
+
+
+#endif		// src_frost_statement_class_hpp

@@ -1,0 +1,5 @@
+[0] Config.pm:304> INFO - This is Biber 2.12
+[0] Config.pm:307> INFO - Logfile is 'build/expressions.blg'
+[17] biber:315> INFO - === Sun Feb 17, 2019, 11:22:18
+[31] Biber.pm:371> INFO - Reading 'build/expressions.bcf'
+[72] Utils.pm:193> WARN - No data sources defined!

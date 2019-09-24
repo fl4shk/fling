@@ -1,0 +1,34 @@
+module GenerateExample[uint WIDTH, ARR_SIZE]
+	(input PortIn in, output PortOut out)
+{
+	//--------
+	using DataInout = ubit[WIDTH];
+	class PortIn
+	{
+		DataInout a[ARR_SIZE], b[ARR_SIZE];
+	};
+	class PortOut
+	{
+		DataInout data[ARR_SIZE];
+	};
+	//--------
+
+	//--------
+	// `generate` is always sequential.
+	generate lab_0 for (i : range(ARR_SIZE))
+	{
+		assign out.data[i] = lab_1[i].f(in.a[i], in.b[i]);
+	}
+
+	// `i` is automatically an integer `genvar` of whatever smallest size
+	// it needs to be to contain `ARR_SIZE - 1`.
+	generate lab_1 for (i : range(ARR_SIZE))
+	{
+		func DataInout f(input DataInout a, b)
+		{
+			// `i` becomes a constant at runtime.
+			return (a + b) * i;
+		}
+	}
+	//--------
+}

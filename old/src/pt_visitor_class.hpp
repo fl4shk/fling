@@ -15,7 +15,7 @@ class PtVisitor final
 public:		// types
 	using OnePtChild = typename ParseTree::OneChild;
 	using PtChildVec = typename ParseTree::ChildVec;
-	using VisitFunc = (PtVisitor::*)(ParseTree* tree);
+	using VisitFunc = PtVisitor::*(ParseTree* tree);
 
 private:		// variables
 	map<string, VisitFunc> _func_map;

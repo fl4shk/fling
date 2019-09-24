@@ -1,0 +1,5 @@
+[0] Config.pm:304> INFO - This is Biber 2.12
+[0] Config.pm:307> INFO - Logfile is 'build/scopes.blg'
+[19] biber:315> INFO - === Wed Feb 27, 2019, 17:12:46
+[34] Biber.pm:371> INFO - Reading 'build/scopes.bcf'
+[84] Utils.pm:193> WARN - No data sources defined!
