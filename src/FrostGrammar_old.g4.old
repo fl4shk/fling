@@ -1,0 +1,722 @@
+grammar FrostGrammar;
+
+//--------
+program:
+	packageItem*
+	EOF
+	;
+//--------
+
+//--------
+headerIf:
+	'if' condition (':' expr)?
+	;
+headerElseIf:
+	'else' 'if' condition (':' expr)?
+	;
+headerElse:
+	'else'
+	;
+headerSwitch:
+	'switch' condition
+	;
+headerCase:
+	'case' condition ':'
+	;
+headerDefault:
+	'default' ':'
+	;
+headerWith:
+	// `expr` allows you to do `with verilog_module.If(x == y)`
+	'with' (letSuffix | constSuffix | expr)
+	;
+headerFor:
+	'for' identExpr 'in' (iterExpr | rangeExpr)
+	;
+headerWhile:
+	'while' condition
+	;
+headerDoWhile:
+	'do' headerWhile
+	;
+
+headerGenIf:
+	'gen' headerIf
+	;
+headerElseGenIf:
+	'else' headerGenIf
+	;
+headerElseGen:
+	'else' 'gen'
+	;
+headerGenSwitch:
+	'gen' headerSwitch
+	;
+headerGenWith:
+	'gen' headerWith
+	;
+headerGenFor:
+	'gen' headerFor
+	;
+headerGenWhile:
+	'gen' headerWhile
+	;
+headerGenDoWhile:
+	'gen' headerDoWhile
+	;
+//--------
+
+condition:
+	'let' letSuffix
+	| expr
+	;
+
+let:
+	'let' TokKwStatic? letSuffix ';'
+	;
+
+letOrConstSuffix:
+	letOrConstAssignSuffix
+	| letOrConstFuncSuffix
+	;
+
+letOrConstAssignSuffix:
+	identExpr (TokAssign | TokAtEquals) expr (':' typename)? 
+	;
+letOrConstFuncSuffix:
+	identExpr TokAtEquals 'func' funcSuffix
+	;
+nonConstLetSuffix:
+	identExpr ':' typename
+	;
+
+letSuffix:
+	letOrConstSuffix
+	| nonConstLetSuffix
+	;
+
+// Constant lambdas are permissible and just mean that you can't reassign
+// to the lambda.  Of course, this means that you can reassign to the
+// lambda otherwise (i.e. when it's not constant)
+constSuffix:
+	'const' letOrConstSuffix
+	;
+
+nonMemberConst:
+	'let' constSuffix ';'
+	;
+memberStaticConst:
+	'let' 'static' constSuffix ';'
+	;
+
+// This means that genvars can store lambdas.
+genLet:
+	'gen' 'let' (('const' letOrConstSuffix) | nonConstLetSuffix) ';'
+	;
+
+anyPackageOrFuncItem:
+	declClass
+	| declEnum
+	| nonMemberConst
+	| genLet
+	| frostUsing
+
+	// Sometimes this is a function call, and sometimes this is an
+	// assignment.  In contexts outside of function scopes, this needs to
+	// be an assignment to a `genvar` if it *is* an assignment because you
+	// can only assign to a variable inside of a function.
+	| expr ';'
+	;
+
+packageItem:
+	anyPackageOrFuncItem
+	| package
+	| packageGen
+	| declNonMemberFunc
+	;
+
+package:
+	'package' identExpr
+		scopedPackageItems
+	;
+
+scopedPackageItems:
+	'{'
+		packageItem*
+	'}'
+	;
+
+packageGen:
+	packageGenIf
+	| packageGenSwitch
+	| packageGenWith
+	| packageGenFor
+	| packageGenWhile
+	| packageGenDoWhile
+	;
+packageGenIf:
+	headerGenIf scopedPackageItems
+	(headerElseGenIf scopedPackageItems)*
+	(headerElseGen scopedPackageItems)?
+	;
+packageGenSwitch:
+	headerGenSwitch
+	'{'
+		(((headerCase | headerDefault)+)
+		(scopedPackageItems | packageItem))*
+	'}'
+	;
+	;
+
+packageGenWith:
+	headerGenWith scopedPackageItems
+	;
+packageGenFor:
+	headerGenFor scopedPackageItems
+	;
+packageGenWhile:
+	headerGenWhile scopedPackageItems
+	;
+packageGenDoWhile:
+	headerGenDoWhile scopedPackageItems
+	;
+
+
+frostUsing:
+	'using' (identExpr '=')? scopedIdent ';'
+	| 'using' (identExpr '=')? typename ';'
+	| 'using' (identExpr '=')? scopedFunc ';'
+	;
+
+declNonMemberFunc:
+	'func' identExpr funcSuffix
+	;
+
+funcSuffix:
+	genericList? argList (':' typename)? '='
+		scopedFuncItems
+	;
+scopedFuncItems:
+	'{'
+		funcItem*
+	'}'
+	;
+funcItem:
+	anyPackageOrFuncItem
+	| let
+	| nonMemberConst
+	| genLet
+	| scopedFuncItems
+	| funcGen
+	;
+funcGen:
+	funcGenIf
+	| funcGenSwitch
+	| funcGenWith
+	| funcGenFor
+	| funcGenWhile
+	| funcGenDoWhile
+	;
+funcGenIf:
+	headerGenIf scopedFuncItems
+	(headerElseGenIf scopedFuncItems)*
+	(headerElseGen scopedFuncItems)?
+	;
+funcGenSwitch:
+	headerGenSwitch
+	'{'
+		(((headerCase | headerDefault)+)
+		(scopedFuncItems | funcItem))*
+	'}'
+	;
+	;
+
+funcGenWith:
+	headerGenWith scopedFuncItems
+	;
+funcGenFor:
+	headerGenFor scopedFuncItems
+	;
+funcGenWhile:
+	headerGenWhile scopedFuncItems
+	;
+funcGenDoWhile:
+	headerGenDoWhile scopedFuncItems
+	;
+
+
+declClass:
+	'class' identExpr genericList? extends?
+		scopedClassItems
+	;
+extends:
+	'extends' typename (',' typename)* (',')?
+	;
+
+classGen:
+	classGenIf
+	| classGenSwitch
+	| classGenWith
+	| classGenFor
+	| classGenWhile
+	| classGenDoWhile
+	;
+classGenIf:
+	headerGenIf scopedClassItems
+	(headerElseGenIf scopedClassItems)*
+	(headerElseGen scopedClassItems)?
+	;
+classGenSwitch:
+	headerGenSwitch
+	'{'
+		(((headerCase | headerDefault)+)
+		(scopedClassItems | classItem))*
+	'}'
+	;
+	;
+
+classGenWith:
+	headerGenWith scopedClassItems
+	;
+classGenFor:
+	headerGenFor scopedClassItems
+	;
+classGenWhile:
+	headerGenWhile scopedClassItems
+	;
+classGenDoWhile:
+	headerGenDoWhile scopedClassItems
+	;
+
+genericList:
+	'{'
+		oneGenericList (',' oneGenericList)* (',')?
+	'}'
+	;
+
+oneGenericList:
+	oneTypeGenericList
+	| oneValGenericList
+	;
+
+oneTypeGenericList:
+	(onePossibInitTypeGeneric (',' onePossibInitTypeGeneric)* ':' 'type')
+	| (identExpr (',' identExpr)* ':' 'type' '...')
+	;
+onePossibInitTypeGeneric:
+	identExpr ('=' typename)?
+	;
+
+oneValGeneric:
+	(onePossibInitValGeneric (',' onePossibInitValGeneric)* ':' typename)
+	| (identExpr (',' identExpr)* ':' typename '...')
+	;
+onePossibInitValGeneric:
+	identExpr ('=' expr)?
+	;
+
+
+
+// Expression parsing
+expr:
+	// Context will let us know if the LHS is a *valid* LHS for an
+	// assignment
+	assignExpr assignOp expr
+	| assignExpr
+	;
+assignOp:
+	TokAssign
+	| TokCstmAssign
+
+	| TokPlusEquals
+	| TokMinusEquals
+
+	| TokMulEquals
+	| TokDivEquals
+	| TokModEquals
+
+	| TokBitAndEquals
+	| TokBitOrEquals
+	| TokBitXorEquals
+
+	| TokBitLslEquals
+	| TokBitLsrEquals
+	| TokBitAsrEquals
+
+	| TokAtEquals
+	;
+
+assignExpr:
+	logicalExpr logicalOp assignExpr
+	| logicalExpr
+	;
+logicalOp:
+	TokLogAnd
+	| TokLogOr
+	;
+
+logicalExpr:
+	compareExpr compareOp logicalExpr
+	| compareExpr
+	;
+compareOp:
+	TokCmpEq
+	| TokCmpNe
+	| TokCmpLt
+	| TokCmpGt
+	| TokCmpLe
+	| TokCmpGe
+	;
+
+compareExpr:
+	addSubExpr addSubOp compareExpr
+	| addSubExpr
+	;
+addSubOp:
+	TokPlus
+	| TokMinus
+	;
+
+addSubExpr:
+	mulDivModEtcExpr mulDivModEtcOp addSubExpr
+	| mulDivModEtcExpr
+	;
+mulDivModEtcOp:
+	TokMul
+	| TokDiv
+	| TokMod
+
+	| TokBitAnd
+	| TokBitOr
+	| TokBitXor
+
+	| TokBitLsl
+	| TokBitLsr
+	| TokBitAsr
+	;
+
+mulDivModEtcExpr:
+	'(' expr ')'
+	| unaryExpr
+	| numberLiteral
+	| stringLiteral
+	| castExpr
+	| contentsofExpr
+	| identExpr
+	;
+
+unaryExpr:
+	unaryOp expr
+	;
+unaryOp:
+	TokAt
+	| TokDollar
+
+	| TokBitNot
+	| TokLogNot
+
+	| TokPlus
+	| TokMinus
+
+	| TokKwMove
+	;
+
+numberLiteral:
+	TokDecNum
+	| TokHexNum
+	| TokOctNum
+	| TokBinNum
+	;
+stringLiteral:
+	TokStringLiteral
+	;
+castExpr:
+	(TokKwStatcast | TokKwDyncast | TokKwReincast)
+		'{' typename '}' '(' expr ')'
+	;
+contentsofExpr:
+	'contentsof' (expr | typename)
+	;
+
+// If done with `genLet`, can use compile-time code execution with this to
+// produce a valid identifier by casting the `genLet` to a `string` (or
+// just using its value if it is already a `string`).  As such, identifiers
+// in general are parser rules rather than lexer rules.  As far as I know,
+// this is unusual.
+identExpr:
+	identConcatExpr (TokIdentConcat identConcatExpr)*
+	;
+identConcatExpr:
+	scopeAccessIdentExpr
+
+	// Require '(' and ')' because of infinite recursion in top-down
+	// parsing.  In many cases, use of '(' and ')' in this situation is
+	// good code style anyway.
+	| '(' (expr | castExpr) ')'
+	;
+
+scopeAccessIdentExpr:
+	lowestIdentExpr
+	((TokScopeAccess | TokCstmScopeAccess) lowestIdentExpr)*
+	;
+
+lowestIdentExpr:
+	// '(' expr ')' allows you to give priority to '#' over '.' and
+	// '->', but it requires (in semantic analysis) that you use a an
+	// expression composed exclusively of `genLet`s, compile-time
+	// constants, and/or compile-time function calls.
+	(basicIdent | ('(' expr ')'))
+		(genericInstList? funcCallSuffix)?
+		(funcCallSuffix | ('[' expr ']'))*
+	;
+basicIdent:
+	TokBasicIdent
+	;
+
+
+// Lexer rules
+LexWhitespace:
+	(' ' | '\t' | '\r' | '\n') -> skip
+	;
+
+LexLineComment:
+	('//' ~('\n')+) -> skip
+	;
+
+
+fragment FragEscapeSequence:
+	FragBasicEscapeSequence
+	| FragHexEscapeSequence
+	;
+
+fragment FragBasicEscapeSequence:
+	'\\' ['"?abfnrtv\\]
+	;
+
+fragment FragHexEscapeSequence:
+	'\\x' [A-Fa-f0-9_]+
+	;
+
+fragment FragChar:
+	~["\\]
+	| FragEscapeSequence
+	;
+
+TokStringLiteral:
+	'"' FragChar* '"'
+	;
+
+TokDecNum: [0-9] [0-9_]* ;
+TokHexNum: '0x' [0-9a-fA-F] [0-9a-fA-F_]* ;
+TokOctNum: '0o' [0-7] [0-7_]* ;
+TokBinNum: '0b' [0-1] [0-1_]* ;
+
+TokParamPack: '...' ;
+
+TokLogAnd: '&&' ;
+TokLogOr: '||' ;
+
+TokCmpEq: '==' ;
+TokCmpNe: '!=' ;
+TokCmpLt: '<' ;
+TokCmpGt: '>' ;
+TokCmpLe: '<=' ;
+TokCmpGe: '>=' ;
+
+TokPlus: '+' ;
+TokMinus: '-' ;
+
+TokMul: '*' ;
+TokDiv: '/' ;
+TokMod: '%' ;
+
+TokBitAnd: '&' ;
+TokBitOr: '|' ;
+TokBitXor: '^' ;
+
+TokBitLsl: '<<' ;
+TokBitLsr: '>>' ;
+TokBitAsr: '>>>' ;
+
+TokBitNot: '~' ;
+TokLogNot: '!' ;
+
+TokAssign: '=' ;
+TokCstmAssign: ':=' ;
+
+TokPlusEquals: '+=' ;
+TokMinusEquals: '-=' ;
+
+TokMulEquals: '*=' ;
+TokDivEquals: '/=' ;
+TokModEquals: '%=' ;
+
+TokBitAndEquals: '&=' ;
+TokBitOrEquals: '|=' ;
+TokBitXorEquals: '^=' ;
+
+TokBitLslEquals: '<<=' ;
+TokBitLsrEquals: '>>=' ;
+TokBitAsrEquals: '>>>=' ;
+
+TokAt: '@' ;
+TokAtEquals: '@=' ;
+TokDollar: '$' ;
+TokIdentConcat: '#' ;
+
+TokScopeAccess: '.' ;
+TokCstmScopeAccess: '->' ;
+
+TokLParen: '(' ;
+TokRParen: ')' ;
+TokLBracket: '[' ;
+TokRBracket: ']' ;
+TokLBrace: '{' ;
+TokRBrace: '}' ;
+TokSemicolon: ';' ;
+TokColon: ':' ;
+TokComma: ',' ;
+
+
+TokKwString: 'string' ;
+TokKwVector: 'vector' ;
+TokKwStack: 'stack' ;
+TokKwList: 'list' ;
+TokKwSet: 'set' ;
+TokKwDict: 'dict' ;
+TokKwVariant: 'variant' ;
+TokKwTuple: 'tuple' ;
+
+TokKwU8: 'u8' ;
+TokKwS8: 's8' ;
+TokKwU16: 'u16' ;
+TokKwS16: 's16' ;
+TokKwU32: 'u32' ;
+TokKwS32: 's32' ;
+TokKwU64: 'u64' ;
+TokKwS64: 's64' ;
+
+TokKwSizeT: 'size_t' ;
+
+TokKwAny: 'any' ;
+TokKwVoid: 'void' ;
+
+TokKwContents: 'contents' ;
+TokKwContentsof: 'contentsof' ;
+
+TokKwStatcast: 'statcast' ;
+TokKwDyncast: 'dyncast' ;
+TokKwReincast: 'reincast' ;
+TokKwImplcast: 'implcast' ;
+TokKwImplicit: 'implicit' ;
+
+
+TokKwPtr: 'ptr' ;
+TokKwCnptr: 'cnptr' ;
+TokKwNull: 'null' ;
+
+TokKwRef: 'ref' ;
+TokKwCnref: 'cnref' ;
+TokKwRvref: 'rvref' ;
+
+TokKwNew: 'new' ;
+TokKwDelete: 'delete' ;
+TokKwMove: 'move' ;
+
+TokKwLet: 'let' ;
+
+TokKwPackage: 'package' ;
+TokKwUsing: 'using' ;
+
+TokKwFunc: 'func' ;
+TokKwInline: 'inline' ;
+TokKwNoinline: 'noinline' ;
+TokKwReturn: 'return' ;
+
+TokKwType: 'type' ;
+TokKwTypeof: 'typeof' ;
+
+TokKwEnum: 'enum' ;
+
+TokKwClass: 'class' ;
+TokKwSelf: 'self' ;
+TokKwExtends: 'extends' ;
+
+TokKwInit: 'init' ;
+TokKwDest: 'dest' ;
+TokKwFwditer: 'fwditer' ;
+TokKwRvsiter: 'rvsiter' ;
+
+TokKwMembfuncCmp: '__cmp__' ;
+
+TokKwMembfuncPlus: '__plus__' ;
+TokKwMembfuncMinus: '__minus__' ;
+
+TokKwMembfuncMul: '__mul__' ;
+TokKwMembfuncDiv: '__div__' ;
+TokKwMembfuncMod: '__mod__' ;
+
+TokKwMembfuncAnd: '__and__' ;
+TokKwMembfuncOr: '__or__' ;
+TokKwMembfuncXor: '__xor__' ;
+
+TokKwMembfuncLsl: '__lsl__' ;
+TokKwMembfuncLsr: '__lsr__' ;
+TokKwMembfuncAsr: '__asr__' ;
+
+TokKwMembfuncNot: '__not__' ;
+
+TokKwMembfuncColoneq: '__coloneq__' ;
+
+TokKwMembfuncPluseq: '__pluseq__' ;
+TokKwMembfuncMinuseq: '__minuseq__' ;
+
+TokKwMembfuncMuleq: '__muleq__' ;
+TokKwMembfuncDiveq: '__diveq__' ;
+TokKwMembfuncModeq: '__modeq__' ;
+
+TokKwMembfuncAndeq: '__andeq__' ;
+TokKwMembfuncOreq: '__oreq__' ;
+TokKwMembfuncXoreq: '__xoreq__' ;
+
+TokKwMembfuncLsleq: '__lsleq__' ;
+TokKwMembfuncLsreq: '__lsreq__' ;
+TokKwMembfuncAsreq: '__asreq__' ;
+
+TokKwMembfuncDollar: '__dollar__' ;
+
+
+TokKwRange: 'range' ;
+
+TokKwVirtual: 'virtual' ;
+TokKwStatic: 'static' ;
+TokKwConst: 'const' ;
+
+TokKwNovtable: 'novtable' ;
+TokKwVirtid: 'virtid' ;
+TokKwVirtstr: 'virtstr' ;
+
+TokKwPub: 'pub' ;
+TokKwProt: 'prot' ;
+TokKwPriv: 'priv' ;
+
+TokKwGen: 'gen' ;
+
+TokKwIf: 'if' ;
+TokKwElse: 'else' ;
+TokKwSwitch: 'switch' ;
+TokKwCase: 'case' ;
+TokKwDefault: 'default' ;
+
+TokKwWith: 'with' ;
+
+TokKwFor: 'for' ;
+TokKwIn: 'in' ;
+TokKwWhile: 'while' ;
+TokKwDo: 'do' ;
+
+
+TokMembfuncIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
+TokBasicIdent: [A-Za-z_] [A-Za-z0-9_]* ;
+
+TokOther: . ;

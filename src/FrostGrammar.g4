@@ -1,342 +1,151 @@
 grammar FrostGrammar;
 
-program:
-	packageItem*
+kwIf: 'if' ;
+kwElse: 'else' ;
+kwMatch: 'match' ;
+kwCase: 'case' ;
+kwDefault: 'default' ;
+kwWith: 'with' ;
+kwFor: 'for' ;
+kwWhile: 'while' ;
+kwDo: 'do' ;
+kwGen: 'gen' ;
+kwMacro: 'macro' ;
+kwLet: 'let' ;
+
+
+// attribute ideas:  must_use, inline, noinline, deprecated,
+// alignas(number), packed, section(string), target(string)
+kwAttr: 'attr' ;
+
+kwFunc: 'func' ;
+kwReturn: 'return' ;
+
+kwType: 'type' ;
+kwTypeof: 'typeof' ;
+kwInstof: 'instof' ;
+
+// `refl` is the type returned by `reflof`
+kwRefl: 'refl' ;
+kwReflof: 'reflof' ;
+
+kwTry: 'try' ;
+kwCatch: 'catch' ;
+kwExcept: 'except' ;
+kwThrow: 'throw' ;
+
+kwNamespace: 'namespace' ;
+kwUsing: 'using' ;
+kwExtern: 'extern' ;
+kwLibrary: 'library' ;
+
+kwClibrary: 'clibrary' ;
+kwCinclude: 'cinclude' ;
+kwCheader: 'cheader' ;
+kwCextern: 'cextern' ;
+
+kwEnum: 'enum' ;
+kwUnion: 'union' ;
+kwClass: 'class' ;
+kwExtends: 'extends' ;
+kwSelf: 'self' ;
+
+kwPub: 'pub' ;
+kwProt: 'prot' ;
+kwPriv: 'priv' ;
+
+kwMove: 'move' ;
+
+kwNew: 'new' ;
+kwDelete: 'delete' ;
+
+kwNull: 'null' ;
+
+kwNullable; 'nullable' ;
+kwVolatile: 'volatile' ;
+kwConst: 'const' ;
+kwMut: 'mut' ;
+kwRestrict: 'restrict' ;
+kwAtomic: 'atomic' ;
+
+kwStatic: 'static' ;
+kwStaticAssert: 'static_assert' ;
+
+kwBool: 'bool' ;
+kwTrue: 'true' ;
+kwFalse: 'false' ;
+
+kwU8: 'u8' ;
+kwS8: 's8' ;
+kwU16: 'u16' ;
+kwS16: 's16' ;
+kwU32: 'u32' ;
+kwS32: 's32' ;
+kwU64: 'u64' ;
+kwS64: 's64' ;
+kwSizeT: 'size_t' ;
+kwString: 'string' ;
+kwChar: 'char' ;
+kwFloat: 'float' ;
+kwDouble: 'double' ;
+kwVoid: 'void' ;
+kwAuto: 'auto' ;
+
+kwUnsigned: 'unsigned' ;
+kwSigned: 'signed' ;
+kwShortint: 'shortint' ;
+kwInt: 'int' ;
+kwLongint: 'longint' ;
+
+kwVariant: 'variant' ;
+kwTuple: 'tuple' ;
+
+kwFile: 'file' ;
+kwStdin: 'stdin' ;
+kwStdout: 'stdout' ;
+kwStderr: 'stderr' ;
+
+kwCast: 'cast' ;
+kwReinterpret: 'reinterpret' ;
+kwImplicit: 'implicit' ;
+//kwExplicit: 'explicit' ;
+
+
+
+
+frostProgram:
+	frostProgramItem*
 	EOF
 	;
 
-headerIf:
-	'if' letOrConstOrExpr ':'
-	;
-headerElseIf:
-	'else' 'if' letOrConstOrExpr ':'
-	;
-headerElse:
-	'else' ':'
-	;
-headerSwitch:
-	'switch' letOrConstOrExpr ':'
-	;
-headerCase:
-	'case' letOrConstOrExpr ':'
-	;
-headerDefault:
-	'default' ':'
-	;
-headerWith:
-	'with' (letSuffix | frostConstSuffix) ':'
-	;
-headerFor:
-	'for' identExpr 'in' (iterExpr | rangeExpr) ':'
-	;
-headerWhile:
-	'while' expr ':'
-	;
-headerDoWhile:
-	'do' headerWhile ':'
-	;
-headerFunc:
-	'func'
-	;
-
-headerGenIf:
-	'gen' headerIf
-	;
-headerElseGenIf:
-	'else' headerGenIf
-	;
-headerElseGen:
-	'else' 'gen'
-	;
-headerGenSwitch:
-	'gen' headerSwitch
-	;
-headerGenWith:
-	'gen' headerWith
-	;
-headerGenFor:
-	'gen' headerFor
-	;
-headerGenWhile:
-	'gen' headerWhile
-	;
-headerGenDoWhile:
-	'gen' headerDoWhile
-	;
-headerGenFunc:
-	'gen' headerFunc
-	;
-
-letOrConstOrExpr:
-	let
-	| frostConst
-	| expr
-	;
-
-anyScopeItem:
-	declClass
-	| frostConst
-	| genLet
+frostProgramItem:
+	frostNamespace
+	| frostLet
+	| frostClass
+	| frostEnum
+	| frostFunc
 	| frostUsing
-
-	// Sometimes this is a function call, and sometimes this is an
-	// assignment.  In contexts outside of function scopes, this needs to
-	// be an assignment to a `genvar` if it *is* an assignment because you
-	// can only assign to a variable inside of a function.
-	| expr ';'
+	| frostProgramGen
 	;
 
-packageItem:
-	anyScopeItem
-	| package
-	| packageGen
-	| declPackagedOrGlobalFunc
-	;
-
-package:
-	'package' identExpr
-		scopedPackageItems
-	;
-
-scopedPackageItems:
+frostNamespace:
+	kwNamespace frostIdent
 	'{'
-		packageItem*
+		frostProgramItem*
 	'}'
 	;
 
-packageGen:
-	packageGenIf
-	| packageGenSwitch
-	| packageGenWith
-	| packageGenFor
-	| packageGenWhile
-	| packageGenDoWhile
+frostLetSuffix:
+	frostLetIdentExpr (',' frostLetIdentExpr)* (':' frostTypename)?
 	;
-packageGenIf:
-	headerGenIf scopedPackageItems
-	(headerElseGenIf scopedPackageItems)*
-	(headerElseGen scopedPackageItems)?
-	;
-packageGenSwitch:
-	headerGenSwitch
-	'{'
-		((headerCase | headerDefault)
-		(scopedPackageItems | packageItem))*
-	'}'
-	;
-packageGenWith:
-	headerGenWith scopedPackageItems
-	;
-packageGenFor:
-	headerGenFor scopedPackageItems
-	;
-packageGenWhile:
-	headerGenWhile scopedPackageItems
-	;
-packageGenDoWhile:
-	headerGenDoWhile
-		scopedPackageItems
+frostLetIdentExpr:
+	frostIdent ('=' frostExpr)?
 	;
 
-let:
-	'let' letSuffix ';'
-	;
-letOrConstSuffix:
-	identExpr (':' typename)? (TokAssign | TokAtEquals) expr
-	| identExpr TokAtEquals 'func' funcSuffix
-	;
-letSuffix:
-	identExpr ':' typename
-	| letOrConstSuffix
+frostLet:
+	kwLet frostLetSuffix ';'
 	;
 
-// Constant lambdas are permissible and just mean that you can't reassign
-// to the lambda.  Of course, this means that you can reassign to the
-// lambda otherwise (i.e. when it's not constant)
-frostConstSuffix:
-	'const' letOrConstSuffix
-	;
-
-frostConst:
-	'let'  frostConstSuffix ';'
-	;
-
-// This means that genvars can store lambdas.
-genLet:
-	'gen' 'let' TokKwConst? letSuffix ';'
-	;
-
-frostUsing:
-	'using' identExpr '=' typename ';'
-	| 'using' scopedIdent ';'
-	;
-
-declPackagedOrGlobalFunc:
-	(headerGenFunc | headerFunc) identExpr
-		funcSuffix
-	;
-
-funcSuffix:
-	typename? genericList? argList
-		scopedFuncItems
-	;
-funcItem:
-	anyScopeItem
-	| let
-	;
-
-declClass:
-	'class' identExpr genericList? extends?
-		scopedClassItems
-	;
-extends:
-	'extends' typename (',' typename)*
-	;
-
-genericList:
-	'{'
-		oneGeneric (',' oneGeneric)*
-	'}'
-	;
-
-oneGeneric:
-	oneTypeGeneric
-	| oneValGeneric
-	;
-oneTypeGeneric:
-	'type' ((identExpr ('=' typename)?) | ('...' identExpr))
-	;
-oneValGeneric:
-	typename ((identExpr ('=' expr)) | ('...' identExpr))
-	;
-
-
-// Expression parsing
-expr:
-	assignExpr assignOp expr
-	| assignExpr
-	;
-assignOp:
-	TokAssign
-	| TokCstmAssign
-
-	| TokPlusEquals
-	| TokMinusEquals
-
-	| TokMulEquals
-	| TokDivEquals
-	| TokModEquals
-
-	| TokBitAndEquals
-	| TokBitOrEquals
-	| TokBitXorEquals
-
-	| TokBitLslEquals
-	| TokBitLsrEquals
-	| TokBitAsrEquals
-
-	| TokAtEquals
-	;
-
-assignExpr:
-	logicalExpr logicalOp assignExpr
-	| logicalExpr
-	;
-logicalOp:
-	TokLogAnd
-	| TokLogOr
-	;
-
-logicalExpr:
-	compareExpr compareOp logicalExpr
-	| compareExpr
-	;
-compareOp:
-	TokCmpEq
-	| TokCmpNe
-	| TokCmpLt
-	| TokCmpGt
-	| TokCmpLe
-	| TokCmpGe
-	;
-
-compareExpr:
-	addSubExpr addSubOp compareExpr
-	| addSubExpr
-	;
-addSubOp:
-	TokPlus
-	| TokMinus
-	;
-
-addSubExpr:
-	mulDivModEtcExpr mulDivModEtcOp addSubExpr
-	| mulDivModEtcExpr
-	;
-mulDivModEtcOp:
-	TokMul
-	| TokDiv
-	| TokMod
-
-	| TokBitAnd
-	| TokBitOr
-	| TokBitXor
-
-	| TokBitLsl
-	| TokBitLsr
-	| TokBitAsr
-	;
-
-mulDivModEtcExpr:
-	'(' expr ')'
-	| identExpr
-	| unaryExpr
-	;
-
-unaryExpr:
-	unaryOp expr
-	;
-unaryOp:
-	TokAt
-	| TokDollar
-
-	| TokBitNot
-	| TokLogNot
-
-	| TokPlus
-	| TokMinus
-	;
-
-// If done with `genLet`, can use compile-time code execution with this to
-// produce an identifier by casting the `genLet` to a `string` (or just
-// using its value if it is already a `string`)
-identExpr:
-	simpleIdentExpr (TokIdentConcat simpleIdentExpr)*
-	;
-simpleIdentExpr:
-	identConcatExpr
-
-	// Require '(' and ')' because of infinite recursion in top-down
-	// parsing.  Use of '(' and ')' in this situation is good code style
-	// anyway.
-	| '(' expr ')'
-	;
-
-identConcatExpr:
-	lowestIdentExpr
-	((TokScopeAccess | TokCstmScopeAccess) lowestIdentExpr)*
-	;
-
-lowestIdentExpr:
-	// '(' expr ')' allows you to give priority to '#' over '.' and
-	// '->'
-	(basicIdent | ('(' expr ')'))
-		(genericInstList? funcCallSuffix)?
-		(funcCallSuffix | ('[' expr ']'))*
-	;
-basicIdent:
-	TokBasicIdent
-	;
 
 // Lexer rules
 LexWhitespace:
@@ -366,11 +175,35 @@ fragment FragChar:
 	| FragEscapeSequence
 	;
 
+
 TokStringLiteral:
 	'"' FragChar* '"'
 	;
 
-TokDecNum: [0-9] [0-9_]* ;
+fragment FragDecNum:
+	[0-9] [0-9_]*
+	;
+fragment FragFloatFrac:
+	FragDecNum? '.' FragDecNum
+	| FragDecNum '.'
+	;
+fragment FragFloatExpPart:
+	'e' FragFloatSign? FragDecNum
+	| 'E' FragFloatSign? FragDecNum
+	;
+fragment FragFloatSign:
+	'+' | '-'
+	;
+fragment FragFloatSuffix:
+	'f' | 'd' | 'l' | 'F' | 'D' | 'L'
+	;
+
+TokFloatNum: 
+	FragFloatFrac FragFloatExpPart? FragFloatSuffix?
+	| FragDecNum FragFloatExpPart FragFloatSuffix?
+	;
+
+TokDecNum: FragDecNum ;
 TokHexNum: '0x' [0-9a-fA-F] [0-9a-fA-F_]* ;
 TokOctNum: '0o' [0-7] [0-7_]* ;
 TokBinNum: '0b' [0-1] [0-1_]* ;
@@ -424,11 +257,13 @@ TokBitLsrEquals: '>>=' ;
 TokBitAsrEquals: '>>>=' ;
 
 TokAt: '@' ;
+TokAtAt: '@@' ;
 TokAtEquals: '@=' ;
 TokDollar: '$' ;
 TokIdentConcat: '#' ;
 
 TokScopeAccess: '.' ;
+TokCstmPtrScopeAccess: '$.' ;
 TokCstmScopeAccess: '->' ;
 
 TokLParen: '(' ;
@@ -441,89 +276,8 @@ TokSemicolon: ';' ;
 TokColon: ':' ;
 TokComma: ',' ;
 
-
-TokKwString: 'string' ;
-TokKwVector: 'vector' ;
-TokKwStack: 'stack' ;
-TokKwList: 'list' ;
-TokKwSet: 'set' ;
-TokKwDict: 'dict' ;
-TokKwVariant: 'variant' ;
-
-TokKwU8: 'u8' ;
-TokKwS8: 's8' ;
-TokKwU16: 'u16' ;
-TokKwS16: 's16' ;
-TokKwU32: 'u32' ;
-TokKwS32: 's32' ;
-TokKwU64: 'u64' ;
-TokKwS64: 's64' ;
-
-TokKwAny: 'any' ;
-TokKwVoid: 'void' ;
-
-TokKwContents: 'contents' ;
-TokKwContentsof: 'contentsof' ;
-
-TokKwCast: 'cast' ;
-
-
-TokKwPtr: 'ptr' ;
-TokKwNull: 'null' ;
-
-TokKwPref: 'pref' ;
-TokKwRref: 'rref' ;
-TokKwCref: 'cref' ;
-
-TokKwNew: 'new' ;
-TokKwDelete: 'delete' ;
-TokKwMove: 'move' ;
-
-TokKwLet: 'let' ;
-
-TokKwPackage: 'package' ;
-TokKwUsing: 'using' ;
-
-TokKwFunc: 'func' ;
-TokKwReturn: 'return' ;
-
-TokKwType: 'type' ;
-TokKwTypeof: 'typeof' ;
-
-TokKwClass: 'class' ;
-TokKwSelf: 'self' ;
-TokKwExtends: 'extends' ;
-
-TokKwInit: 'init' ;
-TokKwDest: 'dest' ;
-TokKwFiter: 'fiter' ;
-TokKwRiter: 'riter' ;
-TokKwRange: 'range' ;
-
-TokKwVirtual: 'virtual' ;
-TokKwStatic: 'static' ;
-TokKwConst: 'const' ;
-
-TokKwPub: 'pub' ;
-TokKwProt: 'prot' ;
-TokKwPriv: 'priv' ;
-
-TokKwGen: 'gen' ;
-
-TokKwIf: 'if' ;
-TokKwElse: 'else' ;
-TokKwSwitch: 'switch' ;
-TokKwCase: 'case' ;
-TokKwDefault: 'default' ;
-
-TokKwWith: 'with' ;
-
-TokKwFor: 'for' ;
-TokKwIn: 'in' ;
-TokKwWhile: 'while' ;
-TokKwDo: 'do' ;
-
-
+TokReservedMembfuncIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
+TokMacroIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
 TokBasicIdent: [A-Za-z_] [A-Za-z0-9_]* ;
 
 TokOther: . ;
