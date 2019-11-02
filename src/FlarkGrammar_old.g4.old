@@ -1,4 +1,4 @@
-grammar FrostGrammar;
+grammar FlarkGrammar;
 
 //--------
 program:

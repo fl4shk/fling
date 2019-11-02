@@ -1,6 +1,6 @@
-# Frost
-Frost is a custom programming language for which a compiler is being
-developed.  The compiler itself is just called `frost`.
+# Flark
+Flark is a custom programming language for which a compiler is being
+developed.  The compiler itself is just called `flark`.
 
 Limitations of C++ are what really drove the creation of this project.
 
@@ -12,7 +12,7 @@ generation is a primary goal of this language.
 
 C++ does have some compile-time code execution via `constexpr`, but I view
 `constexpr` as supporting too little of the C++ language.  In comparison,
-Frost does not place very many limits on what can be done with compile-time
+Flark does not place very many limits on what can be done with compile-time
 code execution.   Almost every language feature is available at
 compile-time, and some language features are *only* available at
 compile-time.
@@ -35,7 +35,7 @@ C interop is a must-have feature for the language, and C code generation is
 actually what the first version of the compiler will produce.  Once the
 first version of the compiler (to be written in C++) is finished, the
 compiler will be re-implemented in its own language.  Long term, the
-compiler will be provided as both C source code and Frost source code.  By
+compiler will be provided as both C source code and Flark source code.  By
 providing the compiler as C source code, bootstrapping the compiler will
 only need to be done once by me, and I can leave future bootstrapping to
 people making C compilers.
