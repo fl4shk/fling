@@ -11,11 +11,12 @@ kwWhile: 'while' ;
 kwDo: 'do' ;
 kwGen: 'gen' ;
 kwMacro: 'macro' ;
+kwToident: 'toident' ;
 kwLet: 'let' ;
 
 
-// attribute ideas:  must_use, inline, noinline, deprecated,
-// alignas(number), packed, section(string), target(string)
+// attribute ideas:  must_use, inline, noinline, deprecated, packed,
+// section(string), target(string), force_soa, allow_soa
 kwAttr: 'attr' ;
 
 kwFunc: 'func' ;
@@ -29,10 +30,6 @@ kwInstof: 'instof' ;
 kwRefl: 'refl' ;
 kwReflof: 'reflof' ;
 
-kwTry: 'try' ;
-kwCatch: 'catch' ;
-kwExcept: 'except' ;
-kwThrow: 'throw' ;
 
 kwNamespace: 'namespace' ;
 kwUsing: 'using' ;
@@ -42,12 +39,16 @@ kwLibrary: 'library' ;
 kwClibrary: 'clibrary' ;
 kwCinclude: 'cinclude' ;
 kwCheader: 'cheader' ;
+kwCdefine: 'cefine' ;
 kwCextern: 'cextern' ;
 
 kwEnum: 'enum' ;
 kwUnion: 'union' ;
+kwVariant: 'variant' ;
 kwClass: 'class' ;
 kwExtends: 'extends' ;
+kwAbstract: 'abstract' ;
+kwFinal: 'final' ;
 kwSelf: 'self' ;
 
 kwPub: 'pub' ;
@@ -58,10 +59,11 @@ kwMove: 'move' ;
 
 kwNew: 'new' ;
 kwDelete: 'delete' ;
+kwStalloc: 'stalloc' ;
 
 kwNull: 'null' ;
+kwNullT: 'null_t' ;
 
-kwNullable; 'nullable' ;
 kwVolatile: 'volatile' ;
 kwConst: 'const' ;
 kwMut: 'mut' ;
@@ -88,17 +90,20 @@ kwString: 'string' ;
 kwChar: 'char' ;
 kwFloat: 'float' ;
 kwDouble: 'double' ;
+kwLongdouble: 'longdouble' ;
+kwFpenv: 'fpenv' ;
 kwVoid: 'void' ;
 kwAuto: 'auto' ;
 
-kwUnsigned: 'unsigned' ;
-kwSigned: 'signed' ;
-kwShortint: 'shortint' ;
-kwInt: 'int' ;
-kwLongint: 'longint' ;
+kwUchar: 'uchar' ;
+kwSchar: 'schar' ;
+kwUshortint: 'ushortint' ;
+kwSshortint: 'sshortint' ;
+kwUint: 'uint' ;
+kwSint: 'sint' ;
+kwUlongint: 'ulongint' ;
+kwSlongint: 'slongint' ;
 
-kwVariant: 'variant' ;
-kwTuple: 'tuple' ;
 
 kwFile: 'file' ;
 kwStdin: 'stdin' ;
@@ -135,15 +140,9 @@ frostNamespace:
 	'}'
 	;
 
-frostLetSuffix:
-	frostLetIdentExpr (',' frostLetIdentExpr)* (':' frostTypename)?
-	;
-frostLetIdentExpr:
-	frostIdent ('=' frostExpr)?
-	;
-
 frostLet:
-	kwLet frostLetSuffix ';'
+	frostRefLet
+	| frostOtherLet
 	;
 
 
@@ -260,10 +259,12 @@ TokAt: '@' ;
 TokAtAt: '@@' ;
 TokAtEquals: '@=' ;
 TokDollar: '$' ;
-TokIdentConcat: '#' ;
+
+TokVariantNeeded: '?' ;
 
 TokScopeAccess: '.' ;
-TokCstmPtrScopeAccess: '$.' ;
+TokPtrScopeAccess: '$.' ;
+TokQmarkScopeAccess: '?.' ;
 TokCstmScopeAccess: '->' ;
 
 TokLParen: '(' ;
@@ -276,8 +277,12 @@ TokSemicolon: ';' ;
 TokColon: ':' ;
 TokComma: ',' ;
 
+// The non-post/pre underscore parts must start and end with an
+// alphanumeric character, and there must be at least two alphanumeric
+// characters.
 TokReservedMembfuncIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
 TokMacroIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
-TokBasicIdent: [A-Za-z_] [A-Za-z0-9_]* ;
+TokBasicIdent: ('r#')?  ([_]? [A-Za-z]) ([_]? [A-Za-z0-9])* [_]?
+ ;
 
 TokOther: . ;
