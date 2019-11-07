@@ -1,4 +1,4 @@
-grammar FlarkGrammar;
+grammar FlingGrammar;
 
 //--------
 program:
@@ -119,7 +119,7 @@ anyPackageOrFuncItem:
 	| declEnum
 	| nonMemberConst
 	| genLet
-	| frostUsing
+	| flingUsing
 
 	// Sometimes this is a function call, and sometimes this is an
 	// assignment.  In contexts outside of function scopes, this needs to
@@ -182,7 +182,7 @@ packageGenDoWhile:
 	;
 
 
-frostUsing:
+flingUsing:
 	'using' (identExpr '=')? scopedIdent ';'
 	| 'using' (identExpr '=')? typename ';'
 	| 'using' (identExpr '=')? scopedFunc ';'

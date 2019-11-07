@@ -1,42 +1,28 @@
-# Flark
-Flark is a custom programming language for which a compiler is being
-developed.  The compiler itself is just called `flark`.
+# Fling
+Fling is a custom programming language for which a compiler is being
+developed.  The compiler itself is just called `fling`.
 
-Limitations of C++ are what really drove the creation of this project.
+The language is largely an enhancement over my own understanding of C++,
+with much of the langauge having identical, equivalent, or similar enough
+features compared to what exists in C++.
 
-For example, in C++  I have sometimes found myself in need of compile-time
-reflection.  I have often, in C++, found myself in need of some simple
-compile-time code generation, for which I had used the C preprocessor.  The
-ability to combine compile-time reflection with compile-time code
-generation is a primary goal of this language.
+One key difference between this language and C++ is how error handling is
+done.  Error handling is done similar to how it is done in Rust (`Result`
+in Rust-speak).
 
-C++ does have some compile-time code execution via `constexpr`, but I view
-`constexpr` as supporting too little of the C++ language.  In comparison,
-Flark does not place very many limits on what can be done with compile-time
-code execution.   Almost every language feature is available at
-compile-time, and some language features are *only* available at
-compile-time.
+The main enhancements over the way I write and understand C++ myself are in
+the compile-time language support.  Nearly the entire language is available
+at compile-time.  Macros similar to what you might find in a competent
+assembler exist in this language.  They take arguments in the same way that
+functions do (including templates), but such arguments are used entirely
+for code generation.  Compile-time reflection, generally intended to be
+used with code generation, is also supported (with a limitation of not
+being able to look at functions other than their arguments).
 
-Many language features of modern, idiomatic C++ are being brought into this
-language nearly as-is (at with least my understanding of the as-is), but
-with different syntax or perhaps some enhancements in some cases, with very
-few cuts from the core language features that have no equivalent features.
+The standard library is to be very small (such that what parts of it get
+used are just compiled into the final binary), and it is to be implemented
+entirely in the language itself.
 
-The language will be object-oriented, generic, procedural, structural,
-reflective, generative, and with type inference.  It will be a systems
-programming language.
-
-The main philosophy of the language is to allow the programmer to leverage
-the compiler to do the programmer's dirty work, including examining (to an
-extent) the source code of one section of the program in another section of
-the program.
-
-C interop is a must-have feature for the language, and C code generation is
-actually what the first version of the compiler will produce.  Once the
-first version of the compiler (to be written in C++) is finished, the
-compiler will be re-implemented in its own language.  Long term, the
-compiler will be provided as both C source code and Flark source code.  By
-providing the compiler as C source code, bootstrapping the compiler will
-only need to be done once by me, and I can leave future bootstrapping to
-people making C compilers.
-
+Lastly, the language has C interop as a key feature, which allows the
+programmer to use C libraries.  C interop is done by way of generating C
+code.
