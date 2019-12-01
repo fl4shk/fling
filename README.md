@@ -21,7 +21,10 @@ being able to look at functions other than their arguments).
 
 The standard library is to be very small (such that what parts of it get
 used are just compiled into the final binary), and it is to be implemented
-entirely in the language itself.
+entirely in the language itself with no compiler magic.
+
+Libraries in general are a feature that is an explicit part of the
+language.
 
 Lastly, the language has C interop as a key feature, which allows the
 programmer to use C libraries.  C interop is done by way of generating C
