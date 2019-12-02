@@ -1,5 +1,3 @@
-lexer grammar FlingLexerGrammar;
-
 // Lexer rules
 LexWhitespace:
 	(' ' | '\t' | '\r' | '\n') -> skip
