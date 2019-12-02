@@ -22,6 +22,7 @@ flingSwProgramGen:
 	| flingSwProgramGenWhile
 	| flingSwProgramGenDoWhile
 	| flingSwGenDeclVar
+	| flingSharedStmt
 	;
 
 flingSwProgramGenIf:
@@ -47,7 +48,7 @@ flingSwProgramElseGen:
 flingSwProgramGenMatch:
 	'gen' 'match' flingExpr
 	'{'
-		(flingSwProgramMatchCase '=>' flingSwProgram)*
+		(flingMatchCase '=>' flingSwProgram)*
 	'}'
 	;
 flingSwProgramGenFor:

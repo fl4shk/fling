@@ -1,0 +1,24 @@
+Lexer (done)
+
+Templates shared stuff
+
+Expressions
+	* Support both HDL expressions and software expressions in same parser.
+
+Functions
+	* Support both HDL functions and software functions in same parser.
+	Software function syntax can be used in both HDL runtime code and HDL
+	compile-time code.
+
+Custom Types
+	* Support both HDL classes and software classes in same parser.
+	Specify, in pt visitor, if it's a valid HDL *runtime* class.
+	* Usability of custom types at both HDL runtime and HDL compile-time is
+	*entirely based upon member variables, not member functions*.  This
+	permits storing functions only executable at HDL compile-time and
+	functions only executable at HDL runtime in the same class.  This can
+	be useful if compile-time code execution provides the initial value of
+	a class instance, for example.  It can also be useful for testing
+	purposes.
+
+HDL modules, procs, and tasks
