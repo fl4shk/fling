@@ -8,6 +8,36 @@ LexLineComment:
 	;
 
 
+fragment FragDecNum:
+	[0-9] [0-9_]*
+	;
+TokDecNum: FragDecNum ;
+TokHexNum: '0x' [0-9a-fA-F] [0-9a-fA-F_]* ;
+TokOctNum: '0o' [0-7] [0-7_]* ;
+TokBinNum: '0b' [0-1] [0-1_]* ;
+
+
+fragment FragFloatFrac:
+	FragDecNum? '.' FragDecNum
+	| FragDecNum '.'
+	;
+fragment FragFloatExpPart:
+	'e' FragFloatSign? FragDecNum
+	| 'E' FragFloatSign? FragDecNum
+	;
+fragment FragFloatSign:
+	'+' | '-'
+	;
+fragment FragFloatSuffix:
+	'f' | 'd' | 'l' | 'F' | 'D' | 'L'
+	;
+
+TokFloatNum: 
+	FragFloatFrac FragFloatExpPart? FragFloatSuffix?
+	| FragDecNum FragFloatExpPart FragFloatSuffix?
+	;
+
+
 fragment FragEscapeSequence:
 	FragBasicEscapeSequence
 	| FragHexEscapeSequence
@@ -31,33 +61,6 @@ TokStringLiteral:
 	'"' FragChar* '"'
 	;
 
-fragment FragDecNum:
-	[0-9] [0-9_]*
-	;
-fragment FragFloatFrac:
-	FragDecNum? '.' FragDecNum
-	| FragDecNum '.'
-	;
-fragment FragFloatExpPart:
-	'e' FragFloatSign? FragDecNum
-	| 'E' FragFloatSign? FragDecNum
-	;
-fragment FragFloatSign:
-	'+' | '-'
-	;
-fragment FragFloatSuffix:
-	'f' | 'd' | 'l' | 'F' | 'D' | 'L'
-	;
-
-TokFloatNum: 
-	FragFloatFrac FragFloatExpPart? FragFloatSuffix?
-	| FragDecNum FragFloatExpPart FragFloatSuffix?
-	;
-
-TokDecNum: FragDecNum ;
-TokHexNum: '0x' [0-9a-fA-F] [0-9a-fA-F_]* ;
-TokOctNum: '0o' [0-7] [0-7_]* ;
-TokBinNum: '0b' [0-1] [0-1_]* ;
 
 TokParamPack: '...' ;
 TokRangeSeparator: '..' ;
@@ -116,9 +119,13 @@ TokAtEquals: '@=' ;
 
 TokErrorCheckOrNullCheck: '?' ;
 
-TokScopeAccess: '.' ;
-TokPtrScopeAccess: '*.' ;
-TokCstmScopeAccess: '->' ;
+TokGlobalForceSuccess: '!!' ;
+TokGlobalErrorCheckOrNullCheck: '??' ;
+
+TokMemberAccess: '.' ;
+TokPtrMemberAccess: '*.' ;
+TokCstmMemberAccess: '->' ;
+TokScopeAccess: '::' ;
 
 TokLParen: '(' ;
 TokRParen: ')' ;
@@ -149,7 +156,6 @@ TokKwBreak: 'break' ;
 
 TokKwGen: 'gen' ;
 TokKwMacro: 'macro' ;
-TokKwDefine: 'define' ;
 TokKwTokstrm: 'tokstrm' ;
 TokKwCat: 'cat' ;
 TokKwFromident: 'fromident' ;
@@ -179,6 +185,7 @@ TokKwInitial: 'initial' ;
 TokKwAlwaysComb: 'always_comb' ;
 TokKwAlwaysBlk: 'always_blk' ;
 TokKwAlwaysFf: 'always_ff' ;
+TokKwDelay: 'delay' ;
 
 TokKwDollarDisplay: '$display' ;
 TokKwDollarMonitor: '$monitor' ;
@@ -219,6 +226,7 @@ TokKwExtends: 'extends' ;
 TokKwAbstract: 'abstract' ;
 TokKwBase: 'base' ;
 TokKwFriend: 'friend' ;
+TokKwVirtual: 'virtual' ;
 TokKwSelf: 'self' ;
 TokKwSelfT: 'self_t' ;
 
@@ -327,13 +335,11 @@ TokKwAttr: 'attr' ;
 // alphanumeric character, and there must be at least two alphanumeric
 // characters.
 TokReservedIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
-TokMacroDefineIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
+TokMacroIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
 
-fragment FragBasicIdent:
-	([_]? [A-Za-z]) ([_]? [A-Za-z0-9])* [_]?
-	;
+fragment FragBasicIdent: ([_]? [A-Za-z]) ([_]? [A-Za-z0-9])* [_]?  ;
 fragment FragRawIdent: 'r#' FragBasicIdent ;
 
-TokIdent: FragBasicIdent | FragRawIdent;
+TokIdent: FragBasicIdent | FragRawIdent ;
 
 TokOther: . ;

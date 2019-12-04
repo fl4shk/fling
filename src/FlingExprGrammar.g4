@@ -1,3 +1,4 @@
+//--------
 flingExpr:
 	flingAssignExpr (flingAssignOp flingExpr)?
 	;
@@ -58,31 +59,71 @@ flingLowUnaryExpr:
 flingHighUnaryOp:
 	TokMulOrPtr | TokAt
 	;
+//--------
 
+--------
 flingHighUnaryExpr:
-	(
-		(
-			flingHighestExpr TokLogNotOrForceSuccess
-			| flingHighestExpr TokErrorCheckOrNullCheck
-			| flingHighestExpr flingArrayIndexOrSlice
-		)
-		((TokScopeAccess | TokPtrScopeAccess | TokCstmScopeAccess)
-		flingExpr)?
-	)
-	| flingHighestExpr
+	flingHighestExpr
+	(flingHighUnaryExprSuffixPart0 flingHighUnaryExprSuffixPart1?)?
+	;
+flingHighUnaryExprSuffixPart0:
+	TokLogNotOrForceSuccess
+	| TokErrorCheckOrNullCheck
+	| TokGlobalForceSuccess
+	| TokGlobalErrorCheckOrNullCheck
+	| flingArrayIndexOrSlice
+	;
+	
+flingHighUnaryExprSuffixPart1:
+	flingHighUnaryExprSuffixPart1Opt0
+	| flingHighUnaryExprSuffixPart1Opt1
+	;
+flingHighUnaryExprSuffixPart1Opt0:
+	(TokMemberAccess | TokPtrMemberAccess)
+	(flingIdent | flingCallFuncExpr | flingPointableFuncExpr)
+	;
+flingHighUnaryExprSuffixPart1Opt1:
+	TokCstmMemberAccess flingIdent
 	;
 flingArrayIndexOrSlice:
 	'[' flingExpr ']'
 	;
 
 flingHighestExpr:
-	'(' flingExpr ')'
-	| flingIdent
-	| TokStringLiteral
+	flingHighestExprPrefix flingHighestExprSuffix?
+	;
+flingHighestExprPrefix:
+	TokDecNum | TokHexNum | TokOctNum | TokBinNum
 	| TokFloatNum
-	| TokDecNum | TokHexNum | TokOctNum | TokBinNum
-	| flingRunDefine
-	| flingCallFunc
+	| '(' flingExpr ')'
+	| flingIdent
+	| flingCallFuncExpr
+	| flingPointableFuncExpr
+	| flingString
+	| flingPackedParamPackExpr
+	| flingCastExpr
 	| flingMatchExpr
 	| flingIfExpr
 	;
+flingHighestExprSuffix:
+	TokRangeSeparator flingExpr
+	| TokParamPack
+	;
+
+flingPackedParamPackExpr:
+	'[' flingExpr (',' flingExpr)* (',')? ']'
+	;
+flingUnpackedParamPackExpr:
+	flingHighestExpr '...'
+	;
+
+
+flingCallFuncExpr:
+	(flingIdent | flingString) flingInstTemplateArgList?
+		flingInstFuncMacroArgList
+	;
+flingPointableFuncExpr:
+	(flingIdent | flingString) flingInstTemplateArgList?
+		flingInstPointableFuncArgList
+	;
+//--------
