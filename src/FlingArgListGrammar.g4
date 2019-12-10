@@ -13,7 +13,7 @@ flingTypenameList:
 //--------
 flingDeclFuncMacroArgList:
 	'('
-		flingDeclFuncMacroArg (',' flingDeclFuncMacroArg)* (',')?
+		(flingDeclFuncMacroArg (',' flingDeclFuncMacroArg)* (',')?)?
 	')'
 	;
 flingDeclFuncMacroArg:
@@ -59,7 +59,7 @@ flingInstFuncMacroArgList:
 		(
 			flingInstFuncMacroPosArgList
 			| flingInstFuncMacroNamedArgList
-		)
+		)?
 	')'
 	;
 

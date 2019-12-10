@@ -108,18 +108,26 @@ flingPrefixLeafExpr:
 	| flingCastExpr
 	| flingMatchExpr
 	| flingIfExpr
+	| flingNewExpr
 	| flingScopedIdent
 	| flingScopedFuncCallExpr
 	;
 
+flingScope:
+	flingScopeSeparator? flingTypename '::'
+	;
+flingScopeSeparator: '::' ;
 
 flingScopedIdent:
-	flingScopedIdent
+	flingScope? flingIdent
 	;
 
 // Not for overloaded operators which are technically also functions
+flingScopedFuncCallExpr:
+	flingScope? flingFuncCallExpr
+	;
 flingFuncCallExpr:
-	flingIdent
+	flingIdent flingInstTemplateArgList? flingInstFuncMacroArgList
 	;
 
 
