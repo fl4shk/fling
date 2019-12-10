@@ -87,9 +87,10 @@ TokBitAnd: '&' ;
 TokBitOr: '|' ;
 TokBitXor: '^' ;
 
-TokBitLsl: '<<' ;
-TokBitLsr: '>>' ;
-TokBitAsr: '>>>' ;
+// These have been made into *parser* rules
+//TokBitLsl: '<<' ;
+//TokBitLsr: '>>' ;
+//TokBitAsr: '>>>' ;
 
 TokBitNot: '~' ;
 TokLogNotOrForceSuccess: '!' ;
@@ -109,9 +110,9 @@ TokBitAndEquals: '&=' ;
 TokBitOrEquals: '|=' ;
 TokBitXorEquals: '^=' ;
 
-TokBitLslEquals: '<<=' ;
-TokBitLsrEquals: '>>=' ;
-TokBitAsrEquals: '>>>=' ;
+//TokBitLslEquals: '<<=' ;
+//TokBitLsrEquals: '>>=' ;
+//TokBitAsrEquals: '>>>=' ;
 
 TokAt: '@' ;
 TokAtAt: '@@' ;
@@ -119,17 +120,18 @@ TokAtEquals: '@=' ;
 
 TokErrorCheckOrNullCheck: '?' ;
 
-TokGlobalForceSuccess: '!!' ;
-TokGlobalErrorCheckOrNullCheck: '??' ;
+TokMultiForceSuccess: '!!' ;
+TokMultiErrorCheckOrNullCheck: '??' ;
 
 TokMemberAccess: '.' ;
-TokPtrMemberAccess: '*.' ;
-TokCstmMemberAccess: '->' ;
+TokPtrMemberAccess: '->' ;
+TokCstmMemberAccess: ':.' ;
 TokScopeAccess: '::' ;
 
 TokLParen: '(' ;
 TokRParen: ')' ;
 TokLAttr: '#[' ;
+TokRAttr: ']#' ;
 TokLBracket: '[' ;
 TokRBracket: ']' ;
 TokLBrace: '{' ;
@@ -153,6 +155,7 @@ TokKwWhile: 'while' ;
 TokKwDo: 'do' ;
 TokKwContinue: 'continue' ;
 TokKwBreak: 'break' ;
+TokKwProvide: 'provide' ;
 
 TokKwGen: 'gen' ;
 TokKwMacro: 'macro' ;
@@ -164,8 +167,8 @@ TokKwFromident: 'fromident' ;
 // attribute ideas:  must_use, inline, noinline, deprecated, packed,
 // section("string"), target("string"), force_soa, allow_soa,
 // force_one_inst, force_multi_inst, attr(some_macro(args...))
-// Getter and setter attribute ideas:  pub_vget, pub_vset, pub_crget,
-// pub_crset, pub_rvset, (priv and prot of these)
+// Getter and setter attribute ideas:  vget, vset, crget, crset, rvset,
+// (priv and prot of these)
 
 TokKwFunc: 'func' ;
 TokKwReturn: 'return' ;
@@ -199,11 +202,11 @@ TokKwInstof: 'instof' ;
 // Build scripts, libraries, namespaces, etc.
 TokKwLibrary: 'library' ;
 TokKwExtern: 'extern' ;
+TokKwWork: 'work' ;
 TokKwNamespace: 'namespace' ;
 TokKwUsing: 'using' ;
 
 TokKwDollarLibrary: '$library' ;
-TokKwWork: 'work' ;
 TokKwDollarShell: '$shell' ;
 TokKwDollarPath: '$path' ;
 TokKwDollarExtern: '$extern' ;
@@ -214,8 +217,8 @@ TokKwDollarCLibrary: '$c_library' ;
 TokKwDollarCHeader: '$c_header' ;
 TokKwCHeader: 'c_header' ;
 TokKwCExtern: 'c_extern' ;
-// This just specifies that a `#define` exists C-side.  Such `#define`s
-// have values that fling doesn't care about.
+// This just specifies that a constant value `#define` exists C-side.  Such
+// `#define`s have values that fling doesn't care about.
 TokKwCppDefine: 'cpp_define' ;
 
 TokKwEnum: 'enum' ;
@@ -226,24 +229,28 @@ TokKwExtends: 'extends' ;
 TokKwAbstract: 'abstract' ;
 TokKwBase: 'base' ;
 TokKwFriend: 'friend' ;
-TokKwVirtual: 'virtual' ;
+TokKwDyn: 'dyn' ;
 TokKwSelf: 'self' ;
 TokKwSelfT: 'self_t' ;
+TokKwInit: 'init' ;
+TokKwDest: 'dest' ;
+
+TokKwPub: 'pub' ;
+TokKwProt: 'prot' ;
+TokKwPriv: 'priv' ;
 
 TokKwTrait: 'trait' ;
 TokKwRequires: 'requires' ;
 
 TokKwTry: 'try' ;
 TokKwCatch: 'catch' ;
-
-TokKwPub: 'pub' ;
-TokKwProt: 'prot' ;
-TokKwPriv: 'priv' ;
+TokKwThrow: 'throw' ;
 
 TokKwMove: 'move' ;
 
 TokKwAlloc: 'alloc' ;
-TokKwAllocT: 'alloc_t' ;
+TokKwNew: 'new' ;
+TokKwDelete: 'delete' ;
 
 TokKwNull: 'null' ;
 TokKwNullT: 'null_t' ;
@@ -287,43 +294,45 @@ TokKwChar: 'char' ;
 TokKwFloat: 'float' ;
 TokKwDouble: 'double' ;
 TokKwLongdouble: 'longdouble' ;
-TokKwFpenv: 'fpenv' ;
-TokKwSimd: 'simd' ;
+//TokKwFpenv: 'fpenv' ;
+//TokKwSimd: 'simd' ;
 
 TokKwVoid: 'void' ;
 TokKwAuto: 'auto' ;
 TokKwRange: 'range' ;
-
 
 TokKwSizeof: 'sizeof' ;
 
 TokKwCUchar: 'c_uchar' ;
 TokKwCSchar: 'c_schar' ;
 TokKwCUshortint: 'c_ushortint' ;
-TokKwCSshortint: 'c_sshortint' ;
+TokKwCShortint: 'c_shortint' ;
 TokKwCUint: 'c_uint' ;
-TokKwCSint: 'c_sint' ;
+TokKwCInt: 'c_int' ;
 TokKwCUlongint: 'c_ulongint' ;
-TokKwCSlongint: 'c_slongint' ;
+TokKwCLongint: 'c_longint' ;
 TokKwCUlonglongint: 'c_ulonglongint' ;
-TokKwCSlonglongint: 'c_slonglongint' ;
+TokKwCLonglongint: 'c_longlongint' ;
 
-
-TokKwFile: 'file' ;
-TokKwStdin: 'stdin' ;
-TokKwStdout: 'stdout' ;
-TokKwStderr: 'stderr' ;
-
-TokKwAtomic: 'atomic' ;
-TokKwAtomicRef: 'atomic_ref' ;
-TokKwThread: 'thread' ;
-TokKwMutex: 'mutex' ;
-TokKwCallOnce: 'thrd_call_once' ;
-TokKwOnceFlag: 'thrd_once_flag' ;
-TokKwCond: 'thrd_cond' ;
-TokKwTss: 'tss' ;
+//TokKwResult: 'result' ;
+//TokKwOption: 'option' ;
+//
+//TokKwFile: 'file' ;
+//TokKwStdin: 'stdin' ;
+//TokKwStdout: 'stdout' ;
+//TokKwStderr: 'stderr' ;
+//
+//TokKwAtomic: 'atomic' ;
+//TokKwAtomicRef: 'atomic_ref' ;
+//TokKwThread: 'thread' ;
+//TokKwMutex: 'mutex' ;
+//TokKwCallOnce: 'thrd_call_once' ;
+//TokKwOnceFlag: 'thrd_once_flag' ;
+//TokKwCond: 'thrd_cond' ;
+//TokKwTss: 'tss' ;
 
 TokKwCast: 'cast' ;
+TokKwAs: 'as' ;
 TokKwReinterpret: 'reinterpret' ;
 TokKwImplicit: 'implicit' ;
 

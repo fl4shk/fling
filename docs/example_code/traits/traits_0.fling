@@ -1,0 +1,42 @@
+class Point<T: type>
+{
+	x, y: T;
+	default func init[(@const ...), (@@...)];
+
+	static const func cast<string>(this: @const self_t)
+	{
+		(ret := "(" + cast<string>(this.x) + ", " + cast<string>(this.y)
+			+ ")")??;
+		return ret;
+	}
+}
+
+class Square<T: type>
+{
+	pos: Point<T>;
+	size: T;
+	default func init(@const ...);
+}
+
+class Rectangle<T: type>
+{
+	pos, size: Point<T>;
+	default func init(@const ...);
+}
+
+trait HasPos<T: type>
+{
+	pos: Point<T>;
+}
+
+func constrain_shape<T: type(HasPos<i32>)>(shape_i32: @const T): void =>
+	stdout.print("Here is my shape's position:  {}\n".format(cast<string>
+		(shape_i32)))!!;
+
+
+func main(argc: c_int, argv: **char): c_int
+{
+	a := Square<i32>(pos: Point(x: 3, y: 4), size: Point(x: 2, y: 2));
+	constraint_shape(a);
+	return 0;
+}

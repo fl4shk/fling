@@ -1,0 +1,3 @@
+flingDeclNamedClass:
+	'class'
+flingDeclInlineClass:

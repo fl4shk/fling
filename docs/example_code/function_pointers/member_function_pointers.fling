@@ -1,0 +1,124 @@
+trait CanCastTo<FromT, ToT, ErrT: type>
+{
+	func cast<ToT>(from: @const FromT): result<ToT, ErrT>;
+}
+
+class Vec2d<T: type>
+{
+	using ArrT = T[2];
+	priv #[crget]# _arr: ArrT;
+
+	default func init();
+
+	// Useful for when we want to initialize the entire class
+	//default func init[(@const ...), (@@...)];
+
+	// The shorthands having an `arr` function argument rely upon not
+	// having both an `arr` variable and an `_arr` variable in this class.
+	// It is unlikely that one would have both of those in the same class.
+
+	// A very common case.  Useful for when we want to initialize only part
+	// of the class.  The `default` in front of `arr` specifies that we
+	// want to initialize `self._arr` with `arr`.  Identifiers that start
+	// with an underscore are recommended for private and protected class
+	// members because of shorthands like this.
+	default func init[(default arr: @const auto), (default arr: @@auto)];
+	//func init(arr: @const T...)
+	//	[self._arr.init(arr...)] {}
+	//func init(default arr: @@T...)
+	//	[self._arr.init(move(arr...))] {}
+
+	// Pass `arr` to `self._arr`
+	// The second version of the function does
+	// `self._arr.init(move(arr...))` by default due to that being the most
+	// common situation.
+	default func init[(default[_arr] arr: @const auto...),
+		(default[_arr] arr: @@auto...)];
+	default func init[(to_copy: @const self_t), (to_move: @@self_t)];
+
+	default func dest();
+
+	const func "range"() => range(self._arr);
+	const func size() => self.arr().size();
+
+	func at[(index: size_t), const (index: size_t)] => self._arr.at(index);
+
+	func "[]"[(index: size_t): @auto, const (index: size_t): @const auto]
+		=> self._arr[index];
+
+	gen for item in ["+", "-"]
+	{
+		const func item(other: @const self_t)
+		{
+			ret: self_t;
+			for i in range(ret)
+			{
+				ret[i] = self[i].item(other[i]);
+			}
+			return ret;
+		}
+	}
+	gen for item in ["*", "/"]
+	{
+		const func item(scale: @const T)
+		{
+			ret: self_t;
+			for i in range(ret)
+			{
+				ret[i] = self[i].item(scale);
+			}
+			return ret;
+		}
+	}
+
+	gen for item in ["+=", "-=", "*=", "/="]
+	{
+		default func item(@const ...);
+	}
+
+	const func dot(other: @const self_t)
+	{
+		ret: self_t;
+		for i in range(ret)
+		{
+			ret[i] += self[i] * other[i];
+		}
+		return ret;
+	}
+
+	using ObjAndAddOrSubFunc = *self_t.func(a: @const self_t): self_t;
+
+	static func cast<string>(this: @const self_t): result<string, auto>
+		requires CanCastTo<self_t, string, ret_t::E>
+	{
+		ret := "("?;
+		for i in range(this)
+		{
+			(ret += cast<string>(this[i]))??;
+			if (i + 1) < this.size()
+			{
+				(ret += ",")??;
+			}
+		}
+		(ret += ")")??;
+		return Ok(ret);
+	}
+}
+
+func add_or_sub<T: type>
+(
+	obj_and_func: Vec2d<T>::ObjAndAddOrSubFunc,
+	other: @const Vec2d<T>
+): Vec2d<T>
+{
+	return obj_and_func(other);
+}
+
+func main(argc: c_int, argv: **char): result<c_int, auto>
+{
+	v, w: @const Vec2d<i32> = init(3, 4), init(5, 6);
+	@const z := add_or_sub(@v."+", w);
+
+	stdout.print("Added together:  {}\n".format(cast<string>(z)))??;
+	return Ok(cast<c_int>(0));
+}

@@ -1,21 +1,13 @@
 flingIdent:
-	TokScopeAccess? flingLowIdent
-	;
-
-flingLowIdent:
-	flingMidIdent ('::' flingMidIdent)*
-	;
-
-flingMidIdent:
 	flingHighIdent ('cat' flingHighIdent)*
 	;
 
 flingHighIdent:
 	TokIdent
-	| '#' flingExpr
+	| '#' '(' flingExpr ')'
 	;
 
-flingString:
+flingRawString:
 	TokStringLiteral
 	| TokKwFromident '(' flingIdent ')'
 	;
