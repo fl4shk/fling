@@ -128,11 +128,11 @@ base class #[rtident<u16>]# PigWithWings extends Sprite
 base class #[rtident<u16>]# EngineerWithLightbulb extends Sprite
 {
 	// encoded as a State
-	prot enum BhvState : State
+	prot enum BhvState: State
 	{
-		Search,
-		ClimbLadder,
-		ScrewIn,
+		Search;
+		ClimbLadder;
+		ScrewIn;
 	}
 
 	func init()
@@ -147,52 +147,42 @@ base class #[rtident<u16>]# EngineerWithLightbulb extends Sprite
 	static (MAX_SEARCH_COUNTER, MAX_CLIMB_LADDER_COUNTER
 		MAX_SCREW_IN_COUNTER): const State = (60, 30, 20);
 
-	gen const state_func_list := ["_st_bhv_state", "_st_counter"];
-	gen for i in range(state_func_list)
+	gen
 	{
-		prot func #(state_func_list[i])(): @State => self._state[i]
+		local gen state_func_list: const [string...] = ["_st_bhv_state",
+			"_st_counter"];
+		gen for i in range(state_func_list) =>
+			prot func #(state_func_list[i])(): @State => self._state[i]
 	}
 
 	dyn func behav(): void
 	{
 		match self._st_bhv_state() as BhvState
 		{
-			Search
+		Search =>
+			if self._st_counter() >= MAX_SEARCH_COUNTER
 			{
-				if self._st_counter() >= MAX_SEARCH_COUNTER
-				{
-					self._st_counter() = 0;
-					self._st_bhv_state() = BhvState::ClimbLadder as State;
-				}
-				else
-				{
-					self._st_counter() += 1;
-				}
+				self._st_counter() = 0;
+				self._st_bhv_state() = BhvState::ClimbLadder as State;
 			}
-			ClimbLadder
+			else =>
+				self._st_counter() += 1;
+		ClimbLadder =>
+			if self._st_counter() >= MAX_CLIMB_LADDER_COUNTER
 			{
-				if self._st_counter() >= MAX_CLIMB_LADDER_COUNTER
-				{
-					self._st_counter() = 0;
-					self._st_bhv_state() = BhvState::ScrewIn as State;
-				}
-				else
-				{
-					self._st_counter() += 1;
-				}
+				self._st_counter() = 0;
+				self._st_bhv_state() = BhvState::ScrewIn as State;
 			}
-			ScrewIn
+			else =>
+				self._st_counter() += 1;
+		ScrewIn =>
+			if self._st_counter() >= MAX_SCREW_IN_COUNTER
 			{
-				if self._st_counter() >= MAX_SCREW_IN_COUNTER
-				{
-					self._st_counter() = 0;
-					self._st_bhv_state() = BhvState::Search as State;
-				}
-				else
-				{
-					self._st_counter() += 1;
-				}
+				self._st_counter() = 0;
+				self._st_bhv_state() = BhvState::Search as State;
 			}
+			else =>
+				self._st_counter() += 1;
 		}
 	}
 }
@@ -228,31 +218,29 @@ base class Stack<T: type, IndexT: type(IsUnsignedInteger)=size_t>
 
 		func push(to_push: ToPushT): result<IndexT, auto>
 		{
-			// `gen func` indicates that inline substitution of the
-			// function's contents are to be done
-			define `modded_to_push =>
+			local define `modded_to_push =>
 				gen if item == "cp" => to_push
 				else gen => move(to_push)
 
-			if self._top_index < self._vec.size() =>
+			if self._top_index < self._vec.size()
+			{
 				self._vec[self._top_index] = `modded_to_push;
-			else =>
+			}
+			else
+			{
 				self._vec.push_back(`modded_to_push);
+			}
 			Ok(self._top_index += 1 as IndexT)
 		}
 	}
 	func top[const (): result<@const T, Exception>,
 		(): result<@T, Exception>] =>
-		if self._top_index == 0 =>
-			Err(NothingInStack(self))
-		else =>
-			Ok(self._vec[self._top_index])
+		if self._top_index == 0 => Err(NothingInStack(self))
+		else => Ok(self._vec[self._top_index])
 
-	func pop(): result<auto, Exception> =>
-		if self._top_index == 0 =>
-			Err(TooManyPops(self))
-		else =>
-			Ok(self._top_index -= 1)
+	func pop(): result<IndexT, Exception> =>
+		if self._top_index == 0 => Err(TooManyPops(self))
+		else => Ok(self._top_index -= 1)
 }
 
 class SpriteFactory<IndexT: type(IsSignedInteger)=i32>
