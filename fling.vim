@@ -43,7 +43,7 @@ syn match fling_bin_num "\<\(0b[0-1][0-1_]*\)\>"
 syn keyword fling_ctrl_flow if else match default with for in while do
 syn keyword fling_ctrl_flow continue break provide
 
-syn keyword fling_metaprog gen macro define tokstrm cat fromident
+syn keyword fling_metaprog gen local macro define tokstrm cat fromident
 
 syn keyword fling_func func return
 syn keyword fling_builtin_type ret_t
@@ -78,7 +78,7 @@ syn keyword fling_cstm_type trait requires
 
 syn keyword fling_exception try catch throw
 syn keyword fling_move move
-syn keyword fling_alloc alloc
+syn keyword fling_allocator_t allocator_t
 syn keyword fling_new_delete new delete
 
 syn keyword fling_null null 
@@ -97,7 +97,7 @@ syn keyword fling_builtin_type u8 i8 u16 i16 u32 i32 u64 i64 u128 i128
 syn keyword fling_builtin_type uintptr_t intptr_t ptrdiff_t size_t cmp_t
 syn keyword fling_builtin_type string char
 syn keyword fling_builtin_type float double longdouble
-syn keyword fling_builtin_type fpenv simd
+"syn keyword fling_builtin_type fpenv simd
 syn keyword fling_builtin_type void auto range
 
 syn keyword fling_sizeof sizeof
@@ -110,12 +110,12 @@ syn keyword fling_c_interop_builtin_type c_ulonglongint c_longlongint
 
 syn keyword fling_builtin_type result option
 
-syn keyword fling_file_builtin_type file
-syn keyword fling_console_file stdin stdout stderr
-
-syn keyword fling_thread_builtin_type atomic atomic_ref thread mutex
-syn keyword fling_thread_builtin_type thrd_call_once thrd_once_flag
-syn keyword fling_thread_builtin_type thrd_cond tss
+"syn keyword fling_file_builtin_type file
+"syn keyword fling_console_file stdin stdout stderr
+"
+"syn keyword fling_thread_builtin_type atomic atomic_ref thread mutex
+"syn keyword fling_thread_builtin_type thrd_call_once thrd_once_flag
+"syn keyword fling_thread_builtin_type thrd_cond tss
 
 
 syn keyword fling_cast_pseudo_func cast reinterpret
@@ -159,7 +159,7 @@ hi def link fling_cstm_type_access_spec Statement
 hi def link fling_exception Statement
 hi def link fling_move Statement
 
-hi def link fling_alloc Type
+hi def link fling_allocator_t Type
 hi def link fling_new_delete Statement
 
 hi def link fling_null Number

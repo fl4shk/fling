@@ -155,10 +155,12 @@ TokKwWhile: 'while' ;
 TokKwDo: 'do' ;
 TokKwContinue: 'continue' ;
 TokKwBreak: 'break' ;
-TokKwProvide: 'provide' ;
+//TokKwProvide: 'provide' ;
 
 TokKwGen: 'gen' ;
+TokKwLocal: 'local' ;
 TokKwMacro: 'macro' ;
+TokKwDefine: 'define' ;
 TokKwTokstrm: 'tokstrm' ;
 TokKwCat: 'cat' ;
 TokKwFromident: 'fromident' ;
@@ -171,7 +173,7 @@ TokKwFromident: 'fromident' ;
 // (priv and prot of these)
 
 TokKwFunc: 'func' ;
-TokKwReturn: 'return' ;
+//TokKwReturn: 'return' ;
 TokKwRetT: 'ret_t' ;
 
 
@@ -244,11 +246,10 @@ TokKwRequires: 'requires' ;
 
 TokKwTry: 'try' ;
 TokKwCatch: 'catch' ;
-TokKwThrow: 'throw' ;
 
 TokKwMove: 'move' ;
 
-TokKwAlloc: 'alloc' ;
+TokKwAllocatorT: 'allocator_t' ;
 TokKwNew: 'new' ;
 TokKwDelete: 'delete' ;
 
@@ -314,9 +315,9 @@ TokKwCLongint: 'c_longint' ;
 TokKwCUlonglongint: 'c_ulonglongint' ;
 TokKwCLonglongint: 'c_longlongint' ;
 
-//TokKwResult: 'result' ;
-//TokKwOption: 'option' ;
-//
+TokKwResult: 'result' ;
+TokKwOption: 'option' ;
+
 //TokKwFile: 'file' ;
 //TokKwStdin: 'stdin' ;
 //TokKwStdout: 'stdout' ;

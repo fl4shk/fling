@@ -64,7 +64,7 @@ flingInstFuncMacroArgList:
 	;
 
 flingInstFuncMacroPosArgList:
-	flingExpr (',' flingExpr)* (',')?
+	flingExprList
 	;
 flingInstFuncMacroNamedArgList:
 	flingInstFuncMacroNamedArg (',' flingInstFuncMacroNamedArg)* (',')?
@@ -79,10 +79,7 @@ flingInstFuncMacroNamedArg:
 // Instantiated template arguments
 flingInstTemplateArgList:
 	'<'
-		(
-			flingInstTemplatePosArgList
-			| flingInstTemplateNamedArgList
-		)
+		(flingInstTemplatePosArgList | flingInstTemplateNamedArgList)
 	'>'
 	;
 
@@ -104,7 +101,4 @@ flingInstTemplateNamedArg:
 flingInstTemplateArg:
 	flingExpr | flingTypename
 	;
-
-
 //--------
-
