@@ -3,12 +3,8 @@ class Point<T: type>
 	x, y: T;
 	default func init[(@const ...), (@@...)];
 
-	static const func cast<string>(this: @const self_t)
-	{
-		(ret := "(" + cast<string>(this.x) + ", " + cast<string>(this.y)
-			+ ")")??;
-		return ret;
-	}
+	static const func cast<string>(this: @const self_t) =>
+		("(" + (this.x as string) + ", " + (this.y as string) + ")")??
 }
 
 class Square<T: type>
@@ -24,19 +20,17 @@ class Rectangle<T: type>
 	default func init(@const ...);
 }
 
-trait HasPos<T: type>
-{
+trait HasPos<T: type> =>
 	pos: Point<T>;
-}
 
 func constrain_shape<T: type(HasPos<i32>)>(shape_i32: @const T): void =>
-	stdout.print("Here is my shape's position:  {}\n".format(cast<string>
-		(shape_i32)))!!;
+	stdout.print("Here is my shape's position:  {}\n".format(shape_i32
+		as string)))!!;
 
 
 func main(argc: c_int, argv: **char): c_int
 {
 	a := Square<i32>(pos: Point(x: 3, y: 4), size: Point(x: 2, y: 2));
-	constraint_shape(a);
-	return 0;
+	constrain_shape(a);
+	0 as c_int
 }

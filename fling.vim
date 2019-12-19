@@ -45,7 +45,7 @@ syn keyword fling_ctrl_flow continue break provide
 
 syn keyword fling_metaprog gen local macro define tokstrm cat fromident
 
-syn keyword fling_func func return
+syn keyword fling_func func closure
 syn keyword fling_builtin_type ret_t
 
 syn keyword fling_hdl_func task proc
@@ -54,9 +54,9 @@ syn keyword fling_hdl module input output bidir hi_imped
 syn keyword fling_hdl initial always_comb always_blk always_ff delay
 syn keyword fling_hdl_dollar $display $monitor $finish
 
-syn keyword fling_type_support type instof
+syn keyword fling_type_support type typeof instof
 
-syn keyword fling_library_namespace library work extern namespace using
+syn keyword fling_library_namespace library work namespace using
 
 syn keyword fling_build_main $library $shell $path $extern $flag $var
 
@@ -66,8 +66,8 @@ syn keyword fling_c_interop c_extern cpp_define
 
 
 
-syn keyword fling_cstm_type enum union variant class extends abstract base
-syn keyword fling_cstm_type friend dyn
+syn keyword fling_cstm_type enum union variant class mixin extends 
+syn keyword fling_cstm_type base friend dyn
 syn keyword fling_cstm_type_self self
 syn keyword fling_cstm_type_self_t self_t
 syn keyword fling_builtin_member_func init dest 
@@ -76,7 +76,7 @@ syn keyword fling_cstm_type_access_spec pub priv prot
 
 syn keyword fling_cstm_type trait requires
 
-syn keyword fling_exception try catch throw
+syn keyword fling_exception try catch
 syn keyword fling_move move
 syn keyword fling_allocator_t allocator_t
 syn keyword fling_new_delete new delete
@@ -85,7 +85,7 @@ syn keyword fling_null null
 syn keyword fling_null_t null_t
 
 syn keyword fling_decl_specifier volatile const restrict static
-syn keyword fling_decl_specifier thread_local
+syn keyword fling_decl_specifier thread_local extern 
 
 syn keyword fling_static_assert static_assert
 
@@ -95,10 +95,10 @@ syn keyword fling_bool_value true false
 
 syn keyword fling_builtin_type u8 i8 u16 i16 u32 i32 u64 i64 u128 i128
 syn keyword fling_builtin_type uintptr_t intptr_t ptrdiff_t size_t cmp_t
-syn keyword fling_builtin_type string char
+syn keyword fling_builtin_type string char ident
 syn keyword fling_builtin_type float double longdouble
 "syn keyword fling_builtin_type fpenv simd
-syn keyword fling_builtin_type void auto range
+syn keyword fling_builtin_type void auto range array
 
 syn keyword fling_sizeof sizeof
 

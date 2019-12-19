@@ -3,7 +3,7 @@ class Point<T: type>
 	x, y: T;
 	default func init(@const ...);
 	static func cast<string>(this: @const self_t): result<string, auto> =>
-		"(" + (this.x as string) + ", " + (this.y as string) + ")";
+		("(" + (this.x as string) + ", " + (this.y as string) + ")")??
 }
 
 class Square<T: type>
@@ -20,10 +20,8 @@ class Rectangle<T: type>
 	default func init(@const ...);
 }
 
-trait HasPos<T: type>
-{
+trait HasPos<T: type> =>
 	pos: Point<T>;
-}
 
 func show_pos<ConstrainT: type>(shape: @const trait HasPos<ConstrainT>):
 	void =>
@@ -37,5 +35,5 @@ func main(argc: c_int, argv: **char): c_int
 {
 	show_pos(Square(pos: Point(x: 3 as i32, y: 9 as i32),
 		size: 6 as size_t));
-	return 0;
+	0 as c_int
 }

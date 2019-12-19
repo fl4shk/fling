@@ -1,28 +1,27 @@
 flingExpr:
 	flingAssignExpr (flingAssignOp flingExpr)?
 	;
-// Done this way to not conflict with `>>` in a template instantiation.
-flingBitLslAssignOp: '<' '<=' ;
-flingBitLsrAssignOp: '>' '>=' ;
-flingBitAsrAssignOp: '>' '>' '>=' ;
 flingAssignOp:
 	TokAssign | TokCstmAssign
 	| TokPlusEquals | TokMinusEquals
 	| TokMulEquals | TokDivEquals | TokModEquals
-	| TokBitAndEquals | TokBitOrEquals | TokBitXorEquals
-	| flingBitLslAssignOp | flingBitLsrAssignOp | flingBitAsrAssignOp
+	| TokBitOrEquals | TokBitAndEquals | TokBitXorEquals
+	| flingPseudoTokBitLslEquals | flingPseudoTokBitLsrEquals
+	| flingPseudoTokBitAsrEquals
 	| TokAtEquals
 	;
+flingPseudoTokBitLslEquals: flingPseudoTokBitLsl '=' ;
+flingPseudoTokBitLsrEquals: flingPseudoTokBitLsr '=' ;
+flingPseudoTokBitAsrEquals: flingPseudoTokBitAsr '>' '=' ;
 
 flingAssignExpr:
-	flingLogAndExpr ('&&' flingExpr)?
+	flingLogOrExpr (TokLogOr flingExpr)?
+	;
+flingLogOrExpr:
+	flingLogAndExpr (TokLogAnd flingExpr)?
 	;
 
 flingLogAndExpr:
-	flingLogOrExpr ('||' flingExpr)?
-	;
-
-flingLogOrExpr:
 	flingCompareExpr (flingCompareOp flingExpr)?
 	;
 flingCompareOp:
@@ -32,119 +31,143 @@ flingCompareOp:
 	;
 
 flingCompareExpr:
-	flingAddSubExpr (flingAddSubOp flingExpr)?
-	;
-flingAddSubOp:
-	TokPlus | TokMinus
+	flingAddSubExpr ((TokPlus | TokMinus) flingExpr)?
 	;
 
 flingAddSubExpr:
-	flingMulDivModBitExpr (flingMulDivModBitOp flingExpr)?
-	;
-flingBitLslOp: '<' '<' ;
-flingBitLsrOp: '>' '>' ;
-flingBitAsrOp: '>' '>' '>' ;
-flingMulDivModBitOp:
-	TokMulOrPtr | TokDiv | TokMod
-	| TokBitAnd | TokBitOr | TokBitXor
-	| flingBitLslOp | flingBitLsrOp | flingBitAsrOp
+	flingMulDivModExpr ((TokMulOrPtr | TokDiv | TokMod) flingExpr)?
 	;
 
-flingMulDivModBitExpr:
+flingMulDivModExpr:
+	flingBitShiftExpr (flingBitShiftOp flingExpr)?
+	;
+flingBitShiftOp:
+	flingPseudoTokBitLsl | flingPseudoTokBitLsr | flingPseudoTokBitAsr
+	;
+flingPseudoTokBitLsl: '<' '<' ;
+flingPseudoTokBitLsr: '>' '>' ;
+flingPseudoTokBitAsr: '>' '>' '>';
+
+
+flingBitShiftExpr:
+	flingBitOrExpr (TokBitOr flingExpr)?
+	;
+
+flingBitOrExpr:
+	flingBitAndExpr (TokBitAnd flingExpr)?
+	;
+
+flingBitAndExpr:
+	flingBitXorExpr (TokBitXor flingExpr)?
+	;
+
+flingBitXorExpr:
 	flingPreUnaryOp flingExpr
-	| TokAt? flingLeafExpr
+	| flingHasLeafExpr
 	;
 flingPreUnaryOp:
 	TokPlus | TokMinus
 	| TokBitNot | TokLogNotOrForceSuccess
-	| TokMulOrPtr
+	| TokMulOrPtr | TokAt
 	;
 
-flingLeafExpr:
-	(
-		TokKwMove '(' flingExpr ')'
-		| (
-			flingLeafExprPrologue
-			(
-				(
-					flingLeafExprContinuedRegularPrefix
-					| flingLeafExprContinuedCstmPrefix
-				)
-				flingLeafExprPartialSuffix
-			)*
-		)
-	)
+flingHasLeafExpr:
+	flingLeafExpr flingPostUnaryItem* flingLeafExprSuffix*
 	;
-flingLeafExprPrologue:
-	flingPrefixLeafExpr flingLeafExprPartialSuffix
+flingPostUnaryItem:
+	flingPostUnaryOp? flingPostUnaryItemSuffix*
 	;
-flingLeafExprPartialSuffix:
-	flingArrayIndexOrFuncObjCall* flingLeafExprPartialSuffixOp?
+flingLeafExprSuffix:
+	flingScopeAccessOp flingSuperLeafExpr flingPostUnaryItem*
 	;
-flingLeafExprPartialSuffixOp:
+flingPostUnaryItemSuffix:
+	flingArrayAccessSuffix | flingFuncMacroArgList
+	;
+flingPostUnaryOp;
 	TokLogNotOrForceSuccess | TokErrorCheckOrNullCheck
 	| TokMultiForceSuccess | TokMultiErrorCheckOrNullCheck
 	;
-flingArrayIndexOrFuncObjCall:
+flingArrayAccessSuffix:
 	'[' flingExpr ']'
-	| flingInstFuncMacroArgList 
 	;
-flingLeafExprContinuedRegularPrefix:
-	(TokMemberAccess | TokPtrMemberAccess)
-	(flingIdent | flingFuncCallExpr)
-	;
-flingLeafExprContinuedCstmPrefix:
-	TokCstmMemberAccess flingIdent
+flingScopeAccessOp:
+	TokMemberAccess | TokPtrMemberAccess | TokCstmMemberAccess
+	| TokScopeAccess
 	;
 
-
-flingPrefixLeafExpr:
+flingLeafExpr:
+	flingLeafExprPrefix flingLeafExprSuffix
+	;
+flingLeafExprPrefix:
 	TokDecNum | TokHexNum | TokOctNum | TokBinNum
 	| TokFloatNum
-	| TokKwSelf
-	| '(' flingExpr ')'
-	| flingPackedParamPackExpr:
 	| flingRawString
-	| flingCastExpr
-	| flingMatchExpr
+	| '(' flingExpr ')'
 	| flingIfExpr
-	| flingNewExpr
-	| flingScopedIdent
-	| flingScopedFuncCallExpr
+	| flingMatchExpr
+	| flingSuperLeafExpr
+	;
+flingLeafExprSuffix:
+	TokParamPack
+	| TokRangeSeparator flingExpr
 	;
 
-flingScope:
-	flingScopeSeparator? flingTypename '::'
-	;
-flingScopeSeparator: '::' ;
-
-flingScopedIdent:
-	flingScope? flingIdent
-	;
-
-// Not for overloaded operators which are technically also functions
-flingScopedFuncCallExpr:
-	flingScope? flingFuncCallExpr
-	;
-flingFuncCallExpr:
-	flingIdent flingInstTemplateArgList? flingInstFuncMacroArgList
+//--------
+flingIfExpr:
+	flingNonGenIfExpr | flingGenIfExpr
 	;
 
 
-//flingNonIdentLeafExpr:
-//	TokDecNum | TokHexNum | TokOctNum | TokBinNum
-//	| TokFloatNum
-//	| '(' flingExpr ')'
-//	| flingPackedParamPackExpr
-//	| flingRawString
-//	| flingCastExpr
-//	| flingMatch
-//	| flingIf
-//	;
-//
-//flingPackedParamPackExpr:
-//	'[' flingExpr (',' flingExpr)* (',')? ']'
-//	;
-//flingCastExpr:
-//	(TokKwCast | TokKwReinterpret) '[' flingTypename ']' '(' flingExpr ')'
-//	;
+flingNonGenIfExpr:
+	'if' flingExpr flingScopedExpr
+	flingElseIfExpr*
+	flingElseExpr?
+	;
+flingElseIf:
+	'else' 'if' flingExpr flingScopedExpr
+	;
+flingElse:
+	'else' flingScopedExpr
+	;
+
+
+flingGenIfExpr:
+	'gen' 'if' flingExpr flingScopedExpr
+	flingElseGenIfExpr*
+	flingElseGenExpr?
+	;
+flingElseGenIfExpr:
+	'else' 'gen' 'if' flingExpr flingScopedExpr
+	;
+flingElseGenExpr:
+	'else' 'gen' flingScopedExpr
+	;
+//--------
+
+//--------
+flingMatchExpr:
+	flingNonGenMatchExpr | flingGenMatchExpr
+	;
+
+flingNonGenMatchExpr:
+	'match' flingExpr flingMatchExprCaseList
+	;
+flingGenMatchExpr:
+	'gen' 'match' flingExpr flingMatchExprCaseList
+	;
+//--------
+
+
+flingSuperLeafExpr:
+	| flingSuperLeafIdentExpr
+	| flingCallMacroOrDefine
+	;
+
+flingSuperLeafIdentExpr:
+	(flingIdent | TokKwGen '<' flingIdent '>')
+	(flingInstTemplateArgList? flingInstRegularArgList)?
+	;
+flingCallMacroOrDefine:
+	TokMacroOrDefineIdent flingInstTemplateArgList?
+		flingInstRegularArgList
+	;

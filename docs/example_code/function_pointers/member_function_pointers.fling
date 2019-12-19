@@ -5,7 +5,7 @@ trait CanCastTo<FromT, ToT, ErrT: type>
 
 class Vec2d<T: type>
 {
-	using ArrT = T[2];
+	using ArrT = array<T, 2>;
 	priv #[crget]# _arr: ArrT;
 
 	default func init();
@@ -38,8 +38,8 @@ class Vec2d<T: type>
 
 	default func dest();
 
-	const func "range"() => range(self._arr);
-	const func size() => self.arr().size();
+	const func "range"() => range(self._arr)
+	const func size() => self.arr().size()
 
 	func at[(index: size_t), const (index: size_t)] => self._arr.at(index);
 
@@ -48,32 +48,32 @@ class Vec2d<T: type>
 
 	gen for item in ["+", "-"]
 	{
-		const func item(other: @const self_t)
+		const func gen<item>(other: @const self_t)
 		{
 			ret: self_t;
 			for i in range(ret)
 			{
-				ret[i] = self[i].item(other[i]);
+				ret[i] = self[i].gen<item>(other[i]);
 			}
-			return ret;
+			ret
 		}
 	}
 	gen for item in ["*", "/"]
 	{
-		const func item(scale: @const T)
+		const func gen<item>(scale: @const T)
 		{
 			ret: self_t;
 			for i in range(ret)
 			{
-				ret[i] = self[i].item(scale);
+				ret[i] = self[i].gen<item>(scale);
 			}
-			return ret;
+			ret
 		}
 	}
 
 	gen for item in ["+=", "-=", "*=", "/="]
 	{
-		default func item(@const ...);
+		default func gen<item>(@const ...);
 	}
 
 	const func dot(other: @const self_t)
@@ -83,7 +83,7 @@ class Vec2d<T: type>
 		{
 			ret[i] += self[i] * other[i];
 		}
-		return ret;
+		ret
 	}
 
 	using ObjAndAddOrSubFunc = *self_t.func(a: @const self_t): self_t;
@@ -101,7 +101,7 @@ class Vec2d<T: type>
 			}
 		}
 		(ret += ")")??;
-		return Ok(ret);
+		Ok(ret)
 	}
 }
 
@@ -111,7 +111,7 @@ func add_or_sub<T: type>
 	other: @const Vec2d<T>
 ): Vec2d<T>
 {
-	return obj_and_func(other);
+	obj_and_func(other)
 }
 
 func main(argc: c_int, argv: **char): result<c_int, auto>
@@ -120,5 +120,5 @@ func main(argc: c_int, argv: **char): result<c_int, auto>
 	@const z := add_or_sub(@v."+", w);
 
 	stdout.print("Added together:  {}\n".format(cast<string>(z)))??;
-	return Ok(cast<c_int>(0));
+	Ok(cast<c_int>(0))
 }

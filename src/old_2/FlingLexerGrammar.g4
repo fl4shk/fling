@@ -1,7 +1,11 @@
 // Lexer rules
-LexWhitespace: (' ' | '\t' | '\r' | '\n') -> skip ;
+LexWhitespace:
+	(' ' | '\t' | '\r' | '\n') -> skip
+	;
 
-LexLineComment: ('//' ~('\n')+) -> skip ;
+LexLineComment:
+	('//' ~('\n')+) -> skip
+	;
 
 
 fragment FragDecNum:
@@ -21,8 +25,12 @@ fragment FragFloatExpPart:
 	'e' FragFloatSign? FragDecNum
 	| 'E' FragFloatSign? FragDecNum
 	;
-fragment FragFloatSign: '+' | '-' ;
-fragment FragFloatSuffix: 'f' | 'd' | 'l' | 'F' | 'D' | 'L' ;
+fragment FragFloatSign:
+	'+' | '-'
+	;
+fragment FragFloatSuffix:
+	'f' | 'd' | 'l' | 'F' | 'D' | 'L'
+	;
 
 TokFloatNum: 
 	FragFloatFrac FragFloatExpPart? FragFloatSuffix?
@@ -49,7 +57,9 @@ fragment FragChar:
 	;
 
 
-TokStringLiteral: '"' FragChar* '"' ;
+TokStringLiteral:
+	'"' FragChar* '"'
+	;
 
 
 TokParamPack: '...' ;
@@ -130,7 +140,7 @@ TokSemicolon: ';' ;
 TokColon: ':' ;
 TokComma: ',' ;
 
-TokOneStmtOrExprScope: '=>' ;
+TokCase: '=>' ;
 
 TokToident: '#' ;
 
@@ -188,13 +198,11 @@ TokKwDollarFinish: '$finish' ;
 
 
 TokKwType: 'type' ;
-TokKwTypeof: 'typeof' ;
 TokKwInstof: 'instof' ;
 
 
 // Build scripts, libraries, namespaces, etc.
 TokKwLibrary: 'library' ;
-TokKwExtern: 'extern' ;
 TokKwWork: 'work' ;
 TokKwNamespace: 'namespace' ;
 TokKwUsing: 'using' ;
@@ -218,8 +226,8 @@ TokKwEnum: 'enum' ;
 TokKwUnion: 'union' ;
 TokKwVariant: 'variant' ;
 TokKwClass: 'class' ;
+TokKwMixin: 'mixin' ;
 TokKwExtends: 'extends' ;
-TokKwAbstract: 'abstract' ;
 TokKwBase: 'base' ;
 TokKwFriend: 'friend' ;
 TokKwDyn: 'dyn' ;
@@ -253,6 +261,7 @@ TokKwRestrict: 'restrict' ;
 
 TokKwStatic: 'static' ;
 TokKwThreadLocal: 'thread_local' ;
+TokKwExtern: 'extern' ;
 
 TokKwStaticAssert: 'static_assert' ;
 
@@ -291,8 +300,8 @@ TokKwLongdouble: 'longdouble' ;
 
 TokKwVoid: 'void' ;
 TokKwAuto: 'auto' ;
-TokKwAny: 'any' ;
 TokKwRange: 'range' ;
+TokKwArray: 'array' ;
 
 TokKwSizeof: 'sizeof' ;
 
@@ -337,7 +346,7 @@ TokKwAttr: 'attr' ;
 // alphanumeric character, and there must be at least two alphanumeric
 // characters.
 TokReservedIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
-TokMacroOrDefineIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
+TokMacroIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
 
 fragment FragBasicIdent: ([_]? [A-Za-z]) ([_]? [A-Za-z0-9])* [_]?  ;
 fragment FragRawIdent: 'r#' FragBasicIdent ;

@@ -1,0 +1,36 @@
+flingCtExpr:
+	flingCtAssignExpr (flingAssignOp flingCtExpr)?
+	;
+flingCtAssignExpr:
+	flingCtLogOrExpr (flingLogOrOp flingCtExpr)?
+	;
+flingCtLogOrExpr:
+	flingCtLogAndExpr (flingLogAndOp flingCtExpr)?
+	;
+flingCtLogAndExpr:
+	flingCtCompareExpr (flingCompareOp flingCtExpr)?
+	;
+flingCtCompareExpr:
+	flingCtAddSubExpr (flingAddSubOp flingCtExpr)?
+	;
+flingCtAddSubExpr:
+	flingCtMulDivModExpr (flingMulDivModOp flingCtExpr)?
+	;
+flingCtMulDivModExpr:
+	flingCtBitShiftExpr (flingBitShiftOp flingCtExpr)?
+	;
+flingCtBitShiftExpr:
+	flingCtBitOrExpr (flingBitOrOp flingCtExpr)?
+	;
+flingCtBitOrExpr:
+	flingCtBitAndExpr (flingBitAndOp flingCtExpr)?
+	;
+flingCtBitAndExpr:
+	flingCtBitXorExpr (flingBitXorOp flingCtExpr)?
+	;
+flingCtBitXorExpr:
+	flingPreUnaryOp flingCtExpr
+	| flingCtHasPostUnaryExpr
+	;
+
+fling
