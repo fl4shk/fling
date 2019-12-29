@@ -145,7 +145,6 @@ TokKwWhile: 'while' ;
 TokKwDo: 'do' ;
 TokKwContinue: 'continue' ;
 TokKwBreak: 'break' ;
-//TokKwProvide: 'provide' ;
 
 TokKwGen: 'gen' ;
 TokKwLocal: 'local' ;
@@ -163,6 +162,7 @@ TokKwFromident: 'fromident' ;
 // (priv and prot of these)
 
 TokKwFunc: 'func' ;
+TokKwClosure: 'closure' ;
 //TokKwReturn: 'return' ;
 TokKwRetT: 'ret_t' ;
 

@@ -1,3 +1,4 @@
+//--------
 flingExpr:
 	flingAssignExpr (flingAssignOp flingExpr)?
 	;
@@ -70,29 +71,43 @@ flingPreUnaryOp:
 	| TokBitNot | TokLogNotOrForceSuccess
 	| TokMulOrPtr | TokAt
 	;
+//--------
 
+//--------
 flingHasLeafExpr:
-	flingLeafExpr flingPostUnaryItem* flingLeafExprSuffix*
+	flingLeafExpr flingPostUnaryItem* flingHasLeafExprSuffix*
+	| TokKwTypeof '(' flingExpr ')' (TokScopeAccess
+		
 	;
+
 flingPostUnaryItem:
-	flingPostUnaryOp? flingPostUnaryItemSuffix*
+	(TokLogNotOrForceSuccess | TokErrorCheckOrNullCheck
+	| TokMultiForceSuccess | TokMultiErrorCheckOrNullCheck)?
+	flingPostUnaryItemSuffix*
 	;
-flingLeafExprSuffix:
-	flingScopeAccessOp flingSuperLeafExpr flingPostUnaryItem*
-	;
+
+// Separate parser rule from `flingPostUnaryItem` because I need to know
+// the ordering of these.
 flingPostUnaryItemSuffix:
-	flingArrayAccessSuffix | flingFuncMacroArgList
-	;
-flingPostUnaryOp;
-	TokLogNotOrForceSuccess | TokErrorCheckOrNullCheck
-	| TokMultiForceSuccess | TokMultiErrorCheckOrNullCheck
-	;
-flingArrayAccessSuffix:
+	// For array access or the overloaded "[]" operator
 	'[' flingExpr ']'
+
+	// for function objects
+	| flingInstRegularArgList
 	;
-flingScopeAccessOp:
-	TokMemberAccess | TokPtrMemberAccess | TokCstmMemberAccess
-	| TokScopeAccess
+
+flingHasLeafExprSuffix:
+	(TokMemberAccess | TokPtrMemberAccess | TokCstmMemberAccess
+	| TokScopeAccess)
+
+	// Generic member access
+	(flingSuperLeafExpr
+
+	// For overloaded operators as their string versions (you may want a
+	// pointer to one of these)
+	| flingRawString)
+
+	flingPostUnaryItem*
 	;
 
 flingLeafExpr:
@@ -105,6 +120,8 @@ flingLeafExprPrefix:
 	| '(' flingExpr ')'
 	| flingIfExpr
 	| flingMatchExpr
+	| flingCastExpr
+	| flingReinterpretExpr
 	| flingSuperLeafExpr
 	;
 flingLeafExprSuffix:
@@ -114,60 +131,53 @@ flingLeafExprSuffix:
 
 //--------
 flingIfExpr:
-	flingNonGenIfExpr | flingGenIfExpr
+	(
+		flingIfHeader flingScopedExpr
+		flingElseIfExpr*
+		flingElseExpr?
+	)
+	| (
+		flingGenIfHeader flingScopedExpr
+		flingElseGenIfExpr*
+		flingElseGenExpr?
+	)
 	;
-
-
-flingNonGenIfExpr:
-	'if' flingExpr flingScopedExpr
-	flingElseIfExpr*
-	flingElseExpr?
+flingElseIfExpr
+	flingElseIfHeader flingScopedExpr
 	;
-flingElseIf:
-	'else' 'if' flingExpr flingScopedExpr
-	;
-flingElse:
-	'else' flingScopedExpr
-	;
-
-
-flingGenIfExpr:
-	'gen' 'if' flingExpr flingScopedExpr
-	flingElseGenIfExpr*
-	flingElseGenExpr?
+flingElseExpr
+	flingElseHeader flingScopedExpr)
 	;
 flingElseGenIfExpr:
-	'else' 'gen' 'if' flingExpr flingScopedExpr
+	flingElseGenIfHeader flingScopedExpr
 	;
 flingElseGenExpr:
-	'else' 'gen' flingScopedExpr
+	flingElseGenHeader flingScopedExpr
 	;
+
 //--------
 
 //--------
 flingMatchExpr:
-	flingNonGenMatchExpr | flingGenMatchExpr
-	;
-
-flingNonGenMatchExpr:
-	'match' flingExpr flingMatchExprCaseList
-	;
-flingGenMatchExpr:
-	'gen' 'match' flingExpr flingMatchExprCaseList
+	(flingMatchHeader | flingGenMatchHeader) flingMatchExprCaseList
 	;
 //--------
 
 
+//--------
 flingSuperLeafExpr:
 	| flingSuperLeafIdentExpr
 	| flingCallMacroOrDefine
 	;
 
+// Covers both function calls (using function identifiers)
 flingSuperLeafIdentExpr:
-	(flingIdent | TokKwGen '<' flingIdent '>')
+	flingIdent
 	(flingInstTemplateArgList? flingInstRegularArgList)?
 	;
+
 flingCallMacroOrDefine:
 	TokMacroOrDefineIdent flingInstTemplateArgList?
 		flingInstRegularArgList
 	;
+//--------
