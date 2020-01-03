@@ -52,8 +52,8 @@ fragment FragChar:
 TokStringLiteral: '"' FragChar* '"' ;
 
 
-TokParamPack: '...' ;
-TokRangeSeparator: '..' ;
+//TokParamPack: '...' ;
+//TokRangeSeparator: '..' ;
 TokKwUnderscore: '_' ;
 
 TokLogAnd: '&&' ;
@@ -86,8 +86,6 @@ TokBitNot: '~' ;
 TokLogNotOrForceSuccess: '!' ;
 
 TokAssign: '=' ;
-//TokVarCreateAssign: ':=' ;
-//TokCstmAssign: '::=' ;
 TokCstmAssign: ':=' ;
 
 TokPlusEquals: '+=' ;
@@ -111,11 +109,11 @@ TokAtEquals: '@=' ;
 
 TokErrorCheckOrNullCheck: '?' ;
 
-TokMultiForceSuccess: '!!' ;
-TokMultiErrorCheckOrNullCheck: '??' ;
+//TokMultiForceSuccess: '!!' ;
+//TokMultiErrorCheckOrNullCheck: '??' ;
 
 TokMemberAccess: '.' ;
-TokPtrMemberAccess: '->' ;
+TokPtrMemberAccess: '*.' ;
 TokCstmMemberAccess: ':.' ;
 TokScopeAccess: '::' ;
 
@@ -131,10 +129,123 @@ TokSemicolon: ';' ;
 TokColon: ':' ;
 TokComma: ',' ;
 
-TokOneStmtOrExprScope: '=>' ;
+//TokOneStmtOrExprScope: '=>' ;
 
 TokToident: '#' ;
 
+TokKwCond: 'cond' ;
+TokKwIf: 'if' ;
+TokKwElif: 'elif' ;
+TokKwElse: 'else' ;
+
+TokKwMatch: 'match' ;
+TokKwCase: 'case' ;
+TokKwDefault: 'default' ;
+
+TokKwFor: 'for' ;
+TokKwWhile: 'while' ;
+TokKwScope: 'scope' ;
+
+TokKwExcept: 'except' ;
+TokKwTry: 'try' ;
+TokKwCatch: 'catch' ;
+
+TokKwProvide: 'provide' ;
+
+TokKwClass: 'class' ;
+TokKwBase: 'base' ;
+TokKwMixin: 'mixin' ;
+TokKwExtends: 'extends' ;
+TokKwDyn: 'dyn' ;
+TokKwAbstract: 'abstract' ;
+
+TokKwPub: 'pub' ;
+TokKwProt: 'prot' ;
+TokKwPriv: 'priv' ;
+
+TokKwSelf: 'self' ;
+TokKwSelfT: 'self_t' ;
+TokKwInit: 'init' ;
+TokKwDest: 'dest' ;
+TokKwInitList: 'init_list' ;
+
+TokKwUsing: 'using' ;
+TokKwNamespace: 'namespace' ;
+TokKwLibrary: 'library' ;
+
+TokKwTrait: 'trait' ;
+TokKwRequires: 'requires' ;
+
+TokKwVariant: 'variant' ;
+TokKwTuple: 'tuple' ;
+TokKwEnum: 'enum' ;
+TokKwUnion: 'union' ;
+
+TokKwStatic: 'static' ;
+TokKwConst: 'const' ;
+TokKwVolatile: 'volatile' ;
+
+TokKwStaticAssert: 'static_assert' ;
+
+TokKwFunc: 'func' ;
+TokKwRetT: 'ret_t' ;
+
+TokKwSpec: 'spec' ;
+
+TokKwGen: 'gen' ;
+
+TokKwVar: 'var' ;
+TokKwMove: 'move' ;
+
+TokKwPack: 'pack' ;
+TokKwUnpack: 'unpack' ;
+
+TokKwType: 'type' ;
+TokKwTypeof: 'typeof' ;
+TokKwInstof: 'instof' ;
+
+TokKwTokstrm: 'tokstrm' ;
+
+TokKwCtlist: 'ctlist' ;
+TokKwCtmap: 'ctmap' ;
+TokKwCtset: 'ctset' ;
+
+TokKwU8: 'u8' ;
+TokKwI8: 'i8' ;
+TokKwU16: 'u16' ;
+TokKwI16: 'i16' ;
+TokKwU32: 'u32' ;
+TokKwI32: 'i32' ;
+TokKwU64: 'u64' ;
+TokKwI64: 'i64' ;
+TokKwU128: 'u128' ;
+TokKwI128: 'i128' ;
+
+TokKwString: 'string' ;
+
+TokKwFloat: 'float' ;
+TokKwDouble: 'double' ;
+TokKwLongdouble: 'longdouble' ;
+
+TokKwBool: 'bool' ;
+TokKwTrue: 'true' ;
+TokKwFalse: 'false' ;
+
+TokKwVoid: 'void' ;
+TokKwAuto: 'auto' ;
+TokKwAny: 'any' ;
+TokKwRange: 'range' ;
+
+TokKwResult: 'result' ;
+TokKwOption: 'option' ;
+
+TokKwFile: 'file' ;
+TokKwThread: 'thread' ;
+
+TokKwCast: 'cast' ;
+TokKwAs: 'as' ;
+TokKwReinterpret: 'reinterpret' ;
+TokKwImplicit: 'implicit' ;
 
 //TokKwIf: 'if' ;
 //TokKwElse: 'else' ;
