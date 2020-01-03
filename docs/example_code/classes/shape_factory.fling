@@ -1,0 +1,61 @@
+macro
+(
+BUILD_INIT_RETURN_TYPE_MAP(T: type, name: @const string),
+
+	gen
+	(
+		gen<var>(spec(local, const), ts = tokstrmof(T)),
+		enum
+		(
+		ident("InitArgs".append(ts.name())!),
+			aux_list
+			(
+				NoArgs,
+				CopyWhole,
+				MoveWhole
+			)
+		)
+	)
+	
+),
+class
+(
+spec(base), Vector<T: type>,
+
+	var(spec(pub), x, y: T),
+
+	gen
+	(
+		enum
+		(
+		spec(local), InnerInitType: u8,
+			NoArgs,
+			CopyWhole
+		),
+		gen<var>(spec(local), temp_map: ctmap<InnerInitType, bool>),
+
+		gen<var>(spec(local, const), ts := tokstrmof(T)),
+	),
+
+	//func(spec(pub, default), init()),
+	//func(spec(default), init(to_copy: @const self_t)),
+	//func
+	//(
+	//spec(pub), init(x, y: @const T),
+	//	init_list
+	//	(
+	//		(self.x.init(x)),
+	//		(self.y.init(y))
+	//	)
+	//),
+	func(spec(pub, default, dyn), dest()),
+
+	using(type, OtherT, @const self_t),
+
+	func
+	(
+	spec(pub), "+"(other: OtherT),
+		self_t(x: (self.x + other.x), y: (self.y + other.y))
+	),
+),
+

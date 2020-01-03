@@ -131,22 +131,18 @@ flingLeafExprSuffix:
 
 //--------
 flingIfExpr:
-	(
-		flingIfHeader flingScopedExpr
-		flingElseIfExpr*
-		flingElseExpr?
-	)
-	| (
-		flingGenIfHeader flingScopedExpr
-		flingElseGenIfExpr*
-		flingElseGenExpr?
-	)
+	(flingIfHeader flingScopedExpr
+	flingElseIfExpr*
+	flingElseExpr?)
+	| (flingGenIfHeader flingScopedExpr
+	flingElseGenIfExpr*
+	flingElseGenExpr?)
 	;
 flingElseIfExpr
 	flingElseIfHeader flingScopedExpr
 	;
 flingElseExpr
-	flingElseHeader flingScopedExpr)
+	flingElseHeader flingScopedExpr
 	;
 flingElseGenIfExpr:
 	flingElseGenIfHeader flingScopedExpr

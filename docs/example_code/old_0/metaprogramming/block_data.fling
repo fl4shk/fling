@@ -1,0 +1,10 @@
+base class BlockBaseProperties
+{
+	func init()
+	dyn func 
+}
+
+class BlockData
+{
+	
+}
