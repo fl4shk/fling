@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language: Fling
 " Maintainer: Andrew Clark (FL4SHK)
-" Latest Revision: November 25, 2019
+" Latest Revision: Jan 3, 2020
 
 if exists("b:current_syntax")
     finish
@@ -39,10 +39,11 @@ syn match fling_hex_num "\<\(0x[0-9a-fA-F][0-9a-fA-F_]*\)\>"
 syn match fling_oct_num "\<\(0o[0-7][0-7_]*\)\>"
 syn match fling_bin_num "\<\(0b[0-1][0-1_]*\)\>"
 
-syn keyword fling_non_type_name_keyword cond if elif else
+syn keyword fling_non_type_name_keyword toident
+syn keyword fling_non_type_name_keyword if elif else
 syn keyword fling_non_type_name_keyword match case default
 syn keyword fling_non_type_name_keyword for while scope
-syn keyword fling_non_type_name_keyword except try catch
+syn keyword fling_non_type_name_keyword try catch
 syn keyword fling_non_type_name_keyword provide
 
 syn keyword fling_non_type_name_keyword class base mixin extends
@@ -51,9 +52,9 @@ syn keyword fling_non_type_name_keyword pub prot priv
 syn keyword fling_non_type_name_keyword self
 syn keyword fling_type_name_keyword self_t
 syn keyword fling_builtin_member_func init dest
-syn keyword fling_non_type_name_keyword init_list
+syn keyword fling_non_type_name_keyword initlist
 
-syn keyword fling_non_type_name_keyword using namespace library
+syn keyword fling_non_type_name_keyword using namespace library work
 "syn keyword fling_non_type_name_keyword
 
 syn keyword fling_non_type_name_keyword trait requires
@@ -72,6 +73,13 @@ syn keyword fling_non_type_name_keyword gen
 
 syn keyword fling_non_type_name_keyword var
 syn keyword fling_non_type_name_keyword move
+
+syn keyword fling_null_literal null
+syn keyword fling_type_name_keyword null_t
+
+syn keyword fling_type_name_keyword allocator_t
+syn keyword fling_non_type_name_keyword new delete
+
 syn keyword fling_non_type_name_keyword pack unpack
 
 syn keyword fling_non_type_name_keyword type typeof instof
@@ -111,6 +119,7 @@ hi def link fling_builtin_member_func Function
 hi def link fling_non_type_name_keyword Statement
 hi def link fling_type_name_keyword Type
 
+hi def link fling_null_literal Number
 hi def link fling_bool_literal Number
 
 
