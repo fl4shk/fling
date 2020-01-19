@@ -13,3 +13,4 @@ flingCompUnit:
 	| flingNamespace
 
 	| flingCompUnitGen
+	;
