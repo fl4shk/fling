@@ -39,13 +39,18 @@ syn match fling_hex_num "\<\(0x[0-9a-fA-F][0-9a-fA-F_]*\)\>"
 syn match fling_oct_num "\<\(0o[0-7][0-7_]*\)\>"
 syn match fling_bin_num "\<\(0b[0-1][0-1_]*\)\>"
 
+"--------
 syn keyword fling_non_type_name_keyword toident
+"--------
+
+"--------
 syn keyword fling_non_type_name_keyword if elif else
 syn keyword fling_non_type_name_keyword match case default
-syn keyword fling_non_type_name_keyword for while scope
+syn keyword fling_non_type_name_keyword for while scope label
 syn keyword fling_non_type_name_keyword try catch
-syn keyword fling_non_type_name_keyword provide
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword class base mixin extends
 syn keyword fling_non_type_name_keyword dyn abstract
 syn keyword fling_non_type_name_keyword pub prot priv
@@ -53,38 +58,69 @@ syn keyword fling_non_type_name_keyword self
 syn keyword fling_type_name_keyword self_t
 syn keyword fling_builtin_member_func init dest
 syn keyword fling_non_type_name_keyword initlist
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword using namespace library work
 "syn keyword fling_non_type_name_keyword
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword trait requires
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword variant tuple enum union
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword static const volatile
-syn keyword fling_non_type_name_keyword static_assert
+"--------
 
+"--------
+syn keyword fling_non_type_name_keyword static_assert
+"--------
+
+"--------
 syn keyword fling_non_type_name_keyword func
 syn keyword fling_type_name_keyword ret_t
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword spec
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword gen
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword var
-syn keyword fling_non_type_name_keyword move
+"--------
 
+"--------
+syn keyword fling_non_type_name_keyword move
+"--------
+
+"--------
 syn keyword fling_null_literal null
 syn keyword fling_type_name_keyword null_t
+"--------
 
-syn keyword fling_type_name_keyword allocator_t
-syn keyword fling_non_type_name_keyword new delete
 
+"--------
 syn keyword fling_non_type_name_keyword pack unpack
+"--------
 
+"--------
 syn keyword fling_non_type_name_keyword type typeof instof
-syn keyword fling_type_name_keyword tokstrm
+"--------
 
+"--------
+syn keyword fling_type_name_keyword tokstrm
+"--------
+
+"--------
 syn keyword fling_type_name_keyword ctlist ctmap ctset
 
 syn keyword fling_type_name_keyword u8 i8 u16 i16 u32 i32 u64 i64 u128 i128
@@ -100,7 +136,16 @@ syn keyword fling_type_name_keyword result option
 
 syn keyword fling_type_name_keyword file thread
 
+syn keyword fling_type_name_keyword allocator_t
+"--------
+
+"--------
+syn keyword fling_non_type_name_keyword new delete
+"--------
+
+"--------
 syn keyword fling_non_type_name_keyword cast as reinterpret implicit
+"--------
 
 
 hi def link fling_line_comment Comment

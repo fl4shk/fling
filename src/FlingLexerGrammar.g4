@@ -146,6 +146,7 @@ TokKwDefault: 'default' ;
 TokKwFor: 'for' ;
 TokKwWhile: 'while' ;
 TokKwScope: 'scope' ;
+TokKwLabel: 'label' ;
 
 TokKwTry: 'try' ;
 TokKwCatch: 'catch' ;
@@ -168,6 +169,7 @@ TokKwSelfT: 'self_t' ;
 TokKwInit: 'init' ;
 TokKwDest: 'dest' ;
 TokKwInitlist: 'initlist' ;
+//--------
 
 //--------
 TokKwUsing: 'using' ;
