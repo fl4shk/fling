@@ -70,7 +70,7 @@ syn keyword fling_non_type_name_keyword trait requires
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword variant tuple enum union
+syn keyword fling_non_type_name_keyword variant enum union
 "--------
 
 "--------

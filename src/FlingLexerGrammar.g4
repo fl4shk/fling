@@ -1,16 +1,19 @@
 // Lexer rules
+//--------
 LexWhitespace: (' ' | '\t' | '\r' | '\n') -> skip ;
 
 LexLineComment: ('//' ~('\n')+) -> skip ;
+//--------
 
 
+//--------
 fragment FragDecNum:
 	[0-9] [0-9_]*
 	;
-TokDecNum: FragDecNum ;
-TokHexNum: '0x' [0-9a-fA-F] [0-9a-fA-F_]* ;
-TokOctNum: '0o' [0-7] [0-7_]* ;
-TokBinNum: '0b' [0-1] [0-1_]* ;
+LitDecNum: FragDecNum ;
+LitHexNum: '0x' [0-9a-fA-F] [0-9a-fA-F_]* ;
+LitOctNum: '0o' [0-7] [0-7_]* ;
+LitBinNum: '0b' [0-1] [0-1_]* ;
 
 
 fragment FragFloatFrac:
@@ -24,7 +27,7 @@ fragment FragFloatExpPart:
 fragment FragFloatSign: '+' | '-' ;
 fragment FragFloatSuffix: 'f' | 'd' | 'l' | 'F' | 'D' | 'L' ;
 
-TokFloatNum: 
+LitFloatNum: 
 	FragFloatFrac FragFloatExpPart? FragFloatSuffix?
 	| FragDecNum FragFloatExpPart FragFloatSuffix?
 	;
@@ -49,250 +52,278 @@ fragment FragChar:
 	;
 
 
-TokStringLiteral: '"' FragChar* '"' ;
+LitString: '"' FragChar* '"' ;
+//--------
 
 
-//TokParamPack: '...' ;
-//TokRangeSeparator: '..' ;
-//TokKwUnderscore: '_' ;
+//--------
+PunctParamPack: '...' ;
+PunctRangeSeparator: '..' ;
+//KwUnderscore: '_' ;
+//--------
 
-TokLogAnd: '&&' ;
-TokLogOr: '||' ;
+//--------
+PunctLogOr: '||' ;
+PunctLogAnd: '&&' ;
 
-TokCmpEq: '==' ;
-TokCmpNe: '!=' ;
-TokCmpLt: '<' ;
-TokCmpGt: '>' ;
-TokCmpLe: '<=' ;
-TokCmpGe: '>=' ;
+PunctCmpEq: '==' ;
+PunctCmpNe: '!=' ;
+PunctCmpLt: '<' ;
+PunctCmpGt: '>' ;
+PunctCmpLe: '<=' ;
+PunctCmpGe: '>=' ;
 
-TokPlus: '+' ;
-TokMinus: '-' ;
+PunctPlus: '+' ;
+PunctMinus: '-' ;
 
-TokMulOrPtr: '*' ;
-TokDiv: '/' ;
-TokMod: '%' ;
+PunctMulOrPtr: '*' ;
+PunctDiv: '/' ;
+PunctMod: '%' ;
 
-TokBitAnd: '&' ;
-TokBitOr: '|' ;
-TokBitXor: '^' ;
+PunctBitOr: '|' ;
+PunctBitAnd: '&' ;
+PunctBitXor: '^' ;
 
 // These have been made into *parser* rules
-//TokBitLsl: '<<' ;
-//TokBitLsr: '>>' ;
-//TokBitAsr: '>>>' ;
+//PunctBitLsl: '<<' ;
+//PunctBitLsr: '>>' ;
+//PunctBitAsr: '>>>' ;
 
-TokBitNot: '~' ;
-TokLogNotOrForceSuccess: '!' ;
-
-TokAssign: '=' ;
-TokCstmAssign: ':=' ;
-
-TokPlusEquals: '+=' ;
-TokMinusEquals: '-=' ;
-
-TokMulEquals: '*=' ;
-TokDivEquals: '/=' ;
-TokModEquals: '%=' ;
-
-TokBitAndEquals: '&=' ;
-TokBitOrEquals: '|=' ;
-TokBitXorEquals: '^=' ;
-
-//TokBitLslEquals: '<<=' ;
-//TokBitLsrEquals: '>>=' ;
-//TokBitAsrEquals: '>>>=' ;
-
-TokAtEquals: '@=' ;
-TokAt: '@' ;
-TokAtAt: '@@' ;
-
-TokErrorCheckOrNullCheck: '?' ;
-
-TokMultiForceSuccess: '!!' ;
-TokMultiErrorCheckOrNullCheck: '??' ;
-
-TokMemberAccess: '.' ;
-TokPtrMemberAccess: '*.' ;
-TokCstmMemberAccess: '->' ;
-TokScopeAccess: '::' ;
-
-TokLParen: '(' ;
-TokRParen: ')' ;
-TokLAttr: '#[' ;
-TokRAttr: ']#' ;
-TokLBracket: '[' ;
-TokRBracket: ']' ;
-TokLBrace: '{' ;
-TokRBrace: '}' ;
-TokSemicolon: ';' ;
-TokColon: ':' ;
-TokComma: ',' ;
-
-
-//--------
-TokToident: 'toident' ;
-//--------
-
-//--------
-TokKwIf: 'if' ;
-TokKwElif: 'elif' ;
-TokKwElse: 'else' ;
-
-TokKwMatch: 'match' ;
-TokKwCase: 'case' ;
-TokKwDefault: 'default' ;
-
-TokKwFor: 'for' ;
-TokKwWhile: 'while' ;
-TokKwScope: 'scope' ;
-TokKwLabel: 'label' ;
-
-TokKwTry: 'try' ;
-TokKwCatch: 'catch' ;
-//--------
-
-//--------
-TokKwClass: 'class' ;
-TokKwBase: 'base' ;
-TokKwMixin: 'mixin' ;
-TokKwExtends: 'extends' ;
-TokKwDyn: 'dyn' ;
-TokKwAbstract: 'abstract' ;
-
-TokKwPub: 'pub' ;
-TokKwProt: 'prot' ;
-TokKwPriv: 'priv' ;
-
-TokKwSelf: 'self' ;
-TokKwSelfT: 'self_t' ;
-TokKwInit: 'init' ;
-TokKwDest: 'dest' ;
-TokKwInitlist: 'initlist' ;
-//--------
-
-//--------
-TokKwUsing: 'using' ;
-TokKwNamespace: 'namespace' ;
-TokKwLibrary: 'library' ;
-TokKwWork: 'work' ;
-//--------
-
-//--------
-TokKwTrait: 'trait' ;
-TokKwRequires: 'requires' ;
-//--------
-
-//--------
-TokKwVariant: 'variant' ;
-TokKwTuple: 'tuple' ;
-TokKwEnum: 'enum' ;
-TokKwUnion: 'union' ;
-//--------
-
-//--------
-TokKwStatic: 'static' ;
-TokKwConst: 'const' ;
-TokKwVolatile: 'volatile' ;
-//--------
-
-//--------
-TokKwStaticAssert: 'static_assert' ;
-//--------
-
-//--------
-TokKwFunc: 'func' ;
-TokKwRetT: 'ret_t' ;
-//--------
-
-//--------
-TokKwSpec: 'spec' ;
-//--------
-
-//--------
-TokKwGen: 'gen' ;
-//--------
-
-//--------
-TokKwVar: 'var' ;
-//--------
-
-//--------
-TokKwMove: 'move' ;
-//--------
-
-//--------
-TokKwNull: 'null' ;
-TokKwNullT: 'null_t' ;
+PunctBitNot: '~' ;
+PunctLogNotOrForceSuccess: '!' ;
 //--------
 
 
 //--------
-TokKwPack: 'pack' ;
-TokKwUnpack: 'unpack' ;
+PunctAssign: '=' ;
+PunctCstmAssign: ':=' ;
+
+PunctPlusAssign: '+=' ;
+PunctMinusAssign: '-=' ;
+
+PunctMulAssign: '*=' ;
+PunctDivAssign: '/=' ;
+PunctModAssign: '%=' ;
+
+PunctBitOrAssign: '|=' ;
+PunctBitAndAssign: '&=' ;
+PunctBitXorAssign: '^=' ;
+
+//PunctBitLslAssign: '<<=' ;
+//PunctBitLsrAssign: '>>=' ;
+//PunctBitAsrAssign: '>>>=' ;
+
+PunctAtAssign: '@=' ;
 //--------
 
 //--------
-TokKwType: 'type' ;
-TokKwTypeof: 'typeof' ;
-TokKwInstof: 'instof' ;
+PunctAt: '@' ;
+PunctAtAt: '@@' ;
 //--------
 
 //--------
-TokKwTokstrm: 'tokstrm' ;
+PunctErrorCheckOrNullCheck: '?' ;
+
+PunctMultiForceSuccess: '!!' ;
+PunctMultiErrorCheckOrNullCheck: '??' ;
+//--------
+
+//--------
+PunctMemberAccess: '.' ;
+PunctPtrMemberAccess: '*.' ;
+PunctCstmMemberAccess: '->' ;
+PunctScopeAccess: '::' ;
+//--------
+
+//--------
+PunctLParen: '(' ;
+PunctRParen: ')' ;
+PunctLBracket: '[' ;
+PunctRBracket: ']' ;
+PunctLBrace: '{' ;
+PunctRBrace: '}' ;
+PunctSemicolon: ';' ;
+PunctColon: ':' ;
+PunctComma: ',' ;
+//--------
+
+
+//--------
+KwToident: 'toident' ;
+KwFromident: 'fromident' ;
+//--------
+
+//--------
+KwIf: 'if' ;
+KwElif: 'elif' ;
+KwElse: 'else' ;
+
+KwSwitch: 'switch' ;
+KwTagswitch: 'tagswitch' ;
+KwCase: 'case' ;
+KwDefault: 'default' ;
+
+KwFor: 'for' ;
+KwWhile: 'while' ;
+
+KwBreak: 'break' ;
+KwContinue: 'continue' ;
+
+KwLabel: 'label' ;
+
+KwScope: 'scope' ;
+
+KwTry: 'try' ;
+KwCatch: 'catch' ;
+//--------
+
+//--------
+KwClass: 'class' ;
+KwBase: 'base' ;
+KwMixin: 'mixin' ;
+KwExtends: 'extends' ;
+KwDyn: 'dyn' ;
+KwAbstract: 'abstract' ;
+
+KwPub: 'pub' ;
+KwProt: 'prot' ;
+KwPriv: 'priv' ;
+
+KwSelf: 'self' ;
+KwSelfT: 'self_t' ;
+KwInit: 'init' ;
+KwInitlist: 'initlist' ;
+KwDest: 'dest' ;
+
+KwTag: 'tag' ;
+//--------
+
+//--------
+KwNew: 'new' ;
+KwDelete: 'delete' ;
+//--------
+
+//--------
+KwUsing: 'using' ;
+KwNamespace: 'namespace' ;
+KwLibrary: 'library' ;
+KwWork: 'work' ;
+//--------
+
+//--------
+KwTrait: 'trait' ;
+KwRequires: 'requires' ;
+//--------
+
+//--------
+KwTuple: 'tuple' ;
+KwVariant: 'variant' ;
+KwEnum: 'enum' ;
+KwUnion: 'union' ;
+//--------
+
+//--------
+KwConst: 'const' ;
+KwVolatile: 'volatile' ;
+//--------
+
+//--------
+KwStatic: 'static' ;
+KwExtern: 'extern' ;
+//--------
+
+//--------
+KwStaticAssert: 'static_assert' ;
+//--------
+
+//--------
+KwFunc: 'func' ;
+KwRetT: 'ret_t' ;
+//--------
+
+//--------
+KwSpec: 'spec' ;
+KwAttr: 'attr' ;
+//--------
+
+//--------
+KwGen: 'gen' ;
+KwCall: 'call' ;
+KwSet: 'set' ;
+//--------
+
+//--------
+KwVar: 'var' ;
+//--------
+
+//--------
+KwMove: 'move' ;
+//--------
+
+//--------
+KwNull: 'null' ;
+KwNullT: 'null_t' ;
+//--------
+
+//--------
+KwType: 'type' ;
+KwTypeof: 'typeof' ;
+KwInstof: 'instof' ;
+//--------
+
+//--------
+KwTokstrm: 'tokstrm' ;
 //--------
 
 // Built-in types
 //--------
-TokKwCtlist: 'ctlist' ;
-TokKwCtmap: 'ctmap' ;
-TokKwCtset: 'ctset' ;
+KwCtlist: 'ctlist' ;
+KwCtmap: 'ctmap' ;
+KwCtset: 'ctset' ;
 
-TokKwU8: 'u8' ;
-TokKwI8: 'i8' ;
-TokKwU16: 'u16' ;
-TokKwI16: 'i16' ;
-TokKwU32: 'u32' ;
-TokKwI32: 'i32' ;
-TokKwU64: 'u64' ;
-TokKwI64: 'i64' ;
-TokKwU128: 'u128' ;
-TokKwI128: 'i128' ;
+KwU8: 'u8' ;
+KwI8: 'i8' ;
+KwU16: 'u16' ;
+KwI16: 'i16' ;
+KwU32: 'u32' ;
+KwI32: 'i32' ;
+KwU64: 'u64' ;
+KwI64: 'i64' ;
+KwU128: 'u128' ;
+KwI128: 'i128' ;
 
-TokKwString: 'string' ;
+KwString: 'string' ;
 
-TokKwFloat: 'float' ;
-TokKwDouble: 'double' ;
-TokKwLongdouble: 'longdouble' ;
+KwFloat: 'float' ;
+KwDouble: 'double' ;
+KwLongdouble: 'longdouble' ;
 
-TokKwBool: 'bool' ;
-TokKwTrue: 'true' ;
-TokKwFalse: 'false' ;
+KwBool: 'bool' ;
+KwTrue: 'true' ;
+KwFalse: 'false' ;
 
-TokKwVoid: 'void' ;
-TokKwAuto: 'auto' ;
-TokKwAny: 'any' ;
-TokKwRange: 'range' ;
+KwVoid: 'void' ;
+KwAuto: 'auto' ;
+KwAny: 'any' ;
+KwRange: 'range' ;
 
-TokKwResult: 'result' ;
-TokKwOption: 'option' ;
+KwResult: 'result' ;
+KwOption: 'option' ;
 
-TokKwFile: 'file' ;
-TokKwThread: 'thread' ;
+KwFile: 'file' ;
+KwThread: 'thread' ;
 
-TokKwAllocatorT: 'allocator_t' ;
+KwAllocatorT: 'allocator_t' ;
 //--------
 
 //--------
-TokKwNew: 'new' ;
-TokKwDelete: 'delete' ;
 //--------
 
 //--------
-TokKwCast: 'cast' ;
-TokKwAs: 'as' ;
-TokKwReinterpret: 'reinterpret' ;
-TokKwImplicit: 'implicit' ;
+KwCast: 'cast' ;
+KwAs: 'as' ;
+KwReinterpret: 'reinterpret' ;
+KwImplicit: 'implicit' ;
 //--------
 
 
@@ -301,12 +332,12 @@ TokKwImplicit: 'implicit' ;
 // The non-post/pre underscore parts must start and end with an
 // alphanumeric character, and there must be at least two alphanumeric
 // characters.
-TokReservedIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
-TokMacroOrDefineIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
+MiscReservedIdent: '__' [A-Za-z] ([A-Za-z0-9_]* [A-Za-z0-9])? '__' ;
+MiscMacroOrDefineIdent: '`' [A-Za-z_] [A-Za-z0-9_]* ;
 
 fragment FragBasicIdent: ([_]? [A-Za-z]) ([_]? [A-Za-z0-9])* [_]?  ;
 fragment FragRawIdent: 'r#' FragBasicIdent ;
 
-TokIdent: FragBasicIdent | FragRawIdent ;
+MiscIdent: FragBasicIdent | FragRawIdent ;
 
-TokOther: . ;
+MiscOther: . ;
