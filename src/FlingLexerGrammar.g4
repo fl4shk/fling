@@ -159,9 +159,9 @@ KwElif: 'elif' ;
 KwElse: 'else' ;
 
 KwSwitch: 'switch' ;
-KwTagswitch: 'tagswitch' ;
 KwCase: 'case' ;
 KwDefault: 'default' ;
+KwCaseitem: 'caseitem' ;
 
 KwFor: 'for' ;
 KwWhile: 'while' ;
@@ -194,20 +194,6 @@ KwSelfT: 'self_t' ;
 KwInit: 'init' ;
 KwInitlist: 'initlist' ;
 KwDest: 'dest' ;
-
-KwTag: 'tag' ;
-//--------
-
-//--------
-KwNew: 'new' ;
-KwDelete: 'delete' ;
-//--------
-
-//--------
-KwUsing: 'using' ;
-KwNamespace: 'namespace' ;
-KwLibrary: 'library' ;
-KwWork: 'work' ;
 //--------
 
 //--------
@@ -220,6 +206,18 @@ KwTuple: 'tuple' ;
 KwVariant: 'variant' ;
 KwEnum: 'enum' ;
 KwUnion: 'union' ;
+//--------
+
+//--------
+KwNew: 'new' ;
+KwDelete: 'delete' ;
+//--------
+
+//--------
+KwUsing: 'using' ;
+KwNamespace: 'namespace' ;
+KwLibrary: 'library' ;
+KwWork: 'work' ;
 //--------
 
 //--------

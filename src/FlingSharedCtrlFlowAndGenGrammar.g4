@@ -1,27 +1,18 @@
 //--------
-flingCommonCtrlFlowArgList:
+flingIfHeaderSuffix:
+	'(' flingExpr ')'
+	;
+flingElifHeaderSuffix:
 	'(' flingExpr ')'
 	;
 //--------
 
 //--------
-flingIfHeaderSuffix:
-	flingCommonCtrlFlowArgList
-	;
-flingElifHeaderSuffix:
-	flingCommonCtrlFlowArgList
-	;
-//--------
-
-//--------
-flingSwitchHeaderSuffix:
-	flingCommonCtrlFlowArgList
-	;
-flingTagswitchHeaderSuffix:
-	flingCommonCtrlFlowArgList
+flingMatchHeaderSuffix:
+	'(' flingExpr ')'
 	;
 flingCaseHeaderSuffix:
-	flingCommonCtrlFlowArgList
+	'(' flingExprList ')'
 	;
 //--------
 
@@ -30,7 +21,7 @@ flingForHeaderSuffix:
 	'(' flingIdent ',' flingExpr ')'
 	;
 flingWhileHeaderSuffix:
-	flingCommonCtrlFlowArgList
+	'(' flingExpr ')'
 	;
 
 flingBreakHeaderSuffix:
@@ -43,8 +34,8 @@ flingContinueHeaderSuffix:
 flingLabelHeaderSuffix:
 	'(' flingIdent ')'
 	;
-flingScopeHeaderSuffix:
-	'(' flingIdent ')'
+flingScopeHeader:
+	KwScope ('(' flingIdent ')')?
 	;
 //--------
 
@@ -53,6 +44,9 @@ flingSharedGenItem:
 	flingGenCall
 	| flingGenSet
 	| flingGenVar
+	| flingGenBreak
+	| flingGenContinue
+	| flingGenLabel
 	;
 flingGenCall:
 	KwGen '<' KwCall '>' flingCommonCtrlFlowArgList
@@ -62,6 +56,15 @@ flingGenSet:
 	;
 flingGenVar:
 	KwGen '<' KwVar '>' '(' flingDeclVarPostSpecInnards ')'
+	;
+flingGenBreak:
+	KwGen '<' KwBreak '>' flingBreakHeaderSuffix
+	;
+flingGenContinue:
+	KwGen '<' KwContinue '>' flingContinueHeaderSuffix
+	;
+flingGenLabel:
+	KwGen '<' KwLabel '>' flingLabelHeaderSuffix
 	;
 //--------
 
@@ -78,8 +81,8 @@ flingGenElseHeader:
 //--------
 
 //--------
-flingGenSwitchHeader:
-	KwGen '<' KwSwitch '>' flingSwitchHeaderSuffix
+flingGenMatchHeader:
+	KwGen '<' KwMatch '>' flingMatchHeaderSuffix
 	;
 flingGenTagswitchHeader:
 	KwGen '<' KwTagswitch '>' flingTagswitchHeaderSuffix
@@ -98,21 +101,6 @@ flingGenForHeader:
 	;
 flingGenWhileHeader:
 	KwGen '<' KwWhile '>' flingWhileHeaderSuffix
-	;
-
-flingGenBreak:
-	KwGen '<' KwBreak '>' flingBreakHeaderSuffix
-	;
-flingGenContinue:
-	KwGen '<' KwContinue '>' flingContinueHeaderSuffix
-	;
-
-flingGenLabelHeader:
-	KwGen '<' KwLabel '>' flingLabelHeaderSuffix
-	;
-
-flingGenScopeHeader:
-	KwGen '<' KwScope '>' flingScopeHeaderSuffix
 	;
 //--------
 

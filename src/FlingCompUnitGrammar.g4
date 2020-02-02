@@ -17,7 +17,7 @@ flingCompUnitItem:
 
 	| flingStaticAssert
 
-	| flingDeclCompUnitClass
+	| flingDeclClass
 	| flingDeclVariant
 	| flingDeclEnum
 	| flingDeclUnion
@@ -28,14 +28,24 @@ flingCompUnitItem:
 
 //--------
 flingUsing:
-	KwUsing '(' flingIdent ',' flingExpr ')'
+	KwUsing '(' flingIdent ',' flingTypename ')'
+	;
+
+flingAliasUsing:
+	KwUsing '(' KwAlias ')' 
+	;
+flingTypeUsing:
+	KwUsing '(' KwType ')' '('  flingIdent ',' flingTypename ')'
 	;
 //--------
 
 //--------
 // You can modify named scopes with compile-time code execution.
 flingCompUnitScope:
-	KwScope ('(' flingIdent ')')?
+	flingScopeHeader
+		flingCompUnitScopeInnards
+
+flingCompUnitScopeInnards:
 	'('
 		flingCompUnit?
 	')'
@@ -60,13 +70,73 @@ flingDeclCompUnitVar:
 	')'
 	;
 flingDeclCompUnitVarSpec:
-	KwSpec '(' KwStatic ')'
+	KwSpec '(' (KwStatic | KwExtern) ')'
 	;
 //--------
 
 //--------
 flingCompUnitGen:
+	flingSharedGenItem
+	| flingCompUnitGenIf
+
+	| flingCompUnitGenMatch
+	| flingCompUnitGenTagswitch
+
+	| flingCompUnitGenFor
+	| flingCompUnitGenWhile
+
+	| flingCompUnitGenBreak
+	| flingCompUnitGenContinue
+
+	| flingCompUnitGenLabel
+	| flingCompUnitGenScope
+	| flingCompUnitGenTry
+	| flingCompUnitGenCatch
 	;
+
+flingCompUnitGenIf:
+	flingGenIfHeader flingCompUnitScopeInnards
+	flingCompUnitGenElif*
+	flingCompUnitGenElse?
+	;
+flingCompUnitGenElif:
+	flingGenElifHeader flingCompUnitScopeInnards
+	;
+flingCompUnitGenElse:
+	flingGenElseHeader flingCompUnitScopeInnards
+	;
+
+flingCompUnitGenMatch:
+	flingGenMatchHeader
+	'('
+		(
+			flingCompUnitGenMatchOption
+			(',' flingCompUnitGenMatchOption)*
+			(',')?
+		)?
+	')'
+	;
+
+// Semantic analysis should ban more than one `default` case within one
+// `switch`
+flingCompUnitGenMatchOption:
+	flingCompUnitGenCase
+	| flingCompUnitGenDefault
+	;
+flingCompUnitGenCase:
+	flingGenCaseHeader flingCompUnitScopeInnards
+	;
+flingCompUnitGenDefault:
+	flingGenDefaultHeader flingCompUnitScopeInnards
+	;
+
+flingCompUnitGenFor:
+	flingGenForHeader flingCompUnitScopeInnards
+	;
+flingCompUnitGenWhile:
+	flingGenWhileHeader flingCompUnitScopeInnards
+	;
+
 //--------
 
 //--------

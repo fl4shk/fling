@@ -1,0 +1,4 @@
+if (egg == 9)
+(
+	gen<set>(gen<egg>, gen<egg> += 3),
+),
