@@ -1,4 +1,13 @@
-if (egg == 9)
+gen{cond}
 (
-	gen<set>(gen<egg>, gen<egg> += 3),
-),
+//--------
+if (gen{eef} > 9)
+	(gen{freef} = 3),
+elif (gen{eef} == 3)
+	(gen{freef} = 9),
+elif (gen{eef} == 7)
+	(gen{freef} = 9001),
+else
+	(gen{eef} = gen{freef})
+//--------
+)

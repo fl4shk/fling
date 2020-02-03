@@ -28,14 +28,7 @@ flingCompUnitItem:
 
 //--------
 flingUsing:
-	KwUsing '(' flingIdent ',' flingTypename ')'
-	;
-
-flingAliasUsing:
-	KwUsing '(' KwAlias ')' 
-	;
-flingTypeUsing:
-	KwUsing '(' KwType ')' '('  flingIdent ',' flingTypename ')'
+	KwUsing '(' flingIdent ',' flingExpr ')'
 	;
 //--------
 
@@ -77,34 +70,46 @@ flingDeclCompUnitVarSpec:
 //--------
 flingCompUnitGen:
 	flingSharedGenItem
-	| flingCompUnitGenIf
 
+	| flingCompUnitGenCond
+	| flingCompUnitGenMux
 	| flingCompUnitGenMatch
-	| flingCompUnitGenTagswitch
 
 	| flingCompUnitGenFor
 	| flingCompUnitGenWhile
 
-	| flingCompUnitGenBreak
-	| flingCompUnitGenContinue
-
-	| flingCompUnitGenLabel
 	| flingCompUnitGenScope
 	| flingCompUnitGenTry
 	| flingCompUnitGenCatch
 	;
 
-flingCompUnitGenIf:
-	flingGenIfHeader flingCompUnitScopeInnards
-	flingCompUnitGenElif*
-	flingCompUnitGenElse?
+flingCompUnitGenCond:
+	flingGenCondHeader
+	'('
+		flingIfHeader flingCompUnitScopeInnards
+		(',' flingCompUnitGenElif)*
+		(',' flingCompUnitGenElse)?
+	')'
 	;
 flingCompUnitGenElif:
-	flingGenElifHeader flingCompUnitScopeInnards
+	flingElifHeader flingCompUnitScopeInnards
 	;
 flingCompUnitGenElse:
-	flingGenElseHeader flingCompUnitScopeInnards
+	flingElseHeader flingCompUnitScopeInnards
 	;
+
+
+flingCompUnitGenMux:
+	flingGenMuxHeader
+	'('
+		// if
+		flingCompUnitScopeInnards
+
+		// else
+		',' flingCompUnitScopeInnards
+	')'
+	;
+
 
 flingCompUnitGenMatch:
 	flingGenMatchHeader
@@ -118,17 +123,18 @@ flingCompUnitGenMatch:
 	;
 
 // Semantic analysis should ban more than one `default` case within one
-// `switch`
+// `match`
 flingCompUnitGenMatchOption:
 	flingCompUnitGenCase
 	| flingCompUnitGenDefault
 	;
 flingCompUnitGenCase:
-	flingGenCaseHeader flingCompUnitScopeInnards
+	flingCaseHeader flingCompUnitScopeInnards
 	;
 flingCompUnitGenDefault:
-	flingGenDefaultHeader flingCompUnitScopeInnards
+	flingDefaultHeader flingCompUnitScopeInnards
 	;
+
 
 flingCompUnitGenFor:
 	flingGenForHeader flingCompUnitScopeInnards
@@ -136,7 +142,6 @@ flingCompUnitGenFor:
 flingCompUnitGenWhile:
 	flingGenWhileHeader flingCompUnitScopeInnards
 	;
-
 //--------
 
 //--------

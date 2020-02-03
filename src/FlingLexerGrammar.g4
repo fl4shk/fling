@@ -154,14 +154,15 @@ KwFromident: 'fromident' ;
 //--------
 
 //--------
+KwCond: 'cond' ;
+KwMux: 'mux' ;
 KwIf: 'if' ;
 KwElif: 'elif' ;
 KwElse: 'else' ;
 
-KwSwitch: 'switch' ;
+KwMatch: 'match' ;
 KwCase: 'case' ;
 KwDefault: 'default' ;
-KwCaseitem: 'caseitem' ;
 
 KwFor: 'for' ;
 KwWhile: 'while' ;
@@ -173,6 +174,7 @@ KwLabel: 'label' ;
 
 KwScope: 'scope' ;
 
+KwExcept: 'except' ;
 KwTry: 'try' ;
 KwCatch: 'catch' ;
 //--------
@@ -246,7 +248,6 @@ KwAttr: 'attr' ;
 
 //--------
 KwGen: 'gen' ;
-KwCall: 'call' ;
 KwSet: 'set' ;
 //--------
 
@@ -312,9 +313,6 @@ KwFile: 'file' ;
 KwThread: 'thread' ;
 
 KwAllocatorT: 'allocator_t' ;
-//--------
-
-//--------
 //--------
 
 //--------

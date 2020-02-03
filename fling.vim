@@ -46,11 +46,11 @@ syn match fling_lit_oct_num "\<\(0o[0-7][0-7_]*\)\>"
 syn match fling_lit_bin_num "\<\(0b[0-1][0-1_]*\)\>"
 
 "--------
-syn keyword fling_non_type_name_keyword toident
+syn keyword fling_non_type_name_keyword toident fromident
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword if elif else
+syn keyword fling_non_type_name_keyword cond mux if elif else
 syn keyword fling_non_type_name_keyword switch case default
 syn keyword fling_type_name_keyword caseitem
 syn keyword fling_non_type_name_keyword for while
@@ -105,7 +105,7 @@ syn keyword fling_non_type_name_keyword spec
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword gen call set
+syn keyword fling_non_type_name_keyword gen set
 "--------
 
 "--------

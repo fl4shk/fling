@@ -1,9 +1,16 @@
 //--------
-flingIfHeaderSuffix:
+flingMuxHeaderSuffix:
 	'(' flingExpr ')'
 	;
-flingElifHeaderSuffix:
-	'(' flingExpr ')'
+
+flingIfHeader:
+	KwIf '(' flingExpr ')'
+	;
+flingElifHeader:
+	KwElif '(' flingExpr ')'
+	;
+flingElseHeader:
+	KwElse
 	;
 //--------
 
@@ -11,14 +18,23 @@ flingElifHeaderSuffix:
 flingMatchHeaderSuffix:
 	'(' flingExpr ')'
 	;
-flingCaseHeaderSuffix:
-	'(' flingExprList ')'
+
+flingCaseHeader:
+	KwCase
+	'('
+		// This is temporary.  It needs an update for later versions of the
+		// language.
+		flingExprList
+	')'
+	;
+flingDefaultHeader:
+	KwDefault
 	;
 //--------
 
 //--------
 flingForHeaderSuffix:
-	'(' flingIdent ',' flingExpr ')'
+	'(' flingIdent (':' flingExpr)? ',' flingExpr ')'
 	;
 flingWhileHeaderSuffix:
 	'(' flingExpr ')'
@@ -40,75 +56,62 @@ flingScopeHeader:
 //--------
 
 //--------
+flingCatchHeaderSuffix:
+	'(' flingIdent (':' flingExpr)? ')'
+	;
+//--------
+
+//--------
 flingSharedGenItem:
-	flingGenCall
-	| flingGenSet
-	| flingGenVar
+	flingGenVar
 	| flingGenBreak
 	| flingGenContinue
 	| flingGenLabel
 	;
-flingGenCall:
-	KwGen '<' KwCall '>' flingCommonCtrlFlowArgList
-	;
-flingGenSet:
-	KwGen '<' KwSet '>' '(' flingExpr ',' flingExpr ')'
-	;
 flingGenVar:
-	KwGen '<' KwVar '>' '(' flingDeclVarPostSpecInnards ')'
+	KwGen '{' KwVar '}' '(' flingDeclVarPostSpecInnards ')'
 	;
 flingGenBreak:
-	KwGen '<' KwBreak '>' flingBreakHeaderSuffix
+	KwGen '{' KwBreak '}' flingBreakHeaderSuffix
 	;
 flingGenContinue:
-	KwGen '<' KwContinue '>' flingContinueHeaderSuffix
+	KwGen '{' KwContinue '}' flingContinueHeaderSuffix
 	;
 flingGenLabel:
-	KwGen '<' KwLabel '>' flingLabelHeaderSuffix
+	KwGen '{' KwLabel '}' flingLabelHeaderSuffix
 	;
 //--------
 
 //--------
-flingGenIfHeader:
-	KwGen '<' KwIf '>' flingIfHeaderSuffix
+flingGenCondHeader:
+	KwGen '{' KwCond '}'
 	;
-flingGenElifHeader:
-	KwGen '<' KwElif '>' flingElifHeaderSuffix
+flingGenMuxHeader:
+	KwGen '{' KwMux '}' flingMuxHeaderSuffix
 	;
-flingGenElseHeader:
-	KwGen '<' KwElse '>'
-	;
-//--------
 
-//--------
 flingGenMatchHeader:
-	KwGen '<' KwMatch '>' flingMatchHeaderSuffix
-	;
-flingGenTagswitchHeader:
-	KwGen '<' KwTagswitch '>' flingTagswitchHeaderSuffix
-	;
-flingGenCaseHeader:
-	KwGen '<' KwCase '>' flingCaseHeaderSuffix
-	;
-flingGenDefaultHeader:
-	KwGen '<' KwDefault '>'
+	KwGen '{' KwMatch '}' flingMatchHeaderSuffix
 	;
 //--------
 
 //--------
 flingGenForHeader:
-	KwGen '<' KwFor '>' flingForHeaderSuffix
+	KwGen '{' KwFor '}' flingForHeaderSuffix
 	;
 flingGenWhileHeader:
-	KwGen '<' KwWhile '>' flingWhileHeaderSuffix
+	KwGen '{' KwWhile '}' flingWhileHeaderSuffix
 	;
 //--------
 
 //--------
+flingGenExceptHeader:
+	KwGen '{' KwExcept '}'
+	;
 flingGenTryHeader:
-	KwGen '<' KwTry '>'
+	KwGen '{' KwTry '}'
 	;
 flingGenCatchHeader:
-	KwGen '<' KwCatch '>' '(' flingIdent (':' flingTypename)? ')'
+	KwGen '{' KwCatch '}' flingCatchHeaderSuffix
 	;
 //--------
