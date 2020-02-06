@@ -17,12 +17,12 @@ flingCompUnitItem:
 
 	| flingStaticAssert
 
-	| flingDeclClass
-	| flingDeclVariant
-	| flingDeclEnum
-	| flingDeclUnion
-	| flingDeclTrait
-	| flingDeclFunc
+	| flingClassDecl
+	| flingVariantDecl
+	| flingEnumDecl
+	| flingUnionDecl
+	| flingTraitDecl
+	| flingFuncDecl
 	;
 //--------
 
@@ -35,7 +35,7 @@ flingUsing:
 //--------
 // You can modify named scopes with compile-time code execution.
 flingCompUnitScope:
-	flingScopeHeader
+	KwScope flingScopeHeaderSuffix
 		flingCompUnitScopeInnards
 	;
 
@@ -65,12 +65,20 @@ flingDeclCompUnitVar:
 flingDeclCompUnitVarSpec:
 	KwSpec
 	'{'
-		(KwStatic | KwExtern)
+		flingGlobalNonTypeDeclSpecItem
+		(',' flingGlobalNonTypeDeclSpecItem)*
+		','?
 	'}'
+	;
+flingGlobalNonTypeDeclSpecItem:
+	// `static` and `extern` are mutually exclusive, but we'll let semantic
+	// analysis take care of that.
+	KwStatic | KwExtern
+	| KwExport
 	;
 	
 flingDeclVarPostSpecInnards:
-	flingIdentList ','? ':' flingExpr
+	flingIdentList ','? ':' flingExpr (PunctAssign flingExprList)?
 	;
 //--------
 
@@ -150,7 +158,7 @@ flingCompUnitGenWhile:
 	;
 
 flingCompUnitGenScope:
-	flingGenSco flingCompUnitScopeInnards
+	flingGenScopeHeader flingCompUnitScopeInnards
 	;
 
 flingCompUnitGenTry:

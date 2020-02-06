@@ -180,6 +180,24 @@ KwCatch: 'catch' ;
 //--------
 
 //--------
+KwModule: 'module' ;
+
+KwInput: 'input' ;
+KwOutput: 'output' ;
+KwBidir: 'bidir' ;
+
+KwInitial: 'initial' ;
+KwAlwaysComb: 'always_comb' ;
+KwAlwaysFf: 'always_ff' ;
+KwAlwaysBlk: 'always_blk' ;
+
+KwPosedge: 'posedge' ;
+KwNegedge: 'negedge' ;
+
+KwInst: 'inst' ;
+//--------
+
+//--------
 KwClass: 'class' ;
 KwBase: 'base' ;
 KwMixin: 'mixin' ;
@@ -220,6 +238,7 @@ KwUsing: 'using' ;
 KwNamespace: 'namespace' ;
 KwLibrary: 'library' ;
 KwWork: 'work' ;
+KwExport: 'export' ;
 //--------
 
 //--------
@@ -248,8 +267,7 @@ KwAttr: 'attr' ;
 
 //--------
 KwGen: 'gen' ;
-//KwSet: 'set' ;
-KwEval: 'eval' ;
+KwGeneval: 'geneval' ;
 //--------
 
 //--------

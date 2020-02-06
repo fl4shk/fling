@@ -104,7 +104,7 @@ syn keyword fling_non_type_name_keyword spec attr
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword gen eval
+syn keyword fling_non_type_name_keyword gen geneval
 "--------
 
 "--------

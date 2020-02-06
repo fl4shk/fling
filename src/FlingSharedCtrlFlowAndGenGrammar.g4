@@ -45,7 +45,7 @@ flingLabelHeaderSuffix:
 	flingIdent
 	;
 flingScopeHeaderSuffix:
-	KwScope flingAttr?
+	flingAttr?
 	;
 //--------
 
@@ -58,7 +58,7 @@ flingCatchHeader:
 //--------
 flingSharedGenItem:
 	flingGenVar
-	| flingGenEval
+	| flingGeneval
 	| flingGenBreak
 	| flingGenContinue
 	| flingGenLabel
@@ -66,8 +66,8 @@ flingSharedGenItem:
 flingGenVar:
 	KwGen '[' KwVar ']' '{' flingDeclVarPostSpecInnards '}'
 	;
-flingGenEval:
-	KwGen '[' KwEval ']' '{' flingExpr '}'
+flingGeneval:
+	KwGeneval flingExpr
 	;
 flingGenBreak:
 	KwGen '[' KwBreak ']' flingBreakHeaderSuffix
@@ -99,6 +99,12 @@ flingGenForHeader:
 	;
 flingGenWhileHeader:
 	KwGen '[' KwWhile ']' flingWhileHeaderSuffix
+	;
+//--------
+
+//--------
+flingGenScopeHeader:
+	KwGen '[' KwScope ']' flingScopeHeaderSuffix
 	;
 //--------
 
