@@ -155,13 +155,13 @@ KwFromident: 'fromident' ;
 
 //--------
 KwCond: 'cond' ;
-KwMux: 'mux' ;
-KwIf: 'if' ;
-KwElif: 'elif' ;
+//KwIf: 'if' ;
+//KwElif: 'elif' ;
 KwElse: 'else' ;
+KwMux: 'mux' ;
 
 KwMatch: 'match' ;
-KwCase: 'case' ;
+//KwCase: 'case' ;
 KwDefault: 'default' ;
 
 KwFor: 'for' ;
@@ -174,7 +174,7 @@ KwLabel: 'label' ;
 
 KwScope: 'scope' ;
 
-KwExcept: 'except' ;
+//KwExcept: 'except' ;
 KwTry: 'try' ;
 KwCatch: 'catch' ;
 //--------
@@ -248,7 +248,8 @@ KwAttr: 'attr' ;
 
 //--------
 KwGen: 'gen' ;
-KwSet: 'set' ;
+//KwSet: 'set' ;
+KwEval: 'eval' ;
 //--------
 
 //--------

@@ -50,9 +50,8 @@ syn keyword fling_non_type_name_keyword toident fromident
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword cond mux if elif else
-syn keyword fling_non_type_name_keyword switch case default
-syn keyword fling_type_name_keyword caseitem
+syn keyword fling_non_type_name_keyword cond else mux
+syn keyword fling_non_type_name_keyword match default
 syn keyword fling_non_type_name_keyword for while
 syn keyword fling_non_type_name_keyword break continue label scope
 syn keyword fling_non_type_name_keyword try catch
@@ -101,11 +100,11 @@ syn keyword fling_type_name_keyword ret_t
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword spec
+syn keyword fling_non_type_name_keyword spec attr
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword gen set
+syn keyword fling_non_type_name_keyword gen eval
 "--------
 
 "--------

@@ -1,13 +1,13 @@
-gen{cond}
+gen[cond]
 (
 //--------
-if (gen{eef} > 9)
-	(gen{freef} = 3),
-elif (gen{eef} == 3)
-	(gen{freef} = 9),
-elif (gen{eef} == 7)
-	(gen{freef} = 9001),
+gen[eef] > 9
+	{gen[freef] = 3},
+gen[eef] == 3
+	{gen[freef] = 9},
+gen[eef] == 7
+	{gen[freef] = 9001},
 else
-	(gen{eef} = gen{freef})
+	{gen[eef] = gen[freef]}
 //--------
 )

@@ -3,7 +3,7 @@
 flingCompUnit:
 	flingCompUnitItem
 	(',' flingCompUnitItem)*
-	(',')?
+	','?
 	;
 
 flingCompUnitItem:
@@ -28,7 +28,7 @@ flingCompUnitItem:
 
 //--------
 flingUsing:
-	KwUsing '(' flingIdent ',' flingExpr ')'
+	KwUsing '{' flingIdent ',' flingExpr '}'
 	;
 //--------
 
@@ -37,33 +37,40 @@ flingUsing:
 flingCompUnitScope:
 	flingScopeHeader
 		flingCompUnitScopeInnards
+	;
 
 flingCompUnitScopeInnards:
-	'('
+	'{'
 		flingCompUnit?
-	')'
+	'}'
 	;
 //--------
 
 --------
 flingNamespace:
-	KwNamespace '(' flingIdent ')'
-	'('
+	KwNamespace flingIdent
+	'{'
 		flingCompUnit?
-	')'
+	'}'
 	;
 --------
 
 //--------
 flingDeclCompUnitVar:
-	KwVar
-	'('
-		(flingDeclCompUnitVarSpec ',')?
+	KwVar flingDeclCompUnitVarSpec?
+	'{'
 		flingDeclVarPostSpecInnards
-	')'
+	'}'
 	;
 flingDeclCompUnitVarSpec:
-	KwSpec '(' (KwStatic | KwExtern) ')'
+	KwSpec
+	'{'
+		(KwStatic | KwExtern)
+	'}'
+	;
+	
+flingDeclVarPostSpecInnards:
+	flingIdentList ','? ':' flingExpr
 	;
 //--------
 
@@ -80,19 +87,19 @@ flingCompUnitGen:
 
 	| flingCompUnitGenScope
 	| flingCompUnitGenTry
-	| flingCompUnitGenCatch
 	;
 
 flingCompUnitGenCond:
 	flingGenCondHeader
-	'('
-		flingIfHeader flingCompUnitScopeInnards
-		(',' flingCompUnitGenElif)*
+	'{'
+		flingCompUnitGenIf
+		(',' flingCompUnitGenIf)*
 		(',' flingCompUnitGenElse)?
-	')'
+		','?
+	'}'
 	;
-flingCompUnitGenElif:
-	flingElifHeader flingCompUnitScopeInnards
+flingCompUnitGenIf:
+	flingIfHeader flingCompUnitScopeInnards
 	;
 flingCompUnitGenElse:
 	flingElseHeader flingCompUnitScopeInnards
@@ -101,30 +108,29 @@ flingCompUnitGenElse:
 
 flingCompUnitGenMux:
 	flingGenMuxHeader
-	'('
+	'{'
 		// if
 		flingCompUnitScopeInnards
 
 		// else
 		',' flingCompUnitScopeInnards
-	')'
+	'}'
 	;
 
 
 flingCompUnitGenMatch:
 	flingGenMatchHeader
-	'('
+	'{'
 		(
-			flingCompUnitGenMatchOption
-			(',' flingCompUnitGenMatchOption)*
-			(',')?
+			flingCompUnitGenCase
+			(',' flingCompUnitGenCase)*
+			(',' flingCompUnitGenDefault)?
+			','?
 		)?
-	')'
+	'}'
 	;
 
-// Semantic analysis should ban more than one `default` case within one
-// `match`
-flingCompUnitGenMatchOption:
+flingCompUnitGenMatchOptions:
 	flingCompUnitGenCase
 	| flingCompUnitGenDefault
 	;
@@ -141,6 +147,22 @@ flingCompUnitGenFor:
 	;
 flingCompUnitGenWhile:
 	flingGenWhileHeader flingCompUnitScopeInnards
+	;
+
+flingCompUnitGenScope:
+	flingGenSco flingCompUnitScopeInnards
+	;
+
+flingCompUnitGenTry:
+	flingGenTryHeader
+	'{'
+		flingCompUnitGen
+		',' flingCompUnitGenCatch
+		','?
+	'}'
+	;
+flingCompUnitGenCatch:
+	flingCaseHeader flingCompUnitGen
 	;
 //--------
 
