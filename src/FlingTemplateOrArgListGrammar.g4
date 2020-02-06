@@ -1,26 +1,47 @@
 //--------
 flingTemplateDeclList:
+	'<'
+		flingTemplateDeclListItem
+		(',' flingTemplateDeclListItem)*
+		','?
+	'>'
 	;
 
 flingArgDeclList:
+	'('
+		flingArgDeclListItem
+		(',' flingArgDeclListItem)*
+		','?
+	')'
+	;
+
+flingArgDeclListItem:
+	flingIdentList ':' flingTypename
 	;
 //--------
 
 //--------
 flingTemplateInstList:
-	'<'
-		(
-			flingTemplateInstPosListInnards
-			| flingTemplateInstNamedListInnards
-		)
-	'>'
+	'<' (flingInstPosListInnards | flingInstNamedListInnards) '>'
 	;
 
 flingArgInstList:
-	'(' 
-		(
-			flingArgInstPosListInnards | flingArgInstNamedListInnards
-		)
-	')'
+	'(' (flingInstPosListInnards | flingInstNamedListInnards) ')'
+	;
+flingInstPosListInnards:
+	flingInstPosListInnardsItem
+	(',' flingInstPosListInnardsItem)*
+	','?
+	;
+flingInstPosListInnardsItem:
+	flingExpr
+	;
+flingInstNamedListInnards:
+	flingInstNamedListInnardsItem
+	(',' flingInstNamedListInnardsItem)*
+	','?
+	;
+flingInstNamedListInnardsItem:
+	flingIdent PunctNamedMap flingExpr
 	;
 //--------

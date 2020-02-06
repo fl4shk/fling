@@ -95,6 +95,10 @@ PunctLogNotOrForceSuccess: '!' ;
 
 
 //--------
+PunctNamedMap: '=>' ;
+//--------
+
+//--------
 PunctAssign: '=' ;
 PunctCstmAssign: ':=' ;
 
@@ -182,6 +186,8 @@ KwCatch: 'catch' ;
 //--------
 KwModule: 'module' ;
 
+KwModport: 'modport' ;
+
 KwInput: 'input' ;
 KwOutput: 'output' ;
 KwBidir: 'bidir' ;
@@ -195,6 +201,14 @@ KwPosedge: 'posedge' ;
 KwNegedge: 'negedge' ;
 
 KwInst: 'inst' ;
+
+KwBit: 'bit' ;
+KwLogic: 'logic' ;
+
+KwUnsigned: 'unsigned' ;
+KwSigned: 'signed' ;
+
+KwPacked: 'packed' ;
 //--------
 
 //--------
@@ -258,6 +272,7 @@ KwStaticAssert: 'static_assert' ;
 //--------
 KwFunc: 'func' ;
 KwRetT: 'ret_t' ;
+KwInline: 'inline' ;
 //--------
 
 //--------

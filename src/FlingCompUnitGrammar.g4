@@ -76,9 +76,8 @@ flingGlobalNonTypeDeclSpecItem:
 	KwStatic | KwExtern
 	| KwExport
 	;
-	
 flingDeclVarPostSpecInnards:
-	flingIdentList ','? ':' flingExpr (PunctAssign flingExprList)?
+	flingIdentList ','? (':' flingExpr)? (PunctAssign flingExpr)?
 	;
 //--------
 
