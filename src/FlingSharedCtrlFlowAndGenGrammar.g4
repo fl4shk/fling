@@ -64,7 +64,7 @@ flingSharedGenItem:
 	| flingGenLabel
 	;
 flingGenVar:
-	KwGen '[' KwVar ']' '{' flingDeclVarPostSpecInnards '}'
+	KwGen '[' KwVar ']' flingVarPostSpecInnards
 	;
 flingGeneval:
 	KwGeneval flingExpr

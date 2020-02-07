@@ -8,21 +8,25 @@ flingCompUnit:
 
 flingCompUnitItem:
 	flingUsing
+	| flingStaticAssert
+
 	| flingCompUnitScope
 
 	| flingNamespace
-	| flingDeclCompUnitVar
+	| flingCompUnitVar
 
 	| flingCompUnitGen
 
-	| flingStaticAssert
+	| flingTypeOrTraitOrFunc
+	;
 
-	| flingClassDecl
-	| flingVariantDecl
-	| flingEnumDecl
-	| flingUnionDecl
-	| flingTraitDecl
-	| flingFuncDecl
+flingTypeOrTraitOrFunc:
+	flingClass
+	| flingVariant
+	| flingEnum
+	| flingUnion
+	| flingTrait
+	| flingFunc
 	;
 //--------
 
@@ -56,28 +60,28 @@ flingNamespace:
 --------
 
 //--------
-flingDeclCompUnitVar:
-	KwVar flingDeclCompUnitVarSpec?
-	'{'
-		flingDeclVarPostSpecInnards
-	'}'
+flingCompUnitVar:
+	KwVar flingCompUnitVarSpec?
+		flingVarPostSpecInnards
 	;
-flingDeclCompUnitVarSpec:
+flingCompUnitVarSpec:
 	KwSpec
 	'{'
-		flingGlobalNonTypeDeclSpecItem
-		(',' flingGlobalNonTypeDeclSpecItem)*
+		flingGlobalNonTypeSpecItem
+		(',' flingGlobalNonTypeSpecItem)*
 		','?
 	'}'
 	;
-flingGlobalNonTypeDeclSpecItem:
+flingGlobalNonTypeSpecItem:
 	// `static` and `extern` are mutually exclusive, but we'll let semantic
 	// analysis take care of that.
 	KwStatic | KwExtern
 	| KwExport
 	;
-flingDeclVarPostSpecInnards:
-	flingIdentList ','? (':' flingExpr)? (PunctAssign flingExpr)?
+flingVarPostSpecInnards:
+	'{'
+		flingIdentList ','? (':' flingExpr)? (PunctAssign flingExpr)?
+	'}'
 	;
 //--------
 
@@ -171,6 +175,11 @@ flingCompUnitGenTry:
 flingCompUnitGenCatch:
 	flingCaseHeader flingCompUnitGen
 	;
+//--------
+
+//--------
+flingStaticAssert:
+	KwStaticAssert flingExpr ',' flingExpr
 //--------
 
 //--------
