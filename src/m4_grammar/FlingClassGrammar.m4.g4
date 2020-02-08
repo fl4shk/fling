@@ -1,21 +1,18 @@
 //--------
 flingGlobalClass:
-	KwClass (flingGlobalClassSpec ',')?
+	KwClass (flingGlobalClassSpec PunctComma)?
 		flingClassInnards
 	;
 flingGlobalClassSpec
+	_spec(flingGlobalClassSpecItem)
+	;
 
 flingLocalClass:
-	KwClass (flingLocalClassSpec ',')?
+	KwClass (flingLocalClassSpec PunctComma)?
 		flingClassInnards
 	;
 
 flingLocalClassSpec:
-	KwSpec
-	'{'
-		flingLocalClassSpecItem
-		(',' flingLocalClassSpecItem)*
-		','?
-	'}'
+	_spec(flingLocalClassSpecItem)
 	;
 //--------

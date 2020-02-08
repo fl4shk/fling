@@ -14,9 +14,9 @@ flingExpr:
 		flingExpr
 	)?
 	;
-flingPunctBitLslAssign: '<' '<' '=' ;
-flingPunctBitLsrAssign: '>' '>' '=' ;
-flingPunctBitAsrAssign: '>' '>' '>' '=' ;
+flingPunctBitLslAssign: PunctCmpLt PunctCmpLe ;
+flingPunctBitLsrAssign: PunctCmpGt PunctCmpGe ;
+flingPunctBitAsrAssign: PunctCmpGt PunctCmpGt PunctCmpGe ;
 //--------
 
 //--------
@@ -91,9 +91,9 @@ flingBitXorExpr:
 		flingExpr
 	)?
 	;
-flingPunctBitLsl: '<' '<' ;
-flingPunctBitLsr: '>' '>' ;
-flingPunctBitAsr: '>' '>' '>' ;
+flingPunctBitLsl: PunctCmpLt PunctCmpLt ;
+flingPunctBitLsr: PunctCmpGt PunctCmpGt ;
+flingPunctBitAsr: PunctCmpGt PunctCmpGt PunctCmpGt ;
 //--------
 
 //--------

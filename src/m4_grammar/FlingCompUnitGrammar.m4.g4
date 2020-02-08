@@ -1,9 +1,7 @@
 //--------
 // A compilation unit
 flingCompUnit:
-	flingCompUnitItem
-	(',' flingCompUnitItem)*
-	','?
+	_list(flingCompUnitItem)
 	;
 
 flingCompUnitItem:
@@ -24,7 +22,10 @@ flingCompUnitItem:
 
 //--------
 flingUsing:
-	KwUsing '{' flingIdent ',' flingExpr '}'
+	KwUsing 
+	PunctLBrace
+		flingIdent PunctComma flingExpr
+	PunctRBrace
 	;
 //--------
 
@@ -36,9 +37,9 @@ flingCompUnitScope:
 	;
 
 flingCompUnitScopeInnards:
-	'{'
+	PunctLBrace
 		flingCompUnit?
-	'}'
+	PunctRBrace
 	;
 //--------
 
@@ -64,9 +65,9 @@ flingGlobalNonTypeSpecItem:
 	| KwExport
 	;
 flingVarPostSpecInnards:
-	'{'
-		flingIdentList ','? (':' flingExpr)? (PunctAssign flingExpr)?
-	'}'
+	PunctLBrace
+		flingIdentList (PunctColon flingExpr)? (PunctAssign flingExpr)?
+	PunctRBrace
 	;
 //--------
 
@@ -76,14 +77,18 @@ _gen(CompUnit)
 
 //--------
 flingStaticAssert:
-	KwStaticAssert flingExpr ',' flingExpr
+	KwStaticAssert
+	PunctLBrace
+		flingExpr PunctComma flingExpr
+	PunctRBrace
+	;
 //--------
 
 //--------
 flingIdentList:
-	flingIdent (',' flingIdent)*
+	flingIdent (PunctComma flingIdent)*
 	;
 flingExprList:
-	flingExpr (',' flingExpr)*
+	flingExpr (PunctComma flingExpr)*
 	;
 //--------

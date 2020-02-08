@@ -28,7 +28,7 @@ flingDefaultHeader:
 
 //--------
 flingForHeaderSuffix:
-	flingIdent (':' flingExpr)? ',' flingExpr
+	flingIdent (PunctColon flingExpr)? PunctComma flingExpr
 	;
 flingWhileHeaderSuffix:
 	flingExpr
@@ -51,7 +51,7 @@ flingScopeHeaderSuffix:
 
 //--------
 flingCatchHeader:
-	KwCatch '(' flingIdent (':' flingExpr)? ')'
+	KwCatch PunctLParen flingIdent (PunctColon flingExpr)? PunctRParen
 	;
 //--------
 
@@ -64,52 +64,52 @@ flingSharedGenItem:
 	| flingGenLabel
 	;
 flingGenVar:
-	KwGen '[' KwVar ']' flingVarPostSpecInnards
+	KwGen PunctLBracket KwVar PunctRBracket flingVarPostSpecInnards
 	;
 flingGeneval:
 	KwGeneval flingExpr
 	;
 flingGenBreak:
-	KwGen '[' KwBreak ']' flingBreakHeaderSuffix
+	KwGen PunctLBracket KwBreak PunctRBracket flingBreakHeaderSuffix
 	;
 flingGenContinue:
-	KwGen '[' KwContinue ']' flingContinueHeaderSuffix
+	KwGen PunctLBracket KwContinue PunctRBracket flingContinueHeaderSuffix
 	;
 flingGenLabel:
-	KwGen '[' KwLabel ']' flingLabelHeaderSuffix
+	KwGen PunctLBracket KwLabel PunctRBracket flingLabelHeaderSuffix
 	;
 //--------
 
 //--------
 flingGenCondHeader:
-	KwGen '[' KwCond ']'
+	KwGen PunctLBracket KwCond PunctRBracket
 	;
 flingGenMuxHeader:
-	KwGen '[' KwMux ']' flingMuxHeaderSuffix
+	KwGen PunctLBracket KwMux PunctRBracket flingMuxHeaderSuffix
 	;
 
 flingGenMatchHeader:
-	KwGen '[' KwMatch ']' flingMatchHeaderSuffix
+	KwGen PunctLBracket KwMatch PunctRBracket flingMatchHeaderSuffix
 	;
 //--------
 
 //--------
 flingGenForHeader:
-	KwGen '[' KwFor ']' flingForHeaderSuffix
+	KwGen PunctLBracket KwFor PunctRBracket flingForHeaderSuffix
 	;
 flingGenWhileHeader:
-	KwGen '[' KwWhile ']' flingWhileHeaderSuffix
+	KwGen PunctLBracket KwWhile PunctRBracket flingWhileHeaderSuffix
 	;
 //--------
 
 //--------
 flingGenScopeHeader:
-	KwGen '[' KwScope ']' flingScopeHeaderSuffix
+	KwGen PunctLBracket KwScope PunctRBracket flingScopeHeaderSuffix
 	;
 //--------
 
 //--------
 flingGenTryHeader:
-	KwGen '[' KwTry ']'
+	KwGen PunctLBracket KwTry PunctRBracket
 	;
 //--------

@@ -1,7 +1,7 @@
 //--------
 // A global function
 flingGlobalFunc:
-	KwFunc (flingGlobalFuncSpec ',')?
+	KwFunc (flingGlobalFuncSpec PunctComma)?
 		flingFuncInnards
 	;
 //--------
@@ -53,7 +53,7 @@ flingFuncScopeInnards:
 	;
 
 flingFuncVar:
-	KwVar (KwSpec '{' KwStatic '}')?
+	KwVar (KwSpec PunctLBrace KwStatic PunctRBrace)?
 		flingVarPostSpecInnards
 	;
 //--------

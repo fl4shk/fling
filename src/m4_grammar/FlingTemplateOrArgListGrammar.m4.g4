@@ -1,57 +1,69 @@
 //--------
 flingTemplateDeclList:
-	'<'
-		flingTemplateDeclListItem
-		(',' flingTemplateDeclListItem)*
-		','?
-	'>'
+	PunctCmpLt
+		(flingTemplateDeclListInnards0 | flingTemplateDeclListInnards1)
+		PunctComma?
+	PunctCmpGt
 	;
 
+flingTemplateDeclListInnards0:
+	flingTemplateDeclListItem0 (PunctComma flingTemplateDeclListItem0)*
+	;
+flingTemplateDeclListInnards1:
+	flingTemplateDeclListItem1 (PunctComma flingTemplateDeclListItem1)*
+	;
+
+flingTemplateDeclListItem0:
+	flingIdentList PunctColon KwType (PunctLParen flingExpr PunctRParen)?
+	| flingIdentList PunctColon flingExpr
+	;
+flingTemplateDeclListItem1:
+	flingTemplateDeclListItem0 PunctAssign flingExpr
+	;
+
+
 flingArgDeclList:
-	'('
-		(
-			flingArgDecListInnards0
-			| flingArgDecListInnards1
-		)
-		','?
-	')'
+	PunctLParen
+		(flingArgDeclListInnards0 | flingArgDeclListInnards1)
+		PunctComma?
+	PunctRParen
 	;
 flingArgDeclListInnards0:
-	flingArgDeclListItem0 (',' flingArgDeclListItem0)*
+	flingArgDeclListItem0 (PunctComma flingArgDeclListItem0)*
 	;
 flingArgDeclListInnards1:
-	(flingArgDecListInnards0 ',')?
-	flingArgDeclListItem1 (',' flingArgDeclListItem1)*
+	(flingArgDeclListInnards0 PunctComma)?
+	flingArgDeclListItem1 (PunctComma flingArgDeclListItem1)*
 	;
 
 flingArgDeclListItem0:
-	flingIdentList ':' flingExpr
+	flingIdentList PunctColon flingExpr
 	;
 flingArgDeclListItem1:
-	flingArgDeclListItem0 '=' flingExpr
+	flingArgDeclListItem0 PunctAssign flingExpr
 	;
 //--------
 
 //--------
 flingTemplateInstList:
-	'<' (flingInstPosListInnards | flingInstNamedListInnards) '>'
+	PunctCmpLt
+		(flingInstPosListInnards | flingInstNamedListInnards)
+	PunctCmpGt
 	;
 
 flingArgInstList:
-	'(' (flingInstPosListInnards | flingInstNamedListInnards) ')'
+	PunctLParen
+		(flingInstPosListInnards | flingInstNamedListInnards)
+	PunctRParen
 	;
 flingInstPosListInnards:
-	flingInstPosListInnardsItem
-	(',' flingInstPosListInnardsItem)*
-	','?
+	_list(flingInstPosListInnardsItem)
 	;
 flingInstPosListInnardsItem:
 	flingExpr
 	;
 flingInstNamedListInnards:
-	flingInstNamedListInnardsItem
-	(',' flingInstNamedListInnardsItem)*
-	','?
+	_list(flingInstNamedListInnardsItem)
 	;
 flingInstNamedListInnardsItem:
 	flingIdent PunctNamedMap flingExpr
