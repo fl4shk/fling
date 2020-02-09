@@ -8,7 +8,7 @@ flingGlobalFunc:
 
 //--------
 flingGlobalFuncSpec:
-	_spec(flingGlobalFuncSpecItem)
+	_spec_list(flingGlobalFuncSpecItem)
 	;
 
 flingAnyFuncSpecItem:
@@ -23,7 +23,8 @@ flingGlobalFuncSpecItem:
 
 //--------
 flingFuncInnards:
-	flingIdent flingTemplateDeclList? flingArgDeclList
+	(flingAttr PunctComma)?
+		flingIdent flingTemplateDeclList?  flingArgDeclList
 		flingFuncInnardsSuffix
 	;
 flingFuncInnardsSuffix:
@@ -39,22 +40,22 @@ flingFuncItem:
 	| flingFuncVar
 	| flingFuncGen
 	| flingExpr
+	| flingReturn
 
 	| _type_etc_list(Local)
 	;
 
 flingFuncScope:
 	KwScope flingScopeHeaderSuffix
-		flingFuncScopeInnards
-	;
-
-flingFuncScopeInnards:
-	flingFuncInnardsSuffix
+		flingFuncInnardsSuffix
 	;
 
 flingFuncVar:
 	KwVar (KwSpec PunctLBrace KwStatic PunctRBrace)?
 		flingVarPostSpecInnards
+	;
+flingReturn:
+	KwReturn flingExpr
 	;
 //--------
 

@@ -56,13 +56,13 @@ flingCompUnitVar:
 		flingVarPostSpecInnards
 	;
 flingCompUnitVarSpec:
-	_spec(flingGlobalNonTypeSpecItem)
+	KwSpec
+	PunctLBrace
+		flingGlobalNonTypeSpecItem
+	PunctRBrace
 	;
 flingGlobalNonTypeSpecItem:
-	// `static` and `extern` are mutually exclusive, but we'll let semantic
-	// analysis take care of that.
-	KwStatic | KwExtern
-	| KwExport
+	KwStatic | KwExtern | KwExport
 	;
 flingVarPostSpecInnards:
 	PunctLBrace

@@ -47,13 +47,19 @@ flingArgDeclListItem1:
 //--------
 flingTemplateInstList:
 	PunctCmpLt
-		(flingInstPosListInnards | flingInstNamedListInnards)
+		(
+			flingInstPosListInnards
+			| flingInstNamedListInnards
+		)
 	PunctCmpGt
 	;
 
 flingArgInstList:
 	PunctLParen
-		(flingInstPosListInnards | flingInstNamedListInnards)
+		(
+			flingInstPosListInnards
+			| flingInstNamedListInnards
+		)
 	PunctRParen
 	;
 flingInstPosListInnards:
@@ -66,6 +72,6 @@ flingInstNamedListInnards:
 	_list(flingInstNamedListInnardsItem)
 	;
 flingInstNamedListInnardsItem:
-	flingIdent PunctNamedMap flingExpr
+	flingIdent PunctMapsTo flingExpr
 	;
 //--------

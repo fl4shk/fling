@@ -10,7 +10,7 @@ define(<:_type_etc_list:>,
 :>)dnl
 define(<:_list:>,
 	<:PunctLBrace <:$1:> (PunctComma <:$1:>)* PunctComma? PunctRBrace:>)dnl
-define(<:_spec:>,
+define(<:_spec_list:>,
 	<:KwSpec _list(<:$1:>):>)dnl
 define(<:_gen:>,
 <:

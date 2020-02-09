@@ -51,7 +51,10 @@ flingScopeHeaderSuffix:
 
 //--------
 flingCatchHeader:
-	KwCatch PunctLParen flingIdent (PunctColon flingExpr)? PunctRParen
+	KwCatch
+	PunctLParen
+		flingIdent (PunctColon flingExpr)?
+	PunctRParen
 	;
 //--------
 

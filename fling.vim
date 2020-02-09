@@ -95,7 +95,7 @@ syn keyword fling_non_type_name_keyword static_assert
 "--------
 
 "--------
-syn keyword fling_non_type_name_keyword func
+syn keyword fling_non_type_name_keyword func lambda captures return
 syn keyword fling_type_name_keyword ret_t
 "--------
 
@@ -130,7 +130,7 @@ syn keyword fling_non_type_name_keyword type typeof instof
 "--------
 
 "--------
-syn keyword fling_type_name_keyword tokstrm
+syn keyword fling_type_name_keyword toktree
 "--------
 
 "--------

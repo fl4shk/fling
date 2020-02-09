@@ -99,7 +99,7 @@ PunctLogNotOrForceSuccess: FragLexLineComment* '!' ;
 
 
 //--------
-PunctNamedMap: FragLexLineComment* '=>' ;
+PunctMapsTo: FragLexLineComment* '=>' ;
 //--------
 
 //--------
@@ -196,6 +196,7 @@ KwInput: FragLexLineComment* 'input' ;
 KwOutput: FragLexLineComment* 'output' ;
 KwBidir: FragLexLineComment* 'bidir' ;
 
+KwAssign: FragLexLineComment: 'assign' ;
 KwInitial: FragLexLineComment* 'initial' ;
 KwAlwaysComb: FragLexLineComment* 'always_comb' ;
 KwAlwaysFf: FragLexLineComment* 'always_ff' ;
@@ -213,6 +214,17 @@ KwUnsigned: FragLexLineComment* 'unsigned' ;
 KwSigned: FragLexLineComment* 'signed' ;
 
 KwPacked: FragLexLineComment* 'packed' ;
+
+KwTask: FragLexLineComment* 'task' ;
+
+KwGenerate: FragLexLineComment* 'generate' ;
+
+KwDollarSize: FragLexLineComment* '$size' ;
+KwDollarRange: FragLexLineComment* '$range' ;
+KwDollarHigh: FragLexLineComment* '$high' ;
+KwDollarLow: FragLexLineComment* '$low' ;
+KwDollarFirstel: FragLexLineComment* '$firstel' ;
+KwDollarLastel: FragLexLineComment* '$lastel' ;
 //--------
 
 //--------
@@ -275,9 +287,11 @@ KwStaticAssert: FragLexLineComment* 'static_assert' ;
 
 //--------
 KwFunc: FragLexLineComment* 'func' ;
-//KwLambda: FragLexLineComment* 'lambda' ;
-//KwCaptures: FragLexLineComment* 'captures' ;
+KwLambda: FragLexLineComment* 'lambda' ;
+KwCaptures: FragLexLineComment* 'captures' ;
+KwReturn: FragLexLineComment* 'return' ;
 KwRetT: FragLexLineComment* 'ret_t' ;
+
 KwInline: FragLexLineComment* 'inline' ;
 KwNoinline: FragLexLineComment* 'noinline' ;
 //--------
@@ -312,14 +326,14 @@ KwInstof: FragLexLineComment* 'instof' ;
 //--------
 
 //--------
-KwTokstrm: FragLexLineComment* 'tokstrm' ;
+KwToktree: FragLexLineComment* 'toktree' ;
 //--------
 
 // Built-in types
 //--------
-// KwCtlist: FragLexLineComment* 'ctlist' ;
-// KwCtmap: FragLexLineComment* 'ctmap' ;
-// KwCtset: FragLexLineComment* 'ctset' ;
+KwCtlist: FragLexLineComment* 'ctlist' ;
+KwCtmap: FragLexLineComment* 'ctmap' ;
+KwCtset: FragLexLineComment* 'ctset' ;
 
 KwU8: FragLexLineComment* 'u8' ;
 KwI8: FragLexLineComment* 'i8' ;
