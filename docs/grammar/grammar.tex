@@ -1,0 +1,123 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage[nottoc]{tocbibind}
+\usepackage[font=large]{caption}
+\usepackage{framed}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{fontspec}
+\usepackage[backend=biber,sorting=none]{biblatex}
+%%\usepackage[
+%%	backend=biber,
+%%	style=ieee,
+%%	sorting=none
+%%]{biblatex}
+%\addbibresource{project_refs.bib}
+
+%% Hide section, subsection, and subsubsection numbering
+%\renewcommand{\thesection}{}
+%\renewcommand{\thesubsection}{}
+%\renewcommand{\thesubsubsection}{}
+
+% Alternative form of doing section stuff
+\renewcommand{\thesection}{}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\makeatletter
+\def\@seccntformat#1{\csname #1ignore\expandafter\endcsname\csname the#1\endcsname\quad}
+\let\sectionignore\@gobbletwo
+\let\latex@numberline\numberline
+\def\numberline#1{\if\relax#1\relax\else\latex@numberline{#1}\fi}
+\makeatother
+
+\makeatletter
+\renewcommand\tableofcontents{%
+    \@starttoc{toc}%
+}
+\makeatother
+
+%Figures
+%\begin{figure}[H]
+%	\includegraphics[width=\linewidth]{example.png}
+%	\caption{Example Figure Title}
+%	\label{fig:example}
+%\end{figure}
+
+% Verbatim text
+%\VerbatimInput{main.cpp}
+
+%% Fixed-width text
+%\texttt{module FullAdder(input logic a, b, c_in, output logic s, c_out);}
+%% Bold
+%\textbf{green eggs}
+%% Italic
+%\textit{and}
+%% Underline
+%\underline{eggs}
+
+%% Non-numbered list
+%\begin{itemize}
+%\item item 0
+%\item item 1
+%\end{itemize}
+
+%% Numbered list
+%\begin{enumerate}
+%\item item 0
+%\item item 1
+%\end{enumerate}
+
+%% Spaces and new lines
+%LaTeX ignores extra spaces and new lines.
+%Place \\ at the end of a line to create a new line (but not create a new
+%paragraph)
+
+%% Use "\noindent" to prevent a paragraph from indenting
+
+%% Tables
+%\begin{table}[H]
+%	\begin{center}
+%		\caption{Results for \texttt{blocksPerGrid = 5}}:
+%		\label{tab:table0}
+%		\begin{tabular}{c|c}
+%			\textbf{\texttt{threadsPerBlock}}
+%				& \textbf{\texttt{scaling()} Running Time (us)}\\
+%			\hline
+%			32 & 156.39\\
+%			64 & 163.59\\
+%			128 & 155.62\\
+%			256 & 155.56\\
+%			512 & 161.57\\
+%			1024 & 166.85\\
+%		\end{tabular}
+%	\end{center}
+%\end{table}
+
+\begin{document}
+\setmainfont{Times New Roman}
+\setmonofont{Courier New}
+
+\title{Example}
+%\date{20YY-MM-DD}
+\author{Andrew Clark}
+
+\maketitle
+\pagenumbering{gobble}
+\newpage
+\pagenumbering{arabic}
+
+%\doublespacing
+%\section{Abstract}
+	%\setcounter{section}{-1}
+
+
+	%\printbibliography[heading=bibnumbered,title={Bibliography}]
+
+\end{document}
+
